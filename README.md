@@ -22,5 +22,5 @@ kotlin
 
 ## 환경설정
 Android studio Narwhal
-target SDK: Android 15
-min SDK: 21
+target SDK: 35(Android 15)
+min SDK: 21(Android 5.0)
