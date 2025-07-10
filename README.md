@@ -5,9 +5,13 @@ kotlin
 ## 라이브러리
 
 Retrofit, OKHttp -> 서버연결 및 소셜 로그인
+
 SplashScreen -> 스플래시 화면
+
 MPAndroidChart -> 목표 달성률 차트
+
 미정 -> 달력 디자인 외부 라이브러리
+
 미정 -> 타이머 디자인 외부 라이브러리
 
 ---
