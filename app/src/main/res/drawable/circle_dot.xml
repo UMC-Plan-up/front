@@ -1,0 +1,6 @@
+<!-- res/drawable/circle_dot.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:width="8dp" android:height="8dp" />
+    <solid android:color="#3C74FF" />
+    <corners android:radius="50dp"/>
+</shape>
