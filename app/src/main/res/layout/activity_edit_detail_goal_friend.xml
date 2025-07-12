@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <LinearLayout
+        android:id="@+id/layout_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp">
+
+        <!-- 상단 툴바 -->
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="56dp"
+            android:layout_marginBottom="22dp"
+            app:srcCompat="@drawable/ic_launcher_background" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="친구와 함께하는 세부 목표 수정"
+            android:textSize="22sp"
+            android:textStyle="bold"/>
+
+        <!-- 설명 텍스트 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="기존 설정된 세부 목표를 그대로 적용할 수 있어요."
+            android:textSize="14sp"
+            android:textColor="#22262D"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- 목표명 -->
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="목표명"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="9dp"
+            android:textColor="#000000" />
+
+        <EditText
+            android:id="@+id/edit_goal_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="토익 공부"
+            android:textColorHint="@color/black_300"
+            android:textSize="16sp"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="8dp"
+            android:background="@drawable/bg_record_edittext"
+            android:padding="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1글자 이상 작성해 주세요.\n20자 이내로 작성해 주세요."
+            android:textSize="12sp"
+            android:letterSpacing="0.015"
+            android:textColor="#000000"
+            android:layout_marginBottom="24dp"/>
+
+        <!-- 1회 분량 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="1회 분량"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="9dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="목표 수행에 도전할 때마다 무엇을 얼마만큼 수행할지 구체적 분량을 작성해 주세요."
+            android:textSize="14sp"
+            android:textColor="#22262D"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="7dp"/>
+
+        <EditText
+            android:id="@+id/edit_goal_unit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="토익 교재 1단락씩 공부하기"
+            android:textSize="16sp"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="8dp"
+            android:textColorHint="@color/black_300"
+            android:background="@drawable/bg_record_edittext"
+            android:padding="12dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1글자 이상 작성해 주세요.\n30자 이내로 작성해 주세요."
+            android:textSize="12sp"
+            android:textColor="#000000"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="6dp" />
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="202dp"/>
+
+        <!-- 다음 버튼 -->
+        <Button
+            android:id="@+id/record_next_btn"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:text="다음"
+            android:textSize="16dp"
+            android:lineSpacingExtra="12dp"
+            android:letterSpacing="0.015"
+            app:backgroundTint="@color/blue_200"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/bg_rad6_rectangle"/>
+    </LinearLayout>
+</ScrollView>

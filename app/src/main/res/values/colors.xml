@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="black_300">#4B5563</color>
+    <color name="blue_200">#5C91FC</color>
 
     <!-- 선택된 아이콘 색상 (파란색) -->
     <color name="nav_selected_color">#007BFF</color>
