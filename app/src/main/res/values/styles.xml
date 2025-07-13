@@ -5,4 +5,8 @@
         <item name="android:paddingTop">4dp</item> <!-- 아이콘과 간격용 -->
         <item name="android:textColor">#FF000000</item>
     </style>
+
+    <style name="DailyToDoProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/bg_daily_todo_progress_bar</item>
+    </style>
 </resources>
