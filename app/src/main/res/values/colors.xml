@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <color name="key">#5C91FC</color>
 
     <color name="accent1">#4A74CA</color>
@@ -21,4 +22,14 @@
 
     <color name="information1">#395A5A</color>
     <color name="information2">#D7EEEE</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 선택된 아이콘 색상 (파란색) -->
+    <color name="nav_selected_color">#007BFF</color>
+
+    <!-- 선택되지 않은 아이콘 색상 (검정) -->
+    <color name="nav_unselected_color">#222222</color>
+
 </resources>

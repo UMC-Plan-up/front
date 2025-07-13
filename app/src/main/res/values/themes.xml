@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.PlanUP" parent="Base.Theme.PlanUP" />
+
+    <style name="NoItemBackgroundBottomNavigation" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemBackground">@android:color/transparent</item> <!-- ✅ 완전 투명 처리 -->
+        <item name="itemRippleColor">@android:color/transparent</item> <!-- ✅ Ripple 제거 -->
+    </style>
 </resources>

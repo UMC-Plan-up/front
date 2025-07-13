@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavTextAppearance" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">10sp</item>
+        <item name="android:paddingTop">4dp</item> <!-- 아이콘과 간격용 -->
+        <item name="android:textColor">#FF000000</item>
+    </style>
+</resources>
