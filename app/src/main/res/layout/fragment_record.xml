@@ -161,8 +161,7 @@
         <Button
             android:layout_width="62dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_rounded_border_button"
-            android:backgroundTint="#000000"
+            app:backgroundTint="#FFFFFF"
             android:gravity="center"
             android:minWidth="0dp"
             android:minHeight="0dp"
@@ -170,6 +169,7 @@
             android:paddingTop="4dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp"
+            android:background="@drawable/bg_rounded_border_button"
             android:text="관리"
             android:textColor="#000000"
             android:textSize="14dp" />
