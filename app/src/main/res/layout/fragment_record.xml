@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white">
 
     <LinearLayout
@@ -15,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="목표 달성"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -32,51 +33,44 @@
             android:orientation="horizontal"
             android:layout_marginTop="16dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="2025년 ▼"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025 년"
+                    android:textSize="16sp"
+                    android:layout_marginEnd="12dp"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_down"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+
+
+            <TextView
+                android:id="@+id/tv_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5월"
                 android:textSize="16sp"
-                android:layout_marginEnd="12dp"/>
+                android:layout_marginStart="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5월 ▼"
-                android:textSize="16sp"/>
-        </LinearLayout>
-
-        <!-- 주차 리포트 버튼 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="12dp">
-
-            <!-- 선택된 버튼 예시 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:paddingHorizontal="12dp"
-                android:gravity="center"
-                android:text="1주차\n리포트"
-                android:textColor="@android:color/white"
-                android:textSize="12sp"
-                android:layout_marginEnd="4dp"
-                android:textAlignment="center" />
-
-            <!-- 나머지 버튼 -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:paddingHorizontal="12dp"
-                android:gravity="center"
-                android:text="2주차\n리포트"
-                android:textSize="12sp"
-                android:layout_marginEnd="4dp"
-                android:textAlignment="center" />
-
-            <!-- 3~5주차 생략 가능 -->
+                android:layout_marginStart="12dp"
+                android:src="@drawable/ic_arrow_down"
+                android:layout_gravity="center"/>
         </LinearLayout>
 
         <!-- 배지 기록 -->
@@ -92,12 +86,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="나의 배지 기록"
-                android:textSize="16sp"
+                android:textSize="16dp"
                 android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_right" />
         </LinearLayout>
 
@@ -108,22 +102,74 @@
             android:layout_marginTop="12dp"
             android:gravity="center_vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/img_badge1"
-                android:layout_marginEnd="8dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/img_badge2"
-                android:layout_marginEnd="8dp" />
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/img_badge1"
+                    android:layout_gravity="center"/>
 
-            <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@drawable/img_badge3" />
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="48dp"
+                    android:text="영향력 있는 시작"
+                    android:textSize="11sp"
+                    android:gravity="top|center"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/img_badge2"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="48dp"
+                    android:text="대화의 시작"
+                    android:textSize="11sp"
+                    android:gravity="top|center"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/img_badge3"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:layout_width="60dp"
+                    android:layout_height="48dp"
+                    android:text="도전의 시작"
+                    android:textSize="11sp"
+                    android:gravity="top|center"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"/>
+
+            </LinearLayout>
         </LinearLayout>
 
         <!-- 알림 -->
@@ -143,24 +189,89 @@
                 android:textStyle="bold" />
 
             <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/ic_arrow_right" />
         </LinearLayout>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="• 친구 1 님의 댓글 ‘뿔써 이만큼 함?’"
             android:layout_marginTop="12dp"
-            android:textSize="14sp" />
+            android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="• 친구 2 님이 ‘응원해요’ 버튼을 눌렀습니다."
-            android:layout_marginTop="4dp"
-            android:textSize="14sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/img_blue_circle"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="친구 1 님의 댓글 벌써 이만큼 함?’"
+                    android:textSize="13sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_deep_blue_circle"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="친구 2 님이 '응원해요' 버튼을 눌렀습니다."
+                    android:textSize="13sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_deep_blue_circle"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="친구 3 님이 '응훤해요' 버튼을 눌렀습니다."
+                    android:textSize="13sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <!-- AI 응원 메시지 -->
         <TextView
@@ -180,26 +291,32 @@
             android:layout_marginTop="16dp"
             android:padding="16dp">
 
-            <ImageView
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:src="@drawable/img_planup_logo"
-                android:layout_gravity="start"/>
-
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Team Plan-Up"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_marginTop="8dp"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="이번 주 목표 달성량이 지난주에 비해서..."
-                android:textSize="14sp"
-                android:layout_marginTop="12dp"/>
+                <FrameLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:background="@drawable/shadow_circle">
+
+                    <!-- 내부 이미지 -->
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/img_planup_logo"
+                        android:scaleType="centerInside"
+                        android:layout_gravity="center"
+                        android:padding="20dp" />
+
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
     </LinearLayout>

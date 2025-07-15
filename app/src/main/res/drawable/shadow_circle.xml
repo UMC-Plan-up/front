@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 그림자 효과 (더 진하고 넓게 퍼짐) -->
+    <item android:left="8dp" android:top="8dp" android:right="8dp" android:bottom="8dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="80dp"
+                android:centerColor="#44000000"
+            android:endColor="#00000000"
+            android:useLevel="false"/>
+        </shape>
+    </item>
+
+    <!-- 흰색 원 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@android:color/white"/>
+        </shape>
+    </item>
+
+</layer-list>
