@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/name_back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/name_back_tv"
+        style="@style/TextAppearance.Pretendard.Medium.XL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목록"
+        app:layout_constraintStart_toEndOf="@id/name_back_iv"
+        app:layout_constraintTop_toTopOf="@id/name_back_iv"/>
+
+    <TextView
+        android:id="@+id/name_title_tv"
+        style="@style/TextAppearance.Pretendard.Medium.L"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이름/닉네임 변경"
+        app:layout_constraintTop_toBottomOf="@id/name_back_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/name_sub_title_tv"
+        style="@style/TextAppearance.Pretendard.Medium.SM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이름"
+        app:layout_constraintTop_toBottomOf="@id/name_title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/name_enter_tv"
+        style="@style/TextAppearance.Pretendard.Medium.L"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="이름을 입력하세요"
+        android:textColorHint="@color/semanticB4"
+        android:textColor="@color/semanticB1"
+        android:background="@null"
+        app:layout_constraintTop_toBottomOf="@id/name_sub_title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"/>
+
+    <View
+        android:id="@+id/name_lv"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/semanticB5"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@id/name_enter_tv"/>
+
+    <TextView
+        android:id="@+id/nick_name_title_tv"
+        style="@style/TextAppearance.Pretendard.Medium.SM"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        app:layout_constraintTop_toBottomOf="@id/name_lv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <EditText
+        android:id="@+id/nick_name_edit_et"
+        style="@style/TextAppearance.Pretendard.Medium.L"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="닉네임을 입력하세요"
+        android:textColorHint="@color/semanticB4"
+        android:textColor="@color/semanticB1"
+        android:background="@null"
+        app:layout_constraintTop_toBottomOf="@id/nick_name_title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="8dp"/>
+
+    <View
+        android:id="@+id/nick_name_lv"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/semanticB5"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintTop_toBottomOf="@id/nick_name_edit_et"/>
+
+    <TextView
+        android:id="@+id/nick_name_error_tv"
+        style="@style/TextAppearance.Pretendard.Medium.XS"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/semanticR1"
+        app:layout_constraintTop_toBottomOf="@id/nick_name_lv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="20dp"/>
+
+    <ImageView
+        android:id="@+id/complete_btn_iv"
+        android:layout_width="372dp"
+        android:layout_height="wrap_content"
+        android:src="@drawable/complete_btn_selector"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nick_name_error_tv"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

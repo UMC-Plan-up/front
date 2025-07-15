@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/popup_challenge_cv"
+        android:layout_width="300dp"
+        android:layout_height="247dp"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/popup_challenge_cl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/popup_challenge_close_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/close_emoji"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
+            <TextView
+                android:id="@+id/popup_challenge_title_tv"
+                style="@style/TextAppearance.Pretendard.SemiBold.XL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="챌린지 참여 요청"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/popup_challenge_close_iv"
+                android:layout_marginTop="20dp"/>
+            <TextView
+                android:id="@+id/popup_challenge_notice_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="[닉네임] 님이 1:1 챌린지 참여를 요청했어요. 지금 신청받은 챌린지를 살펴보세요!"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/popup_challenge_title_tv"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"/>
+            <ImageView
+                android:id="@+id/popup_challenge_check_btn_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_go_to_check"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="20dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

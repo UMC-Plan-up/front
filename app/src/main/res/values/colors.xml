@@ -1,5 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <color name="key">#5C91FC</color>
+
+    <color name="accent1">#4A74CA</color>
+    <color name="accent2">#5383E3</color>
+    <color name="accent3">#5C91FC</color>
+    <color name="accent4">#CCDDFE</color>
+
+    <color name="semantic">#00000033</color>
+    <color name="semanticB1">#000000</color>
+    <color name="semanticB2">#22262D</color>
+    <color name="semanticB3">#4B5563</color>
+    <color name="semanticB4">#C7CACF</color>
+    <color name="semanticB5">#E4E6E8</color>
+
+    <color name="semanticR1">#F81E1E</color>
+    <color name="semanticR2">#CA3535</color>
+    <color name="semanticR3">#CA3535</color>
+    <color name="semanticR4">#F5C2C2</color>
+
+    <color name="information1">#395A5A</color>
+    <color name="information2">#D7EEEE</color>
+    <!--  유효성 검사 색상 (박선준)  -->
+    <color name="information3">#35B584</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
@@ -28,4 +53,5 @@
 
     <!-- 선택되지 않은 아이콘 색상 (검정) -->
     <color name="nav_unselected_color">#222222</color>
+
 </resources>
