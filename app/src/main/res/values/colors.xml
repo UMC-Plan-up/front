@@ -53,14 +53,10 @@
 
     <!-- 선택되지 않은 아이콘 색상 (검정) -->
     <color name="nav_unselected_color">#222222</color>
-<<<<<<< HEAD
 
     <!-- res/values/colors.xml -->
     <color name="blue">#3C74FF</color>
     <color name="gray_light">#F1F1F1</color>
     <color name="blue_light">#D6E3FF</color>
     <color name="gray_profile">#D9D9D9</color>
-
-=======
->>>>>>> 517ecb6 (로그인 구현)
 </resources>
