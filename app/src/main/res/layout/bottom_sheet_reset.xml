@@ -1,6 +1,60 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="299dp"
+    android:layout_height="190dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+    android:id="@+id/resetPasswordBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="28dp"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingBottom="20dp">
+
+    <TextView
+        android:id="@+id/resetCompleteTitle"
+        android:layout_width="match_parent"
+        android:layout_height="27dp"
+        android:text="비밀번호 재설정 완료"
+        android:fontFamily="@font/pretendard_semibold"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:id="@+id/resetCompleteDesc"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="입력하신 이메일@email.com 계정의 \n비밀번호가 변경되었어요."
+        android:fontFamily="@font/pretendard_medium"
+        android:textSize="14sp"
+        android:textColor="#000000" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/confirmButton"
+        android:layout_width="110dp"
+        android:layout_height="34dp"
+        android:text="확인"
+        android:fontFamily="@font/pretendard_regular"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:layout_gravity="center"
+        android:background="@drawable/btn_confirm2" />
+
+</LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
