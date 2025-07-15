@@ -3,11 +3,18 @@ package com.example.planup
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.planup.databinding.ActivityMainBinding
+<<<<<<< HEAD
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.bottomnavigation.LabelVisibilityMode
+=======
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.example.planup.mypage.MypageFragment
+>>>>>>> c3d153df6daf44c219b51caef3efddc190e355ba
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {
@@ -49,7 +56,11 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.fragment_record -> {
                     supportFragmentManager.beginTransaction()
+<<<<<<< HEAD
                         .replace(R.id.main_container, RecordFragment())
+=======
+                        .replace(R.id.main_container, CheckGoalFragment())
+>>>>>>> c3d153df6daf44c219b51caef3efddc190e355ba
                         .commitAllowingStateLoss()
                     true
                 }
