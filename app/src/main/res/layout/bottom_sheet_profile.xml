@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/photoOptionBottomSheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottomsheet_round"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="20dp"
+    android:paddingBottom="12dp">
+
+
+    <LinearLayout
+        android:id="@+id/selectFromGallery"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사진 보관함"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/pretendard_medium" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_photo" />
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:id="@+id/takePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사진 찍기"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/pretendard_medium" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="27dp"
+            android:src="@drawable/ic_camera" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/selectFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingVertical="12dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:background="?android:selectableItemBackground">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="파일 선택"
+            android:textSize="14sp"
+            android:textColor="#000000"
+            android:fontFamily="@font/pretendard_medium" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="27dp"
+            android:src="@drawable/ic_file" />
+    </LinearLayout>
+
+</LinearLayout>
+
