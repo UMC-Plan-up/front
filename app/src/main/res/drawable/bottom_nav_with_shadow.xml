@@ -21,9 +21,4 @@
                 android:bottomRightRadius="0dp" />
         </shape>
     </item>
-
-<<<<<<< HEAD
 </layer-list>
-=======
-</layer-list>
->>>>>>> 517ecb6 (로그인 구현)

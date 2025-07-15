@@ -1,12 +1,8 @@
 package com.example.planup
 
-<<<<<<< HEAD
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
-=======
-import android.os.Bundle
->>>>>>> 517ecb6 (로그인 구현)
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,18 +17,17 @@ class GoalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
-<<<<<<< HEAD
         clickListener()
         return binding.root
     }
 
     private fun clickListener(){
-        // 알림
-        binding.challengeMainAlertIv.setOnClickListener{}
-        // 주석
-        binding.challengeMainTodoIv.setOnClickListener{}
-        // 함께 도전 중인 친구들
-        binding.challengeMainFriendTitleIv.setOnClickListener{}
+//        // 알림
+//        binding.challengeMainAlertIv.setOnClickListener{}
+//        // 주석
+//        binding.challengeMainTodoIv.setOnClickListener{}
+//        // 함께 도전 중인 친구들
+//        binding.challengeMainFriendTitleIv.setOnClickListener{}
     }
 
     /*챌린지 참여 요청 팝업*/
@@ -53,8 +48,4 @@ class GoalFragment : Fragment() {
         dialog.show()
     }
 
-=======
-        return binding.root
-    }
->>>>>>> 517ecb6 (로그인 구현)
 }

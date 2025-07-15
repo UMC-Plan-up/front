@@ -11,7 +11,6 @@
         <item name="itemBackground">@android:color/transparent</item> <!-- ✅ 완전 투명 처리 -->
         <item name="itemRippleColor">@android:color/transparent</item> <!-- ✅ Ripple 제거 -->
     </style>
-<<<<<<< HEAD
 
     <!-- Pretendard Text Style -->
 
@@ -70,7 +69,4 @@
         <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">11sp</item>
     </style>
-
-=======
->>>>>>> 517ecb6 (로그인 구현)
 </resources>
