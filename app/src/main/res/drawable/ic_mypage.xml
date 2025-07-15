@@ -3,6 +3,7 @@
     android:height="25dp"
     android:viewportWidth="25"
     android:viewportHeight="25">
+<<<<<<< HEAD
   <path
       android:pathData="M12.2,22.5C17.723,22.5 22.2,18.023 22.2,12.5C22.2,6.977 17.723,2.5 12.2,2.5C6.677,2.5 2.2,6.977 2.2,12.5C2.2,18.023 6.677,22.5 12.2,22.5Z"
       android:strokeLineJoin="round"
@@ -23,4 +24,26 @@
       android:fillColor="#00000000"
       android:strokeColor="#000000"
       android:strokeLineCap="round"/>
+=======
+    <path
+        android:pathData="M12.2,22.5C17.723,22.5 22.2,18.023 22.2,12.5C22.2,6.977 17.723,2.5 12.2,2.5C6.677,2.5 2.2,6.977 2.2,12.5C2.2,18.023 6.677,22.5 12.2,22.5Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M12.2,12C12.863,12 13.499,11.737 13.968,11.268C14.437,10.799 14.7,10.163 14.7,9.5C14.7,8.837 14.437,8.201 13.968,7.732C13.499,7.263 12.863,7 12.2,7C11.537,7 10.901,7.263 10.432,7.732C9.964,8.201 9.7,8.837 9.7,9.5C9.7,10.163 9.964,10.799 10.432,11.268C10.901,11.737 11.537,12 12.2,12Z"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#000000"/>
+    <path
+        android:pathData="M5.211,19.666C5.383,17.06 7.551,15 10.2,15H14.2C16.845,15 19.011,17.055 19.188,19.656"
+        android:strokeLineJoin="round"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#000000"
+        android:strokeLineCap="round"/>
+>>>>>>> 517ecb6 (로그인 구현)
 </vector>

@@ -21,8 +21,8 @@
         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="4dp"
-        android:progress="50"
-        android:progressDrawable="@drawable/progress_drawable"
+        android:progress="30"
+        android:progressDrawable="@drawable/ic_progress_drawable"
         android:layout_marginTop="23dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +40,7 @@
         android:textColor="#000000"
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="62dp" />
+        android:layout_marginTop="43dp" />
 
 
     <TextView
@@ -50,11 +50,10 @@
         android:text="이메일 입력"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
-        android:lineSpacingExtra="4dp"
         android:textColor="#000000"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="77dp" />
+        android:layout_marginTop="186dp" />
 
     <EditText
         android:id="@+id/emailEditText"
@@ -62,18 +61,20 @@
         android:layout_height="48dp"
         android:hint="planup@email.com"
         android:inputType="textEmailAddress"
+        android:fontFamily="@font/pretendard_medium"
         android:paddingStart="12dp"
-        android:background="@drawable/edittext_background"
-        app:layout_constraintTop_toBottomOf="@id/inputEmail"
+        android:background="@drawable/bg_edittext_background1"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="218dp" />
 
     <TextView
         android:id="@+id/emailErrorText1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="186dp"
+        android:layout_height="15dp"
         android:text="* 이메일 형식을 다시 확인해주세요 :)"
+        android:fontFamily="@font/pretendard_regular"
         android:textSize="12sp"
         android:textColor="#5C91FC"
         android:layout_marginTop="12dp"
@@ -82,9 +83,10 @@
 
     <TextView
         android:id="@+id/emailErrorText2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="186dp"
+        android:layout_height="15dp"
         android:text="* 이미 사용 중인 이메일 주소예요."
+        android:fontFamily="@font/pretendard_regular"
         android:textSize="12sp"
         android:textColor="#5C91FC"
         android:layout_marginTop="1dp"
@@ -99,8 +101,8 @@
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"
-        android:background="@drawable/btn_next_background"
-        android:layout_marginTop="610dp"
+        android:background="@drawable/btn_next_background_gray"
+        android:layout_marginTop="591dp"
         android:layout_marginBottom="32dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/progressBar"

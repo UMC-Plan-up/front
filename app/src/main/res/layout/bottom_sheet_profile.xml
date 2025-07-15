@@ -1,25 +1,37 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/photoOptionBottomSheet"
-    android:layout_width="match_parent"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="140dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/bg_bottomsheet_round"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="12dp">
-
+    android:layout_marginTop="4dp"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false">
 
     <LinearLayout
-        android:id="@+id/selectFromGallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingVertical="12dp"
-        android:gravity="center_vertical"
-        android:clickable="true"
-        android:background="?android:selectableItemBackground">
+    android:id="@+id/photoOptionBottomSheet"
+    android:layout_width="126dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="8dp"
+    android:paddingBottom="6dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="8dp">
+
+
+        <LinearLayout
+            android:id="@+id/selectFromGallery"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="0dp"
+            android:paddingEnd="0dp"
+            android:background="?android:selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
         <TextView
             android:layout_width="wrap_content"
@@ -41,12 +53,15 @@
     <LinearLayout
         android:id="@+id/takePhoto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:orientation="horizontal"
-        android:paddingVertical="12dp"
         android:gravity="center_vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:background="?android:selectableItemBackground"
         android:clickable="true"
-        android:background="?android:selectableItemBackground">
+        android:focusable="true"
+        android:layout_marginTop="8dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,16 +78,18 @@
             android:src="@drawable/ic_camera" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/selectFile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:orientation="horizontal"
-        android:paddingVertical="12dp"
         android:gravity="center_vertical"
+        android:paddingStart="0dp"
+        android:paddingEnd="0dp"
+        android:background="?android:selectableItemBackground"
         android:clickable="true"
-        android:background="?android:selectableItemBackground">
+        android:focusable="true"
+        android:layout_marginTop="8dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -90,4 +107,4 @@
     </LinearLayout>
 
 </LinearLayout>
-
+</com.google.android.material.card.MaterialCardView>

@@ -7,7 +7,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.planup.databinding.FragmentFriendBinding
 
+<<<<<<< HEAD
 class FriendFragment : Fragment() {
+=======
+class FriendFragment : Fragment(){
+>>>>>>> 517ecb6 (로그인 구현)
     lateinit var binding: FragmentFriendBinding
     override fun onCreateView(
         inflater: LayoutInflater,

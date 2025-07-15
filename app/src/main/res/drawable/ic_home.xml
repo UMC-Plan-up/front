@@ -3,6 +3,7 @@
     android:height="25dp"
     android:viewportWidth="24"
     android:viewportHeight="25">
+<<<<<<< HEAD
   <group>
     <clip-path
         android:pathData="M0,0.5h24v24h-24z"/>
@@ -14,4 +15,17 @@
         android:strokeColor="#000000"
         android:strokeLineCap="round"/>
   </group>
+=======
+    <group>
+        <clip-path
+            android:pathData="M0,0.5h24v24h-24z"/>
+        <path
+            android:pathData="M1,12.5L12,1.5L23,12.5M21,10.5V20.5C21,21.03 20.789,21.539 20.414,21.914C20.039,22.289 19.53,22.5 19,22.5H5C4.47,22.5 3.961,22.289 3.586,21.914C3.211,21.539 3,21.03 3,20.5V10.5M9,22.5V14.5H15V22.5"
+            android:strokeLineJoin="round"
+            android:strokeWidth="1.5"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:strokeLineCap="round"/>
+    </group>
+>>>>>>> 517ecb6 (로그인 구현)
 </vector>

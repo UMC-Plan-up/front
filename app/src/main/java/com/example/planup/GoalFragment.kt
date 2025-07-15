@@ -1,8 +1,12 @@
 package com.example.planup
 
+<<<<<<< HEAD
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+=======
+import android.os.Bundle
+>>>>>>> 517ecb6 (로그인 구현)
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +21,7 @@ class GoalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
+<<<<<<< HEAD
         clickListener()
         return binding.root
     }
@@ -48,4 +53,8 @@ class GoalFragment : Fragment() {
         dialog.show()
     }
 
+=======
+        return binding.root
+    }
+>>>>>>> 517ecb6 (로그인 구현)
 }

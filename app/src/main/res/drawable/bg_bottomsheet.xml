@@ -1,4 +1,26 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#FFFFFF"/>
-    <corners android:topLeftRadius="20dp" android:topRightRadius="20dp"/>
-</shape>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 그림자 영역: 위로만 퍼지게 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:startColor="#40000000"
+            android:endColor="#00000000"
+            android:angle="270"/>
+        </shape>
+    </item>
+
+    <!-- 실제 흰색 배경 + 위쪽 둥근 모서리만 -->
+    <item android:top="8dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FFFFFF" />
+            <corners
+                android:topLeftRadius="30dp"
+                android:topRightRadius="30dp"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" />
+        </shape>
+    </item>
+
+</layer-list>

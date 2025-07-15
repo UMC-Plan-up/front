@@ -40,4 +40,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+<<<<<<< HEAD
+=======
+    
+>>>>>>> 517ecb6 (로그인 구현)
 </androidx.constraintlayout.widget.ConstraintLayout>
