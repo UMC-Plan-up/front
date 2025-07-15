@@ -15,6 +15,7 @@ import com.github.mikephil.charting.data.PieEntry
 import androidx.core.graphics.toColorInt
 
 class RecordFragment : Fragment() {
+
     lateinit var binding: FragmentRecordBinding
     private lateinit var pieChart: PieChart
 
@@ -23,11 +24,11 @@ class RecordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_record, container, false)
-        pieChart = view.findViewById(R.id.pieChart)
-        setupPieChart()
+        //pieChart = view.findViewById(R.id.pieChart)
+        //setupPieChart()
         return view
     }
-
+/*
     private fun setupPieChart() {
         val entries = ArrayList<PieEntry>()
         entries.add(PieEntry(70f, "달성"))
@@ -54,5 +55,5 @@ class RecordFragment : Fragment() {
             invalidate()
         }
     }
-
+*/
 }
