@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:backgroundTint="@color/background_color">
 
     <!-- 텍스트 -->
     <LinearLayout
@@ -33,7 +34,7 @@
             android:layout_height="29dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/ic_launcher" />
+            app:srcCompat="@drawable/ic_arrow_back" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -46,7 +47,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="312dp"
             android:layout_height="169dp"
-            app:cardBackgroundColor="#4A90E2"
+            app:cardBackgroundColor="#5383E3"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -67,6 +68,7 @@
                     app:layout_constraintLeft_toLeftOf="@+id/record_status_cl"
                     app:layout_constraintTop_toTopOf="@+id/record_status_cl"
                     app:layout_constraintBottom_toBottomOf="@+id/record_status_cl"
+                    android:layout_marginStart="40dp"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
                     android:orientation="vertical"
@@ -78,8 +80,7 @@
                         android:layout_height="wrap_content"
                         android:text="일별 목표 달성률"
                         android:textColor="@android:color/white"
-                        android:textSize="14sp"
-                        android:textStyle="normal" />
+                        style="@style/Typography_XS_Medium"/>
 
                     <TextView
                         android:id="@+id/tv_percent"
@@ -88,8 +89,7 @@
                         android:layout_marginTop="4dp"
                         android:text="70%"
                         android:textColor="@android:color/white"
-                        android:textSize="28sp"
-                        android:textStyle="bold" />
+                        style="@style/Typography_3XL_Semibold"/>
                 </LinearLayout>
 
                 <!-- 오른쪽 도넛 차트 -->
@@ -98,25 +98,26 @@
                     app:layout_constraintRight_toRightOf="@+id/record_status_cl"
                     app:layout_constraintTop_toTopOf="@+id/record_status_cl"
                     app:layout_constraintBottom_toBottomOf="@+id/record_status_cl"
+                    android:layout_marginEnd="30dp"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true" />
 
                 <!-- 하단 설명 텍스트 -->
-                <TextView
-                    android:id="@+id/tv_description"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintLeft_toLeftOf="@+id/record_status_cl"
-                    app:layout_constraintRight_toRightOf="@+id/record_status_cl"
-                    app:layout_constraintBottom_toBottomOf="@+id/record_status_cl"
-                    android:layout_alignParentBottom="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginBottom="8dp"
-                    android:text="7일 간 일별 목표 달성률 평균 50% 이상 기록 시 이용 가능"
-                    android:textColor="@android:color/white"
-                    android:textSize="10dp" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_description"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintLeft_toLeftOf="@+id/record_status_cl"-->
+<!--                    app:layout_constraintRight_toRightOf="@+id/record_status_cl"-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/record_status_cl"-->
+<!--                    android:layout_alignParentBottom="true"-->
+<!--                    android:layout_centerHorizontal="true"-->
+<!--                    android:layout_marginBottom="8dp"-->
+<!--                    android:text="7일 간 일별 목표 달성률 평균 50% 이상 기록 시 이용 가능"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="10dp" />-->
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -155,7 +156,7 @@
             android:layout_weight="1"
             android:text="그린의 목표 리스트"
             android:textColor="#000000"
-            android:textSize="16sp" />
+            style="@style/Typography_L_Semibold"/>
 
         <!-- 관리 버튼 -->
         <Button
@@ -205,6 +206,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="잠금 해제까지 얼마 남지 않았어요!"
+            style="@style/Typography_L_Semibold"
+            android:textColor="@color/blue_300"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/record_lock_cv"/>
@@ -216,7 +219,7 @@
             app:cardBackgroundColor="#4A90E2"
             app:cardCornerRadius="12dp"
             app:cardElevation="4dp"
-            android:backgroundTint="#747984"
+            android:backgroundTint="@color/black_200"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
@@ -237,7 +240,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_launcher_background" />
+                    app:srcCompat="@drawable/ic_lock_circle" />
 
                 <LinearLayout
                     android:id="@+id/linearLayout2"
@@ -254,15 +257,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="4번째 목표를 입력하세요"
-                        android:textSize="16dp"
-                        android:textStyle="bold" />
+                        android:fontFamily="@font/pretendard_bold"
+                        android:textFontWeight="700"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/textView8"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="달성 기준을 입력하세요"
-                        android:textSize="14dp" />
+                        android:textSize="14dp"
+                        android:fontFamily="@font/pretendard_regular"/>
                 </LinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>

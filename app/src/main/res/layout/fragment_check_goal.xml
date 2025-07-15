@@ -35,7 +35,9 @@
                 android:id="@+id/imageView5"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
-                app:srcCompat="@drawable/ic_launcher_background"
+                android:src="@drawable/ic_launcher_background"
+                android:scaleType="centerCrop"
+                android:clipToOutline="true"
                 android:background="@drawable/bg_circle"/>
 
             <TextView
@@ -43,12 +45,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:letterSpacing="0.015"
-                android:lineSpacingExtra="10dp"
                 android:text="그린 님, 벌써 이만큼이나 왔어요!"
-                android:textColor="@color/black"
-                android:textSize="20dp"
-                android:textStyle="bold" />
+                style="@style/Typography_XL_Semibold"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <LinearLayout
@@ -61,17 +60,14 @@
                 android:id="@+id/textView4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:letterSpacing="0.015"
-                android:lineSpacingExtra="9dp"
                 android:text="Daily To-Do List"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                style="@style/Typography_L_Semibold"/>
 
             <ImageView
                 android:id="@+id/imageView6"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_launcher_background" />
+                app:srcCompat="@drawable/ic_arrow_up" />
         </LinearLayout>
 
     </LinearLayout>
@@ -115,16 +111,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="함께 도전중인 친구들은?"
-            android:textSize="18sp"
-            android:lineSpacingExtra="6dp"
-            android:textStyle="bold"/>
+            style="@style/Typography_L_Semibold"/>
 
         <ImageView
             android:id="@+id/imageView7"
             android:layout_width="23dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_launcher_background" />
+            app:srcCompat="@drawable/ic_arrow_up" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
