@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">PlanUP</string>
+
+    <!-- 마이페이지 -->
+
+    <string name="change_password_explain">(%1$s)인증을 위한\n링크를 보내드렸어요.\n메일함에서 링크를 확인해 주세요.</string>
+    <string name="change_password_complete">(%1$s)계정의\n비밀번호가 변경되었어요</string>
+    <string name="friend_block">(%1$s)님을 차단 해제하시겠어요?</string>
+    <string name="kakao_sync">카카오톡 계정(%1$s)에\n이미 연동된 계정이에요.</string>
+    <string name="service_policy">제 1조 (목적)이 약관은 Plan-Up (이하 “회사”라 한다) 이 운영하는 사이버 서비스에서 제공하는 인터넷 관련 서비스(이하 “서비스”라 한다)를 이용함에 있어 “서비스”와이용자의 권리•의무 및 책임사항을 규정함을 목적으로 합니다.
+                                    \n\n제 2조 (정의)
+                                    \n\n..
+    </string>
+    <string name="personal_info_manage">Plan-Up (이하 “회사”라 한다)은 「개인정보 보호법」에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 정하여 운영하고 있습니다.</string>
+    <string name="personal_info_about">회사는 서비스 이용에 필요한 최소한의 개인정보를 수집합니다. 처리하고있는 개인정보는 다음의 수집•이용 목적 이외의 용도로 활용되지 않습니다.
+                                        \n\n① 회원가입 시 다음의 개인정보를 수집 이용합니다.
+                                        \n\n수집 목적\n- (필수) : 회원 식별 및 관리, 서비스 이용 만족도 조사, 필수 고지•통지•안내, 업무의 회신, 서비스개선을 위한 분석, 부정행위 방지\n- (선택) 마케팅, 프로모션 및 혜택 소식 알림
+                                        \n\n수집 항목\n- 이름, 이메일 주소, 닉네임\n- 이메일 회원가입 시 : 비밀번호\n- 카카오로그인 연동 : 이메일 주소, 카카오 계정 식별값
+                                        \n\n....
+    </string>
+
 </resources>
