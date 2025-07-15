@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/backIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_back"
+        android:layout_marginTop="38dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:progress="20"
+        android:progressDrawable="@drawable/progress_drawable"
+        android:layout_marginTop="23dp"
+        app:layout_constraintTop_toBottomOf="@id/backIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Plan-Up 이용 약관에\n동의해 주세요"
+        android:textSize="22sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#000000"
+        android:layout_marginTop="58dp"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- 팝업 -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/popupLayout"
+        android:layout_width="0dp"
+        android:layout_height="347dp"
+        android:background="#D9D9D9"
+        android:layout_marginTop="32dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/popupText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="약관 팝업창"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:layout_marginTop="110dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ImageView
+            android:id="@+id/CloseButton"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:src="@drawable/ic_close"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- popupLayout 바깥에 위치 -->
+    <TextView
+        android:id="@+id/privacyInfo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:text="정보주체의 개인정보 및 권리 보호를 위해 「개인정보 보호법」\n및 관계 법령이 정한 바를 준수하여 안전하게 관리하고 있습니다.\n자세한 사항은 개인정보처리방침에서 확인할 수 있습니다."
+        android:textColor="#545454"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:fontFamily="@font/pretendard_medium"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintTop_toBottomOf="@id/popupLayout"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/nextButton"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:text="다음"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/pretendard_medium"
+        android:background="@drawable/btn_next_background"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/privacyInfo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

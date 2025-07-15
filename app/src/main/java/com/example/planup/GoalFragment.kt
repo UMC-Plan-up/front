@@ -47,4 +47,5 @@ class GoalFragment : Fragment() {
         dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
+
 }

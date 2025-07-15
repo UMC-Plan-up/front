@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="24dp"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/backIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_back"
+        android:layout_marginTop="38dp"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="4dp"
+        android:progress="50"
+        android:progressDrawable="@drawable/progress_drawable"
+        android:layout_marginTop="23dp"
+        app:layout_constraintTop_toBottomOf="@id/backIcon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그인에 사용할\n아이디를 입력해 주세요"
+        android:textSize="22sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="62dp" />
+
+
+    <TextView
+        android:id="@+id/inputEmail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이메일 입력"
+        android:textSize="14sp"
+        android:fontFamily="@font/pretendard_medium"
+        android:lineSpacingExtra="4dp"
+        android:textColor="#000000"
+        app:layout_constraintTop_toBottomOf="@id/titleText"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="77dp" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:hint="planup@email.com"
+        android:inputType="textEmailAddress"
+        android:paddingStart="12dp"
+        android:background="@drawable/edittext_background"
+        app:layout_constraintTop_toBottomOf="@id/inputEmail"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:id="@+id/emailErrorText1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="* 이메일 형식을 다시 확인해주세요 :)"
+        android:textSize="12sp"
+        android:textColor="#5C91FC"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/emailEditText"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/emailErrorText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="* 이미 사용 중인 이메일 주소예요."
+        android:textSize="12sp"
+        android:textColor="#5C91FC"
+        android:layout_marginTop="1dp"
+        app:layout_constraintTop_toBottomOf="@id/emailErrorText1"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/nextButton"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:text="다음"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/pretendard_medium"
+        android:background="@drawable/btn_next_background"
+        android:layout_marginTop="610dp"
+        android:layout_marginBottom="32dp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
