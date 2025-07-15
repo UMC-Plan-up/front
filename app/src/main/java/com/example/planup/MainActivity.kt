@@ -3,11 +3,10 @@ package com.example.planup
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.planup.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.google.android.material.bottomnavigation.LabelVisibilityMode
+import com.example.planup.mypage.MypageFragment
 import com.google.android.material.navigation.NavigationBarView
 
 class MainActivity : AppCompatActivity() {

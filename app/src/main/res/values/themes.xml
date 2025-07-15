@@ -11,4 +11,63 @@
         <item name="itemBackground">@android:color/transparent</item> <!-- ✅ 완전 투명 처리 -->
         <item name="itemRippleColor">@android:color/transparent</item> <!-- ✅ Ripple 제거 -->
     </style>
+
+    <!-- Pretendard Text Style -->
+
+    <!-- Semi Bold -->
+    <style name="TextAppearance.Pretendard.SemiBold.3XL" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.SemiBold.2XL" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.SemiBold.XL" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.SemiBold.L" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.SemiBold.SM" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.SemiBold.S" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semi_bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <!-- Medium -->
+    <style name="TextAppearance.Pretendard.Medium.2XL" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">22sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.XL" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.L" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.SM" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.S" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.XS" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="TextAppearance.Pretendard.Medium.2XS" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_medium</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
 </resources>
