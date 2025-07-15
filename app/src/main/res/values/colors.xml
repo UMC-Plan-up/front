@@ -27,12 +27,25 @@
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="black_400">#22262D</color>
     <color name="black_300">#4B5563</color>
+    <color name="black_200">#C7CACF</color>
+    <color name="black_100">#E4E6E8</color>
 
     <color name="blue_200">#5C91FC</color>
     <color name="blue_400">#4A7ACA</color>
     <color name="blue_300">#5383E3</color>
     <color name="blue_100">#CCDDFE</color>
+
+    <color name="red_300">#F81E1E</color>
+    <color name="red_200">#CA3535</color>
+    <color name="red_100">#F5C2C2</color>
+
+    <color name="green_200">#395A5A</color>
+    <color name="green_100">#D7EEEE</color>
+
+    <color name="background_color">#FAFCFF</color>
 
 
     <!-- 선택된 아이콘 색상 (파란색) -->

@@ -9,4 +9,108 @@
     <style name="DailyToDoProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressDrawable">@drawable/bg_daily_todo_progress_bar</item>
     </style>
+
+    <style name="Typography_3XL_Semibold">
+        <item name="android:textSize">24sp</item>
+        <item name="android:lineSpacingExtra">12sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_2XL_Semibold">
+        <item name="android:textSize">22sp</item>
+        <item name="android:lineSpacingExtra">11sp</item> <!-- 33 - 22 -->
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_2XL_Medium">
+        <item name="android:textSize">22sp</item>
+        <item name="android:lineSpacingExtra">11sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_XL_Semibold">
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_XL_Medium">
+        <item name="android:textSize">20sp</item>
+        <item name="android:lineSpacingExtra">10sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_L_Semibold">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">9sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_L_Medium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:lineSpacingExtra">9sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_SM_Semibold">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_SM_Medium">
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_S_Semibold">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">600</item>
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Typography_S_Medium">
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">7sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_XS_Medium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:lineSpacingExtra">6sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Typography_2XS_Medium">
+        <item name="android:textSize">11sp</item>
+        <item name="android:lineSpacingExtra">5.5sp</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="fontWeight">500</item>
+        <item name="android:fontFamily">@font/pretendard_medium</item>
+    </style>
 </resources>

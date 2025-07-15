@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:backgroundTint="@color/background_color"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,16 +22,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- 2. 이번 주 집중 시간 -->
+
         <TextView
             android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
-            android:letterSpacing="0.015"
-            android:lineSpacingExtra="12dp"
             android:text="토익 공부하기"
-            android:textSize="24sp"
-            android:textStyle="bold"
+            style="@style/Typography_3XL_Semibold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -41,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="이번 주 ‘토익 공부하기’ 집중 시간"
-            android:textSize="14sp"
+            style="@style/Typography_XL_Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -52,9 +51,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
-            android:textColor="#005AFF"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="#548DFF"
             android:textSize="35sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView13"
@@ -72,11 +71,11 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <Button
+            <android.widget.Button
                 android:layout_width="150dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_rad6_rectangle"
-                android:backgroundTint="@color/white"
+                android:background="@drawable/bg_goal_detail_emotion_btn"
+                android:backgroundTint="@null"
                 android:text="😊 응원해요"
                 android:textColor="#22262D"
                 android:textSize="14sp"
@@ -86,11 +85,11 @@
                 android:layout_width="16dp"
                 android:layout_height="wrap_content"/>
 
-            <Button
+            <android.widget.Button
                 android:layout_width="150dp"
                 android:layout_height="40dp"
-                android:background="@drawable/bg_rad6_rectangle"
-                android:backgroundTint="@color/white"
+                android:background="@drawable/bg_goal_detail_emotion_btn"
+                android:backgroundTint="@null"
                 android:text="🤨 분발해요"
                 android:textColor="#22262D"
                 android:textSize="14sp"
@@ -104,8 +103,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이번 주 업로드한 사진 N장"
+            android:fontFamily="@font/pretendard_semibold"
             android:textSize="18sp"
-            android:textStyle="bold"
             android:lineSpacingExtra="9dp"
             android:letterSpacing="0.015"
             app:layout_constraintStart_toStartOf="parent"
@@ -170,8 +169,8 @@
             android:layout_marginStart="33dp"
             android:layout_marginTop="30dp"
             android:text="오늘 ‘토익 공부하기’ 집중 시간"
+            android:fontFamily="@font/pretendard_semibold"
             android:textSize="18sp"
-            android:textStyle="bold"
             android:lineSpacingExtra="9dp"
             android:letterSpacing="0.015"
             />
@@ -181,9 +180,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="00:00:00"
-            android:textColor="#005AFF"
+            android:fontFamily="@font/pretendard_bold"
+            android:textColor="#548DFF"
             android:textSize="35sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView12"
@@ -198,7 +197,7 @@
             app:layout_constraintTop_toBottomOf="@+id/goal_detail_today_timer_tv"
             android:text="이전 주 대비 추세"
             android:textSize="18sp"
-            android:textStyle="bold"
+            android:fontFamily="@font/pretendard_semibold"
             android:letterSpacing="0.015"
             android:lineSpacingExtra="9dp"
             android:layout_marginTop="30dp"
@@ -224,13 +223,18 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/graph_tv"
             android:text="댓글 남기기"
+            android:fontFamily="@font/pretendard_semibold"
             android:textSize="18sp"
             android:letterSpacing="0.015"
             android:lineSpacingExtra="9dp"
-            android:textStyle="bold"
             android:layout_marginStart="33dp"
             android:layout_marginTop="24dp" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_comment_tv"/>
         <!-- 댓글 부분 -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>

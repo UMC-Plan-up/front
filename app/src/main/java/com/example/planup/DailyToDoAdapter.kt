@@ -46,7 +46,7 @@ class DailyToDoAdapter(private val items: List<DailyToDo>) :
                 setTouchEnabled(false)
                 setHoleColor(Color.TRANSPARENT)
                 setDrawHoleEnabled(true)
-                setHoleRadius(70f)
+                setHoleRadius(80f)
                 setDrawEntryLabels(false)
                 invalidate()
             }
