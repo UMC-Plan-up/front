@@ -219,7 +219,7 @@
                     android:id="@+id/popup_report_block_on_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/toggle_on_default"
+                    android:src="@drawable/btn_toggle_on"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:visibility="gone"/>
@@ -227,7 +227,7 @@
                     android:id="@+id/popup_report_block_off_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/toggle_off_default"
+                    android:src="@drawable/btn_toggle_off"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     android:visibility="visible"/>
