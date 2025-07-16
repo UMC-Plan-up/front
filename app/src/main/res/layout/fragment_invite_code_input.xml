@@ -6,7 +6,6 @@
     android:background="#FFFFFF"
     android:padding="24dp">
 
-
     <ImageView
         android:id="@+id/backIcon"
         android:layout_width="24dp"
@@ -21,7 +20,7 @@
         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
         android:layout_width="0dp"
         android:layout_height="4dp"
-        android:progress="90"
+        android:progress="100"
         android:progressDrawable="@drawable/ic_progress_drawable"
         android:layout_marginTop="23dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
@@ -33,43 +32,59 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="초대코드를 공유해\n친구와 팔로우하세요!"
+        android:text="친구에게\n초대받으셨다면,\n받은 코드를 입력해주세요!"
         android:textSize="22sp"
         android:fontFamily="@font/pretendard_medium"
         android:lineSpacingExtra="4dp"
         android:textColor="#000000"
-        android:layout_marginTop="69dp"
+        android:layout_marginTop="70dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/nicknameEditText"
-        android:layout_width="340dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginTop="14dp"
-        android:hint="9ABCDEF273"
+        android:hint="초대코드 입력란"
+        android:textSize="16dp"
         android:background="@drawable/bg_edittext_rounded"
         android:padding="8dp"
-        android:fontFamily="@font/pretendard_regular"
+        android:fontFamily="@font/pretendard_medium"
         android:textColor="#4B5563"
-        android:inputType="text"
+        android:textColorHint="#4B5563"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/shareButton"
+        android:id="@+id/inputButton"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:text="공유"
+        android:text="입력"
         android:textSize="14sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_semibold"
         android:background="@drawable/btn_next_background"
-        android:layout_marginTop="198dp"
+        android:layout_marginTop="12dp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
+        app:layout_constraintTop_toBottomOf="@id/nicknameEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/emailFormatErrorText"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="241dp"
+        android:background="@drawable/bg_error_box"
+        android:gravity="center"
+        android:text="[닉네임] 님과 친구가 되었어요!"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        app:layout_constraintTop_toBottomOf="@id/inputButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -81,16 +96,12 @@
         android:text="다음"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:fontFamily="@font/pretendard_regular"
+        android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
         android:layout_marginTop="617dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
-
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

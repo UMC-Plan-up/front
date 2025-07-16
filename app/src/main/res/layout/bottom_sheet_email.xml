@@ -13,11 +13,9 @@
         android:text="gmail.com"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
-        android:textColor="#5383E3"
+        android:textColor="#4D4D4D"
         android:paddingVertical="4dp"
         android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:drawableEnd="@drawable/ic_check_blue"
         android:drawablePadding="8dp" />
 
     <TextView

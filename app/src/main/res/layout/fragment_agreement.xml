@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="24dp"
     android:background="#FFFFFF">
 
@@ -10,7 +11,7 @@
         android:id="@+id/backIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_arrow_back"
         android:layout_marginTop="38dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -27,20 +28,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-
     <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Plan-Up 이용 약관에\n동의해 주세요"
         android:textSize="22sp"
-        android:fontFamily="@font/pretendard_medium"
+        android:fontFamily="@font/pretendard_regular"
         android:lineSpacingExtra="4dp"
         android:textColor="#000000"
+        android:layout_marginTop="39dp"
         app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="39dp" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/checkAllLayout"
@@ -49,18 +48,18 @@
         android:layout_marginTop="42.5dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:clickable="true"
-        android:focusable="true">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/checkAllImage"
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkAll"
             android:layout_width="27dp"
             android:layout_height="27dp"
-            android:src="@drawable/ic_checkbox_checked"
-            android:contentDescription="체크박스" />
+            android:background="@null"
+            app:buttonCompat="@drawable/ic_checkbox" />
 
         <TextView
             android:id="@+id/checkAllText"
@@ -78,7 +77,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="선택 사항에 대한 동의를 거부하는 경우에도\n서비스는 이용이 가능합니다."
-        android:fontFamily="@font/pretendard_medium"
+        android:fontFamily="@font/pretendard_regular"
         android:textSize="14sp"
         android:textColor="#888888"
         android:lineSpacingExtra="3dp"
@@ -103,16 +102,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/dividerLine"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkAge"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_checkbox_checked" />
+            android:background="@null"
+            app:buttonCompat="@drawable/ic_checkbox" />
 
         <TextView
             android:layout_width="0dp"
@@ -122,9 +122,7 @@
             android:text="[필수] 만 14세 이상입니다"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
-
-
+            android:fontFamily="@font/pretendard_regular" />
     </LinearLayout>
 
     <LinearLayout
@@ -132,17 +130,17 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:orientation="horizontal"
         android:gravity="center_vertical"
         app:layout_constraintTop_toBottomOf="@id/agreeAgeLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkTerms"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_checkbox_checked"
-            android:contentDescription="체크박스" />
+            android:background="@null"
+            app:buttonCompat="@drawable/ic_checkbox" />
 
         <TextView
             android:layout_width="0dp"
@@ -152,7 +150,7 @@
             android:text="[필수] 이용약관 동의"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
+            android:fontFamily="@font/pretendard_regular" />
 
         <TextView
             android:id="@+id/detail1"
@@ -161,8 +159,7 @@
             android:text="@string/detail_text"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
-
+            android:fontFamily="@font/pretendard_regular" />
     </LinearLayout>
 
     <LinearLayout
@@ -176,11 +173,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkMarketing"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_checkbox_checked"
-            android:contentDescription="체크박스" />
+            android:background="@null"
+            app:buttonCompat="@drawable/ic_checkbox" />
 
         <TextView
             android:layout_width="0dp"
@@ -190,7 +188,7 @@
             android:text="[선택] 마케팅 목적의 개인정보 수집 및 이용 동의"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
+            android:fontFamily="@font/pretendard_regular" />
 
         <TextView
             android:id="@+id/detail2"
@@ -199,7 +197,7 @@
             android:text="@string/detail_text"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
+            android:fontFamily="@font/pretendard_regular" />
     </LinearLayout>
 
     <LinearLayout
@@ -213,11 +211,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkAd"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_checkbox_checked"
-            android:contentDescription="체크박스" />
+            android:background="@null"
+            app:buttonCompat="@drawable/ic_checkbox" />
 
         <TextView
             android:layout_width="0dp"
@@ -236,7 +235,7 @@
             android:text="@string/detail_text"
             android:textSize="12sp"
             android:textColor="#000000"
-            android:fontFamily="@font/pretendard_medium" />
+            android:fontFamily="@font/pretendard_regular" />
     </LinearLayout>
 
     <TextView
@@ -254,7 +253,6 @@
         app:layout_constraintTop_toBottomOf="@id/agreeAdLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
-
 
     <TextView
         android:id="@+id/privacyInfo"
@@ -277,13 +275,12 @@
         android:text="다음"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:fontFamily="@font/pretendard_medium"
+        android:fontFamily="@font/pretendard_regular"
         android:background="@drawable/btn_next_background"
         android:layout_marginTop="10dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/privacyInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

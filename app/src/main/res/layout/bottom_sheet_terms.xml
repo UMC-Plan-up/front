@@ -10,7 +10,7 @@
         android:layout_width="205dp"
         android:layout_height="110dp"
         android:text="약관 팝업창"
-        android:fontFamily="@font/pretendard_regular"
+        android:fontFamily="@font/pretendard_medium"
         android:textColor="#000000"
         android:textSize="16sp"
         android:layout_marginTop="113dp"

@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="나와의채팅방"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />
@@ -69,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="카톡채팅1"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="카톡채팅2"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />
@@ -125,7 +125,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="카카오톡"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />
@@ -148,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="인스타그램"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />
@@ -171,7 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="메시지"
-                android:fontFamily="@font/pretendard_regular"
+                android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:layout_marginTop="12dp" />

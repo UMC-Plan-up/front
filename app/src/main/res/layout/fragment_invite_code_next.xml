@@ -50,7 +50,7 @@
         android:hint="9ABCDEF273"
         android:background="@drawable/bg_edittext_rounded"
         android:padding="8dp"
-        android:fontFamily="@font/pretendard_regular"
+        android:fontFamily="@font/pretendard_medium"
         android:textColor="#4B5563"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/titleText"

@@ -12,11 +12,10 @@
         android:text="카카오톡 공유"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
-        android:textColor="#5383E3"
+        android:textColor="#4D4D4D"
         android:paddingVertical="5.5dp"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:drawableEnd="@drawable/ic_check_blue"
         android:drawablePadding="4dp" />
 
     <TextView

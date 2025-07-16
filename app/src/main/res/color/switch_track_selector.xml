@@ -1,0 +1,6 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- ON 상태일 때 -->
+    <item android:color="#65A0A1" android:state_checked="true"/>
+    <!-- OFF 상태일 때 -->
+    <item android:color="#D9D9D9" android:state_checked="false"/>
+</selector>
