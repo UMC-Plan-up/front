@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:layout_marginTop="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_alert_challenge_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/home_alert_challenge_profile_cv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="25dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+            <ImageView
+                android:id="@+id/home_alert_challenge_profile_iv"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/profile_image" />
+        </androidx.cardview.widget.CardView>
+        <TextView
+            android:id="@+id/home_alert_challenge_tv"
+            style="@style/TextAppearance.Pretendard.Medium.S"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@id/home_alert_challenge_profile_cv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="13dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/home_alert_challenge_lv"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/semanticB4"
+        app:layout_constraintTop_toBottomOf="@id/home_alert_challenge_cl"
+        app:layout_constraintStart_toStartOf="@id/home_alert_challenge_cl"
+        app:layout_constraintEnd_toEndOf="@id/home_alert_challenge_cl" />
+</androidx.constraintlayout.widget.ConstraintLayout>

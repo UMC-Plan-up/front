@@ -5,18 +5,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.databinding.FragmentAlertAccomplishmentBinding
+import com.example.planup.databinding.FragmentAlertReactionBinding
 
-class AlertAccomplishmentFragment:Fragment() {
-    lateinit var binding: FragmentAlertAccomplishmentBinding
+class AlertReactionFragment:Fragment() {
+    lateinit var binding: FragmentAlertReactionBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAlertAccomplishmentBinding.inflate(inflater,container,false)
+        binding = FragmentAlertReactionBinding.inflate(inflater,container,false)
+
         return binding.root
     }
 }
