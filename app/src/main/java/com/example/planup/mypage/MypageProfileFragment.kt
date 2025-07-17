@@ -46,32 +46,20 @@ class MypageProfileFragment:Fragment() {
     /*닉네밍 검사*/
     private fun textListener(){
         val errorColor = ContextCompat.getColor(context, R.color.semanticR1)
-        val noramlColor = ContextCompat.getColor(context, R.color.semanticB1)
         binding.nickNameEditEt.addTextChangedListener(object: TextWatcher{
             override fun afterTextChanged(p0: Editable?) {
                 if(20<binding.nickNameEditEt.text.toString().length){
-                    binding.nickNameErrorTv.text = "20자 이내로 입력해 주세요"
+                    binding.nickNameErrorTv.setText(R.string.length_error)
                     binding.nickNameLv.setBackgroundColor(errorColor)
-                }else{
-                    binding.nickNameErrorTv.text = ""
-                    binding.nickNameLv.setBackgroundColor(noramlColor)
-                }
-                if(/*중복 닉네임*/30<binding.nickNameEditEt.text.toString().length){
-                    binding.nickNameErrorTv.text = "이미 사용 중인 닉네임입니다"
+                }else if(/*중복 닉네임*/30<binding.nickNameEditEt.text.toString().length){
+                    binding.nickNameErrorTv.setText(R.string.already_using)
                     binding.nickNameLv.setBackgroundColor(errorColor)
-                }else{
-                    binding.nickNameErrorTv.text = ""
-                    binding.nickNameLv.setBackgroundColor(noramlColor)
                 }
             }
 
-            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
-            }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
-            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                TODO("Not yet implemented")
-            }
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
         })
     }

@@ -59,4 +59,6 @@
     <color name="gray_light">#F1F1F1</color>
     <color name="blue_light">#D6E3FF</color>
     <color name="gray_profile">#D9D9D9</color>
+
+    <color name="transparent">#00000000</color>
 </resources>

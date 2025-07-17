@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.databinding.FragmentHomeBinding
+import com.example.planup.alert.AlertFragment
 
 class HomeFragment : Fragment() {
 
@@ -21,7 +22,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeBinding.inflate(inflater,container,false)
-
+        clickListener()
         return binding.root
     }
 
@@ -43,5 +44,13 @@ class HomeFragment : Fragment() {
 
         val progressBar = view.findViewById<ProgressBar>(R.id.daily_todo_pb)
         progressBar.progress = 75
+    }
+
+    private fun clickListener(){
+        binding.homeAlarmNoneIv.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,AlertFragment())
+                .commitAllowingStateLoss()
+        }
     }
 }
