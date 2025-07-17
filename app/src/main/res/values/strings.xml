@@ -2,20 +2,23 @@
     <string name="app_name">PlanUP</string>
 
     <!-- 마이페이지 -->
-    <!-- 이메일로 인증링크 받기 -->
+    <!-- fragment_email_second.xml -->
+    <string name="change_email_explain">(%1$s)인증을 위한\n링크를 보내드렸어요.\n메일함에서 링크를 확인해 주세요.</string>
+    <!-- fragment_password_second.xml -->
     <string name="change_password_explain">(%1$s)인증을 위한\n링크를 보내드렸어요.\n메일함에서 링크를 확인해 주세요.</string>
-    <!-- 비밀번호 변경 완료 -->
+    <!-- fragment_password_third.xml -->
     <string name="change_password_complete">(%1$s)계정의\n비밀번호가 변경되었어요</string>
-    <!-- 친구 차단 해제 -->
+    <!-- fragment_mypage_friend_block.xml -->
     <string name="friend_block">(%1$s)님을 차단 해제하시겠어요?</string>
-    <!-- 카카오 계정 연동 -->
+    <!-- fragment_mypage_kakao.xml -->
     <string name="kakao_sync">카카오톡 계정(%1$s)에\n이미 연동된 계정이에요.</string>
-    <!-- 약관 설명 -->
+    <!-- fragment_mypage_policy_service.xml -->
     <string name="service_policy">제 1조 (목적)이 약관은 Plan-Up (이하 “회사”라 한다) 이 운영하는 사이버 서비스에서 제공하는 인터넷 관련 서비스(이하 “서비스”라 한다)를 이용함에 있어 “서비스”와이용자의 권리•의무 및 책임사항을 규정함을 목적으로 합니다.
                                     \n\n제 2조 (정의)
                                     \n\n..
     </string>
-    <!-- 개인정보 방침 설명 -->
+
+    <!-- fragment_mypage_policy_personal.xml -->
     <string name="personal_info_manage">Plan-Up (이하 “회사”라 한다)은 「개인정보 보호법」에 따라 이용자의 개인정보를 보호하고 이와 관련한 고충을 신속하고 원활하게 처리할 수 있도록 하기 위하여 다음과 같이 개인정보 처리방침을 정하여 운영하고 있습니다.</string>
     <string name="personal_info_about">회사는 서비스 이용에 필요한 최소한의 개인정보를 수집합니다. 처리하고있는 개인정보는 다음의 수집•이용 목적 이외의 용도로 활용되지 않습니다.
                                         \n\n① 회원가입 시 다음의 개인정보를 수집 이용합니다.
@@ -24,17 +27,26 @@
                                         \n\n....
     </string>
 
-    <!-- 닉네임 변경  -->
+    <!-- fragment_mypage_profile.xml  -->
     <string name="length_error">20자 이내로 입력해 주세요</string>
     <string name="already_using">이미 사용 중인 닉네임 입니다</string>
 
-    <!-- 친구 페이지 -->
+    <!-- fragment_alert.xml -->
     <!-- 1:1 챌린지 탭 버튼-->
     <string-array name="challenge">
         <item name="friend_success_goal">친구의 목표 달성</item>
         <item name="receive_response">받은 반응</item>
         <item name="challenge">챌린지</item>
     </string-array>
+
+<!-- 토스트 메시지 -->
+    <string name="toast_challenge_setting">비활성화된 챌린지 목표는 2개 이하 생성 가능합니다.</string>
+    <string name="toast_challenge_accept">챌린지 참여를 수락했어요.</string>
+    <string name="toast_challenge_decline">챌린지 참여를 거절했어요.</string>
+    <string name="toast_incorrect_email">이메일 형식을 다시 확인해주세요</string>
+    <string name="toast_invalid_email">등록되지 않은 이메일이에요</string>
+    <string name="toast_report">신고가 완료되었습니다.</string>
+    <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
 
 
     <string name="password_text"><u>비밀번호를 잊어버리셨나요?</u></string>
