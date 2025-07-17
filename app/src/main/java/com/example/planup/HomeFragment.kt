@@ -47,7 +47,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun clickListener(){
-        binding.homeAlarmNoneIv.setOnClickListener{
+        binding.homeAlarmCl.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,AlertFragment())
                 .commitAllowingStateLoss()
