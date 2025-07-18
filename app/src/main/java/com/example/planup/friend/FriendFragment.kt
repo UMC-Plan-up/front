@@ -1,10 +1,12 @@
-package com.example.planup
+package com.example.planup.friend
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.planup.MainActivity
+import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendBinding
 
 class FriendFragment : Fragment() {
@@ -15,6 +17,16 @@ class FriendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFriendBinding.inflate(inflater, container, false)
+
+        clickListener()
         return binding.root
+    }
+
+    private fun clickListener(){
+        binding.ivSetting.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, FriendListsFragment())
+                .commitAllowingStateLoss()
+        }
     }
 }

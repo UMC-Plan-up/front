@@ -1,23 +1,18 @@
-package com.example.planup
+package com.example.planup.record
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.planup.MainActivity
+import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
-import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import androidx.core.graphics.toColorInt
 
 class RecordFragment : Fragment() {
 
     lateinit var binding: FragmentRecordBinding
-    private lateinit var pieChart: PieChart
+    // private lateinit var pieChart: PieChart
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -26,8 +21,23 @@ class RecordFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_record, container, false)
         //pieChart = view.findViewById(R.id.pieChart)
         //setupPieChart()
+        clickListener()
         return view
     }
+    private fun clickListener(){
+        binding.btnBadgeRecords.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordBadgesFragment())
+                .commitAllowingStateLoss()
+        }
+
+        binding.btnWeeklyReport1.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordWeeklyReportFragment())
+                .commitAllowingStateLoss()
+        }
+    }
+
 /*
     private fun setupPieChart() {
         val entries = ArrayList<PieEntry>()

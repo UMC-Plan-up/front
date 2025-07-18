@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/report_dialog_root"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_width="326dp"
+    android:layout_height="629dp"
     android:orientation="vertical"
     android:padding="20dp"
-    android:background="@android:color/white">
+    android:background="@drawable/report_dialog_background">
 
     <!-- 제목 영역 -->
     <TextView
