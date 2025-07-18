@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <ImageView
-        android:id="@+id/challenge_setting_back_iv"
+        android:id="@+id/challenge_finish_request_back_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_back"
@@ -13,53 +13,53 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"/>
     <TextView
-        android:id="@+id/challengeg_setting_title_tv"
+        android:id="@+id/challengeg_finish_request_title_tv"
         style="@style/Typography_2XL_Semibold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/challenge_finish_setting_title"
+        android:text="@string/challenge_finish_request_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_setting_back_iv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_finish_request_back_iv"
         android:layout_marginTop="33dp"/>
     <ImageView
-        android:id="@+id/challenge_setting_iv"
+        android:id="@+id/challenge_finish_request_iv"
         android:layout_width="148dp"
         android:layout_height="140dp"
         android:src="@drawable/ic_fireworks"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challengeg_setting_title_tv"
+        app:layout_constraintTop_toBottomOf="@id/challengeg_finish_request_title_tv"
         android:layout_marginTop="55dp"/>
 
     <TextView
-        android:id="@+id/challenge_setting_subtitle_tv"
+        android:id="@+id/challenge_finish_request_subtitle_tv"
         style="@style/Typography_SM_Semibold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/challenge_finish_setting_subtitle"
+        android:text="@string/challenge_finish_request_subtitle"
         android:textColor="@color/blue_200"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_setting_iv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_finish_request_iv"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginTop="65dp"/>
     <TextView
-        android:id="@+id/challenge_setting_content_tv"
+        android:id="@+id/challenge_finish_request_content_tv"
         style="@style/Typography_SM_Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/challenge_finish_setting_content"
+        android:text="@string/challenge_finish_request_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_setting_subtitle_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_finish_request_subtitle_tv"
         android:layout_marginStart="30dp"
         android:layout_marginEnd="30dp"
         android:layout_marginTop="4dp"/>
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/challenge_setting_check_cv"
+        android:id="@+id/challenge_finish_request_check_cv"
         android:layout_width="320dp"
         android:layout_height="44dp"
         app:cardBackgroundColor="@color/white"
@@ -70,11 +70,11 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="18dp">
         <TextView
-            android:id="@+id/challenge_setting_agreement_tv"
+            android:id="@+id/challenge_finish_request_agreement_tv"
             style="@style/Typography_SM_Medium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/challenge_finish_setting_check"
+            android:text="@string/challenge_finish_request_check"
             android:textAlignment="center"
             android:gravity="center" />
     </com.google.android.material.card.MaterialCardView>

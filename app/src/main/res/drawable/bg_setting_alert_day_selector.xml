@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- fragment_setting_alert.xml 요일 selector -->
+<selector xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_setting_alert_day_selected" android:state_selected="true"/>
+    <item android:drawable="@drawable/bg_setting_alert_day_unselected" android:state_selected="false"/>
+</selector>

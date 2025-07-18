@@ -67,6 +67,17 @@
     <string name="challenge_send_title">챌린지 신청하기</string>
     <string name="challenge_send_goal">목표명</string>
     <string name="challenge_send_explain">다른 친구들에게 해당 1:1 챌린지 참여를 제안해 보세요</string>
+
+    <!-- fragment_challenge_finish_setting.xml -->
+    <string name="challenge_finish_setting_title">1:1 챌린지 설정이 완료되었어요!</string>
+    <string name="challenge_finish_setting_subtitle">친구들에게 내 목표가 공개됩니다!</string>
+    <string name="challenge_finish_setting_content">플랜업애서 설정한 목표들은 기본적으로 친구와 공유됩니다. 목표 공유 설정은 추후에도 \'목표\’탭에서 변경 가능해요!</string>
+    <string name="challenge_finish_setting_check">네, 확인했어요.</string>
+    <!-- fragment_challenge_finish_request.xml -->
+    <string name="challenge_finish_request_title">챌린지 참여 요청을 보냈어요!</string>
+    <string name="challenge_finish_request_subtitle">(친구 닉네임)에게 챌린지 참여를 요청했어요.</string>
+    <string name="challenge_finish_request_content">친구에게 답변이 오면, 바로 알려드릴게요!</string>
+    <string name="challenge_finish_request_check">네, 확인했어요.</string>
     <!-- fragment_alert.xml -->
     <!-- 탭 레이아웃 버튼-->
     <string-array name="challenge">
@@ -83,6 +94,31 @@
     <string name="toast_invalid_email">등록되지 않은 이메일이에요</string>
     <string name="toast_report">신고가 완료되었습니다.</string>
     <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
+
+    <!-- popup_push_alert.xml -->
+    <string name="popup_push_title">앱 Push 알림 받기를 설정하시겠어요?</string>
+    <string name="popup_push_explain">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
+    <string name="popup_push_yes">네</string>
+    <string name="popup_push_no">아니오</string>
+
+    <!-- fragment_setting_alert.xml -->
+    <string name="setting_alert_title">알림 설정</string>
+    <string name="setting_alert_receive">설정 목표 알림 받기</string>
+    <string name="setting_alert_time">정기 알림 시각 설정</string>
+    <string name="setting_alert_period">오전</string>
+    <string name="setting_alert_hour">시</string>
+    <string name="setting_alert_minute">분</string>
+    <string name="setting_alert_everyday">매일</string>
+    <string name="setting_alert_monday">월</string>
+    <string name="setting_alert_tuesday">화</string>
+    <string name="setting_alert_wednesday">수</string>
+    <string name="setting_alert_thursday">목</string>
+    <string name="setting_alert_friday">금</string>
+    <string name="setting_alert_saturday">토</string>
+    <string name="setting_alert_sunday">일</string>
+    <string name="setting_alert_save">저장</string>
+
+
 
 
     <string name="password_text"><u>비밀번호를 잊어버리셨나요?</u></string>
