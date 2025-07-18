@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.fragment_record -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, RecordFragment())
+                        .replace(R.id.main_container, RecordOverallFragment())
                         .commitAllowingStateLoss()
                     true
                 }
