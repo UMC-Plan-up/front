@@ -8,17 +8,22 @@ import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.planup.databinding.FragmentHomeBinding
+import com.example.planup.alert.AlertFragment
 
 class HomeFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DailyToDoAdapter
 
+    private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater,container,false)
+        clickListener()
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -39,5 +44,13 @@ class HomeFragment : Fragment() {
 
         val progressBar = view.findViewById<ProgressBar>(R.id.daily_todo_pb)
         progressBar.progress = 75
+    }
+
+    private fun clickListener(){
+        binding.homeAlarmCl.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,AlertFragment())
+                .commitAllowingStateLoss()
+        }
     }
 }

@@ -30,75 +30,83 @@ class MypageFragment : Fragment() {
     private fun clickListener(){
 
         /*프로필 사진 변경*/
-        binding.profileRewriteIv.setOnClickListener{
-            showPopupMenu(binding.profileImageIv)
-        }
-        /*마케팅 수신 알림 토글*/
-        binding.myPageAlertBenefitOnIv.setOnClickListener{
-            binding.myPageAlertBenefitOnIv.visibility=View.GONE
-            binding.myPageAlertBenefitOffIv.visibility=View.VISIBLE
-        }
-        binding.myPageAlertBenefitOffIv.setOnClickListener{
-            binding.myPageAlertBenefitOnIv.visibility=View.VISIBLE
-            binding.myPageAlertBenefitOffIv.visibility=View.GONE
+        binding.mypageMainRewriteIv.setOnClickListener{
+            showPopupMenu(binding.mypageMainRewriteIv)
         }
 
         /*닉네임 변경*/
-        binding.myPageProfileChangeNameIv.setOnClickListener{
+        binding.mypageNicknameIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageProfileFragment())
                 .commitAllowingStateLoss()
         }
         /*이메일 변경*/
-        binding.myPageAccountChangeEmailIv.setOnClickListener{
+        binding.mypageEmailIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageEmailFirstFragment())
                 .commitAllowingStateLoss()
         }
         /*비밀번호 변경*/
-        binding.myPageAccountChangePasswordIv.setOnClickListener{
+        binding.mypagePasswordIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypagePasswordFirstFragment())
                 .commitAllowingStateLoss()
         }
         /*카카오톡 계정 연동*/
-        binding.myPageAccountSyncKakaoIv.setOnClickListener{
+        binding.mypageKakaoIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageKakaoFragment())
                 .commitAllowingStateLoss()
         }
         /*기타 계정 관리*/
-        binding.myPageAccountOtherAccountIv.setOnClickListener{
+        binding.mypageOtherIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageOtherFragment())
                 .commitAllowingStateLoss()
         }
         /*차단 친구 관리*/
-        binding.myPageFriendBlockIv.setOnClickListener{
+        binding.mypageFriendBlockIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageFriendBlockFragment())
                 .commitAllowingStateLoss()
         }
 
 //        /*인원 제한 관리*/
-//        binding.myPageFriendLimitIv.setOnClickListener{
+//        binding.mypageFriendNumberIv.setOnClickListener{
 //            (context as MainActivity).supportFragmentManager.beginTransaction()
 //                .replace(R.id.main_container,MypageFriendLimitFragment())
 //                .commitAllowingStateLoss()
 //        }
+
         /*서비스 알림*/
-        binding.myPageAlertServiceIv.setOnClickListener{
+        binding.mypageAlertServiceIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageServiceFragment())
                 .commitAllowingStateLoss()
         }
-        /*카카오톡 계정 연동*/
-        binding.myPageServicePolicyIv.setOnClickListener{
+
+        /*혜택 및 마케팅 알림*/
+        binding.mypageKakaoIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypagePolicyFragment())
                 .commitAllowingStateLoss()
         }
+        /*마케팅 수신 알림 토글*/
+        binding.mypageAlertBenefitOnIv.setOnClickListener{
+            binding.mypageAlertBenefitOnIv.visibility=View.GONE
+            binding.mypageAlertBenefitOffIv.visibility=View.VISIBLE
+        }
+        binding.mypageAlertBenefitOffIv.setOnClickListener{
+            binding.mypageAlertBenefitOnIv.visibility=View.VISIBLE
+            binding.mypageAlertBenefitOffIv.visibility=View.GONE
+        }
 
+        /*이용약관 및 정책*/
+        binding.mypagePolicyIv.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,MypagePolicyFragment())
+                .commitAllowingStateLoss()
+        }
 
 
 
@@ -122,7 +130,7 @@ class MypageFragment : Fragment() {
         popupWindow.setBackgroundDrawable(ColorDrawable())
 
         // 팝업 표시 (예: 이미지뷰 아래에)
-        popupWindow.showAsDropDown(binding.profileImageCv)
+        popupWindow.showAsDropDown(view)
 
         popupView.findViewById<View>(R.id.album_cl).setOnClickListener{
             Toast.makeText(context,"앨범 선택",LENGTH_SHORT).show()

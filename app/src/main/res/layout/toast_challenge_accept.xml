@@ -5,15 +5,16 @@
     android:layout_height="35dp">
 
     <TextView
-        android:id="@+id/friend_toast_tv"
-        style="@style/Typography_SM_Medium"
+        android:id="@+id/toast_challenge_accept_tv"
+        style="@style/TextAppearance.Pretendard.Medium.SM"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/toast_report"
-        android:textColor="@color/white"
+        android:text="@string/toast_challenge_accept"
         android:textAlignment="center"
-        android:gravity="center"
-        android:background="@drawable/bg_toast_blue_template"
+        android:textColor="@color/white"
+        android:background="@drawable/bg_toast_grey_template"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
