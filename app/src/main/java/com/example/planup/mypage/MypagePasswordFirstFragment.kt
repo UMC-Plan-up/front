@@ -3,6 +3,7 @@ package com.example.planup.mypage
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -35,6 +36,7 @@ class MypagePasswordFirstFragment : Fragment() {
     private fun clickListener() {
         /*뒤로 가기*/
         binding.passwordFirstBackIv.setOnClickListener {
+            ToastInvalidEmail.createToast(context as MainActivity)
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFragment())
                 .commitAllowingStateLoss()
