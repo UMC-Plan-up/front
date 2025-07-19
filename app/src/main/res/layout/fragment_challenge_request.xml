@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/challenge_request_back_iv"
+        android:id="@id/back_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -21,9 +21,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
-        android:text="@string/challenge_request_title"
+        android:text="@string/challenge_request_from"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_request_back_iv" />
+        app:layout_constraintTop_toBottomOf="@id/back_iv" />
 
     <ScrollView
         android:id="@+id/challenge_request_sv"
@@ -44,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="24dp"
-            android:text="@string/challenge_request_goal"
+            android:text="@string/goal_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:text="@string/challenge_request_amount"
+            android:text="@string/amount_once"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/challenge_request_goal_enter_tv" />
 
@@ -162,7 +162,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
-                android:text="@string/challenge_request_hour"
+                android:text="@string/time"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/challenge_request_hour_enter_tv"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -184,7 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
-                android:text="@string/challenge_request_minute"
+                android:text="@string/minute"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/challenge_request_minute_enter_tv"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -206,7 +206,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="7dp"
-                android:text="@string/challenge_request_second"
+                android:text="@string/second"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/challenge_request_second_enter_tv"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -219,7 +219,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:text="@string/challenge_request_due"
+            android:text="@string/finish_day"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/challenge_request_time_cl" />
 
@@ -241,7 +241,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:text="@string/challenge_request_duration"
+            android:text="@string/duration"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/challenge_request_due_enter_tv" />
 
@@ -263,7 +263,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
-            android:text="@string/challenge_request_day"
+            android:text="@string/day"
             app:layout_constraintBottom_toBottomOf="@id/challenge_request_duration_enter_tv"
             app:layout_constraintStart_toEndOf="@id/challenge_request_duration_enter_tv"
             app:layout_constraintTop_toTopOf="@id/challenge_request_duration_enter_tv" />
@@ -275,7 +275,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:text="@string/challenge_request_often"
+            android:text="@string/often"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/challenge_request_duration_enter_tv" />
 
@@ -297,7 +297,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
-            android:text="@string/challenge_request_number"
+            android:text="@string/minimum_number"
             app:layout_constraintBottom_toBottomOf="@id/challenge_request_often_enter_tv"
             app:layout_constraintStart_toEndOf="@id/challenge_request_often_enter_tv"
             app:layout_constraintTop_toTopOf="@id/challenge_request_often_enter_tv" />
@@ -309,7 +309,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
-            android:text="@string/challenge_request_penalty"
+            android:text="@string/penalty"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/challenge_request_often_tv" />
 
@@ -345,11 +345,11 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/challenge_request_decline_tv"
+                android:id="@+id/btn_reject_tv"
                 style="@style/Typography_S_Semibold"
                 android:layout_width="155dp"
                 android:layout_height="37dp"
-                android:text="@string/challenge_request_decline"
+                android:text="@string/btn_reject"
                 android:textColor="@color/blue_300"
                 android:textAlignment="center"
                 android:gravity="center"
@@ -359,29 +359,29 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"/>
             <TextView
-                android:id="@+id/challenge_request_allow_tv"
+                android:id="@+id/btn_approve_tv"
                 style="@style/Typography_S_Semibold"
                 android:layout_width="155dp"
                 android:layout_height="37dp"
-                android:text="@string/challenge_request_allow"
+                android:text="@string/btn_approve"
                 android:textColor="@color/white"
                 android:textAlignment="center"
                 android:gravity="center"
                 android:background="@drawable/bg_challenge_request_allow"
-                app:layout_constraintStart_toEndOf="@id/challenge_request_decline_tv"
+                app:layout_constraintStart_toEndOf="@id/btn_reject_tv"
                 app:layout_constraintTop_toBottomOf="@id/challenge_request_penalty_cl"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"/>
             <TextView
-                android:id="@+id/challenge_request_offer"
+                android:id="@+id/btn_ask_new_penalty_tv"
                 android:layout_width="320dp"
                 android:layout_height="46dp"
-                android:text="@string/challenge_request_offer"
+                android:text="@string/btn_ask_new_penalty"
                 android:textAlignment="center"
                 android:gravity="center"
                 android:background="@drawable/bg_challenge_request_offer"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/challenge_request_allow_tv"
+                app:layout_constraintTop_toBottomOf="@id/btn_approve_tv"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

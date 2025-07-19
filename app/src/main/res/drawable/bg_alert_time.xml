@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- fragment_setting_alert.xml 매일 선택 X -->
+<!-- fragment_setting_alert.xml 시간 선택 드롭다운 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="6dp"/>
     <stroke android:color="@color/black_200" android:width="1dp"/>
     <padding android:top="5dp" android:bottom="5dp" />
-    <size android:width="45dp" android:height="30dp"/>
+    <size android:width="60dp" android:height="30dp"/>
+    <solid android:color="@color/white"/>
 </shape>

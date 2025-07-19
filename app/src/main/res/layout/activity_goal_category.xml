@@ -33,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="82dp"
         android:orientation="vertical"
-        android:background="@drawable/bg_goal_skyblue"
+        android:background="@drawable/bg_goal_setting_selected"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingTop="8dp"

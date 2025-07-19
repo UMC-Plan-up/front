@@ -31,6 +31,13 @@ class MypagePasswordSecondFragment: Fragment() {
                 .replace(R.id.main_container,MypagePasswordFirstFragment())
                 .commitAllowingStateLoss()
         }
+        /*임시 리스너
+        * 원래는 이메일로 전달받은 링크를 통해 이동해야 함*/
+        binding.passwordSecondExplainTv.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,MypagePasswordThirdFragment())
+                .commitAllowingStateLoss()
+        }
 
         /*이메일을 받지 못하셨나요?*/
         binding.passwordSecondNotReceiveTv.setOnClickListener{

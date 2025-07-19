@@ -42,10 +42,8 @@ class MypagePasswordThirdFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
         /*비밀번호 재설정 완료버튼*/
-        binding.passwordThirdCompleteActivateIv.setOnClickListener{
-            binding.passwordThirdCompleteActivateIv.visibility = View.GONE
-            binding.passwordThirdCompleteDeactivateIv.visibility = View.VISIBLE
-            makePopup()
+        binding.btnPasswordCompleteTv.setOnClickListener{
+            if (binding.btnPasswordCompleteTv.isActivated) makePopup()
         }
     }
 
@@ -70,8 +68,8 @@ class MypagePasswordThirdFragment : Fragment() {
     /*비밀번호 유효성 검사*/
     private fun checkPassword() {
 
-        val satisfiedColor = ContextCompat.getColor(context as MainActivity,R.color.information3)
-        val unsatisfiedColor = ContextCompat.getColor(context as MainActivity,R.color.semanticB4)
+        val satisfiedColor = ContextCompat.getColor(context as MainActivity,R.color.green_200)
+        val unsatisfiedColor = ContextCompat.getColor(context as MainActivity,R.color.black_300)
 
         /*새로운 비밀번호 설정*/
         if (binding.passwordThirdNewEnterEt.text.toString().isNotEmpty()) {
@@ -98,8 +96,8 @@ class MypagePasswordThirdFragment : Fragment() {
                 binding.passwordThirdNewSpecialTv.setTextColor(satisfiedColor)
                 special = true
             }else{
-                binding.passwordThirdNewSpecialOnIv.visibility = View.VISIBLE
-                binding.passwordThirdNewSpecialOffIv.visibility = View.GONE
+                binding.passwordThirdNewSpecialOnIv.visibility = View.GONE
+                binding.passwordThirdNewSpecialOffIv.visibility = View.VISIBLE
                 binding.passwordThirdNewSpecialTv.setTextColor(unsatisfiedColor)
                 special = false
             }
@@ -107,7 +105,7 @@ class MypagePasswordThirdFragment : Fragment() {
 
         /*비밀번호 재확인*/
         if (binding.passwordThirdCheckEnterEt.text.toString().isNotEmpty() &&
-            binding.passwordThirdNewEnterEt.text.toString().equals(binding.passwordThirdNewEnterEt.text.toString())){
+            binding.passwordThirdNewEnterEt.text.toString().equals(binding.passwordThirdCheckEnterEt.text.toString())){
             binding.passwordThirdCheckCorrectOnIv.visibility = View.VISIBLE
             binding.passwordThirdCheckCorrectOffIv.visibility = View.GONE
             binding.passwordThirdCheckCorrectTv.setTextColor(satisfiedColor)
@@ -118,8 +116,12 @@ class MypagePasswordThirdFragment : Fragment() {
             binding.passwordThirdCheckCorrectTv.setTextColor(unsatisfiedColor)
             recheck = false
         }
-        if(length && special && recheck) binding.passwordThirdCompleteActivateIv.visibility = View.VISIBLE
-        else binding.passwordThirdCompleteActivateIv.visibility = View.GONE
+        if(length && special && recheck){
+            binding.btnPasswordCompleteTv.isActivated = true
+        }
+        else{
+            binding.btnPasswordCompleteTv.isActivated = false
+        }
     }
 
     /*비밀번호 재설정 완료 팝업*/
@@ -127,10 +129,11 @@ class MypagePasswordThirdFragment : Fragment() {
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.popup_password_reset)
         dialog.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.CENTER)
         }
-        dialog.findViewById<View>(R.id.popup_password_reset_iv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_password_reset_tv).setOnClickListener{
+            dialog.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container,MypageFragment())
                 .commitAllowingStateLoss()

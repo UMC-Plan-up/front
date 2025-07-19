@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="28dp"
-        android:text="@string/challenge_penalty_title"
+        android:text="@string/challenge_request_from"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/challenge_penalty_back_iv" />
     <TextView
@@ -227,8 +227,8 @@
         <TextView
             android:id="@+id/challenge_penalty_skip_tv"
             style="@style/Typography_L_Semibold"
-            android:layout_width="320dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/challenge_penalty_skip"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -252,7 +252,7 @@
         style="@style/Typography_SM_Medium"
         android:layout_width="67dp"
         android:layout_height="40dp"
-        android:text="완료"
+        android:text="@string/btn_complete"
         android:textColor="@color/white"
         android:background="@drawable/bg_challenge_penalty_not_complete"
         android:textAlignment="center"
@@ -266,7 +266,7 @@
         style="@style/Typography_XS_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/length_error"
+        android:text="@string/error_less_thirty_word"
         android:textColor="@color/transparent"
         app:layout_constraintStart_toStartOf="@id/challenge_penalty_enter_et"
         app:layout_constraintTop_toBottomOf="@id/challenge_penalty_enter_et"/>
@@ -275,7 +275,7 @@
         style="@style/Typography_S_Semibold"
         android:layout_width="320dp"
         android:layout_height="44dp"
-        android:text="@string/challenge_request_offer"
+        android:text="@string/btn_complete_ask_new_penalty"
         android:textColor="@color/white"
         android:textAlignment="center"
         android:gravity="center"

@@ -31,27 +31,39 @@
     <string name="length_error">20자 이내로 입력해 주세요</string>
     <string name="already_using">이미 사용 중인 닉네임 입니다</string>
 
+
+    <!-- 챌린지 신청 플로우 -->
+    <string name="challenge_request_from">[닉네임]님의 챌린지 요청</string>
+    <string name="set_challenge_goal">챌린지 목표 설정하기</string>
+    <string name="set_certification_method">인증 방식 설정</string>
+    <string name="goal_name">목표명</string>
+    <string name="amount_once">1회 분량</string>
+    <string name="time">시간</string>
+    <string name="minute">분</string>
+    <string name="second">초</string>
+    <string name="afternoon">오전</string>
+    <string name="hour">시</string>
+    <string name="everyday">매일</string>
+    <string name="day">일</string>
+    <string name="monday">월</string>
+    <string name="tuesday">화</string>
+    <string name="wednesday">수</string>
+    <string name="thursday">목</string>
+    <string name="friday">금</string>
+    <string name="saturday">토</string>
+    <string name="sunday">일</string>
+    <string name="set_finish_day">종료일 설정</string>
+    <string name="finish_day">종료일</string>
+    <string name="duration">기준 기간</string>
+    <string name="often">빈도</string>
+    <string name="penalty">패널티</string>
+    <string name="minimum_number">회 이상</string>
+
     <!-- fragment_challenge_request.xml -->
-    <string name="challenge_request_title">[닉네임]님의 챌린지 요청</string>
-    <string name="challenge_request_goal">목표명</string>
-    <string name="challenge_request_amount">1회 분량</string>
     <string name="challenge_request_verify">인증 방식</string>
     <string name="challenge_request_time">목표 투자 시간</string>
-    <string name="challenge_request_due">종료일</string>
-    <string name="challenge_request_duration">기준 기간</string>
-    <string name="challenge_request_often">빈도</string>
-    <string name="challenge_request_penalty">패널티</string>
-    <string name="challenge_request_decline">거절하기</string>
-    <string name="challenge_request_allow">수락하기</string>
-    <string name="challenge_request_offer">새로운 패널티 제안하기</string>
-    <string name="challenge_request_hour">시간</string>
-    <string name="challenge_request_minute">분</string>
-    <string name="challenge_request_second">초</string>
-    <string name="challenge_request_day">일</string>
-    <string name="challenge_request_number">회 이상</string>
 
     <!-- fragment_challenge_penalty.xml -->
-    <string name="challenge_penalty_title">[닉네임]님의 챌린지 요청</string>
     <string name="challenge_penalty_offer">패널티 제안하기</string>
     <string name="challenge_penalty_coffee">커피 사주기</string>
     <string name="challenge_penalty_snack">식사 계산하기</string>
@@ -60,8 +72,6 @@
     <string name="challenge_penalty_present">3000원 이하 랜덤 선물 주기</string>
     <string name="challenge_penalty_skip">생략하기</string>
     <string name="challenge_penalty_self">직접 입력하기</string>
-    <string name="challenge_penalty_length">30자 이내로 입력해 주세요</string>
-    <string name="challenge_penalty_complete">새로운 패널티 제안 완료하기</string>
 
     <!-- fragment_challenge_send.xml -->
     <string name="challenge_send_title">챌린지 신청하기</string>
@@ -72,12 +82,22 @@
     <string name="challenge_finish_setting_title">1:1 챌린지 설정이 완료되었어요!</string>
     <string name="challenge_finish_setting_subtitle">친구들에게 내 목표가 공개됩니다!</string>
     <string name="challenge_finish_setting_content">플랜업애서 설정한 목표들은 기본적으로 친구와 공유됩니다. 목표 공유 설정은 추후에도 \'목표\’탭에서 변경 가능해요!</string>
-    <string name="challenge_finish_setting_check">네, 확인했어요.</string>
     <!-- fragment_challenge_finish_request.xml -->
     <string name="challenge_finish_request_title">챌린지 참여 요청을 보냈어요!</string>
     <string name="challenge_finish_request_subtitle">(친구 닉네임)에게 챌린지 참여를 요청했어요.</string>
     <string name="challenge_finish_request_content">친구에게 답변이 오면, 바로 알려드릴게요!</string>
-    <string name="challenge_finish_request_check">네, 확인했어요.</string>
+    <!-- fragment_challenge_setting.xml -->
+    <string name="set_challenge_subtitle">친구와 1:1로 단기 목표 성취에 도전해 보세요!</string>
+    <!-- fragment_challenge_certification_method.xml -->
+    <string name="set_certification_method_notice">한 가지 인증 방식을 선택하더라도, 이외의 방식을 추가적으로 활용할 수 있어요. 단, 한번 정한 인증 방식은 수정할 수 없으니 신중하게 결정해 주세요.</string>
+    <!-- fragment_challenge_timer -->
+    <string name="timer_expect_time">목표 투자 시간</string>
+    <string name="timer_ask">타이머 기반 성취 데이터 활용을 위한 질문이에요. 해당 목표를 1회 성취하는 데 시간이 얼마나 소요되나요?</string>
+    <!-- fragment_challenge_photo.xml -->
+    <string name="photo_finish_day">일주일 기한 내에서 종료일을 선택하세요.</string>
+    <string name="photo_duration">선정한 회당 목표를 실시할 기준 기간을 선택하세요. 종료일보다 긴 기준 기간은 설정할 수 없어요.</string>
+    <string name="photo_often">기준 기간 내에 목표를 실행할 횟수를 입력하세요.</string>
+
     <!-- fragment_alert.xml -->
     <!-- 탭 레이아웃 버튼-->
     <string-array name="challenge">
@@ -85,6 +105,40 @@
         <item name="receive_response">받은 반응</item>
         <item name="challenge">챌린지</item>
     </string-array>
+
+    <!-- popup_push_alert.xml -->
+    <string name="popup_push_title">앱 Push 알림 받기를 설정하시겠어요?</string>
+    <string name="popup_push_explain">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
+
+    <!-- fragment_setting_alert.xml -->
+    <string name="setting_alert_title">알림 설정</string>
+    <string name="setting_alert_receive">설정 목표 알림 받기</string>
+    <string name="setting_alert_time">정기 알림 시각 설정</string>
+
+    <!-- fragment_goal_select.xml -->
+    <string name="goal_select_title">목표 설정하기</string>
+    <string name="goal_select_together">친구/커뮤니티와 함께 목표 설정하기</string>
+    <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
+    <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
+
+    <!-- 버튼 -->
+    <string name="btn_next">다음</string>
+    <string name="btn_complete">완료</string>
+    <string name="btn_yes">네</string>
+    <string name="btn_no">아니오</string>
+    <string name="btn_approve">수락하기</string>
+    <string name="btn_reject">거절하기</string>
+    <string name="btn_approval">수락</string>
+    <string name="btn_rejection">거절</string>
+    <string name="btn_ask_new_penalty">새로운 패널티 제안하기</string>
+    <string name="btn_complete_ask_new_penalty">새로운 패널티 제안 완료하기</string>
+    <string name="btn_go_to_check">확인하러 가기</string>
+    <string name="btn_ok">확인</string>
+    <string name="btn_save">저장</string>
+    <string name="btn_yes_checked">네, 확인했어요.</string>
+    <string name="btn_get_link">이메일로 인증 링크 받기</string>
+    <string name="btn_close_account">회원 탈퇴하기</string>
+
 
     <!-- 토스트 메시지 -->
     <string name="toast_challenge_setting">비활성화된 챌린지 목표는 2개 이하 생성 가능합니다.</string>
@@ -94,32 +148,17 @@
     <string name="toast_invalid_email">등록되지 않은 이메일이에요</string>
     <string name="toast_report">신고가 완료되었습니다.</string>
     <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
+    
+    <!-- 에러 메시지 -->
+    <string name="error_more_one_word">1글자 이상 작성해주세요.</string>
+    <string name="error_less_twenty_word">20자 이내로 작성해주세요.</string>
+    <string name="error_less_thirty_word">30자 이내로 작성해주세요.</string>
+    <string name="error_more_thirty_second">30초 이상 설정해주세요</string>
+    <string name="error_more_one">1이상의 숫자를 필수로 입력해 주세요.</string>
 
-    <!-- popup_push_alert.xml -->
-    <string name="popup_push_title">앱 Push 알림 받기를 설정하시겠어요?</string>
-    <string name="popup_push_explain">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
-    <string name="popup_push_yes">네</string>
-    <string name="popup_push_no">아니오</string>
-
-    <!-- fragment_setting_alert.xml -->
-    <string name="setting_alert_title">알림 설정</string>
-    <string name="setting_alert_receive">설정 목표 알림 받기</string>
-    <string name="setting_alert_time">정기 알림 시각 설정</string>
-    <string name="setting_alert_period">오전</string>
-    <string name="setting_alert_hour">시</string>
-    <string name="setting_alert_minute">분</string>
-    <string name="setting_alert_everyday">매일</string>
-    <string name="setting_alert_monday">월</string>
-    <string name="setting_alert_tuesday">화</string>
-    <string name="setting_alert_wednesday">수</string>
-    <string name="setting_alert_thursday">목</string>
-    <string name="setting_alert_friday">금</string>
-    <string name="setting_alert_saturday">토</string>
-    <string name="setting_alert_sunday">일</string>
-    <string name="setting_alert_save">저장</string>
-
-
-
+    <!-- 팝업 메시지 -->
+    <string name="popup_password_reset">비밀번호 재설정 완료</string>
+    <string name="popup_password_explain">계정의 비밀번호가 변경되었어요</string>
 
     <string name="password_text"><u>비밀번호를 잊어버리셨나요?</u></string>
     <string name="detail_text"><u>자세히</u></string>

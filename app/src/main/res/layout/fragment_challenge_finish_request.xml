@@ -74,7 +74,7 @@
             style="@style/Typography_SM_Medium"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/challenge_finish_request_check"
+            android:text="@string/btn_yes_checked"
             android:textAlignment="center"
             android:gravity="center" />
     </com.google.android.material.card.MaterialCardView>
