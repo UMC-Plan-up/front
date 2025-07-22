@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/speechBubbleContainer"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:elevation="4dp">
+
+    <TextView
+        android:id="@+id/textSpeech"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="이번 주 목표 달성량이 지난주에 비해서\nN%나 높아졌어요! :0\n이 페이스만 유지한다면, 네 번째 목표\n잠금 해제도 금방이겠는데요?"
+        android:textColor="#333333"
+        android:textSize="14sp"
+        android:lineSpacingExtra="4dp" />
+</LinearLayout>

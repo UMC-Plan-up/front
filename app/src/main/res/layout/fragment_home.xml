@@ -5,15 +5,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/check_alarm_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/home_alarm_cl"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="52dp"
-        android:layout_marginRight="20dp"
-        app:srcCompat="@drawable/ic_alarm" />
+        android:layout_marginTop="56dp"
+        android:layout_marginRight="20dp">
+        <ImageView
+            android:id="@+id/home_alarm_none_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/emoji_bell"
+            android:visibility="visible"/>
+        <ImageView
+            android:id="@+id/home_alarm_exist_iv"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:src="@drawable/ic_alarm"
+            android:visibility="gone"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -67,7 +83,8 @@
                 android:id="@+id/imageView6"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_arrow_up" />
+                app:srcCompat="@drawable/ic_arrow_back"
+                android:rotation="180"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -77,7 +94,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
@@ -97,28 +114,40 @@
         app:layout_constraintTop_toBottomOf="@+id/daily_todo_rv" />
 
     <LinearLayout
+        android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/daily_todo_pb">
 
         <TextView
             android:id="@+id/textView5"
+            style="@style/Typography_L_Semibold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="함께 도전중인 친구들은?"
-            style="@style/Typography_L_Semibold"/>
+            android:text="함께 도전중인 친구들은?" />
 
         <ImageView
             android:id="@+id/imageView7"
             android:layout_width="23dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_arrow_up" />
+            android:rotation="180"
+            app:srcCompat="@drawable/ic_arrow_back" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_friend_challenge_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:padding="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

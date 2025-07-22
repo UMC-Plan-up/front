@@ -4,26 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <ImageView
-        android:id="@+id/my_page_toast_check_email_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/toast_background"
+    <TextView
+        android:id="@+id/my_page_toast_check_email_tv"
+        style="@style/Typography_SM_Medium"
+        android:layout_width="320dp"
+        android:layout_height="35dp"
+        android:background="@drawable/bg_toast_grey_template"
+        android:text="@string/toast_invalid_email"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/my_page_toast_check_email_tv"
-        style="@style/TextAppearance.Pretendard.Medium.SM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="등록되지 않은 이메일이에요"
-        android:textColor="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/my_page_toast_check_email_iv"
-        app:layout_constraintBottom_toBottomOf="@id/my_page_toast_check_email_iv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

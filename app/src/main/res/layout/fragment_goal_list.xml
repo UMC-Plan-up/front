@@ -33,7 +33,7 @@
         android:layout_height="196dp"
         android:backgroundTint="@color/blue_300"
         app:cardCornerRadius="12dp"
-        app:cardElevation="4dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"
@@ -129,18 +129,18 @@
         android:layout_height="1dp"
         android:layout_marginStart="16dp"
         android:background="#D0D0D0"
-        app:layout_constraintBottom_toBottomOf="@+id/goal_list_btn_camera_ib"
-        app:layout_constraintStart_toEndOf="@+id/goal_list_btn_camera_ib"
-        app:layout_constraintTop_toTopOf="@+id/goal_list_btn_camera_ib" />
+        app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
+        app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
+        app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/goal_list_btn_camera_ib"
-        app:layout_constraintStart_toEndOf="@+id/goal_list_btn_camera_ib"
-        app:layout_constraintTop_toTopOf="@+id/goal_list_btn_camera_ib">
+        app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
+        app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
+        app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv">
 
         <TextView
             android:id="@+id/textView6"
@@ -186,29 +186,82 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- 카메라 버튼 -->
-    <ImageButton
-        android:id="@+id/goal_list_btn_camera_ib"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="28dp"
-        android:layout_marginTop="24dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_camera"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/goal_list_timercard_cv" />
 
     <!-- 메모 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/camera_btn_mcv"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="24dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="4dp"
+        app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
+        app:layout_constraintTop_toBottomOf="@+id/goal_list_timercard_cv"
+        app:strokeColor="@android:color/transparent">
+
+        <ImageButton
+            android:id="@+id/goal_list_btn_camera_ib"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@null"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_camera_blue" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout">
+
+        <TextView
+            android:id="@+id/achivement_status_tv"
+            style="@style/Typography_2XS_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="달성 여부"
+            android:textColor="@color/black_400"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/achivement_status_tv"
+            app:strokeColor="@color/transparent">
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_achivement_status" />
+        </com.google.android.material.card.MaterialCardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 친구 타이머 현황 -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
-        android:layout_width="304dp"
+        android:layout_width="0dp"
         android:layout_height="56dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="24dp"
         android:background="@drawable/bg_rad6_rectangle"
         android:backgroundTint="@color/white"
         android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="@+id/view3"
-        app:layout_constraintStart_toStartOf="@+id/goal_list_btn_camera_ib"
-        app:layout_constraintTop_toBottomOf="@+id/goal_list_btn_camera_ib">
+        app:layout_constraintEnd_toEndOf="@+id/goal_list_timercard_cv"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/camera_btn_mcv">
 
         <EditText
             android:id="@+id/editMemo"
@@ -218,12 +271,12 @@
             android:layout_marginTop="4dp"
             android:background="@android:color/transparent"
             android:hint="오늘의 메모"
-            android:textColorHint="#1D1D1D"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:maxLength="20"
             android:maxLines="1"
             android:padding="0dp"
+            android:textColorHint="#1D1D1D"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -239,7 +292,6 @@
             app:layout_constraintEnd_toEndOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 친구 타이머 현황 -->
     <TextView
         android:id="@+id/goal_list_text_friend_status_tv"
         android:layout_width="wrap_content"

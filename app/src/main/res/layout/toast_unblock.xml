@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!-- 마이페이지 -> 차단친구 관리 -> 차단 해제 클릭 시 발생하는 토스트 메시지 -->
+<!-- 뜨거운 감자 자리에 사용자의 닉네임을 받아와야 함 -->
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="320dp"
+    android:layout_height="35dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/friend_toast_cv"
@@ -11,9 +13,7 @@
         app:cardCornerRadius="4dp"
         app:cardBackgroundColor="@color/accent2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,29 +26,29 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp">
-            <TextView
-                android:id="@+id/friend_toast_name_tv"
-                style="@style/TextAppearance.Pretendard.Medium.SM"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="뜨거운 감자"
-                android:textColor="@color/white"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/friend_toast_tv"/>
-            <TextView
-                android:id="@+id/friend_toast_tv"
-                style="@style/TextAppearance.Pretendard.Medium.SM"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="님을 차단 해제했습니다."
-                android:textColor="@color/white"
-                app:layout_constraintStart_toEndOf="@id/friend_toast_name_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/friend_toast_name_tv"/>
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:id="@+id/friend_toast_name_tv"
+                    style="@style/Typography_SM_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="뜨거운 감자"
+                    android:textColor="@color/white"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/friend_toast_tv"/>
+                <TextView
+                    android:id="@+id/friend_toast_tv"
+                    style="@style/Typography_SM_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" 님을 차단 해제했습니다."
+                    android:textColor="@color/white"
+                    app:layout_constraintStart_toEndOf="@id/friend_toast_name_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/friend_toast_name_tv"/>
                 <View
                     android:id="@+id/friend_toast_name_lv"
                     android:layout_width="0dp"

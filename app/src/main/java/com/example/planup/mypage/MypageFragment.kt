@@ -85,12 +85,6 @@ class MypageFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
 
-        /*혜택 및 마케팅 알림*/
-        binding.mypageKakaoIv.setOnClickListener{
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,MypagePolicyFragment())
-                .commitAllowingStateLoss()
-        }
         /*마케팅 수신 알림 토글*/
         binding.mypageAlertBenefitOnIv.setOnClickListener{
             binding.mypageAlertBenefitOnIv.visibility=View.GONE

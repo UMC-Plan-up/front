@@ -37,42 +37,23 @@
 
     <TextView
         android:id="@+id/email_second_explain_tv"
-        style="@style/TextAppearance.Pretendard.Medium.S"
+        style="@style/Typography_SM_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="20dp"
-        android:text="({email})인증을 위한"
+        android:text="@string/change_email_explain"
+        android:gravity="center"
+        android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_second_title_tv" />
+        app:layout_constraintTop_toBottomOf="@id/email_second_title_tv"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="20dp" />
     <!-- Fragment 코드에서 아래 코드로 {email}에 실제 이메일 넣으면 됨
     val email = "user@example.com"
     val text = getString(R.string.change_password_explain, email)
     textView.text = text -->
-    <TextView
-        android:id="@+id/email_second_explain_second_tv"
-        style="@style/TextAppearance.Pretendard.Medium.S"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="링크를 보내드렸어요."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_second_explain_tv"/>
-    <TextView
-        android:id="@+id/email_second_explain_third_tv"
-        style="@style/TextAppearance.Pretendard.Medium.S"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:text="메일함에서 링크를 확인해 주세요."
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_second_explain_second_tv"/>
+
 
     <TextView
         android:id="@+id/email_second_not_receive_tv"
@@ -82,7 +63,7 @@
         android:text="이메일을 받지 못하셨나요?"
         app:layout_constraintStart_toStartOf="@id/email_second_explain_tv"
         app:layout_constraintEnd_toEndOf="@id/email_second_explain_tv"
-        app:layout_constraintTop_toBottomOf="@id/email_second_explain_third_tv"
+        app:layout_constraintTop_toBottomOf="@id/email_second_explain_tv"
         android:layout_marginTop="72dp"/>
     <View
         android:id="@+id/email_second_not_receive_lv"

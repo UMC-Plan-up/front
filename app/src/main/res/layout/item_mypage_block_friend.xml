@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="12dp">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/friend_block_cl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="12dp"
+    android:paddingHorizontal="6dp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/friend_profile_cv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="21dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <ImageView
+            android:id="@+id/friend_block_profile_iv"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:src="@drawable/profile_image" />
+    </androidx.cardview.widget.CardView>
+    <TextView
+        android:id="@+id/friend_block_name_tv"
+        style="@style/TextAppearance.Pretendard.Medium.XL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        app:layout_constraintStart_toEndOf="@id/friend_profile_cv"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp" />
+    <ImageView
+        android:id="@+id/friend_block_unblock_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_unblock"
+        app:layout_constraintEnd_toStartOf="@id/friend_block_report_iv"
+        app:layout_constraintTop_toTopOf="@id/friend_profile_cv"
+        app:layout_constraintBottom_toBottomOf="@id/friend_profile_cv"
+        android:layout_marginEnd="16dp" />
+    <ImageView
+        android:id="@+id/friend_block_report_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/btn_report"
+        app:layout_constraintTop_toTopOf="@id/friend_profile_cv"
+        app:layout_constraintBottom_toBottomOf="@id/friend_profile_cv"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+    <View
+        android:id="@+id/friend_block_lv"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/semanticB4"
+        app:layout_constraintTop_toBottomOf="@id/friend_block_cl"
+        app:layout_constraintStart_toStartOf="@id/friend_block_cl"
+        app:layout_constraintEnd_toEndOf="@id/friend_block_cl" />
+</androidx.constraintlayout.widget.ConstraintLayout>
