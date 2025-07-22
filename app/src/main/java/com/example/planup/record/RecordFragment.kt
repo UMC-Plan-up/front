@@ -1,9 +1,18 @@
 package com.example.planup.record
 
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.PopupWindow
+import android.widget.Spinner
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.MainActivity
 import com.example.planup.R
@@ -15,14 +24,78 @@ class RecordFragment : Fragment() {
     // private lateinit var pieChart: PieChart
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_record, container, false)
-        //pieChart = view.findViewById(R.id.pieChart)
-        //setupPieChart()
+        binding = FragmentRecordBinding.inflate(inflater, container, false)
         clickListener()
-        return view
+
+        val monthList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
+
+        val monthPopupView = layoutInflater.inflate(R.layout.popup_month_dropdown, null)
+        val monthPopupWindow = PopupWindow(
+            monthPopupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        val monthListView = monthPopupView.findViewById<ListView>(R.id.listViewMonths)
+        val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown_month, R.id.item_text, monthList)
+        monthListView.adapter = monthAdapter
+
+        binding.textSelectedMonth.setOnClickListener {
+            val offsetY = resources.getDimensionPixelSize(R.dimen.dropdown_offset_y)
+            monthPopupWindow.showAsDropDown(binding.textSelectedMonth, 0, offsetY)
+        }
+
+        monthListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedMonth = monthList[position]
+            binding.textSelectedMonth.text = selectedMonth + "월"
+            monthPopupWindow.dismiss()
+        }
+
+        // ▼ Year DropDown ▼ (새로 추가)
+        val yearList = listOf("2025", "2024", "2023", "2022", "2021", "2020")
+
+        val yearPopupView = layoutInflater.inflate(R.layout.popup_year_dropdown, null)
+        val yearPopupWindow = PopupWindow(
+            yearPopupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        val yearListView = yearPopupView.findViewById<ListView>(R.id.listViewYears)
+        val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown_year, R.id.item_text, yearList)
+        yearListView.adapter = yearAdapter
+
+        binding.textSelectedYear.setOnClickListener {
+            val offsetY = resources.getDimensionPixelSize(R.dimen.dropdown_offset_y)
+            yearPopupWindow.showAsDropDown(binding.textSelectedYear, 0, offsetY)
+        }
+
+        yearListView.setOnItemClickListener { _, _, position, _ ->
+            val selectedYear = yearList[position]
+            binding.textSelectedYear.text = selectedYear + "년"
+            yearPopupWindow.dismiss()
+        }
+
+        val text1 = "그린 님을 위한\n플랜업의 "
+        val text2 = "AI 응원 메시지"
+
+        // SpannableStringBuilder를 사용해 색상 분리
+        val spannable = SpannableStringBuilder()
+        spannable.append(text1)
+        spannable.append(text2,
+            ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.blue_200)), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        binding.textMessage.text = spannable
+
+
+
+        return binding.root
     }
     private fun clickListener(){
         binding.btnBadgeRecords.setOnClickListener {
@@ -36,34 +109,36 @@ class RecordFragment : Fragment() {
                 .replace(R.id.main_container, RecordWeeklyReportFragment())
                 .commitAllowingStateLoss()
         }
-    }
 
-/*
-    private fun setupPieChart() {
-        val entries = ArrayList<PieEntry>()
-        entries.add(PieEntry(70f, "달성"))
-        entries.add(PieEntry(30f, "미달성"))
-
-        val dataSet = PieDataSet(entries, "")
-        dataSet.setColors(Color.parseColor("#FFFFFF"), Color.parseColor("#D9D9D9")) // 달성률, 회색 나머지
-        dataSet.setDrawValues(false)
-
-        val data = PieData(dataSet)
-        val percent = 70
-        pieChart.apply {
-            this.data = data
-            setDrawEntryLabels(false)
-            description.isEnabled = false
-            legend.isEnabled = false
-            isRotationEnabled = false
-            setDrawCenterText(true)
-            //centerText = "${percent.toInt()}%"
-            setCenterTextSize(14f)
-            setHoleColor(Color.TRANSPARENT)
-            holeRadius = 70f
-            transparentCircleRadius = 0f
-            invalidate()
+        binding.btnWeeklyReport2.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordWithFriendsFragment())
+                .commitAllowingStateLoss()
         }
+
+        binding.btnWeeklyReport3.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordWithFriendFragment())
+                .commitAllowingStateLoss()
+        }
+
+        binding.btnWeeklyReport4.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordWithCommunityFragment())
+                .commitAllowingStateLoss()
+        }
+
+        binding.btnWeeklyReport5.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordWeeklyReportFragment())
+                .commitAllowingStateLoss()
+        }
+
+        binding.btnBadgeRecords.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordBadgesFragment())
+                .commitAllowingStateLoss()
+        }
+
     }
-*/
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendListsBinding
@@ -21,6 +22,22 @@ class FriendListsFragment : Fragment() {
         binding = FragmentFriendListsBinding.inflate(inflater, container, false)
 
         clickListener()
+
+        val recyclerView = binding.friendListsRecyclerView
+
+        val sampleList = listOf(
+            FriendLists("친구1"),
+            FriendLists("친구2"),
+            FriendLists("친구3"),
+            FriendLists("친구4"),
+            FriendLists("친구5"),
+            FriendLists("친구6"),
+            FriendLists("친구7"),
+        )
+
+        recyclerView.adapter = FriendListsAdapter(sampleList)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
         return binding.root
     }
 
@@ -32,74 +49,5 @@ class FriendListsFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
 
-        /* 친구 목록 삭제 버튼 */
-        binding.btnDeleteFriend.setOnClickListener {
-            showDeleteDialog()
-        }
-
-        /* 친구 목록 차단 버튼*/
-        binding.btnBanFriend.setOnClickListener {
-            showBanDialog()
-        }
-
-        /* 친구 신고 버튼 */
-        binding.btnReportFriend.setOnClickListener {
-            showReportDialog()
-        }
-    }
-
-    private fun showDeleteDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_delete_friend)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // 모서리 투명처리
-        dialog.window?.setDimAmount(0.5f) // 0.0 ~ 1.0 (어두움 정도 조절)
-
-        // 취소 버튼 클릭 시 다이얼로그 닫기
-        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        // 확인 버튼 클릭 시 처리 (예: 친구 삭제 로직)
-        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
-        yesBtn.setOnClickListener {
-            // TODO: 친구 삭제 처리 로직 추가
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
-    private fun showBanDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_ban_friend)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // 모서리 투명처리
-        dialog.window?.setDimAmount(0.5f) // 0.0 ~ 1.0 (어두움 정도 조절)
-
-        // 취소 버튼 클릭 시 다이얼로그 닫기
-        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
-        noBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        // 확인 버튼 클릭 시 처리 (예: 친구 삭제 로직)
-        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
-        yesBtn.setOnClickListener {
-            // TODO: 친구 삭제 처리 로직 추가
-            dialog.dismiss()
-        }
-
-        dialog.show()
-    }
-
-    private fun showReportDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_report_friend)
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent) // 모서리 투명처리
-        dialog.window?.setDimAmount(0.5f) // 0.0 ~ 1.0 (어두움 정도 조절)
-
-
-
-        dialog.show()
     }
 }
