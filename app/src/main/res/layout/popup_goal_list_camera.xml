@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_popup_camera">
+
+    <TextView
+        android:id="@+id/take_photo_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="사진 찍기"
+        android:textColor="@color/black_300"
+        style="@style/Typography_S_Medium"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#B8B7B7" />
+
+    <TextView
+        android:id="@+id/choose_gallery_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="앨범에서 선택하기"
+        style="@style/Typography_S_Medium"
+        android:textColor="@color/black_300"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"/>
+
+</LinearLayout>

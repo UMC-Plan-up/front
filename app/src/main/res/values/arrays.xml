@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/values/arrays.xml -->
+<resources>
+    <string-array name="goal_list_spinner_dropdown">
+        <item>목표 1</item>
+        <item>목표 2</item>
+        <item>목표 3</item>
+    </string-array>
+</resources>
