@@ -187,8 +187,8 @@
 <!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
         <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/alert_time_cl"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
             android:background="@drawable/bg_dropdown_alert"
             android:dropDownWidth="match_parent"
             android:spinnerMode="dropdown"
