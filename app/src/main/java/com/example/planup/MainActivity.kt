@@ -6,7 +6,9 @@ import com.example.planup.databinding.ActivityMainBinding
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.example.planup.friend.FriendFragment
 import com.example.planup.mypage.MypageFragment
+import com.example.planup.record.RecordFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.fragment_record -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container,RecordFragment())
+                        .replace(R.id.main_container, RecordFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.fragment_friend -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container,FriendFragment())
+                        .replace(R.id.main_container, FriendFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }

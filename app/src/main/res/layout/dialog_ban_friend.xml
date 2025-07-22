@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="300dp"
+            android:layout_height="194dp">
+
+            <TextView
+                android:id="@+id/popup_block_title_tv"
+                style="@style/TextAppearance.Pretendard.Medium.SM"
+                android:layout_width="260dp"
+                android:layout_height="24dp"
+                android:text="친구 1 님을 차단하시겠어요?"
+                android:gravity="center"
+                android:textAlignment="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="22dp" />
+
+            <TextView
+                android:id="@+id/popup_block_description_tv"
+                style="@style/TextAppearance.Pretendard.Medium.SM"
+                android:layout_width="260dp"
+                android:layout_height="63dp"
+                android:lineSpacingExtra="4dp"
+                android:text="차단 시, 해당 계정에 알림이 가지 않으며 차단한 이용자에게는 내 계정의 활동및 기록이 보이지 않게 됩니다."
+                android:textSize="14sp"
+                android:textAlignment="textStart"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/popup_block_title_tv"
+                android:layout_marginTop="12dp" />
+
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="260dp"
+                android:layout_height="36dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/popup_block_description_tv"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="12dp">
+
+                <ImageView
+                    android:id="@+id/popup_block_no_iv"
+                    android:layout_width="110dp"
+                    android:layout_height="34dp"
+                    android:src="@drawable/no_btn_transparant"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/popup_block_yes_iv" />
+
+                <ImageView
+                    android:id="@+id/popup_block_yes_iv"
+                    android:layout_width="110dp"
+                    android:layout_height="34dp"
+                    android:src="@drawable/yes_btn_activate"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@id/popup_block_no_iv"
+                    app:layout_constraintEnd_toEndOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>
