@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="24dp">
+
+    <!-- 친구 카드 1 예시 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="12dp">
+
+        <ImageView
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/circle_bg"
+            android:layout_marginEnd="12dp"/>
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="친구 1"
+            android:textSize="16sp"
+            android:textStyle="bold"/>
+
+        <!-- 삭제 버튼 -->
+        <TextView
+            android:id="@+id/btn_delete_friend1"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:text="삭제"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/bg_red_rounded"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- 차단 버튼 -->
+        <TextView
+            android:id="@+id/btn_ban_friend1"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:text="차단"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/bg_green_rounded"
+            android:layout_marginEnd="8dp"/>
+
+        <!-- 신고 버튼 -->
+        <TextView
+            android:id="@+id/btn_report_friend1"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:paddingHorizontal="12dp"
+            android:gravity="center"
+            android:text="신고"
+            android:textSize="14sp"
+            android:textColor="@android:color/black"
+            android:background="@drawable/bg_blue_rounded"/>
+    </LinearLayout>
+</LinearLayout>

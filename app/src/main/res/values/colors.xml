@@ -22,8 +22,6 @@
 
     <color name="information1">#395A5A</color>
     <color name="information2">#D7EEEE</color>
-    <!--  유효성 검사 색상 (박선준)  -->
-    <color name="information3">#35B584</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
@@ -44,6 +42,14 @@
 
     <color name="green_200">#395A5A</color>
     <color name="green_100">#D7EEEE</color>
+
+    <color name="charcolor1">#FFEFA1</color>
+    <color name="charcolor2">#FFD6E8</color>
+    <color name="charcolor3">#A0CCCC</color>
+    <color name="charcolor4">#F3A998</color>
+    <color name="charcolor5">#FF7C7C</color>
+
+
 
     <color name="background_color">#FAFCFF</color>
 

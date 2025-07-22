@@ -18,6 +18,7 @@
             android:gravity="center_vertical">
 
             <ImageView
+                android:id="@+id/btn_back"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_arrow_left" />
@@ -66,24 +67,46 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:gravity="center_vertical">
 
-            <EditText
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:hint="나의초대코드"
-                android:background="@drawable/bg_edittext"
-                android:paddingHorizontal="12dp"
-                android:textSize="14sp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:text="완료"
+                <EditText
+                    android:layout_width="231dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:hint="나의초대코드"
+                    android:background="@drawable/bg_edittext"
+                    android:paddingHorizontal="12dp"
+                    android:textSize="14sp"
+                    android:layout_marginRight="10dp"/>
+
+                <TextView
+                    android:layout_width="73dp"
+                    android:layout_height="40dp"
+                    android:text="복사"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:textColor="@android:color/black"
+                    android:background="@drawable/bg_edittext"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btn_upload"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="공유"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginTop="10dp"
                 android:textColor="@android:color/white"
+                android:background="@drawable/bg_blue_edittext"
                 android:backgroundTint="#548CFF"/>
         </LinearLayout>
 
@@ -110,21 +133,23 @@
             android:gravity="center_vertical">
 
             <EditText
-                android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_width="231dp"
+                android:layout_height="40dp"
                 android:layout_weight="1"
                 android:hint="코드를 입력하세요"
                 android:background="@drawable/bg_edittext"
                 android:paddingHorizontal="12dp"
+                android:layout_marginRight="10dp"
                 android:textSize="14sp"/>
 
-            <Button
-                android:layout_width="wrap_content"
+            <TextView
+                android:layout_width="73dp"
                 android:layout_height="48dp"
-                android:layout_marginStart="8dp"
                 android:text="입력"
-                android:textColor="@android:color/white"
-                android:backgroundTint="#548CFF"/>
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:background="@drawable/bg_blue_edittext"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
 
     </LinearLayout>
