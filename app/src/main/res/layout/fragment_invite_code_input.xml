@@ -6,14 +6,16 @@
     android:background="#FFFFFF"
     android:padding="24dp">
 
+
     <ImageView
         android:id="@+id/backIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_arrow_back"
         android:layout_marginTop="38dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -22,7 +24,7 @@
         android:layout_height="4dp"
         android:progress="100"
         android:progressDrawable="@drawable/ic_progress_drawable"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -30,14 +32,14 @@
 
     <TextView
         android:id="@+id/titleText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="230dp"
+        android:layout_height="99dp"
         android:text="친구에게\n초대받으셨다면,\n받은 코드를 입력해주세요!"
         android:textSize="22sp"
         android:fontFamily="@font/pretendard_medium"
         android:lineSpacingExtra="4dp"
-        android:textColor="#000000"
-        android:layout_marginTop="70dp"
+        android:textColor="@color/black_400"
+        android:layout_marginTop="77dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -45,14 +47,13 @@
         android:id="@+id/nicknameEditText"
         android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="16dp"
         android:hint="초대코드 입력란"
         android:textSize="16dp"
         android:background="@drawable/bg_edittext_rounded"
         android:padding="8dp"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="#4B5563"
-        android:textColorHint="#4B5563"
+        android:textColorHint="@color/black_300"
         app:layout_constraintTop_toBottomOf="@id/titleText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -63,9 +64,9 @@
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:text="입력"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textColor="#FFFFFF"
-        android:fontFamily="@font/pretendard_semibold"
+        android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
         android:layout_marginTop="12dp"
         android:gravity="center"
@@ -73,32 +74,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+
     <TextView
-        android:id="@+id/emailFormatErrorText"
+        android:id="@+id/emailFormatErrorText2"
         android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="241dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="346dp"
         android:background="@drawable/bg_error_box"
         android:gravity="center"
-        android:text="[닉네임] 님과 친구가 되었어요!"
+        android:text="유효하지 않은 초대코드입니다."
         android:fontFamily="@font/pretendard_medium"
         android:textColor="#FFFFFF"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/inputButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/nextButton"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:text="다음"
-        android:textSize="16sp"
-        android:textColor="#FFFFFF"
-        android:fontFamily="@font/pretendard_medium"
-        android:background="@drawable/btn_next_background"
-        android:layout_marginTop="617dp"
+    <TextView
+        android:id="@+id/textShareLater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/share_later"
+        android:textSize="14sp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:lineSpacingExtra="4dp"
+        android:textColor="@color/black_300"
+        android:layout_marginTop="312dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"

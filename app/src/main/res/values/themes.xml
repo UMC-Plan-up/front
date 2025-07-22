@@ -12,6 +12,7 @@
         <item name="itemRippleColor">@android:color/transparent</item> <!-- ✅ Ripple 제거 -->
     </style>
 
+
     <!-- Pretendard Text Style -->
 
     <!-- Semi Bold -->

@@ -10,33 +10,36 @@
         android:id="@+id/backIcon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_arrow_back"
         android:layout_marginTop="38dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/notificationTitleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="알림 설정"
         android:fontFamily="@font/pretendard_semibold"
-        android:textSize="18sp"
-        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textColor="@color/black_400"
         app:layout_constraintTop_toTopOf="@id/backIcon"
         app:layout_constraintBottom_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
+        android:id="@+id/clockImage"
         android:layout_width="170dp"
         android:layout_height="170dp"
         android:src="@drawable/ic_clock"
         app:layout_constraintTop_toTopOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="64dp" />
+        android:layout_marginTop="96dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/goalNotificationToggleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
@@ -49,7 +52,7 @@
             android:text="설정 목표 알림 받기"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_medium"
-            android:textColor="#000000"
+            android:textColor="@color/black_400"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -57,9 +60,11 @@
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/toggleSwitch1"
             android:layout_width="55dp"
-            android:layout_height="20dp"
+            android:layout_height="30dp"
             android:checked="true"
             app:showText="false"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
             app:trackTint="@color/switch_track_selector"
             app:thumbTint="@color/switch_thumb_selector"
             app:layout_constraintEnd_toEndOf="parent"
@@ -79,6 +84,7 @@
         android:layout_marginTop="360dp" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/regularNotificationToggleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
@@ -91,7 +97,7 @@
             android:text="정기 알림 시각 설정"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_medium"
-            android:textColor="#000000"
+            android:textColor="@color/black_400"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent" />
@@ -99,9 +105,11 @@
         <com.google.android.material.materialswitch.MaterialSwitch
             android:id="@+id/toggleSwitch2"
             android:layout_width="55dp"
-            android:layout_height="20dp"
+            android:layout_height="30dp"
             android:checked="false"
             app:showText="false"
+            android:scaleX="0.8"
+            android:scaleY="0.8"
             app:trackTint="@color/switch_track_selector"
             app:thumbTint="@color/switch_thumb_selector"
             app:layout_constraintEnd_toEndOf="parent"
@@ -109,193 +117,216 @@
             app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
     <LinearLayout
+        android:id="@+id/regularNotificationTimeLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="420dp"
+        android:layout_marginTop="431dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent">
 
 
         <FrameLayout
+            android:id="@+id/ampmSelectorLayout"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginEnd="8dp">
 
             <EditText
-                android:layout_width="match_parent"
+                android:id="@+id/ampmEditText"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:hint="오전"
-                android:background="@drawable/bg_timer_setting2"
+                android:background="@drawable/btn_no"
                 android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:paddingStart="8dp"
-                android:textColor="#6F6F6F"
-                android:textColorHint="#6F6F6F"
+                android:textColorHint="@color/black_300"
                 android:inputType="none" />
 
             <ImageView
+                android:id="@+id/ampmDropdownIcon"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginTop="1dp"
                 android:src="@drawable/ic_arrow_up"
-                android:contentDescription="@null" />
+                android:contentDescription="@null"
+                app:tint="@color/black_300" />
+
         </FrameLayout>
 
 
         <FrameLayout
+            android:id="@+id/hourSelectorLayout"
             android:layout_width="60dp"
             android:layout_height="30dp"
             android:layout_marginEnd="8dp">
 
             <EditText
-                android:layout_width="match_parent"
+                android:id="@+id/hourEditText"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:hint="07시"
-                android:background="@drawable/bg_timer_setting2"
+                android:background="@drawable/btn_no"
                 android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:paddingStart="8dp"
-                android:textColor="#6F6F6F"
-                android:textColorHint="#6F6F6F"
+                android:textColorHint="@color/black_300"
                 android:inputType="none" />
 
             <ImageView
+                android:id="@+id/hourDropdownIcon"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="5dp"
                 android:src="@drawable/ic_arrow_up"
+                android:layout_marginTop="1dp"
+                app:tint="@color/black_300"
                 android:contentDescription="@null" />
         </FrameLayout>
 
 
         <FrameLayout
+            android:id="@+id/minuteSelectorLayout"
             android:layout_width="60dp"
             android:layout_height="30dp">
 
             <EditText
-                android:layout_width="match_parent"
+                android:id="@+id/minuteEditText"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
                 android:hint="30분"
-                android:background="@drawable/bg_timer_setting2"
+                android:background="@drawable/btn_no"
                 android:fontFamily="@font/pretendard_medium"
                 android:textSize="14sp"
                 android:paddingStart="8dp"
-                android:textColor="#6F6F6F"
-                android:textColorHint="#6F6F6F"
+                android:textColorHint="@color/black_300"
                 android:inputType="none" />
 
             <ImageView
+                android:id="@+id/minuteDropdownIcon"
                 android:layout_width="14dp"
                 android:layout_height="14dp"
                 android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="5dp"
+                android:layout_marginTop="1dp"
+                app:tint="@color/black_300"
                 android:src="@drawable/ic_arrow_up"
                 android:contentDescription="@null" />
         </FrameLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/daySelectorLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="456dp"
+        android:layout_marginTop="467dp"
         android:orientation="horizontal"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent">
 
-
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayEveryButton"
             android:layout_width="45dp"
             android:layout_height="30dp"
             android:layout_marginEnd="6dp"
             android:text="매일"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="@color/black_300"
             android:fontFamily="@font/pretendard_medium" />
 
-
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayMondayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="월"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="@color/black_300"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayTuesdayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="화"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayWednesdayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="수"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayThursdayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="목"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/dayFridayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="금"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/daySaturdayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="5dp"
             android:text="토"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
 
         <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/daySundayButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:text="일"
             android:textSize="14sp"
-            android:background="@drawable/bg_timer_setting2"
-            android:textColor="#6F6F6F"
+            android:background="@drawable/btn_no"
+            android:textColor="#4B5563"
             android:fontFamily="@font/pretendard_medium" />
     </LinearLayout>
 
 
     <TextView
-        android:id="@+id/emailFormatErrorText"
+        android:id="@+id/notificationSaveMessage"
         android:layout_width="0dp"
         android:layout_height="35dp"
-        android:layout_marginTop="518dp"
+        android:layout_marginTop="526dp"
         android:background="@drawable/bg_error_box"
         android:gravity="center"
         android:text="알림 설정 내역이 저장되었어요."
@@ -307,13 +338,12 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
 
-
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/nextButton"
+        android:id="@+id/saveButton"
         android:layout_width="0dp"
         android:layout_height="44dp"
         android:text="저장"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"

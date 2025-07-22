@@ -7,17 +7,19 @@
 
     <TextView
         android:id="@+id/termTitle"
-        android:layout_width="205dp"
-        android:layout_height="110dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="약관 팝업창"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="#000000"
+        android:textColor="@color/black_400"
         android:textSize="16sp"
-        android:layout_marginTop="113dp"
-        android:layout_marginStart="58dp"
         android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+
 
     <ImageView
         android:id="@+id/closeIcon"
@@ -28,6 +30,5 @@
         android:src="@drawable/ic_close"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

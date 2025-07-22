@@ -1,0 +1,73 @@
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="308dp"
+    android:layout_height="wrap_content"
+    app:cardElevation="8dp"
+    app:cardCornerRadius="10dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false">
+
+    <LinearLayout
+        android:id="@+id/resetPasswordBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="30dp"
+        android:paddingStart="30dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="20dp">
+
+        <!-- 타이틀 + 설명 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="12dp"
+            android:gravity="start">
+
+            <TextView
+                android:id="@+id/friendTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="새로운 친구"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="22sp"
+                android:textColor="@color/black_400" />
+
+            <TextView
+                android:id="@+id/friendDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="____님과 친구가 되었어요!"
+                android:fontFamily="@font/pretendard_medium"
+                android:textSize="16sp"
+                android:textColor="@color/black_300" />
+        </LinearLayout>
+
+        <!-- 이미지 -->
+        <ImageView
+            android:id="@+id/giftImage"
+            android:layout_width="118dp"
+            android:layout_height="110dp"
+            android:src="@drawable/ic_gift"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp" />
+
+        <!-- 확인 버튼 -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/confirmButton"
+            android:layout_width="70dp"
+            android:layout_height="43dp"
+            android:text="확인"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_gravity="end"
+            android:background="@drawable/btn_confirm" />
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
+
