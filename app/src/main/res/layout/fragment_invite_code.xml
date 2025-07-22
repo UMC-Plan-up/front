@@ -79,7 +79,7 @@
         android:id="@+id/textShareLater"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/share_later"
+        android:text="다음에 입력할게요"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_semibold"
         android:lineSpacingExtra="4dp"

@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#484848"
-    app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.TopRounded">
+    app:cardBackgroundColor="#484848">
 
     <LinearLayout
         android:id="@+id/bottomSheetShareChannel"
