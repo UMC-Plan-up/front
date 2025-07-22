@@ -37,7 +37,7 @@
                     style="@style/TextAppearance.Pretendard.Medium.SM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="사진 보관함"
+                    android:text="@string/dropdown_profile_album"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
                 <ImageView
@@ -64,7 +64,7 @@
                     style="@style/TextAppearance.Pretendard.Medium.SM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="사진 찍기"
+                    android:text="@string/dropdown_profile_camera"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
                 <ImageView
@@ -93,7 +93,7 @@
                     style="@style/TextAppearance.Pretendard.Medium.SM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="파일 선택"
+                    android:text="@string/dropdown_profile_file"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"/>
                 <ImageView

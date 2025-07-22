@@ -1,6 +1,7 @@
 package com.example.planup.mypage
 
 import android.app.Dialog
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
@@ -15,6 +16,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypagePasswordThirdBinding
+import androidx.core.graphics.drawable.toDrawable
 
 class MypagePasswordThirdFragment : Fragment() {
     lateinit var binding: FragmentMypagePasswordThirdBinding
@@ -131,6 +133,7 @@ class MypagePasswordThirdFragment : Fragment() {
         dialog.window?.apply {
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.CENTER)
+            setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         }
         dialog.findViewById<View>(R.id.popup_password_reset_tv).setOnClickListener{
             dialog.dismiss()

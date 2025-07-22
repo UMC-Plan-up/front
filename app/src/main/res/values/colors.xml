@@ -68,4 +68,9 @@
     <color name="gray_profile">#D9D9D9</color>
 
     <color name="transparent">#00000000</color>
+
+    <!-- 마이페이지 N.N.N -->
+    <color name="mypage_version">#787878</color>
+    <!-- 이메일 도메인 -->
+    <color name="email_domain">#4D4D4D</color>
 </resources>

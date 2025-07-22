@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/nickname_back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/arrow_left"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nickname_back_tv"
+        style="@style/Typography_2XL_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/category"
+        android:textColor="@color/black_400"
+        app:layout_constraintBottom_toBottomOf="@id/nickname_back_iv"
+        app:layout_constraintStart_toEndOf="@id/nickname_back_iv"
+        app:layout_constraintTop_toTopOf="@id/nickname_back_iv" />
+
+    <TextView
+        android:id="@+id/name_title_tv"
+        style="@style/Typography_L_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/mypage_nickname"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nickname_back_tv" />
+
+    <TextView
+        android:id="@+id/nickname_title_tv"
+        style="@style/Typography_SM_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="79dp"
+        android:text="@string/nickname_title"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nickname_back_tv" />
+
+    <EditText
+        android:id="@+id/nickname_et"
+        style="@style/Typography_L_Medium"
+        android:layout_width="312dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="13dp"
+        android:background="@drawable/bg_edittext_nickname"
+        android:hint="닉네임을 입력하세요"
+        android:textColor="@color/black_400"
+        android:textColorHint="@color/black_200"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nickname_title_tv" />
+
+    <View
+        android:id="@+id/nick_name_lv"
+        android:layout_width="312dp"
+        android:layout_height="1dp"
+        android:layout_marginEnd="20dp"
+        android:background="@color/semanticB5"
+        app:layout_constraintTop_toBottomOf="@id/nickname_et"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="24dp"/>
+
+    <TextView
+        android:id="@+id/nick_name_error_tv"
+        style="@style/Typography_XS_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/red_300"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nick_name_lv"
+        android:layout_marginStart="24dp"/>
+
+    <TextView
+        android:id="@+id/nickname_complete_btn"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        android:text="@string/btn_complete"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:background="@drawable/bg_btn_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="20dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

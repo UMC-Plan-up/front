@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 마이페이지 메인 화면 세부항목 -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <padding android:top="5dp" android:bottom="5dp"/>
+</shape>

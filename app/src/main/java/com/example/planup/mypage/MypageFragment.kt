@@ -1,7 +1,6 @@
 package com.example.planup.mypage
 
 import android.graphics.drawable.ColorDrawable
-import android.health.connect.datatypes.units.Length
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -37,7 +36,7 @@ class MypageFragment : Fragment() {
         /*닉네임 변경*/
         binding.mypageNicknameIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,MypageProfileFragment())
+                .replace(R.id.main_container,MypageNicknameFragment())
                 .commitAllowingStateLoss()
         }
         /*이메일 변경*/
@@ -70,13 +69,6 @@ class MypageFragment : Fragment() {
                 .replace(R.id.main_container,MypageFriendBlockFragment())
                 .commitAllowingStateLoss()
         }
-
-//        /*인원 제한 관리*/
-//        binding.mypageFriendNumberIv.setOnClickListener{
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_container,MypageFriendLimitFragment())
-//                .commitAllowingStateLoss()
-//        }
 
         /*서비스 알림*/
         binding.mypageAlertServiceIv.setOnClickListener{

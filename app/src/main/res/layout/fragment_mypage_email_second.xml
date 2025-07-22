@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
-        android:text="비밀번호 변경"
+        android:text="@string/mypage_email"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/email_second_back_tv" />
 
@@ -40,7 +40,7 @@
         style="@style/Typography_SM_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/change_email_explain"
+        android:text="@string/link_by_email"
         android:gravity="center"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +60,7 @@
         style="@style/TextAppearance.Pretendard.Medium.L"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="이메일을 받지 못하셨나요?"
+        android:text="@string/not_receive_email"
         app:layout_constraintStart_toStartOf="@id/email_second_explain_tv"
         app:layout_constraintEnd_toEndOf="@id/email_second_explain_tv"
         app:layout_constraintTop_toBottomOf="@id/email_second_explain_tv"

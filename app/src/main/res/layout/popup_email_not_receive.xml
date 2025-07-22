@@ -2,55 +2,49 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="248dp"
+    android:background="@drawable/bg_popup_email">
 
-    <ImageView
-        android:id="@+id/popup_email_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/popup_email"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
     <TextView
         android:id="@+id/popup_email_title_tv"
         style="@style/TextAppearance.Pretendard.Medium.XL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="이메일을 받지 못하셨나요?"
-        app:layout_constraintTop_toTopOf="@id/popup_email_iv"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="34dp"/>
+        android:layout_marginTop="20dp"/>
     <TextView
-        android:id="@+id/popup_email_sub_first_tv"
         style="@style/TextAppearance.Pretendard.Medium.SM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="이메일 다시 보내기"
-        app:layout_constraintStart_toStartOf="@id/popup_email_iv"
-        android:layout_marginStart="26dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="40dp"
         app:layout_constraintTop_toBottomOf="@id/popup_email_title_tv"
-        android:layout_marginTop="34dp"/>
+        android:layout_marginTop="22dp"/>
     <TextView
-        android:id="@+id/popup_email_sub_second_tv"
         style="@style/TextAppearance.Pretendard.Medium.SM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="카카오톡 소셜로그인 사용하기"
-        app:layout_constraintStart_toStartOf="@id/popup_email_iv"
-        app:layout_constraintTop_toBottomOf="@id/popup_email_sub_first_tv"
-        android:layout_marginStart="26dp"
-        android:layout_marginTop="12dp"/>
-    <ImageView
-        android:id="@+id/popup_password_reset_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/cancel_btn_deactivate"
-        app:layout_constraintStart_toStartOf="@id/popup_email_iv"
-        app:layout_constraintEnd_toEndOf="@id/popup_email_iv"
-        app:layout_constraintBottom_toBottomOf="@id/popup_email_iv"
-        android:layout_marginBottom="20dp"/>
-
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_email_title_tv"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="65dp"/>
+    <TextView
+        android:id="@+id/btn_popup_cancel_tv"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        android:text="@string/btn_cancel"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/white"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:background="@drawable/bg_btn_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="31dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

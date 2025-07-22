@@ -1,66 +1,150 @@
 package com.example.planup.mypage
 
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageServiceBinding
+import androidx.core.graphics.drawable.toDrawable
 
-class MypageServiceFragment:Fragment() {
+class MypageServiceFragment : Fragment() {
     lateinit var binding: FragmentMypageServiceBinding
+    var dayList: ArrayList<Boolean> = ArrayList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageServiceBinding.inflate(inflater,container,false)
+        binding = FragmentMypageServiceBinding.inflate(inflater, container, false)
         clickListener()
         return binding.root
     }
 
-    private fun clickListener(){
+    private fun clickListener() {
         /*뒤로 가기*/
-        binding.serviceBackIv.setOnClickListener{
+        binding.serviceBackIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,MypageFragment())
+                .replace(R.id.main_container, MypageFragment())
                 .commitAllowingStateLoss()
         }
 
         /*푸시 알림 설정*/
-        binding.servicePushAllowOnIv.setOnClickListener{
-            binding.servicePushAllowOnIv.visibility = View.GONE
-            binding.servicePushAllowOffIv.visibility = View.VISIBLE
+        binding.servicePushOnIv.setOnClickListener {
+            binding.servicePushOnIv.visibility = View.GONE
+            binding.servicePushOffIv.visibility = View.VISIBLE
         }
-        binding.servicePushAllowOffIv.setOnClickListener{
-            binding.servicePushAllowOnIv.visibility = View.VISIBLE
-            binding.servicePushAllowOffIv.visibility = View.GONE
+        binding.servicePushOffIv.setOnClickListener {
+            binding.servicePushOnIv.visibility = View.VISIBLE
+            binding.servicePushOffIv.visibility = View.GONE
         }
 
         /*설정 목표 알림 설정*/
-        binding.serviceReceiveAlertOnIv.setOnClickListener{
+        binding.serviceReceiveAlertOnIv.setOnClickListener {
             binding.serviceReceiveAlertOnIv.visibility = View.GONE
             binding.serviceReceiveAlertOffIv.visibility = View.VISIBLE
         }
-        binding.serviceReceiveAlertOffIv.setOnClickListener{
+        binding.serviceReceiveAlertOffIv.setOnClickListener {
             binding.serviceReceiveAlertOnIv.visibility = View.VISIBLE
             binding.serviceReceiveAlertOffIv.visibility = View.GONE
         }
 
         /*정기 알림 설정*/
-        binding.serviceRegularAlertOnIv.setOnClickListener{
-            binding.serviceRegularAlertOnIv.visibility = View.GONE
-            binding.serviceRegularAlertOffIv.visibility = View.VISIBLE
-            binding.serviceSetTimeCl.visibility = View.GONE
+        binding.serviceRegularOnIv.setOnClickListener {
+            binding.serviceRegularOnIv.visibility = View.GONE
+            binding.serviceRegularOffIv.visibility = View.VISIBLE
+            binding.serviceDayCl.visibility = View.GONE
         }
-        binding.serviceRegularAlertOffIv.setOnClickListener{
-            binding.serviceRegularAlertOnIv.visibility = View.VISIBLE
-            binding.serviceRegularAlertOffIv.visibility = View.GONE
-            binding.serviceSetTimeCl.visibility = View.VISIBLE
+        binding.serviceRegularOffIv.setOnClickListener {
+            binding.serviceRegularOnIv.visibility = View.VISIBLE
+            binding.serviceRegularOffIv.visibility = View.GONE
+            binding.serviceDayCl.visibility = View.VISIBLE
         }
-        /*요일별 선택 효과 구현 필요*/
+
+        /* 시간 설정 */
+
+        /* 요일 선택 효과 */
+        val selected = ContextCompat.getColor(context, R.color.blue_200)
+        val unselected = ContextCompat.getColor(context, R.color.black_300)
+        binding.serviceEverydayCl.setOnClickListener { //매일
+            binding.serviceEverydayCl.isActivated = !binding.serviceEverydayCl.isActivated
+            binding.serviceEverydayTv.setTextColor(
+                if (binding.serviceEverydayCl.isActivated) selected else unselected
+            )
+        }
+        // 월요일
+        binding.serviceMondayCl.setOnClickListener {
+            binding.serviceMondayCl.isActivated = !binding.serviceMondayCl.isActivated
+            binding.serviceMondayTv.setTextColor(
+                if (binding.serviceMondayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 화요일
+        binding.serviceTuesdayCl.setOnClickListener {
+            binding.serviceTuesdayCl.isActivated = !binding.serviceTuesdayCl.isActivated
+            binding.serviceTuesdayTv.setTextColor(
+                if (binding.serviceTuesdayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 수요일
+        binding.serviceWednesdayCl.setOnClickListener {
+            binding.serviceWednesdayCl.isActivated = !binding.serviceWednesdayCl.isActivated
+            binding.serviceWednesdayTv.setTextColor(
+                if (binding.serviceWednesdayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 목요일
+        binding.serviceThursdayCl.setOnClickListener {
+            binding.serviceThursdayCl.isActivated = !binding.serviceThursdayCl.isActivated
+            binding.serviceThursdayTv.setTextColor(
+                if (binding.serviceThursdayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 금요일
+        binding.serviceFridayCl.setOnClickListener {
+            binding.serviceFridayCl.isActivated = !binding.serviceFridayCl.isActivated
+            binding.serviceFridayTv.setTextColor(
+                if (binding.serviceFridayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 토요일
+        binding.serviceSaturdayCl.setOnClickListener {
+            binding.serviceSaturdayCl.isActivated = !binding.serviceSaturdayCl.isActivated
+            binding.serviceSaturdayTv.setTextColor(
+                if (binding.serviceSaturdayCl.isActivated) selected else unselected
+            )
+        }
+
+        // 일요일
+        binding.serviceSundayCl.setOnClickListener {
+            binding.serviceSundayCl.isActivated = !binding.serviceSundayCl.isActivated
+            binding.serviceSundayTv.setTextColor(
+                if (binding.serviceSundayCl.isActivated) selected else unselected
+            )
+        }
+
+
+    }
+
+    private fun dropDown(view: View, layout: Int) {
+        val inflater = LayoutInflater.from(context)
+        var popUpView = inflater.inflate(layout, null)
+        var popupWindow = PopupWindow(
+            popUpView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+
+        popupWindow.isOutsideTouchable = true
+        popupWindow.showAsDropDown(view)
     }
 }

@@ -46,7 +46,7 @@ class MypageEmailSecondFragment:Fragment() {
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
                 dialog.setCanceledOnTouchOutside(false)
             }
-            dialog.findViewById<View>(R.id.popup_password_reset_iv).setOnClickListener{
+            dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
                 dialog.dismiss()
             }
             dialog.show()

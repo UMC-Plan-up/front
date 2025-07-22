@@ -6,9 +6,9 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.MainActivity
 import com.example.planup.R
@@ -18,7 +18,7 @@ class MypageEmailFirstFragment : Fragment() {
 
     lateinit var binding: FragmentMypageEmailFirstBinding
     lateinit var mailAddr: String
-    lateinit var mailDomain: String
+    lateinit var popupWindow: PopupWindow
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,38 +34,42 @@ class MypageEmailFirstFragment : Fragment() {
         return binding.root
     }
 
-//    override fun onStart() {
-//        super.onStart()
-//
-//    }
-
     private fun clickListener() {
         /*뒤로 가기*/
-        binding.emailFirstBackIv.setOnClickListener {
+        binding.backIv.setOnClickListener {
+            popupWindow.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFragment())
                 .commitAllowingStateLoss()
         }
         /*인증번호 받기 버튼 클릭*/
-        binding.emailFirstReceiveBtnActIv.setOnClickListener {
-            mailAddr =
-                binding.emailFirstEt.text.toString() + "@" + binding.emailFirstDomainAtv.text.toString()
+        binding.btnGetLinkTv.setOnClickListener {
+            if (!binding.btnGetLinkTv.isActivated) return@setOnClickListener
+            mailAddr = binding.emailEt.text.toString()
             Toast.makeText(context,mailAddr,LENGTH_SHORT).show()
 
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageEmailSecondFragment())
                 .commitAllowingStateLoss()
         }
+        /* 이메일 도메인 드롭다운 */
+        binding.emailDropdownIv.setOnClickListener{
+            dropDown(binding.emailEt)
+        }
+    }
+
+    private fun dropDown(view: View){
+        var inflater = LayoutInflater.from(context)
+        var popupView = inflater.inflate(R.layout.dropdown_email_domain,null)
+
+        popupWindow = PopupWindow(
+            popupView,ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        popupWindow.showAsDropDown(view)
+        popupWindow.isOutsideTouchable = true
     }
     private fun textListener(){
-        binding.emailFirstEt.addTextChangedListener(object :TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                checkMail()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
-        binding.emailFirstDomainAtv.addTextChangedListener(object :TextWatcher {
+        binding.emailEt.addTextChangedListener(object :TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 checkMail()
             }
@@ -75,12 +79,10 @@ class MypageEmailFirstFragment : Fragment() {
     }
 
     private fun checkMail() {
-        if (binding.emailFirstEt.text.toString().isNotEmpty() && binding.emailFirstDomainAtv.text.toString().isNotEmpty()) {
-            binding.emailFirstReceiveBtnDeactIv.visibility = View.GONE
-            binding.emailFirstReceiveBtnActIv.visibility = View.VISIBLE
+        if (binding.emailEt.text.toString().isNotEmpty()) {
+            binding.btnGetLinkTv.isActivated = true
         }else{
-            binding.emailFirstReceiveBtnDeactIv.visibility = View.VISIBLE
-            binding.emailFirstReceiveBtnActIv.visibility = View.GONE
+            binding.btnGetLinkTv.isActivated = false
         }
     }
 }

@@ -1,7 +1,0 @@
-<!-- 알림 페이지 처음 접근 시 발생하는 팝업 확인버튼-->
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <corners android:radius="6dp"/>
-    <padding android:left="8dp" android:right="8dp" android:bottom="8dp" android:top="8dp"/>
-    <size android:width="148dp" android:height="40dp"/>
-    <stroke android:width="1dp" android:color="@color/black_200"/>
-</shape>

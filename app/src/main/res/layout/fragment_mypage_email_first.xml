@@ -5,115 +5,85 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/email_first_back_iv"
+        android:id="@+id/back_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:src="@drawable/arrow_left"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/email_first_back_tv"
-        app:layout_constraintBottom_toBottomOf="@id/email_first_back_tv"/>
+        app:layout_constraintTop_toTopOf="@id/category_tv"
+        app:layout_constraintBottom_toBottomOf="@id/category_tv"/>
 
     <TextView
-        android:id="@+id/email_first_back_tv"
-        style="@style/TextAppearance.Pretendard.Medium.XL"
+        android:id="@+id/category_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="목록"
-        app:layout_constraintStart_toEndOf="@id/email_first_back_iv"
+        android:text="@string/category"
+        style="@style/Typography_XL_Medium"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toEndOf="@id/back_iv"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="20dp"/>
 
     <TextView
-        android:id="@+id/email_first_title_tv"
-        style="@style/TextAppearance.Pretendard.Medium.L"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="이메일 변경"
+        android:text="@string/mypage_email"
+        style="@style/Typography_L_Medium"
+        android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_first_back_tv" />
+        app:layout_constraintTop_toBottomOf="@id/category_tv"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp" />
 
     <TextView
-        android:id="@+id/email_first_explain_tv"
-        style="@style/TextAppearance.Pretendard.Medium.L"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="새롭게 사용할 이메일 주소를 입력해 주세요"
+        android:text="@string/new_email"
+        style="@style/Typography_L_Medium"
+        android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/email_first_title_tv"
+        app:layout_constraintTop_toBottomOf="@id/category_tv"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"/>
+        android:layout_marginTop="78dp"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/email_first_email_select_cl"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/email_first_explain_tv"
+    <EditText
+        android:id="@+id/email_et"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/black_400"
+        android:hint="@string/email_enter"
+        android:textColorHint="@color/black_300"
+        android:background="@drawable/bg_edittext_email"
+        android:inputType="textEmailAddress"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="14dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp">
-
-        <EditText
-            android:id="@+id/email_first_et"
-            style="@style/TextAppearance.Pretendard.Medium.S"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="이메일 주소를 입력하세요"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/semanticB4"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/email_first_at_tv"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <TextView
-            android:id="@+id/email_first_at_tv"
-            style="@style/TextAppearance.Pretendard.Medium.S"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="\@"
-            app:layout_constraintStart_toEndOf="@id/email_first_et"
-            app:layout_constraintEnd_toStartOf="@id/email_first_domain_atv"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-        <AutoCompleteTextView
-            android:id="@+id/email_first_domain_atv"
-            style="@style/TextAppearance.Pretendard.Medium.S"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="이메일 주소를 입력하세요"
-            android:textColorHint="@color/semanticB4"
-            android:inputType="textEmailAddress"
-            android:drawableEnd="@drawable/arrow_down"
-            app:layout_constraintStart_toEndOf="@id/email_first_at_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+        app:layout_constraintTop_toBottomOf="@id/category_tv"
+        android:layout_marginTop="111dp"
+        android:layout_marginStart="20dp"/>
     <ImageView
-        android:id="@+id/email_first_receive_btn_act_iv"
+        android:id="@+id/email_dropdown_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/receive_link_activate"
+        android:src="@drawable/ic_arrow_down_email"
+        app:layout_constraintEnd_toEndOf="@id/email_et"
+        app:layout_constraintTop_toTopOf="@id/email_et"
+        app:layout_constraintBottom_toBottomOf="@id/email_et"
+        android:layout_marginEnd="8dp"/>
+
+    <TextView
+        android:id="@+id/btn_get_link_tv"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        android:text="@string/btn_get_link"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:background="@drawable/bg_btn_selector"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/email_first_receive_btn_deact_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/receive_link_deactivate"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"
-        android:visibility="visible"/>
+        android:layout_marginBottom="30dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

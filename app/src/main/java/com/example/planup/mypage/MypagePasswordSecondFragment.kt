@@ -1,6 +1,8 @@
 package com.example.planup.mypage
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -10,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypagePasswordSecondBinding
+import androidx.core.graphics.drawable.toDrawable
 
 class MypagePasswordSecondFragment: Fragment() {
 
@@ -46,7 +49,8 @@ class MypagePasswordSecondFragment: Fragment() {
             dialog.window?.apply {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
                 setGravity(Gravity.BOTTOM)
-                dialog.findViewById<View>(R.id.popup_password_reset_iv).setOnClickListener{
+                setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+                dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
                     dialog.dismiss()
                 }
                 dialog.setCanceledOnTouchOutside(false)
