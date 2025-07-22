@@ -59,6 +59,7 @@
     <string name="setting_category2"><u>1개의 카테고리를 필수로 선택해 주세요.</u></string>
     <string name="goal_share_info">
     플랜업에서 설정한 목표들은 기본적으로 친구와 공유됩니다.
-    목표 공유 설정은 추후에도 목표 탭에서 변경 가능해요!
-</string>
+    목표 공유 설정은 추후에도 목표 탭에서 변경 가능해요!</string>
+
+
 </resources>

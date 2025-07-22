@@ -1,5 +1,6 @@
 package com.example.planup
 
+import FriendChallengeAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,10 @@ import com.example.planup.alert.AlertFragment
 
 class HomeFragment : Fragment() {
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: DailyToDoAdapter
+    private lateinit var dailyRecyclerVIew: RecyclerView
+    private lateinit var dailyAdapter: DailyToDoAdapter
+    private lateinit var friendRecyclerView: RecyclerView
+    private lateinit var friendAdapter: FriendChallengeAdapter
 
     private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
@@ -29,8 +32,8 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.daily_todo_rv)
-        recyclerView.layoutManager =
+        dailyRecyclerVIew = view.findViewById(R.id.daily_todo_rv)
+        dailyRecyclerVIew.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         val dailyToDos = listOf(
@@ -39,11 +42,22 @@ class HomeFragment : Fragment() {
             DailyToDo("운동", 50, 3)
         )
 
-        adapter = DailyToDoAdapter(dailyToDos)
-        recyclerView.adapter = adapter
+        dailyAdapter = DailyToDoAdapter(dailyToDos)
+        dailyRecyclerVIew.adapter = dailyAdapter
 
         val progressBar = view.findViewById<ProgressBar>(R.id.daily_todo_pb)
         progressBar.progress = 75
+
+        friendRecyclerView = view.findViewById(R.id.home_friend_challenge_rv)
+        friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val dummyData = listOf(
+            FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
+            FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
+        )
+
+        friendAdapter = FriendChallengeAdapter(dummyData)
+        friendRecyclerView.adapter = friendAdapter
     }
 
     private fun clickListener(){

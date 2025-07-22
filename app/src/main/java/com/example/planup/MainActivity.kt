@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 R.id.fragment_home -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, HomeFragment())
+                        .replace(R.id.main_container, GoalListFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
