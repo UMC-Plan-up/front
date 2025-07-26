@@ -7,20 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.databinding.FragmentAlertBinding
+import com.example.planup.databinding.FragmentHomeAlertBinding
 import com.example.planup.main.home.adapter.AlertVPAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 
-class AlertFragment : Fragment() {
-    lateinit var binding: FragmentAlertBinding
+class HomeAlertFragment : Fragment() {
+    lateinit var binding: FragmentHomeAlertBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAlertBinding.inflate(inflater, container, false)
+        binding = FragmentHomeAlertBinding.inflate(inflater, container, false)
         setTabLayout() //탭 레이아웃
 
         return binding.root

@@ -42,30 +42,25 @@ class MypageDeleteAccountFragment: Fragment(){
         }
 
         /*회원 탈퇴 체크박스*/
-        binding.deleteAccountCheckIv.setOnClickListener{
-            /*체크박스 체크 이미지 필요함*/
-            /*회원 탈퇴하기 비활성화 버튼 필요함*/
-            binding.deleteAccountCheckTv.setTextColor(selectedColor)
-            binding.deleteAccountBtnIv.visibility =View.VISIBLE
+        binding.deleteAgreeCheckIv.setOnClickListener{
+            binding.deleteAgreeCheckIv.visibility = View.GONE
+            binding.deleteAgreeUncheckIv.visibility = View.VISIBLE
+            binding.btnDeleteAccountTv.isActivated = false
         }
-        /*회원 탈퇴 체크박스*/
-        /*체크박스 체크 이미지 필요함*/
-        /*회원 탈퇴하기 비활성화 버튼 필요함*/
-        binding.deleteAccountCheckIv.setOnClickListener{
-            /*체크박스 체크 이미지 필요함*/
-            /*회원 탈퇴하기 비활성화 버튼 필요함*/
-            binding.deleteAccountCheckTv.setTextColor(unselectedColor)
-            binding.deleteAccountBtnIv.visibility =View.VISIBLE
+        binding.deleteAgreeUncheckIv.setOnClickListener{
+            binding.deleteAgreeCheckIv.visibility = View.VISIBLE
+            binding.deleteAgreeUncheckIv.visibility = View.GONE
+            binding.btnDeleteAccountTv.isActivated = true
         }
 
         /*회원 탈퇴 버튼*/
-        binding.deleteAccountBtnIv.setOnClickListener{
+        binding.btnDeleteAccountTv.setOnClickListener{
             /*회원 탈퇴 로직 필요함*/
             /*로그인 or 회원가입 액티비티 연결 되어야 함*/
 //            (context as MainActivity).supportFragmentManager.beginTransaction()
 //                .replace(R.id.main_container,LoginActivity())
 //                .commitAllowingStateLoss()
-            Toast.makeText(context,"회원 탈퇴 완료",LENGTH_SHORT).show()
+            if (binding.btnDeleteAccountTv.isActivated) Toast.makeText(context,"회원 탈퇴 완료",LENGTH_SHORT).show()
         }
     }
 }

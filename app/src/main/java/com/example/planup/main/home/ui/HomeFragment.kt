@@ -13,6 +13,7 @@ import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
+import com.example.planup.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
 
@@ -66,8 +67,11 @@ class HomeFragment : Fragment() {
 
     private fun clickListener(){
         binding.homeAlarmCl.setOnClickListener{
+//            (context as MainActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.main_container, HomeAlertFragment())
+//                .commitAllowingStateLoss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, AlertFragment())
+                .replace(R.id.main_container, ChallengeAlertFragment())
                 .commitAllowingStateLoss()
         }
     }
