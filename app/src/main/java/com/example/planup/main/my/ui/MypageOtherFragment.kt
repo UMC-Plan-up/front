@@ -1,6 +1,7 @@
 package com.example.planup.main.my.ui
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
@@ -12,6 +13,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageOtherBinding
 import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.login.LoginActivity
 
 class MypageOtherFragment:Fragment() {
     lateinit var binding:FragmentMypageOtherBinding
@@ -62,9 +64,8 @@ class MypageOtherFragment:Fragment() {
 
         /*확인 버튼 클릭 시 로그인 화면으로 이동*/
         dialog.findViewById<View>(R.id.btn_logout_ok_tv).setOnClickListener{
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_container,LoginActivity())
-//                .commitAllowingStateLoss()
+            val intent = Intent(context as MainActivity,LoginActivity::class.java)
+            startActivity(intent)
         }
         dialog.show()
     }
