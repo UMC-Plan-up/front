@@ -16,7 +16,7 @@ class ResendEmailBottomSheet : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.bottom_sheet_resend_email, container, false)
+        return inflater.inflate(R.layout.popup_resend_email, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
