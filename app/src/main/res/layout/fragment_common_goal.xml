@@ -23,7 +23,7 @@
             android:id="@+id/communityTitle"
             android:layout_width="284dp"
             android:layout_height="30dp"
-            android:text="친구/커뮤니티와 공동 목표 설정하기"
+            android:text="@string/goal_select_together"
             android:textSize="20sp"
             android:fontFamily="@font/pretendard_semibold"
             android:textColor="@color/black_400"
@@ -32,35 +32,59 @@
         <LinearLayout
             android:id="@+id/tabContainer"
             android:layout_width="match_parent"
-            android:layout_height="34dp"
+            android:layout_height="40dp"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:weightSum="2">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="0dp"
+                app:cardElevation="8dp"
+                app:cardMaxElevation="12dp"
+                app:cardUseCompatPadding="false"
+                app:cardPreventCornerOverlap="false"
+                app:shapeAppearanceOverlay="@style/TopRoundedShape">
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/friendTab"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="0dp"
-                android:layout_height="34dp"
-                android:layout_weight="1"
-                android:text="친구와 함께"
-                android:textSize="16sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:background="@drawable/bg_tab_left"
-                android:textColor="#4B5563" />
+                    android:id="@+id/friendTab"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/community_with_friends"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:backgroundTint="@null"
+                    android:background="#E4E6E8"
+                    android:textColor="#4B5563" />
+            </com.google.android.material.card.MaterialCardView>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/communityTab"
-                style="@style/Widget.AppCompat.Button.Borderless"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
-                android:layout_height="34dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="커뮤니티와 함께"
-                android:textSize="16sp"
-                android:fontFamily="@font/pretendard_medium"
-                android:background="@drawable/bg_tab_right"
-                android:textColor="#5383E3" />
+                android:layout_marginStart="0dp"
+                app:cardElevation="8dp"
+                app:cardMaxElevation="12dp"
+                app:cardUseCompatPadding="false"
+                app:cardPreventCornerOverlap="false"
+                app:shapeAppearanceOverlay="@style/TopRoundedShape">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/communityTab"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="@string/community_with_community"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:backgroundTint="@null"
+                    android:background="#CCDDFE"
+                    android:textColor="#5383E3" />
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/goalCard1"
@@ -69,7 +93,6 @@
             android:orientation="vertical"
             android:background="@drawable/bg_bottomsheet_goal"
             android:padding="12dp" >
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -399,7 +422,7 @@
                 android:id="@+id/moreText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="더보기"
+                android:text="@string/community_see_more"
                 android:textSize="16sp"
                 android:textColor="@color/black_400"
                 android:fontFamily="@font/pretendard_medium" />
@@ -428,7 +451,7 @@
                 android:layout_width="110dp"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
-                android:text="새 커뮤니티 만들기"
+                android:text="@string/community_create_new"
                 android:textSize="14sp"
                 android:textColor="#FFFFFF"
                 android:fontFamily="@font/pretendard_medium" />

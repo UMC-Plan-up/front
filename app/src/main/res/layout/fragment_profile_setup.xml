@@ -6,7 +6,6 @@
     android:background="#FFFFFF"
     android:padding="24dp" >
 
-
     <ImageView
         android:id="@+id/backIcon"
         android:layout_width="24dp"
@@ -20,7 +19,7 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="프로필 설정"
+        android:text="@string/profile_setup_title"
         android:fontFamily="@font/pretendard_semibold"
         android:textSize="20dp"
         android:textColor="@color/black_400"
@@ -79,7 +78,7 @@
         android:id="@+id/nickNameLabel"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:text="닉네임 설정"
+        android:text="@string/profile_nickname_label"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_400"
@@ -110,7 +109,7 @@
         android:id="@+id/nicknameGuide1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="* 20자 이내로 입력해 주세요."
+        android:text="@string/profile_nickname_error_length"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="#5C91FC"
         android:textSize="12sp"
@@ -122,7 +121,7 @@
         android:id="@+id/nicknameGuide2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="* 이미 사용 중인 닉네임입니다."
+        android:text="@string/profile_nickname_error_duplicate"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="#5C91FC"
         android:textSize="12sp"
@@ -132,13 +131,14 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:text="다음"
+        android:text="@string/btn_next"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
+        android:backgroundTint="@null"
         android:layout_marginTop="617dp"
         android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/backIcon"

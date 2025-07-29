@@ -6,7 +6,6 @@
     android:background="#FFFFFF"
     android:padding="24dp">
 
-
     <ImageView
         android:id="@+id/backIcon"
         android:layout_width="24dp"
@@ -16,12 +15,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <TextView
         android:id="@+id/goalDetailTitle"
         android:layout_width="286dp"
         android:layout_height="33dp"
-        android:text="친구 님의 세부 목표"
+        android:text="@string/goal_friend_detail"
         android:textSize="22sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
@@ -33,7 +31,7 @@
         android:id="@+id/goalDetailSubtitle"
         android:layout_width="295dp"
         android:layout_height="21dp"
-        android:text="친구가 설정한 세부 목표를 그대로 적용할 수 있어요."
+        android:text="@string/goal_friend_detail_description"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
@@ -45,7 +43,7 @@
         android:id="@+id/authMethodTitle"
         android:layout_width="103dp"
         android:layout_height="27dp"
-        android:text="인증 방식 설정"
+        android:text="@string/set_certification_method"
         android:textSize="18sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
@@ -57,7 +55,7 @@
         android:id="@+id/authMethodDescription"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:text="한 가지 인증 방식을 선택하더라도, 이외의 방식을 추가적으로 활용할 수 있어요. 단, 한번 정한 인증 방식은 수정할 수 없으니 신중하게 결정해 주세요."
+        android:text="@string/set_certification_method_notice"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
@@ -97,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
-                android:text="타이머 인증"
+                android:text="@string/auth_timer"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black_400" />
@@ -106,7 +104,7 @@
                 android:id="@+id/timerAuthDescription"
                 android:layout_width="142dp"
                 android:layout_height="wrap_content"
-                android:text="타이머 인증을 선택할 시, 유저의 타이머 기록이 성취율 측정 및 랭킹에 반영됩니다."
+                android:text="@string/auth_timer_description"
                 android:textSize="12sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black_400" />
@@ -145,7 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
-                android:text="사진 인증"
+                android:text="@string/auth_photo"
                 android:textSize="14sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black_400" />
@@ -154,19 +152,18 @@
                 android:id="@+id/pictureAuthDescription"
                 android:layout_width="142dp"
                 android:layout_height="wrap_content"
-                android:text="사진 인증을 선택할 시, 유저의 인증샷 업로드 기록이 성취율 측정 및 랭킹에 반영됩니다."
+                android:text="@string/auth_photo_description"
                 android:textSize="12sp"
                 android:fontFamily="@font/pretendard_medium"
                 android:textColor="@color/black_400" />
         </LinearLayout>
     </LinearLayout>
 
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:text="다음"
+        android:text="@string/btn_next"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"

@@ -49,7 +49,6 @@
         android:id="@+id/friend_block_list_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        tools:listitem="@layout/item_mypage_block_friend"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@id/email_second_title_tv"

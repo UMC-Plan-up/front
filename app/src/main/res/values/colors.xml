@@ -69,6 +69,8 @@
 
     <color name="transparent">#00000000</color>
 
+    <color name="white_font">#FDFEFF</color>
+
     <!-- 마이페이지 N.N.N -->
     <color name="mypage_version">#787878</color>
     <!-- 이메일 도메인 -->

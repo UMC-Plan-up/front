@@ -50,7 +50,6 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
     }
 
     /* popup_share.xml을 PopupWindow로 띄우는 함수 */
-    // TODO : 공유버튼 누르면 자꾸 LoginActivity로 튕김 수정해야함
     private fun showSharePopup(anchorView: View) {
         val popupView = LayoutInflater.from(requireContext())
             .inflate(R.layout.popup_share, null)
@@ -67,10 +66,10 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         popupWindow.elevation = 8f
 
         // 팝업 내부 버튼 클릭 이벤트
-        val kakaoShare = popupView.findViewById<LinearLayout>(R.id.kakaoShareText)
-        val smsShare = popupView.findViewById<LinearLayout>(R.id.smsShareText)
-        val copyText = popupView.findViewById<LinearLayout>(R.id.copyText)
-        val etcShare = popupView.findViewById<LinearLayout>(R.id.etcShareText)
+        val kakaoShare = popupView.findViewById<TextView>(R.id.kakaoShareText)
+        val smsShare = popupView.findViewById<TextView>(R.id.smsShareText)
+        val copyText = popupView.findViewById<TextView>(R.id.copyText)
+        val etcShare = popupView.findViewById<TextView>(R.id.etcShareText)
 
         kakaoShare.setOnClickListener {
             // TODO: 카카오톡 공유 기능
@@ -85,12 +84,13 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
             popupWindow.dismiss()
         }
         etcShare.setOnClickListener {
-            // TODO: 기타 공유 기능
+            ShareChannelBottomSheet().show(parentFragmentManager, "ShareChannel")
             popupWindow.dismiss()
         }
+        popupWindow.showAsDropDown(anchorView, 0, dpToPx(7.5f))
+    }
 
-        // 팝업 띄우기 (버튼 아래)
-        popupWindow.showAsDropDown(anchorView)
+    private fun dpToPx(dp: Float): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 }
-

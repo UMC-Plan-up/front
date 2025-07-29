@@ -73,7 +73,7 @@ class MypageFragment : Fragment() {
         /*서비스 알림*/
         binding.mypageAlertServiceIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageServiceFragment())
+                .replace(R.id.main_container, MypageAlertFragment())
                 .commitAllowingStateLoss()
         }
 

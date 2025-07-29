@@ -45,7 +45,7 @@
         android:id="@+id/goalShareNoticeText"
         android:layout_width="300dp"
         android:layout_height="24dp"
-        android:text="친구들에게 내 목표가 공개됩니다!"
+        android:text="@string/challenge_finish_setting_subtitle"
         android:textSize="16sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/blue_200"
@@ -64,7 +64,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="357dp"
-        android:text="플랜업애서 설정한 목표들은 기본적으로 친구와 공유됩니다. 목표 공유 설정은 추후에도 ‘목표’ 탭에서 변경 가능해요!" />
+        android:text="@string/challenge_finish_setting_content" />
 
 
 
@@ -72,7 +72,7 @@
         android:id="@+id/startPlanUpButton"
         android:layout_width="match_parent"
         android:layout_height="44dp"
-        android:text="Plan-Up 사용 시작하기"
+        android:text="@string/btn_start_PlanUp"
         android:textSize="16sp"
         android:textColor="@color/black_300"
         android:textAllCaps="false"

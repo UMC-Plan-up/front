@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="@android:color/white"
+    app:shapeAppearanceOverlay="@style/TopRoundedCard" >
+
+    <LinearLayout
+        android:id="@+id/emailBottomSheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="30dp"
+        android:paddingTop="35dp"
+        android:paddingBottom="24dp">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="215dp"
+            android:layout_height="32dp"
+            android:text="@string/popup_email_title"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/pretendard_semibold"
+            android:textSize="20sp"
+            android:textColor="@color/black_400" />
+
+        <TextView
+            android:id="@+id/resendEmailOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/popup_email_again"
+            android:layout_marginStart="15dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:textSize="16sp"
+            android:textColor="@color/black_400" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/black_100" />
+
+        <TextView
+            android:id="@+id/kakaoLoginOption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/popup_email_kakao"
+            android:fontFamily="@font/pretendard_medium"
+            android:textSize="16sp"
+            android:layout_marginStart="15dp"
+            android:textColor="@color/black_400" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/cancelButton"
+            android:layout_width="304dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="33dp"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/btn_cancel"
+            android:textSize="16sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/pretendard_medium"
+            android:background="@drawable/btn_next_background"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
