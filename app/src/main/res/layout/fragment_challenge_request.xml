@@ -327,7 +327,7 @@
                     android:id="@+id/challenge_request_penalty_enter_iv"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_coffee"
+                    android:src="@drawable/ic_coffee2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

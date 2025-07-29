@@ -1,11 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:padding="24dp">
-
 
     <ImageView
         android:id="@+id/backIcon"
@@ -16,12 +14,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-
     <TextView
         android:id="@+id/goalSettingTitle"
         android:layout_width="110dp"
         android:layout_height="30dp"
-        android:text="목표 설정하기"
+        android:text="@string/goal_select_title"
         android:textSize="20sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
@@ -29,13 +26,13 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="31dp" />
 
-
     <LinearLayout
         android:id="@+id/communityGoalLayout"
         android:layout_width="0dp"
         android:layout_height="82dp"
         android:orientation="vertical"
         android:background="@drawable/bg_goal_black"
+        android:gravity="center_vertical"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:paddingTop="8dp"
@@ -48,11 +45,10 @@
         <TextView
             android:id="@+id/communityGoalText"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="친구/커뮤니티와 함께 목표 설정하기"
-            android:textSize="20sp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:text="@string/goal_select_together"
+            android:textSize="18sp"
             android:textColor="@color/black_400"
             android:fontFamily="@font/pretendard_medium" />
 
@@ -63,7 +59,7 @@
         android:layout_width="0dp"
         android:layout_height="82dp"
         android:orientation="vertical"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:background="@drawable/bg_goal_black"
         android:paddingStart="12dp"
         android:paddingEnd="0dp"
@@ -78,8 +74,8 @@
             android:id="@+id/challengeGoalTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="친구와 1:1 챌린지 도전하기"
-            android:textSize="20sp"
+            android:text="@string/goal_select_challenge"
+            android:textSize="18sp"
             android:textColor="@color/black_400"
             android:fontFamily="@font/pretendard_medium" />
 
@@ -88,25 +84,23 @@
             android:id="@+id/challengeGoalSubtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="친구와 패널티를 걸고 도전해 보세요!"
+            android:text="@string/goal_select_challenge_explain"
             android:textSize="14sp"
             android:textColor="@color/black_300"
             android:fontFamily="@font/pretendard_medium" />
     </LinearLayout>
 
-
     <TextView
         android:id="@+id/categorySettingTitle"
         android:layout_width="99dp"
         android:layout_height="27dp"
-        android:text="카테고리 설정"
+        android:text="@string/category_setting"
         android:textSize="18dp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="293dp" />
-
 
     <LinearLayout
         android:id="@+id/categoryStudyLayout"
@@ -127,13 +121,12 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="공부하기"
+            android:text="@string/community_category_study"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
 
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/categoryReadingLayout"
@@ -154,7 +147,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="독서하기"
+            android:text="@string/community_category_reading"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -180,7 +173,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="명상하기"
+            android:text="@string/community_category_meditation"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -208,7 +201,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="수면 패턴 관리"
+            android:text="@string/community_category_sleep"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -236,7 +229,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="식습관 관리"
+            android:text="@string/community_category_diet"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -264,7 +257,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="악기 배우기"
+            android:text="@string/community_category_music"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -292,7 +285,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="운동하기"
+            android:text="@string/community_category_exercise"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -320,7 +313,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="일기 쓰기"
+            android:text="@string/community_category_journal"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -348,7 +341,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="직접 설정하기"
+            android:text="@string/category_custom_option"
             android:textSize="16sp"
             android:textColor="#448AF7"
             android:fontFamily="@font/pretendard_medium" />
@@ -359,7 +352,7 @@
         android:id="@+id/customCategoryEditText"
         android:layout_width="170dp"
         android:layout_height="40dp"
-        android:hint="요리하기"
+        android:hint="@string/category_cooking"
         android:textColorHint="@color/black_300"
         android:fontFamily="@font/pretendard_medium"
         android:paddingStart="12dp"
@@ -374,7 +367,7 @@
         android:id="@+id/nextButton"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:text="다음"
+        android:text="@string/btn_next"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"
@@ -387,28 +380,31 @@
 
     <TextView
         android:id="@+id/categoryGuideText1"
-        android:layout_width="200dp"
-        android:layout_height="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/setting_category1"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
         android:textSize="12sp"
-        android:layout_marginTop="582dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginStart="6dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/backIcon" />
+        app:layout_constraintTop_toBottomOf="@id/customCategoryEditText" />
 
     <TextView
         android:id="@+id/categoryGuideText2"
-        android:layout_width="200dp"
-        android:layout_height="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/setting_category2"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
         android:textSize="12sp"
-        android:layout_marginTop="600dp"
-        android:layout_marginStart="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="6dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/backIcon" />
+        app:layout_constraintTop_toBottomOf="@id/categoryGuideText1" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

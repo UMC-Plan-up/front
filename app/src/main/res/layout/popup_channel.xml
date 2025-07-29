@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardElevation="0dp"
-    app:cardBackgroundColor="#484848">
+    app:cardBackgroundColor="#484848"
+    app:shapeAppearanceOverlay="@style/TopRoundedCard" >
 
     <LinearLayout
         android:id="@+id/bottomSheetShareChannel"
@@ -18,15 +19,14 @@
 
         <TextView
             android:id="@+id/titleText"
-            android:layout_width="93dp"
-            android:layout_height="27dp"
-            android:text="공유하기"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
             android:fontFamily="@font/pretendard_bold"
             android:textSize="20sp"
             android:textColor="#FFFFFF"
             android:layout_gravity="start" />
 
-        <!-- 첫 번째 줄 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -111,7 +111,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 두 번째 줄 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

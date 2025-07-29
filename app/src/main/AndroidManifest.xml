@@ -25,6 +25,7 @@
         <activity android:name=".main.MainActivity" />
         <activity android:name=".signup.SignupActivity" />
         <activity android:name=".password.ResetPasswordActivity" />
+        <activity android:name=".goal.GoalSettingActivity" />
 
     </application>
 

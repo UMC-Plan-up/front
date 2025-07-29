@@ -42,10 +42,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         nicknameGuide1.visibility = View.GONE
         nicknameGuide2.visibility = View.GONE
 
-
-        nextButton.setBackgroundColor(
-            requireContext().getColor(R.color.blue_200)
-        )  // 버튼 항상 활성화
+        /* 처음에는 다음 버튼 비활성화 */
+        setNextButtonEnabled(false)
 
         /* 닉네임 입력 변화 감지 → 유효성 검사 */
         nicknameEditText.addTextChangedListener {
@@ -56,20 +54,28 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
             val isTooLong = nickname.length > 20
             val isTaken = takenNicknames.contains(nickname)
+            val isEmpty = nickname.isEmpty()
 
             when {
                 isTooLong -> {
                     // 20자 초과 → 안내문 표시
                     nicknameGuide1.visibility = View.VISIBLE
+                    setNextButtonEnabled(false)
                 }
 
                 isTaken -> {
                     // 중복 닉네임 → 안내문 표시
                     nicknameGuide2.visibility = View.VISIBLE
+                    setNextButtonEnabled(false)
+                }
+
+                isEmpty -> {
+                    setNextButtonEnabled(false)
                 }
 
                 else -> {
-                    // 조건 만족 시 안내문 없음
+                    // 모든 조건 만족 → 버튼 활성화
+                    setNextButtonEnabled(true)
                 }
             }
         }
@@ -102,13 +108,19 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         }
     }
 
+    /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
+    private fun setNextButtonEnabled(enabled: Boolean) {
+        nextButton.isEnabled = enabled
+        // 버튼 상태에 따라 selector 적용됨
+        // 배경 drawable에서 반경, 색상 모두 자동 적용
+        nextButton.setBackgroundResource(R.drawable.btn_next_background)
+    }
 
     /* InviteCodeFragment로 이동하는 메서드 */
     private fun openNextStep() {
         // SignupActivity의 navigateToFragment() 호출
         (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
     }
-
 
     /* 현재 닉네임과 프로필 이미지를 저장하는 함수 (나중에 API 연동 시 사용) */
     private fun saveProfileData(nickname: String) {
@@ -117,8 +129,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         // TODO: 닉네임과 프로필을 회원가입 API요청 시 서버에 함께 전송해야 함
     }
 
-
-    /*  editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
+    /* editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
     private fun showProfilePopup(anchorView: View) {
         // popup_profile.xml inflate
         val popupView = LayoutInflater.from(requireContext())
@@ -164,4 +175,5 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         )
     }
 }
+
 
