@@ -199,8 +199,11 @@
     <string name="challenge_request_verify">인증 방식</string>
     <string name="challenge_request_time">목표 투자 시간</string>
 
-    <!-- fragment_challenge_penalty.xml -->
-    <string name="challenge_penalty_offer">패널티 제안하기</string>
+    <!-- fragment_challenge_set_penalty.xml -->
+    <!-- fragment_challenge_new_penalty.xml -->
+    <string name="challenge_penalty_offer">패널티 제안</string>
+    <string name="challenge_offer_penalty">패널티 제안하기</string>
+    <string name="challenge_penalty_explain">친구에게 페널티를 제안해 보세요!</string>
     <string name="challenge_penalty_coffee">커피 사주기</string>
     <string name="challenge_penalty_snack">식사 계산하기</string>
     <string name="challenge_penalty_cleaning">청소하기</string>
@@ -246,29 +249,50 @@
     <string name="popup_push_title">앱 Push 알림 받기를 설정하시겠어요?</string>
     <string name="popup_push_explain">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
 
-    <!-- fragment_challenge_alert.xml -->
+    <!-- fragment_challenge_set_alert.xml -->
     <string name="setting_alert_title">알림 설정</string>
     <string name="setting_alert_receive">설정 목표 알림 받기</string>
     <string name="setting_alert_regular">정기 알림 시각 설정</string>
-    <string-array name="challenge_alert_time">
+
+
+    <!--  GoalActivity  -->
+    <!-- fragment_goal_select.xml -->
+    <string name="goal_select_title">목표 설정하기</string>
+    <string name="goal_select_together">친구/커뮤니티와 함께 목표 설정하기</string>
+    <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
+    <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
+
+    <!-- fragment_challenge_set_photo.xml -->
+    <string name="one">01</string>
+    <string name="two">02</string>
+    <string name="three">03</string>
+    <string name="four">04</string>
+    <string name="five">05</string>
+    <string name="six">06</string>
+    <string name="seven">07</string>
+
+    <!-- 스피너 드롭다운 -->
+    <string-array name="spinner_morning_afternoon">
         <item name="morning">오전</item>
         <item name="afternoon">오후</item>
     </string-array>
-    <string-array name="challenge_alert_hour">
-    <item name="one">01</item>
-    <item name="two">02</item>
-    <item name="three">03</item>
-    <item name="four">04</item>
-    <item name="five">05</item>
-    <item name="six">06</item>
-    <item name="seven">07</item>
-    <item name="eight">08</item>
-    <item name="nine">09</item>
-    <item name="ten">10</item>
-    <item name="eleven">11</item>
-    <item name="twelve">12</item>
+    <string-array name="spinner_hour">
+        <item name="zeor">00</item>
+        <item name="one">01</item>
+        <item name="two">02</item>
+        <item name="three">03</item>
+        <item name="four">04</item>
+        <item name="five">05</item>
+        <item name="six">06</item>
+        <item name="seven">07</item>
+        <item name="eight">08</item>
+        <item name="nine">09</item>
+        <item name="ten">10</item>
+        <item name="eleven">11</item>
+        <item name="twelve">12</item>
     </string-array>
-    <string-array name="challenge_alert_minute">
+    <string-array name="spinner_minute_second">
+        <item name="zeor">00</item>
         <item name="one">01</item>
         <item name="two">02</item>
         <item name="three">03</item>
@@ -330,12 +354,6 @@
         <item name="fifty_nine">59</item>
     </string-array>
 
-    <!-- fragment_goal_select.xml -->
-    <string name="goal_select_title">목표 설정하기</string>
-    <string name="goal_select_together">친구/커뮤니티와 함께 목표 설정하기</string>
-    <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
-    <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
-
     <!-- 버튼 -->
     <string name="btn_login">로그인</string>
     <string name="btn_next">다음</string>
@@ -377,7 +395,7 @@
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
-    
+
     <!-- 에러 메시지 -->
     <string name="error_more_one_word">1글자 이상 작성해주세요.</string>
     <string name="error_less_twenty_word">20자 이내로 작성해주세요.</string>

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.PopupWindow
 import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -23,9 +22,9 @@ class MypageAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageAlertBinding.inflate(inflater, container, false)
-        setSpinner(binding.serviceTimeSp,R.array.challenge_alert_time)
-        setSpinner(binding.serviceHourSp,R.array.challenge_alert_hour)
-        setSpinner(binding.serviceMinuteSp,R.array.challenge_alert_minute)
+        setSpinner(binding.serviceTimeSp,R.array.spinner_morning_afternoon)
+        setSpinner(binding.serviceHourSp,R.array.spinner_hour)
+        setSpinner(binding.serviceMinuteSp,R.array.spinner_minute_second)
         clickListener()
         return binding.root
     }
@@ -143,8 +142,8 @@ class MypageAlertFragment : Fragment() {
     private fun setSpinner(spinnerId:AppCompatSpinner, stringId: Int){
         val spinner = spinnerId
         val items = resources.getStringArray(stringId)
-        val adapter = ArrayAdapter(requireContext(), R.layout.item_challenge_alert_spinner, items)//스피너 위젯 설정
-        adapter.setDropDownViewResource(R.layout.dropdown_alert_ampm)//드롭다운 메뉴 설정
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_challenge_alert, items)//스피너 위젯 설정
+        adapter.setDropDownViewResource(R.layout.dropdown_alert)//드롭다운 메뉴 설정
         spinner.adapter = adapter
 
         spinner.setSelection(0,false)

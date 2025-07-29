@@ -8,10 +8,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalSelectBinding
-import com.example.planup.main.MainActivity
+import com.example.planup.goal.GoalActivity
 
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
@@ -28,45 +29,58 @@ class GoalSelectFragment : Fragment() {
     }
 
     private fun clickListener() {
+        val select = ContextCompat.getColor(context,R.color.blue_200)
+        val unselect = ContextCompat.getColor(context,R.color.black_400)
+
+        //뒤로가기
+        binding.goalSelectBackIv.setOnClickListener {
+
+        }
         //함께 목표 설정하기 클릭
-        binding.goalSettingTogetherCl.setOnClickListener {
-            binding.goalSettingTogetherCl.isSelected = true
-            binding.goalSettingChallengeCl.isSelected = false
+        binding.goalSelectTogetherCl.setOnClickListener {
+            binding.goalSelectTogetherCl.isSelected = true
+            binding.goalSelectChallengeCl.isSelected = false
+            binding.goalSelectTogetherTv.setTextColor(select)
+            binding.goalSelectChallengeTv.setTextColor(unselect)
+            binding.goalSelectPenaltyTv.setTextColor(unselect)
         }
 
         //1:1 챌린지 도전하기 클릭
-        binding.goalSettingChallengeCl.setOnClickListener {
-            binding.goalSettingTogetherCl.isSelected = false
-            binding.goalSettingChallengeCl.isSelected = true
+        binding.goalSelectChallengeCl.setOnClickListener {
+            binding.goalSelectTogetherCl.isSelected = false
+            binding.goalSelectChallengeCl.isSelected = true
+            binding.goalSelectTogetherTv.setTextColor(unselect)
+            binding.goalSelectChallengeTv.setTextColor(select)
+            binding.goalSelectPenaltyTv.setTextColor(select)
         }
 
         //다음 버튼 클릭 후 선택한 목표에 따른 페이지 이동
         binding.goalSelectNextBtn.setOnClickListener {
-            if (binding.goalSettingTogetherCl.isSelected) {
-                (context as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, ChallengeSettingFragment())
+            if (binding.goalSelectTogetherCl.isSelected) {
+                (context as GoalActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.goal_container, ChallengeSetGoalFragment())
                     .commitAllowingStateLoss()
-            } else if (binding.goalSettingChallengeCl.isSelected) {
+            } else if (binding.goalSelectChallengeCl.isSelected) {
                 if(sleepChallenge==2){
                     makeToast()
                     sleepChallenge --
                     return@setOnClickListener
                 }
-                (context as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, ChallengeSettingFragment())
+                (context as GoalActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.goal_container, ChallengeSetGoalFragment())
                     .commitAllowingStateLoss()
             }
         }
     }
     private fun makeToast(){
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template_s,null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = getString(R.string.toast_challenge_setting)
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.CENTER_HORIZONTAL,0,300)
+        toast.setGravity(Gravity.BOTTOM,0,141)
         toast.show()
     }
 }

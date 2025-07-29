@@ -10,12 +10,12 @@ import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.databinding.FragmentChallengeAlertBinding
+import com.example.planup.databinding.FragmentChallengeSetAlertBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 
-class ChallengeAlertFragment : Fragment() {
-    lateinit var binding: FragmentChallengeAlertBinding
+class ChallengeSetAlertFragment : Fragment() {
+    lateinit var binding: FragmentChallengeSetAlertBinding
     private var isFirst = true
 
     override fun onCreateView(
@@ -23,7 +23,7 @@ class ChallengeAlertFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentChallengeAlertBinding.inflate(inflater, container, false)
+        binding = FragmentChallengeSetAlertBinding.inflate(inflater, container, false)
         setSpinner(binding.alertTimeSp,R.array.spinner_morning_afternoon)
         setSpinner(binding.alertHourSp,R.array.spinner_hour)
         setSpinner(binding.alertMinuteSp,R.array.spinner_minute_second)

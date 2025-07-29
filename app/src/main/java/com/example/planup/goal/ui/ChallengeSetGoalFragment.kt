@@ -8,22 +8,20 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.databinding.FragmentChallengeSettingBinding
+import com.example.planup.databinding.FragmentChallengeSetGoalBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.main.MainActivity
 
-class ChallengeSettingFragment : Fragment() {
-    lateinit var binding: FragmentChallengeSettingBinding
+class ChallengeSetGoalFragment : Fragment() {
+    lateinit var binding: FragmentChallengeSetGoalBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentChallengeSettingBinding.inflate(inflater, container, false)
+        binding = FragmentChallengeSetGoalBinding.inflate(inflater, container, false)
         clickListener()
         textListener()
         return binding.root
@@ -39,7 +37,7 @@ class ChallengeSettingFragment : Fragment() {
         //인증방식 설정 페이지로 이동
         binding.btnNextTv.setOnClickListener{
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeCertificationFragment())
+                .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
                 .commitAllowingStateLoss()
         }
     }
