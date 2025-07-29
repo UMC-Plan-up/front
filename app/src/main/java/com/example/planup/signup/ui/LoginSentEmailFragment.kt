@@ -33,9 +33,9 @@ class LoginSentEmailFragment : Fragment(R.layout.fragment_login_sent_email) {
         // TODO: 이메일 인증 API 호출 → 성공 응답 시 ProfileSetupFragment로 이동하도록 변경
         val mockVerifyText = view.findViewById<TextView>(R.id.mockVerifyText)
         mockVerifyText.setOnClickListener {
-            val intent = Intent(context as SignupActivity,GoalActivity::class.java)
-            startActivity(intent)
-            //openProfileSetup()
+//            val intent = Intent(context as SignupActivity,GoalActivity::class.java)
+//            startActivity(intent)
+            openProfileSetup()
         }
     }
 
