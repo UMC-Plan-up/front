@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/fragment_goal"
-        android:title="목표 설정"
+        android:title="목표"
         android:icon="@drawable/ic_goal"
         android:enabled="true"
         app:showAsAction="always"

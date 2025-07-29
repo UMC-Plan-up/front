@@ -1,4 +1,4 @@
-package com.example.planup.main.home.ui
+package com.example.planup.main.goal.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.R
+import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.home.adapter.GoalAdapter
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -44,14 +44,20 @@ class RecordOverallFragment : Fragment() {
             GoalItem("헬스장 가기", "매일 30분 이상", 82)
         )
 
-        adapter = GoalAdapter(goals)
+        adapter = GoalAdapter(goals) { goalItem ->
+            val fragment = GoalDescriptionFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
         recyclerView.adapter = adapter
     }
 
-    private fun setupPieChart(pieChart: PieChart, percent: Int) {
+    private fun setupPieChart(pieChart: PieChart, progress: Int) {
         val entries = listOf(
-            PieEntry(percent.toFloat()),
-            PieEntry((100 - percent).toFloat())
+            PieEntry(progress.toFloat()),
+            PieEntry((100 - progress).toFloat())
         )
 
         val dataSet = PieDataSet(entries, "").apply {
