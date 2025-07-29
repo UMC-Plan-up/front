@@ -24,9 +24,9 @@ class ChallengeAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeAlertBinding.inflate(inflater, container, false)
-        setSpinner(binding.alertTimeSp,R.array.challenge_alert_time)
-        setSpinner(binding.alertHourSp,R.array.challenge_alert_hour)
-        setSpinner(binding.alertMinuteSp,R.array.challenge_alert_minute)
+        setSpinner(binding.alertTimeSp,R.array.spinner_morning_afternoon)
+        setSpinner(binding.alertHourSp,R.array.spinner_hour)
+        setSpinner(binding.alertMinuteSp,R.array.spinner_minute_second)
         clickListener()
         return binding.root
     }
@@ -137,12 +137,11 @@ class ChallengeAlertFragment : Fragment() {
     private fun setSpinner (spinnerId:AppCompatSpinner, stringId: Int) {
         val spinner = spinnerId
         val items = resources.getStringArray(stringId)
-//        val adapter = ArrayAdapter(requireContext(), R.layout.item_challenge_alert_spinner, items)//스피너 위젯 설정
-        val adapter = ArrayAdapter(requireContext(), R.layout.item_challenge_alert_spinner, items)//스피너 위젯 설정
-        adapter.setDropDownViewResource(R.layout.dropdown_alert_ampm)//드롭다운 메뉴 설정
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_challenge_alert, items)//스피너 위젯 설정
+        adapter.setDropDownViewResource(R.layout.dropdown_alert)//드롭다운 메뉴 설정
         spinner.adapter = adapter
 
-        // "오전"을 기본값으로 설정 (0번째)
+        // spinner에 띄울 기본값 설정 (0번째)
         spinner.setSelection(0, false)
 
         // 리스너 연결

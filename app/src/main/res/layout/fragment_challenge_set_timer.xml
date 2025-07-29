@@ -52,91 +52,34 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/hour_cl"
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/challenge_timer_hour_sp"
         android:layout_width="70dp"
         android:layout_height="33dp"
-        android:background="@drawable/bg_set_timer"
+        style="@style/SetTimerSpinner"
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="58dp"
-        android:layout_marginStart="16dp">
-        <TextView
-            android:id="@+id/hour_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/hour"
-            style="@style/Typography_SM_Medium"
-            android:textColor="@color/black_300"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="7.5dp"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_down_timer"
-            app:layout_constraintStart_toEndOf="@id/hour_tv"
-            android:layout_marginStart="8dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/minute_cl"
+        android:layout_marginStart="16dp"/>
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/challenge_timer_minute_sp"
         android:layout_width="70dp"
         android:layout_height="33dp"
-        android:background="@drawable/bg_set_timer"
+        style="@style/SetTimerSpinner"
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
-        app:layout_constraintStart_toEndOf="@id/hour_cl"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_sp"
         android:layout_marginTop="58dp"
-        android:layout_marginStart="4dp">
-        <TextView
-            android:id="@+id/minute_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/minute"
-            style="@style/Typography_SM_Medium"
-            android:textColor="@color/black_300"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="7.5dp"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_down_timer"
-            app:layout_constraintStart_toEndOf="@id/minute_tv"
-            android:layout_marginStart="20dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginStart="4dp"/>
+    <androidx.appcompat.widget.AppCompatSpinner
+        android:id="@+id/challenge_timer_second_sp"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        style="@style/SetTimerSpinner"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_sp"
+        android:layout_marginTop="58dp"
+        android:layout_marginStart="4dp"/>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/second_cl"
-        android:layout_width="70dp"
-        android:layout_height="33dp"
-        android:background="@drawable/bg_set_timer"
-        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
-        app:layout_constraintStart_toEndOf="@id/minute_cl"
-        android:layout_marginTop="58dp"
-        android:layout_marginStart="4dp">
-        <TextView
-            android:id="@+id/second_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/second"
-            style="@style/Typography_SM_Medium"
-            android:textColor="@color/black_300"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="7.5dp"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_down_timer"
-            app:layout_constraintStart_toEndOf="@id/second_tv"
-            android:layout_marginStart="20dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
     <TextView
         android:id="@+id/error_tv"
         android:layout_width="wrap_content"
@@ -144,11 +87,12 @@
         android:text=""
         style="@style/Typography_XS_Medium"
         android:textColor="@color/red_300"
-        app:layout_constraintTop_toBottomOf="@id/hour_cl"
-        app:layout_constraintStart_toStartOf="@id/hour_cl"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_sp"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_sp"
         android:layout_marginTop="7dp"/>
 
     <TextView
+        android:id="@+id/challenge_timer_next_btn"
         android:layout_width="320dp"
         android:layout_height="44dp"
         android:text="@string/btn_next"

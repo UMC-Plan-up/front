@@ -163,7 +163,7 @@
             android:id="@+id/alert_time_sp"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/Widget.My.Spinner"
+            style="@style/SetAlertSpinner"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -171,7 +171,7 @@
             android:id="@+id/alert_hour_sp"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/Widget.My.Spinner"
+            style="@style/SetAlertSpinner"
             app:layout_constraintStart_toEndOf="@id/alert_time_sp"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="6dp"/>
@@ -180,7 +180,7 @@
             android:id="@+id/alert_minute_sp"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/Widget.My.Spinner"
+            style="@style/SetAlertSpinner"
             app:layout_constraintStart_toEndOf="@id/alert_hour_sp"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginStart="6dp"/>
