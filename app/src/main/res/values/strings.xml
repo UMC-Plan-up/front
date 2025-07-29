@@ -139,9 +139,14 @@
     <!-- fragment_mypage_kakao.xml -->
     <string name="kakao_sync">카카오톡 계정(%1$s)에\n이미 연동된 계정이에요.</string>
     <!-- fragment_mypage_other.xml -->
-
+    <!-- fragment_mypage_delete_account.xml -->
+    <string name="delete_account_notice1">지금 탈퇴하시면, 현재까지 기록했던 목표 달성 기록과 친구 목록이 삭제돼요.</string>
+    <string name="delete_account_notice2">지금 탈퇴하시면, 잠금 해제된 목표들도 함께 사라져요. 추후에 같은 계정으로 재가입하셔도해당 내역은 복구되지 않아요.</string>
+    <string name="delete_account_agreement">회원 탈퇴 유의사항을 확인하였으며, 이에 동의합니다.</string>
+    <string name="delete_account_reason">탈퇴 이유를 알려주세요</string>
+    <string name="delete_account_feedback">피드백을 제공해 주신다면, 더 나은 서비스로 발전시켜 보답하겠습니다.</string>
     <!-- fragment_mypage_friend_block.xml -->
-    <string name="friend_block">(%1$s)님을 차단 해제하시겠어요?</string>
+    <string name="friend_block">%1$s님을 차단 해제하시겠어요?</string>
     <!-- fragment_mypage_service.xml -->
     <string name="service_explatin">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
     <string name="service_push">앱 푸시 알림 허용</string>
@@ -163,7 +168,7 @@
     </string>
 
     <!-- 챌린지 신청 플로우 -->
-    <string name="challenge_request_from">[닉네임]님의 챌린지 요청</string>
+    <string name="challenge_request_from">[%1$s]님의 챌린지 요청</string>
     <string name="set_challenge_goal">챌린지 목표 설정하기</string>
     <string name="set_certification_method">인증 방식 설정</string>
     <string name="goal_name">목표명</string>
@@ -241,11 +246,29 @@
     <string name="popup_push_title">앱 Push 알림 받기를 설정하시겠어요?</string>
     <string name="popup_push_explain">알림 받기를 설정하시면, 원하는 시각에 알려드릴게요. 목표 달성을 잊지 않고 실천하는 데 도움이 될 거예요!</string>
 
-    <!-- fragment_setting_alert.xml -->
+    <!-- fragment_challenge_alert.xml -->
     <string name="setting_alert_title">알림 설정</string>
     <string name="setting_alert_receive">설정 목표 알림 받기</string>
     <string name="setting_alert_regular">정기 알림 시각 설정</string>
-    <string-array name="setting_alert_time">
+    <string-array name="challenge_alert_time">
+        <item name="morning">오전</item>
+        <item name="afternoon">오후</item>
+    </string-array>
+    <string-array name="challenge_alert_hour">
+    <item name="one">01</item>
+    <item name="two">02</item>
+    <item name="three">03</item>
+    <item name="four">04</item>
+    <item name="five">05</item>
+    <item name="six">06</item>
+    <item name="seven">07</item>
+    <item name="eight">08</item>
+    <item name="nine">09</item>
+    <item name="ten">10</item>
+    <item name="eleven">11</item>
+    <item name="twelve">12</item>
+    </string-array>
+    <string-array name="challenge_alert_minute">
         <item name="one">01</item>
         <item name="two">02</item>
         <item name="three">03</item>
@@ -317,7 +340,8 @@
     <string name="btn_login">로그인</string>
     <string name="btn_next">다음</string>
     <string name="btn_complete">완료</string>
-    <string name="btn_yes">네</string>
+    <string name="btn_yes1">네</string>
+    <string name="btn_yes2">예</string>
     <string name="btn_no">아니오</string>
     <string name="btn_approve">수락하기</string>
     <string name="btn_reject">거절하기</string>
@@ -338,7 +362,7 @@
     <string name="btn_input">입력</string>
     <string name="btn_community_category_goal">목표 설정 시작하기</string>
     <string name="btn_start_PlanUp">Plan-Up 사용 시작하기</string>
-
+    <string name="btn_report_complete">신고완료</string>
 
 
     <!-- 토스트 메시지 -->
@@ -352,6 +376,7 @@
     <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
+    <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     
     <!-- 에러 메시지 -->
     <string name="error_more_one_word">1글자 이상 작성해주세요.</string>

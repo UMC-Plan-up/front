@@ -154,7 +154,7 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="8dp"
                 android:layout_marginTop="1dp"
-                android:src="@drawable/ic_arrow_up"
+                android:src="@drawable/ic_arrow_up_alert"
                 android:contentDescription="@null"
                 app:tint="@color/black_300" />
 
@@ -185,7 +185,7 @@
                 android:layout_height="14dp"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="5dp"
-                android:src="@drawable/ic_arrow_up"
+                android:src="@drawable/ic_arrow_up_alert"
                 android:layout_marginTop="1dp"
                 app:tint="@color/black_300"
                 android:contentDescription="@null" />
@@ -217,7 +217,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="1dp"
                 app:tint="@color/black_300"
-                android:src="@drawable/ic_arrow_up"
+                android:src="@drawable/ic_arrow_up_alert"
                 android:contentDescription="@null" />
         </FrameLayout>
     </LinearLayout>

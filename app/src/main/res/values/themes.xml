@@ -70,4 +70,13 @@
         <item name="fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">11sp</item>
     </style>
+
+    <style name="Widget.My.Spinner" parent="Widget.AppCompat.Spinner">
+        <item name="android:overlapAnchor">false</item>
+        <item name="overlapAnchor"> false</item>
+        <item name="android:spinnerMode">dropdown</item>
+        <item name="android:dropDownWidth">match_parent</item>
+        <item name="android:background">@drawable/bg_dropdown_alert</item>
+        <item name="android:maxHeight">110dp</item>
+    </style>
 </resources>

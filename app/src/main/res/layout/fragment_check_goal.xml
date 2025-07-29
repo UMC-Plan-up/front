@@ -67,7 +67,7 @@
                 android:id="@+id/imageView6"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                app:srcCompat="@drawable/ic_arrow_up" />
+                app:srcCompat="@drawable/ic_arrow_up_alert" />
         </LinearLayout>
 
     </LinearLayout>
@@ -118,7 +118,7 @@
             android:layout_width="23dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            app:srcCompat="@drawable/ic_arrow_up" />
+            app:srcCompat="@drawable/ic_arrow_up_alert" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

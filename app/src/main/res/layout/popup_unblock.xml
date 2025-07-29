@@ -53,24 +53,35 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp">
 
-                <ImageView
-                    android:id="@+id/popup_block_no_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/no_btn_transparant"
+
+                <TextView
+                    android:id="@+id/popup_unblock_no_btn"
+                    android:layout_width="110dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_btn_transparent"
+                    android:text="@string/btn_no"
+                    style="@style/Typography_SM_Medium"
+                    android:textColor="@color/black_400"
+                    android:textAlignment="center"
+                    android:gravity="center"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/popup_block_yes_iv" />
+                    app:layout_constraintEnd_toStartOf="@id/popup_unblock_yes_btn"/>
 
-                <ImageView
-                    android:id="@+id/popup_block_yes_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/yes_btn_activate"
+                <TextView
+                    android:id="@+id/popup_unblock_yes_btn"
+                    android:layout_width="110dp"
+                    android:layout_height="34dp"
+                    android:background="@drawable/bg_btn_blue"
+                    android:text="@string/btn_yes2"
+                    style="@style/Typography_SM_Medium"
+                    android:textColor="@color/white_font"
+                    android:textAlignment="center"
+                    android:gravity="center"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/popup_block_no_iv"
+                    app:layout_constraintStart_toEndOf="@id/popup_unblock_no_btn"
                     app:layout_constraintEnd_toEndOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 

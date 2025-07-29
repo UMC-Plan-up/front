@@ -4,23 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.PopupWindow
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
-import com.example.planup.databinding.FragmentMypageServiceBinding
+import com.example.planup.databinding.FragmentMypageAlertBinding
 
-class MypageServiceFragment : Fragment() {
-    lateinit var binding: FragmentMypageServiceBinding
-    var dayList: ArrayList<Boolean> = ArrayList()
+class MypageAlertFragment : Fragment() {
+    lateinit var binding: FragmentMypageAlertBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageServiceBinding.inflate(inflater, container, false)
+        binding = FragmentMypageAlertBinding.inflate(inflater, container, false)
+        setSpinner(binding.serviceTimeSp,R.array.challenge_alert_time)
+        setSpinner(binding.serviceHourSp,R.array.challenge_alert_hour)
+        setSpinner(binding.serviceMinuteSp,R.array.challenge_alert_minute)
         clickListener()
         return binding.root
     }
@@ -135,14 +140,18 @@ class MypageServiceFragment : Fragment() {
 
     }
 
-    private fun dropDown(view: View, layout: Int) {
-        val inflater = LayoutInflater.from(context)
-        var popUpView = inflater.inflate(layout, null)
-        var popupWindow = PopupWindow(
-            popUpView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        )
+    private fun setSpinner(spinnerId:AppCompatSpinner, stringId: Int){
+        val spinner = spinnerId
+        val items = resources.getStringArray(stringId)
+        val adapter = ArrayAdapter(requireContext(), R.layout.item_challenge_alert_spinner, items)//스피너 위젯 설정
+        adapter.setDropDownViewResource(R.layout.dropdown_alert_ampm)//드롭다운 메뉴 설정
+        spinner.adapter = adapter
 
-        popupWindow.isOutsideTouchable = true
-        popupWindow.showAsDropDown(view)
+        spinner.setSelection(0,false)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {}
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
+        }
     }
 }
