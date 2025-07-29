@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 아래 깔릴 그림자 -->
+    <item android:drawable="@drawable/triangle_shadow"/>
+    <!-- 살짝 위로 올려진 흰 삼각형 -->
+    <item
+        android:top="2dp"
+        android:drawable="@drawable/triangle_white"/>
+</layer-list>

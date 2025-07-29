@@ -1,5 +1,6 @@
 package com.example.planup.main.record.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -7,136 +8,110 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import android.widget.PopupWindow
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
+import com.example.planup.main.MainActivity
 
 class RecordFragment : Fragment() {
 
-    lateinit var binding: FragmentRecordBinding
-    // private lateinit var pieChart: PieChart
+    private lateinit var binding: FragmentRecordBinding
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRecordBinding.inflate(inflater, container, false)
-        clickListener()
 
-        val monthList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12")
-
-        val monthPopupView = layoutInflater.inflate(R.layout.popup_month_dropdown, null)
-        val monthPopupWindow = PopupWindow(
-            monthPopupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
+        // ▼ 드롭다운 설정
+        setupDropdown(
+            targetView = binding.textSelectedMonth,
+            items = listOf("월", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"),
+            popupLayoutRes = R.layout.popup_month_dropdown,
+            listViewId = R.id.listViewMonths,
+            itemLayoutRes = R.layout.item_dropdown_month,
+            onItemSelected = { selected ->
+                binding.textSelectedMonth.text = "${selected}월"
+            }
         )
 
-        val monthListView = monthPopupView.findViewById<ListView>(R.id.listViewMonths)
-        val monthAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown_month, R.id.item_text, monthList)
-        monthListView.adapter = monthAdapter
-
-        binding.textSelectedMonth.setOnClickListener {
-            val offsetY = resources.getDimensionPixelSize(R.dimen.dropdown_offset_y)
-            monthPopupWindow.showAsDropDown(binding.textSelectedMonth, 0, offsetY)
-        }
-
-        monthListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedMonth = monthList[position]
-            binding.textSelectedMonth.text = selectedMonth + "월"
-            monthPopupWindow.dismiss()
-        }
-
-        // ▼ Year DropDown ▼ (새로 추가)
-        val yearList = listOf("2025", "2024", "2023", "2022", "2021", "2020")
-
-        val yearPopupView = layoutInflater.inflate(R.layout.popup_year_dropdown, null)
-        val yearPopupWindow = PopupWindow(
-            yearPopupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
+        setupDropdown(
+            targetView = binding.textSelectedYear,
+            items = listOf("연도", "2025", "2024", "2023", "2022", "2021", "2020"),
+            popupLayoutRes = R.layout.popup_year_dropdown,
+            listViewId = R.id.listViewYears,
+            itemLayoutRes = R.layout.item_dropdown_year,
+            onItemSelected = { selected ->
+                binding.textSelectedYear.text = "${selected}년"
+            }
         )
 
-        val yearListView = yearPopupView.findViewById<ListView>(R.id.listViewYears)
-        val yearAdapter = ArrayAdapter(requireContext(), R.layout.item_dropdown_year, R.id.item_text, yearList)
-        yearListView.adapter = yearAdapter
-
-        binding.textSelectedYear.setOnClickListener {
-            val offsetY = resources.getDimensionPixelSize(R.dimen.dropdown_offset_y)
-            yearPopupWindow.showAsDropDown(binding.textSelectedYear, 0, offsetY)
-        }
-
-        yearListView.setOnItemClickListener { _, _, position, _ ->
-            val selectedYear = yearList[position]
-            binding.textSelectedYear.text = selectedYear + "년"
-            yearPopupWindow.dismiss()
-        }
-
+        // ▼ Spannable 텍스트 설정
         val text1 = "그린 님을 위한\n플랜업의 "
         val text2 = "AI 응원 메시지"
+        binding.textMessage.text = SpannableStringBuilder().apply {
+            append(text1)
+            append(
+                text2,
+                ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.blue_200)),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+        }
 
-        // SpannableStringBuilder를 사용해 색상 분리
-        val spannable = SpannableStringBuilder()
-        spannable.append(text1)
-        spannable.append(text2,
-            ForegroundColorSpan(ContextCompat.getColor(requireContext(), R.color.blue_200)), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-        binding.textMessage.text = spannable
-
-
+        // ▼ 클릭 리스너 설정
+        setFragmentClick(binding.btnBadgeRecords, RecordBadgesFragment())
+        setFragmentClick(binding.btnWeeklyReport1, RecordWeeklyReportFragment())
+        setFragmentClick(binding.btnWeeklyReport2, RecordWithFriendsFragment())
+        setFragmentClick(binding.btnWeeklyReport3, RecordWithFriendsFragment())
+        setFragmentClick(binding.btnWeeklyReport4, RecordWithCommunityFragment())
+        setFragmentClick(binding.btnWeeklyReport5, RecordWeeklyReportFragment())
 
         return binding.root
     }
-    private fun clickListener(){
-        binding.btnBadgeRecords.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordBadgesFragment())
-                .commitAllowingStateLoss()
+
+    /** 공통 드롭다운 생성 함수 */
+    private fun setupDropdown(
+        targetView: TextView,
+        items: List<String>,
+        popupLayoutRes: Int,
+        listViewId: Int,
+        itemLayoutRes: Int,
+        onItemSelected: (String) -> Unit
+    ) {
+        val popupView = layoutInflater.inflate(popupLayoutRes, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+
+        val listView = popupView.findViewById<ListView>(listViewId)
+        val adapter = ArrayAdapter(requireContext(), itemLayoutRes, R.id.item_text, items)
+        listView.adapter = adapter
+
+        targetView.setOnClickListener {
+            val offsetY = resources.getDimensionPixelSize(R.dimen.dropdown_offset_y)
+            popupWindow.showAsDropDown(targetView, 0, offsetY)
         }
 
-        binding.btnWeeklyReport1.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordWeeklyReportFragment())
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selected = items[position]
+            onItemSelected(selected)
+            popupWindow.dismiss()
+        }
+    }
+
+    /** 공통 Fragment 전환 처리 */
+    private fun setFragmentClick(view: View, fragment: Fragment) {
+        view.setOnClickListener {
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
                 .commitAllowingStateLoss()
         }
-
-        binding.btnWeeklyReport2.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordWithFriendsFragment())
-                .commitAllowingStateLoss()
-        }
-
-        binding.btnWeeklyReport3.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordWithFriendFragment())
-                .commitAllowingStateLoss()
-        }
-
-        binding.btnWeeklyReport4.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordWithCommunityFragment())
-                .commitAllowingStateLoss()
-        }
-
-        binding.btnWeeklyReport5.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordWeeklyReportFragment())
-                .commitAllowingStateLoss()
-        }
-
-        binding.btnBadgeRecords.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordBadgesFragment())
-                .commitAllowingStateLoss()
-        }
-
     }
 }
