@@ -1,5 +1,6 @@
 package com.example.planup.signup.data
 
+
 data class Agreement(
     val termsId: Int,
     val isAgreed: Boolean
