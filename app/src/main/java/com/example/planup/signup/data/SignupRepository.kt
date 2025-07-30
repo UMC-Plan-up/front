@@ -9,4 +9,3 @@ class SignupRepository(
     suspend fun signup(signupRequestDto: SignupRequestDto): Response<SignupResponseDto> =
         api.signup(signupRequestDto)
 }
-
