@@ -139,58 +139,70 @@
             app:layout_constraintEnd_toEndOf="@id/passwordEditText" />
 
 
-        <TextView
-            android:id="@+id/forgotPasswordText"
-            android:layout_width="136dp"
-            android:layout_height="18dp"
-            android:text="@string/password_text"
-            android:fontFamily="@font/pretendard_medium"
-            android:textColor="#11286E"
-            android:textSize="12sp"
-            android:textAlignment="center"
-            android:layout_marginTop="25dp"
-            app:layout_constraintTop_toBottomOf="@id/passwordEditText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/loginButton"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/btn_blue_background"
             android:text="@string/btn_login"
             android:fontFamily="@font/pretendard_medium"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:gravity="center"
-            app:layout_constraintTop_toBottomOf="@id/forgotPasswordText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/signupText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/signup"
-            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/white"
             android:textSize="14sp"
-            android:textColor="@color/black_400"
-            android:layout_marginTop="10dp"
-            app:layout_constraintTop_toBottomOf="@id/loginButton"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/passwordEditText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/signupCardView"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="6dp"
+        app:preventCornerOverlap="false"
+        app:layout_constraintTop_toBottomOf="@id/loginButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:backgroundTint="#FFFFFF">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signupButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:text="@string/signup"
+            android:textColor="@color/black_400"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="center"/>
+    </androidx.cardview.widget.CardView>
+
+
+    <TextView
+        android:id="@+id/forgotPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/password_text"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/black_300"
+        android:textSize="12sp"
+        android:textAlignment="center"
+        android:layout_marginTop="128dp"
+        app:layout_constraintTop_toBottomOf="@id/passwordEditText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
         <LinearLayout
             android:id="@+id/orDivider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="20dp"
             android:gravity="center"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@id/signupText"
+            app:layout_constraintTop_toBottomOf="@id/forgotPasswordText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
@@ -222,7 +234,7 @@
             android:id="@+id/kakaoLoginLayout"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal"
             android:gravity="center"
             android:background="@drawable/btn_yellow_background"
@@ -276,52 +288,5 @@
                 android:layout_marginStart="16dp"
                 android:gravity="center_vertical" />
         </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/emailFormatErrorText"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="35dp"
-            android:background="@drawable/bg_error_box"
-            android:gravity="center"
-            android:text="@string/toast_incorrect_email"
-            android:fontFamily="@font/pretendard_medium"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/loginButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-
-        <TextView
-            android:id="@+id/emailNotFoundErrorText"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="11dp"
-            android:background="@drawable/bg_error_box"
-            android:gravity="center"
-            android:text="@string/toast_invalid_email"
-            android:fontFamily="@font/pretendard_medium"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/emailFormatErrorText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/passwordNotFoundErrorText"
-            android:layout_width="0dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="11dp"
-            android:background="@drawable/bg_error_box"
-            android:gravity="center"
-            android:text="@string/toast_incorrect_password"
-            android:fontFamily="@font/pretendard_medium"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/emailNotFoundErrorText"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -139,7 +139,7 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="326dp"
-        android:layout_marginStart="81dp">
+        android:layout_marginStart="83dp">
 
         <TextView
             android:id="@+id/categoryReadingText"
@@ -165,18 +165,18 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="326dp"
-        android:layout_marginStart="175dp">
+        android:layout_marginStart="179dp">
 
         <TextView
             android:id="@+id/categoryDigitalDetoxText"
-            android:layout_width="match_parent"
+            android:layout_width="75dp"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:fontFamily="@font/pretendard_medium"
             android:gravity="center"
             android:text="@string/community_category_meditation"
-            android:textSize="16sp"
             android:textColor="#448AF7"
-            android:fontFamily="@font/pretendard_medium" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 
@@ -221,7 +221,7 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="378dp"
-        android:layout_marginStart="117dp">
+        android:layout_marginStart="119dp">
 
         <TextView
             android:id="@+id/categorySleepText"
@@ -277,7 +277,7 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="430dp"
-        android:layout_marginStart="99dp">
+        android:layout_marginStart="101dp">
 
         <TextView
             android:id="@+id/categoryExerciseText"
@@ -305,7 +305,7 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="430dp"
-        android:layout_marginStart="175dp">
+        android:layout_marginStart="179dp">
 
         <TextView
             android:id="@+id/categoryDiaryText"
