@@ -1,12 +1,6 @@
 <resources>
     <string name="app_name">PlanUP</string>
 
-    <string name="plan">Plan</string>
-    <string name="dash">-</string>
-    <string name="u_letter">U</string>
-    <string name="p_letter">p</string>
-    <string name="or_text">or</string>
-
     <!-- 회원가입 -->
     <string name="signup">회원가입하기</string>
     <string name="hint_email">이메일을 입력하세요.</string>
@@ -107,8 +101,6 @@
     <string name="community_greeting">다양한 커뮤니티들이\n%s님을 기다리고 있어요!</string>
 
     <string name="kakao_app_key">d457e1de9a930076ef76a74e0bb30b6b</string>
-
-
 
 
     <!-- fragment_agreement.xml -->
