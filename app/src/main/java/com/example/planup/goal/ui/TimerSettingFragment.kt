@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.NumberPicker
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class TimerSettingFragment : Fragment() {
 
@@ -62,7 +61,7 @@ class TimerSettingFragment : Fragment() {
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
-            (requireActivity() as GoalSettingActivity).navigateToFragment(goalDetailFragment)
+            (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
         }
     }
 
@@ -74,7 +73,7 @@ class TimerSettingFragment : Fragment() {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalSettingActivity).navigateToFragment(certFragment)
+            (requireActivity() as GoalActivity).navigateToFragment(certFragment)
         }
     }
 }

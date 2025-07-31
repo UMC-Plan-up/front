@@ -12,7 +12,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
@@ -66,7 +66,7 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalSettingActivity)
+            (requireActivity() as GoalActivity)
                 .navigateToFragment(goalDetailFragment)
         }
 
@@ -78,7 +78,7 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                (requireActivity() as GoalSettingActivity)
+                (requireActivity() as GoalActivity)
                     .navigateToFragment(goalCompleteFragment)
             }
         }

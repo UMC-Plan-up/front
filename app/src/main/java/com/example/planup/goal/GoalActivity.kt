@@ -1,14 +1,14 @@
 package com.example.planup.goal
-//회원가입 후 목표설정 플로우
+// 회원가입 후 목표설정 플로우
+
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
-import com.example.planup.goal.ui.GoalSelectFragment
+import com.example.planup.goal.ui.GoalCategoryFragment
 
-class GoalActivity:AppCompatActivity() {
+class GoalActivity : AppCompatActivity() {
 
     lateinit var binding: ActivityGoalBinding
 
@@ -18,9 +18,29 @@ class GoalActivity:AppCompatActivity() {
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager.beginTransaction() //함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
-            .replace(R.id.goal_container,GoalSelectFragment())
-            .commitAllowingStateLoss()
+
+        val nickname = intent.getStringExtra("goalOwnerName") ?: "사용자"
+
+        if (savedInstanceState == null) {
+            // GoalCategoryFragment로 이동하면서 nickname 전달
+            val goalCategoryFragment = GoalCategoryFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", nickname)
+                }
+            }
+
+            // 함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container, goalCategoryFragment)
+                .commit()
+        }
     }
 
+
+    fun navigateToFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.goal_container, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
 }
