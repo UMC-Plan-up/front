@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class CertificationMethodFragment : Fragment(R.layout.fragment_certification_method) {
 
@@ -69,7 +69,7 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
                             putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
                         }
                     }
-                    (requireActivity() as GoalSettingActivity).navigateToFragment(timerFragment)
+                    (requireActivity() as GoalActivity).navigateToFragment(timerFragment)
                 }
                 "PICTURE" -> {
                     // 사진 인증 → GoalDetailFragment로 이동
@@ -78,7 +78,7 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
                             putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
                         }
                     }
-                    (requireActivity() as GoalSettingActivity).navigateToFragment(detailFragment)
+                    (requireActivity() as GoalActivity).navigateToFragment(detailFragment)
                 }
                 else -> {
                     // 선택되지 않았으면 아무 동작 안 함
