@@ -232,6 +232,7 @@
             android:fontFamily="@font/pretendard_medium" />
     </LinearLayout>
 
+
     <TextView
         android:id="@+id/requiredErrorText"
         android:layout_width="0dp"
@@ -242,10 +243,11 @@
         android:textColor="#FFFFFF"
         android:background="@drawable/bg_error_box"
         android:fontFamily="@font/pretendard_medium"
-        app:layout_constraintTop_toBottomOf="@id/agreeAdLayout"
-        android:layout_marginTop="76dp"
+        app:layout_constraintBottom_toTopOf="@id/privacyInfo"
+        android:layout_marginBottom="31dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
 
     <TextView
         android:id="@+id/privacyInfo"
@@ -256,11 +258,10 @@
         android:textColor="@color/black_300"
         android:textSize="12sp"
         android:lineSpacingMultiplier="1.1"
-        app:layout_constraintTop_toBottomOf="@id/agreeAdLayout"
-        android:layout_marginTop="136dp"
+        app:layout_constraintBottom_toTopOf="@id/nextButton"
+        android:layout_marginBottom="13dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
@@ -268,13 +269,14 @@
         android:layout_height="44dp"
         android:text="@string/btn_next"
         android:textSize="16sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/privacyInfo"
-        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="33dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
