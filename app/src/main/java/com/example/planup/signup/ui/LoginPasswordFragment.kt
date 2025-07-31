@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.signup.SignupActivity
 
 class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
@@ -90,9 +91,16 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
     /* LoginSentEmailFragment로 이동하는 메서드 */
     private fun openNextStep() {
+        val password = passwordEditText.text.toString()
+
+        // (1) SignupActivity에 password 저장
+        val activity = requireActivity() as SignupActivity
+        activity.password = password
+
+        // (2) LoginSentEmailFragment로 이동
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, LoginSentEmailFragment()) // 다음 단계로 이동
-            .addToBackStack(null) // 뒤로가기 가능
+            .replace(R.id.signup_container, LoginSentEmailFragment())
+            .addToBackStack(null)
             .commit()
     }
 

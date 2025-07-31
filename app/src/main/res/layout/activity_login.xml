@@ -160,11 +160,11 @@
         android:layout_marginTop="5dp"
         app:cardElevation="2dp"
         app:cardCornerRadius="6dp"
-        app:preventCornerOverlap="false"
+        app:cardPreventCornerOverlap="false"
         app:layout_constraintTop_toBottomOf="@id/loginButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:backgroundTint="#FFFFFF">
+        android:backgroundTint="@color/white">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/signupButton"

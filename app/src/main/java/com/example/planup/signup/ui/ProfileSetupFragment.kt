@@ -122,12 +122,15 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
     }
 
-    /* 현재 닉네임과 프로필 이미지를 저장하는 함수 (나중에 API 연동 시 사용) */
+    /* 현재 닉네임과 프로필 이미지를 저장하는 함수 */
     private fun saveProfileData(nickname: String) {
-        val selectedNickname = nickname  // 현재 닉네임
-        val profileImageDrawable = editIcon.drawable  // 현재 프로필 이미지
-        // TODO: 닉네임과 프로필을 회원가입 API요청 시 서버에 함께 전송해야 함
+        val activity = requireActivity() as SignupActivity
+        activity.nickname = nickname
+
+        // TODO: 프로필 이미지 관련
+        activity.profileImgUrl = ""  // 이미지 선택 하면 실제 이미지 URL을 여기 저장
     }
+
 
     /* editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
     private fun showProfilePopup(anchorView: View) {

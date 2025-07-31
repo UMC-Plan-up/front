@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
-        signupText = findViewById(R.id.signupText)
+        signupText = findViewById(R.id.signupButton)
         forgotPasswordText = findViewById(R.id.forgotPasswordText)
 
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)

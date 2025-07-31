@@ -11,12 +11,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.signup.SignupActivity
 
 class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
 
     private lateinit var emailEditText: EditText
-    private lateinit var emailErrorText1: TextView   // 이메일 형식 에러 메시지
-    private lateinit var emailErrorText2: TextView   // 중복 이메일 에러 메시지
+    private lateinit var emailErrorText1: TextView
+    private lateinit var emailErrorText2: TextView
     private lateinit var nextButton: AppCompatButton
 
     // [테스트용] 이미 사용중인 이메일 리스트
@@ -80,9 +81,16 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
 
     /* LoginPasswordFragment로 이동하는 메서드 */
     private fun openNextStep() {
+        val email = emailEditText.text.toString().trim()
+
+        // (1) SignupActivity에 email 저장
+        val activity = requireActivity() as SignupActivity
+        activity.email = email
+
+        // (2) LoginPasswordFragment로 이동
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, LoginPasswordFragment())  // 다음 단계로 이동
-            .addToBackStack(null)  // 뒤로가기 가능
+            .replace(R.id.signup_container, LoginPasswordFragment())
+            .addToBackStack(null)
             .commit()
     }
 
@@ -112,7 +120,6 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
         nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.blue_200)
     }
-
 
     private fun disableNextButton() {  // 다음 버튼 비활성화
         nextButton.isEnabled = false
