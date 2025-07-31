@@ -13,7 +13,7 @@ import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
-import com.example.planup.goal.ui.ChallengeAlertFragment
+import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
 
