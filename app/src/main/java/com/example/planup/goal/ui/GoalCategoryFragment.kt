@@ -198,11 +198,11 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
             R.id.categoryReadingLayout -> R.id.categoryReadingText
             R.id.categoryDigitalDetoxLayout -> R.id.categoryDigitalDetoxText
             R.id.categoryMeditationLayout -> R.id.categoryMeditationText
-            R.id.categorySleepLayout -> R.id.categorySleepText
+            R.id.categorySleepLayout -> R.id.category_sleep_tv
             R.id.categoryInstrumentLayout -> R.id.categoryInstrumentText
             R.id.categoryExerciseLayout -> R.id.categoryExerciseText
             R.id.categoryDiaryLayout -> R.id.categoryDiaryText
-            R.id.categoryCustomLayout -> R.id.categoryCustomText
+            R.id.categoryCustomLayout -> R.id.category_custom_tv
             else -> R.id.categoryStudyText
         }
     }

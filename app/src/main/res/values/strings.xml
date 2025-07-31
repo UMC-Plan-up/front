@@ -421,6 +421,8 @@
     <string name="error_more_one">1이상의 숫자를 필수로 입력해 주세요.</string>
     <string name="error_under_twenty_word">20자 이내로 입력해 주세요</string>
     <string name="error_already_nickname">이미 사용 중인 닉네임 입니다</string>
+    <string name="error_category">1개의 카테고리를 필수로 선택해 주세요.</string>
+    <string name="error_category_name">1글자 이상 카테고리명을 입력해 주세요.</string>
 
     <!-- 팝업 메시지 -->
     <string name="popup_password_reset">비밀번호 재설정 완료</string>

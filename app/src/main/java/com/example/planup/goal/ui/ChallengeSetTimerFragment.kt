@@ -1,9 +1,11 @@
 package com.example.planup.goal.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.widget.AppCompatSpinner
@@ -11,13 +13,12 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetTimerBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.adapter.TimerRVAdapter
+import java.sql.Array
+import java.sql.Time
 
 class ChallengeSetTimerFragment:Fragment() {
     lateinit var binding: FragmentChallengeSetTimerBinding
-    private var hour: Int = 0
-    private var minute: Int = 0
-    private var second: Int = 0
-    private var sum: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,10 +27,7 @@ class ChallengeSetTimerFragment:Fragment() {
     ): View? {
         binding = FragmentChallengeSetTimerBinding.inflate(inflater,container,false)
         clickListener()
-        setTimer(binding.challengeTimerHourSp, R.array.spinner_hour) //시간 드롭다운
-        setTimer(binding.challengeTimerMinuteSp, R.array.spinner_minute_second) //분 드롭다운
-        setTimer(binding.challengeTimerSecondSp, R.array.spinner_minute_second) //초 드롭다운
-        //sumTime()
+        setTimer()
         return binding.root
     }
     private fun clickListener(){
@@ -39,6 +37,18 @@ class ChallengeSetTimerFragment:Fragment() {
                 .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
                 .commitAllowingStateLoss()
         }
+
+        //타이머 시간 설정
+        binding.challengeTimerHourTv.setOnClickListener { //시간
+            binding.challengeTimerHourRv.visibility = View.VISIBLE
+        }
+        binding.challengeTimerMinuteTv.setOnClickListener { //분
+            binding.challengeTimerMinuteRv.visibility = View.VISIBLE
+        }
+        binding.challengeTimerSecondTv.setOnClickListener { //초
+            binding.challengeTimerSecondRv.visibility = View.VISIBLE
+        }
+
         //다음 버튼 -> 페널티 설정 페이지로 이동
         binding.challengeTimerNextBtn.setOnClickListener{
             if (!binding.challengeTimerNextBtn.isActivated) return@setOnClickListener
@@ -47,38 +57,48 @@ class ChallengeSetTimerFragment:Fragment() {
                 .commitAllowingStateLoss()
         }
     }
-    private fun setTimer(spinnerId: AppCompatSpinner, stringId: Int){
-        val spinner = spinnerId
-        val items = resources.getStringArray(stringId)
-        val adapter = ArrayAdapter(requireContext(),R.layout.item_spinner_challenge_timer,items)
-        adapter.setDropDownViewResource(R.layout.dropdown_timer)
 
-        spinner.adapter = adapter
+    //타이머 설정 관리
+    private fun setTimer(){
+        //시간, 분, 초 를 저장하는 어레이 리스트 만들기
+        val hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>()) //시간
+        val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //분
+        val seconds = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //초
+        Log.d("afadsfadsfadshgkljdfshgiru", R.array.spinner_minute_second.toString())
 
-        spinner.setSelection(0,false)
+        //각 드롭다운에 대한 어댑터 생성
+        val timerAdapter = ArrayList<TimerRVAdapter>()
+        timerAdapter.add(0, TimerRVAdapter(hours))
+        timerAdapter.add(1, TimerRVAdapter(minutes))
+        timerAdapter.add(2, TimerRVAdapter(seconds))
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                when (spinner) {
-                    binding.challengeTimerHourSp -> hour = spinner.selectedItem.toString().toInt()
-                    binding.challengeTimerMinuteSp -> minute = spinner.selectedItem.toString().toInt()
-                    binding.challengeTimerSecondSp -> second = spinner.selectedItem.toString().toInt()
-                }
-//                sum = (3600 * hour) + (60 * minute) + (second)
-                sumTime((3600 * hour) + (60 * minute) + (second))
+        binding.challengeTimerHourRv.adapter = timerAdapter[0]
+        binding.challengeTimerMinuteRv.adapter = timerAdapter[1]
+        binding.challengeTimerSecondRv.adapter = timerAdapter[2]
+
+        timerAdapter[0].setDropdownListener(object : TimerRVAdapter.DropdownListener{
+            //시간 선택
+            override fun setTime(position: Int) {
+                Log.d("afdfdaff","afafdfafaffffa hour touch")
+                binding.challengeTimerHourTv.text = hours[position]
+                binding.challengeTimerHourRv.visibility = View.GONE
             }
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-        }
+        })
+        timerAdapter[1].setDropdownListener(object : TimerRVAdapter.DropdownListener{
+            //분 선택
+            override fun setTime(position: Int) {
+                Log.d("afdfdaff","afafdfafaffffa minute click")
+                binding.challengeTimerMinuteTv.text = minutes[position]
+                binding.challengeTimerMinuteRv.visibility = View.GONE
+            }
+        })
+        timerAdapter[2].setDropdownListener(object : TimerRVAdapter.DropdownListener{
+            //초 선택
+            override fun setTime(position: Int) {
+                Log.d("afdfdaff","afafdfafaffffa second click")
+                binding.challengeTimerSecondTv.text = seconds[position]
+                binding.challengeTimerSecondRv.visibility = View.GONE
+            }
+        })
     }
-    private fun sumTime(sum:Int){
-        if (sum<30){
-            binding.errorTv.text = getString(R.string.error_more_thirty_second)
-            binding.errorTv.text = getString(R.string.error_more_thirty_second)
-            binding.challengeTimerNextBtn.isActivated = false
-        } else{
-            binding.errorTv.text = null
-            binding.challengeTimerNextBtn.isActivated = true
-        }
-    }
-
 }
