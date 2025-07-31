@@ -25,20 +25,19 @@ class GoalActivity : AppCompatActivity() {
             val goalSelectFragment = GoalSelectFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", nickname)
-
                 }
             }
 
             supportFragmentManager.beginTransaction() //함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
                 .replace(R.id.goal_container, goalSelectFragment)
-                .commitAllowingStateLoss()
-        }
+                .commitAllowingStateLoss()}
+    }
 
-        fun navigateToFragment(fragment: Fragment) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+
+    fun navigateToFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.goal_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

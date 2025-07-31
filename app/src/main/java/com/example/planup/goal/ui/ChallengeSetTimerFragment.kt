@@ -13,7 +13,6 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetTimerBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
-
 class ChallengeSetTimerFragment:Fragment() {
     lateinit var binding: FragmentChallengeSetTimerBinding
     private var totalTime = 0
@@ -29,7 +28,6 @@ class ChallengeSetTimerFragment:Fragment() {
         binding = FragmentChallengeSetTimerBinding.inflate(inflater,container,false)
         clickListener()
         init()
-
         return binding.root
     }
     private fun init(){
