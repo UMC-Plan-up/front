@@ -8,35 +8,49 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.PopupWindow
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.planup.databinding.FragmentGoalListBinding
-import android.widget.TextView
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
+import com.example.planup.databinding.FragmentTimerBinding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-class GoalListFragment : Fragment() {
+class TimerFragment : Fragment() {
 
-    private lateinit var binding: FragmentGoalListBinding
+    private lateinit var binding: FragmentTimerBinding
+    private var timerJob: Job? = null
+    private var isRunning = false
+    private var elapsedSeconds = 0
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentGoalListBinding.inflate(inflater,container,false)
+    ): View {
+        binding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupSpinner()
+        setupCameraPopup()
+        setupTimerButton()
+    }
+
+    private fun setupSpinner() {
         val spinner: Spinner = binding.goalListSpinner
 
         ArrayAdapter.createFromResource(
-            requireContext(),                     // context: Fragment라면 requireContext()
-            R.array.goal_list_spinner_dropdown, // string-array name
-            android.R.layout.simple_spinner_item // 기본 항목 레이아웃
+            requireContext(),
+            R.array.goal_list_spinner_dropdown,
+            android.R.layout.simple_spinner_item
         ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item) // 드롭다운 레이아웃
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             spinner.adapter = adapter
         }
 
@@ -51,11 +65,11 @@ class GoalListFragment : Fragment() {
                 Toast.makeText(requireContext(), "선택: $selectedItem", Toast.LENGTH_SHORT).show()
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무 것도 선택되지 않았을 때
-            }
+            override fun onNothingSelected(parent: AdapterView<*>) {}
         }
+    }
 
+    private fun setupCameraPopup() {
         val cameraImageView = binding.goalListBtnCameraIb
 
         cameraImageView.setOnClickListener {
@@ -69,12 +83,10 @@ class GoalListFragment : Fragment() {
                 true
             )
 
-            // 배경 클릭 시 닫히게 하기
             popupWindow.setBackgroundDrawable(null)
             popupWindow.isOutsideTouchable = true
             popupWindow.elevation = 10f
 
-            // 클릭 이벤트 처리
             val takePhoto = popupView.findViewById<TextView>(R.id.take_photo_tv)
             val chooseGallery = popupView.findViewById<TextView>(R.id.choose_gallery_tv)
 
@@ -88,8 +100,50 @@ class GoalListFragment : Fragment() {
                 popupWindow.dismiss()
             }
 
-            // 위치 조정: anchor 바로 아래에 띄우기
             popupWindow.showAsDropDown(cameraImageView, 0, 10)
         }
+    }
+
+    private fun setupTimerButton() {
+        val playButton = binding.goalListPlayBtn
+
+        playButton.setOnClickListener {
+            if (isRunning) {
+                stopTimer()
+            } else {
+                startTimer()
+            }
+        }
+    }
+
+    private fun startTimer() {
+        isRunning = true
+        //binding.goalListPlayBtn.setImageResource(R.drawable.ic_pause_circle) // 재생 → 일시정지 아이콘
+
+        timerJob = lifecycleScope.launch {
+            while (true) {
+                delay(1000)
+                elapsedSeconds++
+                updateTimerText()
+            }
+        }
+    }
+
+    private fun stopTimer() {
+        isRunning = false
+        binding.goalListPlayBtn.setImageResource(R.drawable.ic_play_circle) // 일시정지 → 재생 아이콘
+        timerJob?.cancel()
+    }
+
+    private fun updateTimerText() {
+        val hours = elapsedSeconds / 3600
+        val minutes = (elapsedSeconds % 3600) / 60
+        val seconds = elapsedSeconds % 60
+        binding.goalListTextTimerTv.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        timerJob?.cancel()
     }
 }

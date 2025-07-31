@@ -55,4 +55,6 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.viewpager2)
     implementation(libs.mpandroidchart)
+    implementation("com.kizitonwose.calendar:view:2.6.2")
+    implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
 }
