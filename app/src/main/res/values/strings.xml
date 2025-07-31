@@ -92,6 +92,13 @@
     <string name="share_copy">복사</string>
     <string name="share_more">기타</string>
 
+    <string name="plan">Plan</string>
+    <string name="dash">-</string>
+    <string name="u_letter">U</string>
+    <string name="p_letter">p</string>
+    <string name="or_text">or</string>
+
+
 
     <string name="community_greeting">다양한 커뮤니티들이\n%s님을 기다리고 있어요!</string>
 
