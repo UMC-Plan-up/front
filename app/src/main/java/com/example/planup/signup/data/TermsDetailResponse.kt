@@ -1,14 +1,13 @@
 package com.example.planup.signup.data
 
-data class SignupResponseDto(
+data class TermsDetailResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: ResultData
+    val result: TermDetail
 )
 
-data class ResultData(
+data class TermDetail(
     val id: Int,
-    val email: String,
-    val friendNickname: String
+    val content: String
 )
