@@ -19,7 +19,7 @@
         android:id="@+id/headerText"
         android:layout_width="268dp"
         android:layout_height="33dp"
-        android:text="친구와 공동 목표 설정하기"
+        android:text="@string/goal_set_shared_with_friend"
         android:textSize="22sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
@@ -31,7 +31,7 @@
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="27dp"
-        android:text="목표 투자 시간"
+        android:text="@string/challenge_request_time"
         android:textSize="18sp"
         android:fontFamily="@font/pretendard_semibold"
         android:textColor="@color/black_400"
@@ -43,7 +43,7 @@
         android:id="@+id/descText"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:text="타이머 기반 성취 데이터 활용을 위한 질문이에요. 해당 목표를 1회 성취하는 데 시간이 얼마나 소요되나요?"
+        android:text="@string/timer_ask"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
@@ -69,20 +69,21 @@
                 android:id="@+id/hourEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="시간"
+                android:hint="@string/time"
                 android:focusable="false"
                 android:clickable="true"
                 android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="9dp"
+                android:paddingStart="7.5dp"
                 android:textColorHint="@color/black_300"
                 android:background="@drawable/bg_timer_setting" />
 
             <ImageView
                 android:id="@+id/hourArrow"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_arrow_down"
                 android:layout_gravity="end|center_vertical"
+                android:layout_marginTop="1dp"
                 android:layout_marginEnd="7dp" />
         </FrameLayout>
 
@@ -95,20 +96,22 @@
                 android:id="@+id/minuteEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="분"
+                android:hint="@string/minute"
                 android:focusable="false"
                 android:clickable="true"
                 android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="9dp"
+                android:paddingStart="7.5dp"
                 android:textColorHint="@color/black_300"
                 android:background="@drawable/bg_timer_setting" />
 
             <ImageView
                 android:id="@+id/minArrow"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_arrow_down"
+                android:layout_marginTop="1dp"
                 android:layout_gravity="end|center_vertical"
+
                 android:layout_marginEnd="7dp" />
         </FrameLayout>
 
@@ -121,20 +124,21 @@
                 android:id="@+id/secondEditText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="초"
+                android:hint="@string/second"
                 android:focusable="false"
                 android:clickable="true"
                 android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="9dp"
+                android:paddingStart="7.5dp"
                 android:textColorHint="@color/black_300"
                 android:background="@drawable/bg_timer_setting" />
 
             <ImageView
                 android:id="@+id/secArrow"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_arrow_down"
                 android:layout_gravity="end|center_vertical"
+                android:layout_marginTop="1dp"
                 android:layout_marginEnd="7dp" />
         </FrameLayout>
     </LinearLayout>
@@ -173,7 +177,7 @@
         android:id="@+id/warningText"
         android:layout_width="123dp"
         android:layout_height="18dp"
-        android:text="30초 이상 설정해 주세요."
+        android:text="@string/error_more_thirty_second"
         android:textSize="12sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="#F81E1E"
@@ -186,7 +190,7 @@
         android:id="@+id/nextButton"
         android:layout_width="0dp"
         android:layout_height="44dp"
-        android:text="다음"
+        android:text="@string/btn_next"
         android:textSize="16sp"
         android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"

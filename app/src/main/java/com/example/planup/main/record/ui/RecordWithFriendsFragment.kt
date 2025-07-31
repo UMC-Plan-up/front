@@ -15,15 +15,18 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.data.CombinedData
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.PercentFormatter
 
 class RecordWithFriendsFragment : Fragment() {
     lateinit var binding: FragmentRecordWithFriendsBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,12 +59,12 @@ class RecordWithFriendsFragment : Fragment() {
             BarEntry(4f, 1f),
             BarEntry(5f, 4f),
             BarEntry(6f, 5f),
-            BarEntry(7f, 5f) // 평균
+            BarEntry(7f, 5f)
         )
 
         val dataSet = BarDataSet(entries, "요일별 기록")
-        dataSet.color = Color.parseColor("#508CFF") // 파란색 계열
-        dataSet.valueTextColor = Color.TRANSPARENT // 숫자 안 보이게
+        dataSet.color = Color.parseColor("#508CFF")
+        dataSet.valueTextColor = Color.TRANSPARENT
 
         val barData = BarData(dataSet)
         barData.barWidth = 0.5f
@@ -84,28 +87,34 @@ class RecordWithFriendsFragment : Fragment() {
         barChart.legend.isEnabled = false
         barChart.setScaleEnabled(false)
         barChart.setPinchZoom(false)
-        barChart.invalidate() // 갱신
+        barChart.invalidate()
 
-        // CombinedChart 설정
         val combinedChart = binding.combinedChart
         val labels = listOf("4월 4주차", "4월 5주차", "이번 주")
         val barValues = listOf(5f, 80f, 25f)
-        val lineValues = listOf(10f, 85f, 30f)
+        val lineValues = listOf(5f, 80f, 25f)
 
         val barEntries = barValues.mapIndexed { i, value -> BarEntry(i.toFloat(), value) }
-        val barDataSet = BarDataSet(barEntries, "퍼센트").apply {
-            color = Color.rgb(68, 109, 255)
-            valueTextColor = Color.WHITE
-            valueTextSize = 12f
+        val barDataSet = BarDataSet(barEntries, "").apply {
+            color = Color.parseColor("#6799FF")
+            valueTextColor = Color.parseColor("#6799FF")
+            valueTextSize = 14f
             valueFormatter = PercentFormatter()
+            setDrawValues(true)
+            highLightAlpha = 0
         }
-        val barData2 = BarData(barDataSet)
+        val barData2 = BarData(barDataSet).apply {
+            barWidth = 0.6f
+        }
 
         val lineEntries = lineValues.mapIndexed { i, value -> Entry(i.toFloat(), value) }
-        val lineDataSet = LineDataSet(lineEntries, "추세선").apply {
+        val lineDataSet = LineDataSet(lineEntries, "").apply {
             color = Color.YELLOW
-            setDrawCircles(false)
+            circleRadius = 6f
+            setCircleColor(Color.YELLOW)
+            setDrawCircleHole(false)
             lineWidth = 2f
+            valueTextSize = 0f
             mode = LineDataSet.Mode.CUBIC_BEZIER
             setDrawValues(false)
         }
@@ -119,19 +128,29 @@ class RecordWithFriendsFragment : Fragment() {
         combinedChart.apply {
             description.isEnabled = false
             axisRight.isEnabled = false
+
+            axisLeft.apply {
+                axisMinimum = 0f
+                axisMaximum = 100f
+                textColor = Color.BLACK
+                textSize = 12f
+                granularity = 10f
+            }
+
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 valueFormatter = IndexAxisValueFormatter(labels)
                 granularity = 1f
-                textSize = 12f
+                textSize = 14f
                 textColor = Color.BLACK
+                setDrawGridLines(false)
+                axisMinimum = -0.5f
+                axisMaximum = labels.size - 0.5f
             }
-            axisLeft.apply {
-                axisMinimum = 0f
-                textColor = Color.BLACK
-                textSize = 12f
-            }
+
             legend.isEnabled = false
+            extraTopOffset = 20f
+            extraBottomOffset = 50f
             data = combinedData
             setScaleEnabled(false)
             setPinchZoom(false)
@@ -140,5 +159,4 @@ class RecordWithFriendsFragment : Fragment() {
 
         return binding.root
     }
-
 }

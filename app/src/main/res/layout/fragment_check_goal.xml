@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="52dp"
         android:layout_marginRight="20dp"
-        app:srcCompat="@drawable/ic_alarm" />
+        app:srcCompat="@drawable/ic_alarm2" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ImageView
+        android:id="@+id/back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/title_tv"
+        style="@style/Typography_2XL_Semibold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp"
+        android:text="@string/set_challenge_goal"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_iv" />
+
+    <TextView
+        android:id="@+id/subtitle_tv"
+        style="@style/Typography_L_Semibold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/set_certification_method"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_tv" />
+
+    <TextView
+        style="@style/Typography_S_Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="20dp"
+        android:text="@string/set_certification_method_notice"
+        android:textColor="@color/black_300"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subtitle_tv" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/timer_cl"
+        android:layout_width="300dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="118dp"
+        android:background="@drawable/bg_challenge_certification_selector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/subtitle_tv">
+
+
+        <ImageView
+            android:id="@+id/challenge_certification_timer_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="21dp"
+            android:src="@drawable/ic_timer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/challenge_certification_timer_tv"
+            style="@style/Typography_S_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="타이머 인증"
+            android:textColor="@color/black_400"
+            app:layout_constraintStart_toEndOf="@id/challenge_certification_timer_iv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            style="@style/Typography_XS_Medium"
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="4dp"
+            android:text="타이머 인증을 선택할 시, 유저의 타이머 기록이 성취율 측정 및 랭킹에 반영됩니다."
+            android:textColor="@color/black_400"
+            app:layout_constraintStart_toEndOf="@id/challenge_certification_timer_iv"
+            app:layout_constraintTop_toBottomOf="@id/challenge_certification_timer_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/photo_cl"
+        android:layout_width="300dp"
+        android:layout_height="128dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_challenge_certification_selector"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/timer_cl">
+
+        <ImageView
+            android:id="@+id/challenge_certification_photo_iv"
+            android:layout_width="82dp"
+            android:layout_height="82dp"
+            android:src="@drawable/ic_picture"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="21dp"/>
+        <TextView
+            android:id="@+id/challenge_certification_photo_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사진 인증"
+            style="@style/Typography_S_Medium"
+            android:textColor="@color/black_400"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/challenge_certification_photo_iv"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"/>
+        <TextView
+            android:layout_width="140dp"
+            android:layout_height="wrap_content"
+            android:text="사진 인증을 선택할 시, 유저의 인증샷 업로드 기록이 성취율 측정 및 랭킹에 반영됩니다."
+            style="@style/Typography_XS_Medium"
+            android:textColor="@color/black_400"
+            app:layout_constraintTop_toBottomOf="@id/challenge_certification_photo_tv"
+            app:layout_constraintStart_toEndOf="@id/challenge_certification_photo_iv"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="24dp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:id="@+id/btn_next_tv"
+        style="@style/Typography_SM_Medium"
+        android:layout_width="320dp"
+        android:layout_height="44dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_btn_blue"
+        android:gravity="center"
+        android:text="@string/btn_next"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

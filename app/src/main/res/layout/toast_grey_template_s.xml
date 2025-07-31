@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toast_grey_template_tv"
+    android:layout_width="320dp"
+    android:layout_height="35dp"
+    android:background="@drawable/bg_toast_grey_template"
+    android:textColor="@color/white_font"
+    style="@style/Typography_S_Medium"
+    android:textAlignment="center"
+    android:gravity="center"/>

@@ -1,18 +1,31 @@
 package com.example.planup.main.goal.ui
 
 import android.app.Dialog
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
+import com.example.planup.main.goal.item.GoalItem
+import com.example.planup.main.home.adapter.GoalAdapter
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 
 class GoalFragment : Fragment() {
     lateinit var binding: FragmentGoalBinding
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: GoalAdapter
+    private lateinit var dailyPieChart: PieChart
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,31 +36,65 @@ class GoalFragment : Fragment() {
         return binding.root
     }
 
-    private fun clickListener(){
-//        // 알림
-//        binding.challengeMainAlertIv.setOnClickListener{}
-//        // 주석
-//        binding.challengeMainTodoIv.setOnClickListener{}
-//        // 함께 도전 중인 친구들
-//        binding.challengeMainFriendTitleIv.setOnClickListener{}
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        dailyPieChart = view.findViewById(R.id.daily_goal_complete_pc)
+        setupPieChart(dailyPieChart, 70)
+
+
+        recyclerView = view.findViewById(R.id.goal_list_rv)
+        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val goals = listOf(
+            GoalItem("목표명", "[기준 기간]&[빈도]&\"이상\"", 82),
+            GoalItem("토익 공부하기", "매주 5번 이상", 82),
+            GoalItem("헬스장 가기", "매일 30분 이상", 82)
+        )
+
+        adapter = GoalAdapter(goals) { goalItem ->
+            val fragment = GoalDescriptionFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+        recyclerView.adapter = adapter
     }
 
-    /*챌린지 참여 요청 팝업*/
-    private fun makePopup(){
-        val dialog = Dialog(context as MainActivity)
-        dialog.setContentView(R.layout.popup_challenge)
-        dialog.window?.apply {
-            setLayout(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.BOTTOM)
+    private fun setupPieChart(pieChart: PieChart, progress: Int) {
+        val entries = listOf(
+            PieEntry(progress.toFloat()),
+            PieEntry((100 - progress).toFloat())
+        )
+
+        val dataSet = PieDataSet(entries, "").apply {
+            colors = listOf(Color.WHITE, Color.rgb(220, 220, 220))
+            setDrawValues(false)
+            sliceSpace = 2f
         }
 
-        dialog.findViewById<View>(R.id.popup_challenge_check_btn_iv).setOnClickListener{
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, GoalFragment())
-                .commitAllowingStateLoss()
+        pieChart.apply {
+            data = PieData(dataSet)
+            description.isEnabled = false
+            legend.isEnabled = false
+            setDrawEntryLabels(false)
+            setTouchEnabled(false)
+            isDrawHoleEnabled = true
+            setHoleColor(Color.TRANSPARENT)
+            holeRadius = 70f
+            transparentCircleRadius = 0f
+            centerText = ""
+            invalidate()
         }
-        dialog.setCanceledOnTouchOutside(false)
-        dialog.show()
+    }
+
+    private fun clickListener() {
+        binding.manageButton.setOnClickListener {
+            val isEditMode = adapter.toggleEditMode()
+            binding.manageButton.text = if (isEditMode) "완료" else "관리"
+        }
+
+
     }
 
 }

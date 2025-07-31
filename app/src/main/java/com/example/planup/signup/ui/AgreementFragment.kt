@@ -31,6 +31,9 @@ class AgreementFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_agreement, container, false)
 
+        val errorBox = view.findViewById<TextView>(R.id.requiredErrorText)
+        errorBox.visibility = View.GONE
+
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {

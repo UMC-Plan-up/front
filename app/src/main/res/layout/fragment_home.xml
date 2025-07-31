@@ -39,7 +39,7 @@
             android:layout_height="30dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_alarm"
+            android:src="@drawable/ic_alarm2"
             android:visibility="gone"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
