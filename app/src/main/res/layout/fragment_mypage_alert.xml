@@ -2,17 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/service_back_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
         android:src="@drawable/ic_mypage_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         style="@style/Typography_2XL_Medium"
@@ -20,9 +22,9 @@
         android:layout_height="wrap_content"
         android:text="@string/category"
         android:textColor="@color/black_400"
+        app:layout_constraintBottom_toBottomOf="@id/service_back_iv"
         app:layout_constraintStart_toEndOf="@id/service_back_iv"
-        app:layout_constraintTop_toTopOf="@id/service_back_iv"
-        app:layout_constraintBottom_toBottomOf="@id/service_back_iv"/>
+        app:layout_constraintTop_toTopOf="@id/service_back_iv" />
 
     <TextView
         android:id="@+id/service_title_tv"
@@ -50,24 +52,24 @@
         style="@style/Typography_S_Medium"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
         android:gravity="center"
         android:text="@string/service_explatin"
-        android:textColor="@color/black_400"
         android:textAlignment="center"
+        android:textColor="@color/black_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/service_alarm_iv"
-        android:layout_marginTop="14dp"/>
+        app:layout_constraintTop_toBottomOf="@id/service_alarm_iv" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/service_push_cl"
         android:layout_width="312dp"
         android:layout_height="56dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/bg_service"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/service_alarm_iv"
-        android:layout_marginTop="80dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/service_alarm_iv">
 
         <TextView
             style="@style/TextAppearance.Pretendard.Medium.S"
@@ -83,9 +85,9 @@
             android:id="@+id/service_push_toggle_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/service_push_on_iv"
@@ -107,6 +109,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
@@ -119,11 +122,11 @@
         android:id="@+id/service_goal_cl"
         android:layout_width="312dp"
         android:layout_height="56dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/bg_service"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/service_push_cl"
-        android:layout_marginTop="20dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/service_push_cl">
 
         <TextView
             style="@style/TextAppearance.Pretendard.Medium.S"
@@ -139,9 +142,9 @@
             android:id="@+id/service_receive_alert_toggle_cl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:id="@+id/service_receive_alert_on_iv"
@@ -163,22 +166,23 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <View
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/semanticB4"
-        app:layout_constraintTop_toBottomOf="@id/service_goal_cl"
         app:layout_constraintEnd_toEndOf="@id/service_goal_cl"
-        app:layout_constraintStart_toStartOf="@id/service_goal_cl"/>
+        app:layout_constraintStart_toStartOf="@id/service_goal_cl"
+        app:layout_constraintTop_toBottomOf="@id/service_goal_cl" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="312dp"
         android:layout_height="56dp"
+        android:layout_marginTop="96dp"
         android:background="@drawable/bg_service"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/service_push_cl"
-        android:layout_marginTop="96dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/service_push_cl">
 
         <TextView
             style="@style/TextAppearance.Pretendard.Medium.S"
@@ -219,211 +223,269 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/service_time_cl"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_timer_dropdown"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/service_day_cl"
+        app:layout_constraintStart_toStartOf="@id/service_day_cl">
+
+        <TextView
+            android:id="@+id/service_morning_tv"
+            style="@style/Typography_S_Medium"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center"
+            android:text="@string/morning"
+            android:textColor="@color/black_300"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/service_afternoon_tv"
+            style="@style/Typography_S_Medium"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:text="@string/afternoon"
+            android:textColor="@color/black_300"
+            app:layout_constraintTop_toBottomOf="@id/service_morning_tv" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/service_hour_rv"
+        android:layout_width="60dp"
+        android:layout_height="219dp"
+        android:layout_marginStart="66dp"
+        android:paddingStart="12dp"
+        android:background="@drawable/bg_timer_dropdown"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/service_day_cl"
+        app:layout_constraintStart_toStartOf="@id/service_day_cl" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/service_minute_rv"
+        android:layout_width="60dp"
+        android:layout_height="219dp"
+        android:layout_marginStart="132dp"
+        android:paddingStart="12dp"
+        android:background="@drawable/bg_timer_dropdown"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/service_day_cl"
+        app:layout_constraintStart_toStartOf="@id/service_day_cl" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/service_day_cl"
         android:layout_width="wrap_content"
         android:layout_height="68dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="151dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/service_push_cl"
-        android:layout_marginTop="151dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/service_push_cl">
 
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/service_time_sp"
+        <TextView
+            android:id="@+id/service_time_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/SetAlertSpinner"
+            android:background="@drawable/bg_timer_setting"
+            android:gravity="center_vertical|start"
+            android:text="@string/morning"
+            android:textColor="@color/black_300"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/service_hour_sp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2.5dp"
+            android:src="@drawable/ic_arrow_up_14"
+            app:layout_constraintBottom_toBottomOf="@id/service_time_tv"
+            app:layout_constraintEnd_toEndOf="@id/service_time_tv"
+            app:layout_constraintTop_toTopOf="@id/service_time_tv" />
+
+        <TextView
+            android:id="@+id/service_hour_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/SetAlertSpinner"
-            app:layout_constraintStart_toEndOf="@id/service_time_sp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="6dp"/>
-        <androidx.appcompat.widget.AppCompatSpinner
-            android:id="@+id/service_minute_sp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_timer_setting"
+            android:gravity="center_vertical|start"
+            android:text="@string/hour"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_time_tv"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2.5dp"
+            android:src="@drawable/ic_arrow_up_14"
+            app:layout_constraintBottom_toBottomOf="@id/service_hour_tv"
+            app:layout_constraintEnd_toEndOf="@id/service_hour_tv"
+            app:layout_constraintTop_toTopOf="@id/service_hour_tv" />
+
+        <TextView
+            android:id="@+id/service_minute_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="60dp"
             android:layout_height="30dp"
-            style="@style/SetAlertSpinner"
-            app:layout_constraintStart_toEndOf="@id/service_hour_sp"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginStart="6dp"/>
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_timer_setting"
+            android:gravity="center_vertical|start"
+            android:text="@string/minute"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_hour_tv"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="2.5dp"
+            android:src="@drawable/ic_arrow_up_14"
+            app:layout_constraintBottom_toBottomOf="@id/service_minute_tv"
+            app:layout_constraintEnd_toEndOf="@id/service_minute_tv"
+            app:layout_constraintTop_toTopOf="@id/service_minute_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_everyday_cl"
+        <TextView
+            android:id="@+id/service_everyday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="45dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_every_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/everyday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="6dp">
-            <TextView
-                android:id="@+id/service_everyday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/everyday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_monday_cl"
+        <TextView
+            android:id="@+id/service_monday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_everyday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_monday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/monday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/monday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_everyday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_tuesday_cl"
+        <TextView
+            android:id="@+id/service_tuesday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_monday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_tuesday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/tuesday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/tuesday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_monday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_wednesday_cl"
+        <TextView
+            android:id="@+id/service_wednesday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_tuesday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_wednesday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/wednesday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/wednesday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_tuesday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_thursday_cl"
+
+        <TextView
+            android:id="@+id/service_thursday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_wednesday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_thursday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/thursday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/thursday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_wednesday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_friday_cl"
+        <TextView
+            android:id="@+id/service_friday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_thursday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_friday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/friday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/friday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_thursday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_saturday_cl"
+        <TextView
+            android:id="@+id/service_saturday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_friday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_saturday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/saturday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/saturday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_friday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/service_sunday_cl"
+        <TextView
+            android:id="@+id/service_sunday_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/bg_alert_day_selector"
-            app:layout_constraintTop_toBottomOf="@id/service_time_sp"
-            app:layout_constraintStart_toEndOf="@id/service_saturday_cl"
+            android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="6dp">
-            <TextView
-                android:id="@+id/service_sunday_tv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/sunday"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_400"
-                android:gravity="center"
-                android:textAlignment="center"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:background="@drawable/bg_alert_day_selector"
+            android:gravity="center"
+            android:text="@string/sunday"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintStart_toEndOf="@id/service_saturday_tv"
+            app:layout_constraintTop_toBottomOf="@id/service_time_tv" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/service_save_btn"
+        style="@style/Typography_SM_Medium"
         android:layout_width="320dp"
         android:layout_height="44dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/bg_btn_blue"
-        android:text="@string/btn_save"
-        style="@style/Typography_SM_Medium"
-        android:textColor="@color/white"
         android:gravity="center"
+        android:text="@string/btn_save"
         android:textAlignment="center"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="20dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -85,7 +85,7 @@
         <item name="overlapAnchor"> false</item>
         <item name="android:spinnerMode">dropdown</item>
         <item name="android:dropDownWidth">match_parent</item>
-        <item name="android:background">@drawable/bg_spinner</item>
+        <item name="android:background">@drawable/bg_timer_spinner</item>
         <item name="android:maxHeight">110dp</item>
     </style>
 
