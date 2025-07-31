@@ -125,7 +125,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
-
     <TextView
         android:id="@+id/requiredErrorText"
         android:layout_width="0dp"
@@ -142,7 +141,6 @@
         app:layout_constraintBottom_toTopOf="@id/privacyInfo"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-
 
     <TextView
         android:id="@+id/privacyInfo"
@@ -166,7 +164,7 @@
         android:layout_height="44dp"
         android:text="@string/btn_next"
         android:textSize="16sp"
-        android:textColor="@color/white"
+        android:textColor="#FFFFFF"
         android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
         android:gravity="center"
@@ -176,6 +174,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
