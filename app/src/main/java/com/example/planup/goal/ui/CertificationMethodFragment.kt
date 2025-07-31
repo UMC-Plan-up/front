@@ -78,7 +78,6 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
                             putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
                         }
                     }
-
                     (requireActivity() as GoalActivity).navigateToFragment(detailFragment)
                 }
                 else -> {

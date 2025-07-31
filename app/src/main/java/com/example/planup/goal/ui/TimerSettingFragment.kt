@@ -66,7 +66,6 @@ class TimerSettingFragment : Fragment() {
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
-
             (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
         }
     }
@@ -137,7 +136,6 @@ class TimerSettingFragment : Fragment() {
         }else{
             binding.errorTv.visibility = View.GONE
             binding.challengeTimerNextBtn.isActivated = true
-
         }
     }
 }
