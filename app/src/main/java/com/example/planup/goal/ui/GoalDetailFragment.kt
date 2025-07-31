@@ -90,7 +90,6 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-
                     (requireActivity() as GoalActivity)
                         .navigateToFragment(timerFragment)
                 }
