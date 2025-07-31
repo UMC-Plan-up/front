@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.GoalSettingActivity
 
 class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
@@ -75,7 +76,9 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalSettingActivity).navigateToFragment(goalInputFragment)
+            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container,goalInputFragment)
+                .commitAllowingStateLoss()
         }
     }
 
