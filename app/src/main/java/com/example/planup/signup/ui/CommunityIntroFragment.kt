@@ -147,6 +147,7 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
             val context = requireContext()
             val intent = Intent(context, GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname) // 닉네임 전달
+
             }
             startActivity(intent)
         }
