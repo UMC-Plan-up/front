@@ -224,7 +224,7 @@
         android:layout_marginStart="117dp">
 
         <TextView
-            android:id="@+id/categorySleepText"
+            android:id="@+id/category_sleep_tv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -336,7 +336,7 @@
         android:layout_marginStart="5dp">
 
         <TextView
-            android:id="@+id/categoryCustomText"
+            android:id="@+id/category_custom_tv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"

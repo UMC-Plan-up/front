@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.ui.GoalCategoryFragment
+import com.example.planup.goal.ui.GoalSelectFragment
 
 class GoalSettingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

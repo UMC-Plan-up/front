@@ -2,7 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
 
     <ImageView
@@ -52,33 +54,98 @@
         android:layout_marginStart="20dp"
         android:layout_marginEnd="20dp" />
 
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/challenge_timer_hour_sp"
+    <!-- 시간 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_hour_tv"
         android:layout_width="70dp"
         android:layout_height="33dp"
-        style="@style/SetTimerSpinner"
+        android:background="@drawable/bg_timer_setting"
+        style="@style/Typography_SM_Medium"
+        android:text="@string/time"
+        android:textColor="@color/black_400"
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="58dp"
         android:layout_marginStart="16dp"/>
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/challenge_timer_minute_sp"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_hour_tv"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_hour_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_tv"
+        android:visibility="gone"/>
+
+    <!-- 분 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_minute_tv"
         android:layout_width="70dp"
         android:layout_height="33dp"
-        style="@style/SetTimerSpinner"
+        android:background="@drawable/bg_timer_setting"
+        android:text="@string/minute"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/black_400"
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
-        app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_sp"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_tv"
         android:layout_marginTop="58dp"
         android:layout_marginStart="4dp"/>
-    <androidx.appcompat.widget.AppCompatSpinner
-        android:id="@+id/challenge_timer_second_sp"
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_minute_tv"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_minute_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_minute_tv"
+        android:visibility="gone"/>
+
+    <!-- 초 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_second_tv"
         android:layout_width="70dp"
         android:layout_height="33dp"
-        style="@style/SetTimerSpinner"
+        android:background="@drawable/bg_timer_setting"
+        android:text="@string/second"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/black_400"
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
-        app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_sp"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_tv"
         android:layout_marginTop="58dp"
         android:layout_marginStart="4dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_second_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_second_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_second_tv"
+        android:visibility="gone"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_second_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_second_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_second_tv"/>
 
     <TextView
         android:id="@+id/error_tv"
@@ -87,8 +154,8 @@
         android:text=""
         style="@style/Typography_XS_Medium"
         android:textColor="@color/red_300"
-        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_sp"
-        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_sp"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_tv"
         android:layout_marginTop="7dp"/>
 
     <TextView

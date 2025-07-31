@@ -28,7 +28,8 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
         super.onViewCreated(view, savedInstanceState)
 
         // GoalCategoryFragment → CommonGoalFragment에서 넘겨준 닉네임 받기
-        goalOwnerName = requireArguments().getString("goalOwnerName") ?: "사용자"
+//        goalOwnerName = requireArguments().getString("goalOwnerName") ?: "사용자"
+        goalOwnerName = savedInstanceState?.getString("goalOwnerName", "사용자").toString()
 
         // 초기화
         backIcon = view.findViewById(R.id.backIcon)

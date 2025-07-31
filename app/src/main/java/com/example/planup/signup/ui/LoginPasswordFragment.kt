@@ -3,6 +3,7 @@ package com.example.planup.signup.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -34,6 +35,7 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)

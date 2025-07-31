@@ -2,6 +2,7 @@ package com.example.planup.signup.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -9,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.GoalSettingActivity
 import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
@@ -143,9 +145,13 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 
         /* 목표 설정 시작하기 버튼 → GoalCategoryFragment로 이동 */
         startGoalSettingButton.setOnClickListener {
-            val context = requireContext()
-            val intent = Intent(context, GoalSettingActivity::class.java).apply {
-                putExtra("goalOwnerName", nickname) // 닉네임 전달
+//            val context = requireContext()
+//            val intent = Intent(context, GoalSettingActivity::class.java).apply {
+//                putExtra("goalOwnerName", nickname) // 닉네임 전달
+//            }
+//            startActivity(intent)
+            val intent = Intent(context as SignupActivity,GoalActivity::class.java).apply {
+                putExtra("goalOwnerName",nickname)
             }
             startActivity(intent)
         }
