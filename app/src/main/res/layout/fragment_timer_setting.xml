@@ -3,194 +3,173 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    android:padding="24dp">
+    android:background="@color/white">
+
 
     <ImageView
-        android:id="@+id/backIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_arrow_back"
-        android:layout_marginTop="38dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/headerText"
-        android:layout_width="268dp"
-        android:layout_height="33dp"
-        android:text="@string/goal_set_shared_with_friend"
-        android:textSize="22sp"
-        android:fontFamily="@font/pretendard_semibold"
-        android:textColor="@color/black_400"
-        android:layout_marginTop="31dp"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/titleText"
+        android:id="@+id/back_iv"
         android:layout_width="wrap_content"
-        android:layout_height="27dp"
-        android:text="@string/challenge_request_time"
-        android:textSize="18sp"
-        android:fontFamily="@font/pretendard_semibold"
-        android:textColor="@color/black_400"
-        android:layout_marginTop="88dp"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/descText"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:text="@string/timer_ask"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretendard_medium"
-        android:textColor="@color/black_300"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- 기본 UI -->
-    <LinearLayout
-        android:id="@+id/timeSetContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@id/descText"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="33dp">
-
-            <EditText
-                android:id="@+id/hourEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/time"
-                android:focusable="false"
-                android:clickable="true"
-                android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="7.5dp"
-                android:textColorHint="@color/black_300"
-                android:background="@drawable/bg_timer_setting" />
-
-            <ImageView
-                android:id="@+id/hourArrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="7dp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="33dp"
-            android:layout_marginStart="4dp">
-
-            <EditText
-                android:id="@+id/minuteEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/minute"
-                android:focusable="false"
-                android:clickable="true"
-                android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="7.5dp"
-                android:textColorHint="@color/black_300"
-                android:background="@drawable/bg_timer_setting" />
-
-            <ImageView
-                android:id="@+id/minArrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_marginTop="1dp"
-                android:layout_gravity="end|center_vertical"
-
-                android:layout_marginEnd="7dp" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="70dp"
-            android:layout_height="33dp"
-            android:layout_marginStart="4dp">
-
-            <EditText
-                android:id="@+id/secondEditText"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:hint="@string/second"
-                android:focusable="false"
-                android:clickable="true"
-                android:fontFamily="@font/pretendard_medium"
-                android:paddingStart="7.5dp"
-                android:textColorHint="@color/black_300"
-                android:background="@drawable/bg_timer_setting" />
-
-            <ImageView
-                android:id="@+id/secArrow"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="7dp" />
-        </FrameLayout>
-    </LinearLayout>
-
-    <!-- 펼쳐진 UI (NumberPicker) -->
-    <LinearLayout
-        android:id="@+id/expandedPickerLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="24dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/descText"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <NumberPicker
-            android:id="@+id/hourPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"/>
-
-        <NumberPicker
-            android:id="@+id/minutePicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"/>
-
-        <NumberPicker
-            android:id="@+id/secondPicker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"/>
 
     <TextView
-        android:id="@+id/warningText"
-        android:layout_width="123dp"
-        android:layout_height="18dp"
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_set_shared_with_friend"
+        style="@style/Typography_2XL_Semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_iv"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="28dp" />
+
+    <TextView
+        android:id="@+id/expected_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/timer_expect_time"
+        style="@style/Typography_L_Semibold"
+        android:fontFamily="@font/pretendard_semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="20dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/timer_ask"
+        style="@style/Typography_S_Medium"
+        android:textColor="@color/black_300"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp" />
+
+    <!-- 시간 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_hour_tv"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:background="@drawable/bg_timer_setting"
+        style="@style/Typography_SM_Medium"
+        android:text="@string/time"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="58dp"
+        android:layout_marginStart="16dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_hour_tv"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_hour_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:paddingStart="12dp"
+        android:elevation="10dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_tv"
+        android:visibility="gone"/>
+
+    <!-- 분 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_minute_tv"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:background="@drawable/bg_timer_setting"
+        android:text="@string/minute"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_tv"
+        android:layout_marginTop="58dp"
+        android:layout_marginStart="4dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_minute_tv"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_minute_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:paddingStart="12dp"
+        android:elevation="10dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_minute_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_minute_tv"
+        android:visibility="gone"/>
+
+    <!-- 초 드롭다운 -->
+    <TextView
+        android:id="@+id/challenge_timer_second_tv"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:background="@drawable/bg_timer_setting"
+        android:text="@string/second"
+        style="@style/Typography_SM_Medium"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_tv"
+        android:layout_marginTop="58dp"
+        android:layout_marginStart="4dp"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/challenge_timer_second_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:elevation="10dp"
+        android:paddingStart="12dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_second_tv"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_second_tv"
+        android:visibility="gone"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_down_timer"
+        app:layout_constraintEnd_toEndOf="@id/challenge_timer_second_tv"
+        app:layout_constraintTop_toTopOf="@id/challenge_timer_second_tv"
+        app:layout_constraintBottom_toBottomOf="@id/challenge_timer_second_tv"/>
+
+    <TextView
+        android:id="@+id/error_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/error_more_thirty_second"
-        android:textSize="12sp"
-        android:fontFamily="@font/pretendard_medium"
-        android:textColor="#F81E1E"
+        style="@style/Typography_XS_Medium"
+        android:textColor="@color/red_300"
+        app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_tv"
+        app:layout_constraintStart_toStartOf="@id/challenge_timer_hour_tv"
         android:layout_marginTop="7dp"
-        app:layout_constraintTop_toBottomOf="@id/timeSetContainer"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:visibility="gone"/>
 
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/nextButton"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/challenge_timer_next_btn"
+        android:layout_width="320dp"
         android:layout_height="44dp"
         android:text="@string/btn_next"
+<<<<<<< HEAD
         android:textSize="16sp"
         android:textColor="@color/white"
         android:fontFamily="@font/pretendard_medium"
@@ -198,7 +177,16 @@
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="33dp"
+=======
+        style="@style/Typography_S_Medium"
+        android:background="@drawable/bg_btn_selector"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:textAlignment="center"
+>>>>>>> 271459c ([style] 드롭다운 구현)
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,13 +9,16 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.adapter.TimerRVAdapter
 
 class TimerSettingFragment : Fragment() {
-    private lateinit var binding:FragmentTimerSettingBinding
-    private var totalTime = 0 //타이머 설정 시간을 초 단위로 저장
+
+    private lateinit var hourEditText: EditText
+    private lateinit var minuteEditText: EditText
+    private lateinit var secondEditText: EditText
+
+    private lateinit var nextButton: AppCompatButton
+    private lateinit var backIcon: ImageView
 
     private var goalOwnerName: String? = null
 
@@ -23,43 +26,35 @@ class TimerSettingFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val view = inflater.inflate(R.layout.fragment_timer_setting, container, false)
 
-        binding = FragmentTimerSettingBinding.inflate(inflater,container,false)
-        clickListener()
-        setTimer()
         goalOwnerName = arguments?.getString("goalOwnerName")
             ?: throw IllegalStateException("TimerSettingFragment must receive goalOwnerName!")
-        return binding.root
 
+        initViews(view)
+        setupNextButton()
+        setupBackButton()
+
+        return view
     }
 
-    private fun clickListener(){
-        //이전 버튼 -> 인증방식 설정 페이지로 이동
-        binding.backIv.setOnClickListener {
-            val certFragment = CertificationMethodFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalOwnerName)
-                }
-            }
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,certFragment)
-                .commitAllowingStateLoss()
-        }
+    /* 뷰 초기화 */
+    private fun initViews(view: View) {
+        hourEditText = view.findViewById(R.id.hourEditText)
+        minuteEditText = view.findViewById(R.id.minuteEditText)
+        secondEditText = view.findViewById(R.id.secondEditText)
 
-        //타이머 시간 설정
-        binding.challengeTimerHourTv.setOnClickListener { //시간
-            binding.challengeTimerHourRv.visibility = View.VISIBLE
-        }
-        binding.challengeTimerMinuteTv.setOnClickListener { //분
-            binding.challengeTimerMinuteRv.visibility = View.VISIBLE
-        }
-        binding.challengeTimerSecondTv.setOnClickListener { //초
-            binding.challengeTimerSecondRv.visibility = View.VISIBLE
-        }
+        nextButton = view.findViewById(R.id.nextButton)
+        backIcon = view.findViewById(R.id.backIcon)
 
-        //다음 버튼 -> 페널티 설정 페이지로 이동
-        binding.challengeTimerNextBtn.setOnClickListener{
-            if (!binding.challengeTimerNextBtn.isActivated) return@setOnClickListener
+        // 버튼은 항상 활성화
+        nextButton.isEnabled = true
+        nextButton.setBackgroundResource(R.drawable.btn_next_background)
+    }
+
+    /* 다음 버튼 클릭 → GoalDetailFragment로 이동 */
+    private fun setupNextButton() {
+        nextButton.setOnClickListener {
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
@@ -70,73 +65,15 @@ class TimerSettingFragment : Fragment() {
         }
     }
 
-    //타이머 설정 관리
-    private fun setTimer(){
-        //시간, 분, 초 를 저장하는 어레이 리스트 만들기
-        val hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>()) //시간
-        val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //분
-        val seconds = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //초
-
-        //각 드롭다운에 대한 어댑터 생성
-        val timerAdapter = ArrayList<TimerRVAdapter>()
-        timerAdapter.add(0, TimerRVAdapter(hours))
-        timerAdapter.add(1, TimerRVAdapter(minutes))
-        timerAdapter.add(2, TimerRVAdapter(seconds))
-
-        binding.challengeTimerHourRv.adapter = timerAdapter[0]
-        binding.challengeTimerMinuteRv.adapter = timerAdapter[1]
-        binding.challengeTimerSecondRv.adapter = timerAdapter[2]
-
-        timerAdapter[0].setDropdownListener(object : TimerRVAdapter.DropdownListener{
-            //시간 선택
-            override fun setTime(position: Int) {
-                binding.challengeTimerHourTv.text = hours[position]
-                binding.challengeTimerHourRv.visibility = View.GONE
-                timeWatcher(3600*hours[position].toInt(),0) //전체 시간 업데이트
+    /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
+    private fun setupBackButton() {
+        backIcon.setOnClickListener {
+            val certFragment = CertificationMethodFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", goalOwnerName)
+                }
             }
-        })
-        timerAdapter[1].setDropdownListener(object : TimerRVAdapter.DropdownListener{
-            //분 선택
-            override fun setTime(position: Int) {
-                binding.challengeTimerMinuteTv.text = minutes[position]
-                binding.challengeTimerMinuteRv.visibility = View.GONE
-                timeWatcher(minutes[position].toInt(),1) //전체 시간 업데이트
-            }
-        })
-        timerAdapter[2].setDropdownListener(object : TimerRVAdapter.DropdownListener{
-            //초 선택
-            override fun setTime(position: Int) {
-                binding.challengeTimerSecondTv.text = seconds[position]
-                binding.challengeTimerSecondRv.visibility = View.GONE
-                timeWatcher(seconds[position].toInt(),2) //전체 시간 업데이트
-            }
-        })
-    }
-    //타이머로 설정한 시간 업데이트
-    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
-    private fun timeWatcher(selected:Int,position:Int){
-        val hour = (totalTime / 3600) * 3600
-        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
-        val second= totalTime - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
-
-        if (position == 0){
-            totalTime -= hour
-            totalTime += 3600*selected
-        } else if (position == 1){
-            totalTime -= minute
-            totalTime += 60*selected
-        } else if (position == 2){
-
-            totalTime -= second
-            totalTime += selected
-        }
-        if (totalTime < 30){
-            binding.errorTv.visibility = View.VISIBLE
-            binding.challengeTimerNextBtn.isActivated = false
-        }else{
-            binding.errorTv.visibility = View.GONE
-            binding.challengeTimerNextBtn.isActivated = true
-
+            (requireActivity() as GoalActivity).navigateToFragment(certFragment)
         }
     }
 }
