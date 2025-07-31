@@ -8,6 +8,13 @@ import com.example.planup.signup.ui.AgreementFragment
 
 class SignupActivity : AppCompatActivity() {
 
+    var email: String? = null
+    var password: String? = null
+    var nickname: String? = null
+    var profileImgUrl: String? = null
+    var inviteCode: String? = null
+    var agreements: List<Agreement>? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
@@ -19,6 +26,11 @@ class SignupActivity : AppCompatActivity() {
                 .commit()
         }
     }
+
+    data class Agreement(
+        val termsId: Int,
+        val isAgreed: Boolean
+    )
 
     // Fragment 이동 공용 메서드
     fun navigateToFragment(fragment: Fragment) {

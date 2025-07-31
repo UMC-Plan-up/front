@@ -88,7 +88,7 @@ class PushAlertFragment : Fragment() {
         }
 
         //저장 버튼 클릭
-        binding.saveButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             // TODO: 저장 버튼 클릭 시 Push 알림 설정 저장
 
             binding.notificationSaveMessage.visibility = View.VISIBLE

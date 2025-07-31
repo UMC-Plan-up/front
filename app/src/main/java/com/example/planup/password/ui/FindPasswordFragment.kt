@@ -35,7 +35,7 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
         emailEditText = view.findViewById(R.id.emailEditText)
         emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
-        sendVerificationButton = view.findViewById(R.id.sendVerificationButton)
+        sendVerificationButton = view.findViewById(R.id.nextButton)
         emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
 
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)

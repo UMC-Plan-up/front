@@ -12,8 +12,13 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
+import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
+import com.example.planup.signup.data.SignupRepository
+import com.example.planup.signup.data.SignupRequestDto
+import kotlinx.coroutines.launch
 
 class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
@@ -21,11 +26,6 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     private lateinit var inviteCodeEditText: EditText
     private lateinit var inputButton: AppCompatButton
     private lateinit var textShareLater: TextView
-
-    /* [테스트용] 등록된 초대코드 */
-    // TODO : API 연동
-    private val validInviteCode = "9ABCDEF273"
-    private val friendNickname = "green"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,41 +65,116 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         inputButton.setOnClickListener {
             val enteredCode = inviteCodeEditText.text.toString().trim()
 
-            if (enteredCode.isNotEmpty() && enteredCode == validInviteCode) {
-                // 올바른 초대코드 → 팝업 띄우기
-                hideInvalidCodeMessage()
-                showPopupCenter(view, friendNickname)
-            } else if (enteredCode.isNotEmpty()) {
-                // 코드 입력했지만 유효하지 않음 → "유효하지 않은 초대코드입니다." 표시
-                showInvalidCodeMessage()
+            if (enteredCode.isNotEmpty()) {
+                // (1) SignupActivity에 값 저장
+                val activity = requireActivity() as SignupActivity
+                activity.inviteCode = enteredCode
+                activity.agreements = listOf(SignupActivity.Agreement(termsId = 1, isAgreed = true))
+
+                // (2) 회원가입 API 요청
+                val request = SignupRequestDto(
+                    email = activity.email ?: "",
+                    password = activity.password ?: "",
+                    passwordCheck = activity.password ?: "",
+                    nickname = activity.nickname ?: "",
+                    inviteCode = enteredCode,
+                    profileImg = activity.profileImgUrl ?: "",
+                    agreements = activity.agreements!!.map {
+                        com.example.planup.signup.data.Agreement(it.termsId, it.isAgreed)
+                    }
+                )
+
+                lifecycleScope.launch {
+                    try {
+                        val repository = SignupRepository(RetrofitInstance.signupApi)
+                        val response = repository.signup(request)
+
+                        if (response.isSuccess) {
+                            // (3) 올바른 초대코드 → 팝업 띄우기
+                            hideInvalidCodeMessage()
+                            //val nickname = response.result.nickname
+                            //showPopupCenter(view, nickname)
+
+                        } else {
+                            // (4) 서버 응답 실패 → 코드별 처리
+                            handleErrorCode(response.code)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        // (5) 네트워크 등 예외 발생 시 처리
+                        setErrorMessage("네트워크 오류가 발생했습니다.")
+                    }
+                }
             }
-            // 입력이 비어있으면 아무 반응 없음
         }
+
 
         /* “다음에 할게요” 클릭 → CommunityIntroFragment로 이동 */
         textShareLater.setOnClickListener {
-            val communityIntroFragment = CommunityIntroFragment.newInstance(friendNickname)
-            (requireActivity() as SignupActivity).navigateToFragment(communityIntroFragment)
+            val activity = requireActivity() as SignupActivity
+            activity.inviteCode = ""
+            activity.agreements = listOf(SignupActivity.Agreement(termsId = 1, isAgreed = true))
+
+            val request = SignupRequestDto(
+                email = activity.email ?: "",
+                password = activity.password ?: "",
+                passwordCheck = activity.password ?: "",
+                nickname = activity.nickname ?: "",
+                inviteCode = "",
+                profileImg = activity.profileImgUrl ?: "",
+                agreements = activity.agreements!!.map {
+                    com.example.planup.signup.data.Agreement(it.termsId, it.isAgreed)
+                }
+            )
+
+            lifecycleScope.launch {
+                try {
+                    val repository = SignupRepository(RetrofitInstance.signupApi)
+                    val response = repository.signup(request)
+
+                    if (response.isSuccess) {
+                        //val nickname = response.result.nickname
+                        //val fragment = CommunityIntroFragment.newInstance(nickname)
+                        //activity.navigateToFragment(fragment)
+                    } else {
+                        handleErrorCode(response.code)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    setErrorMessage("네트워크 오류가 발생했습니다.")
+                }
+            }
         }
     }
 
     /* 잘못된 코드 text 표시 함수 */
     private fun showInvalidCodeMessage() {
-        val invalidText = view?.findViewById<TextView>(R.id.emailFormatErrorText2)
-        invalidText?.apply {
-            visibility = View.VISIBLE   // 잘못된 코드 메시지 표시
-
-            // 3초 후 자동으로 사라지도록 postDelayed
-            postDelayed({
-                hideInvalidCodeMessage()
-            }, 3000)
-        }
+        setErrorMessage("유효하지 않은 초대코드입니다.")
     }
 
     /* 잘못된 코드 text 숨김 함수 */
     private fun hideInvalidCodeMessage() {
         val invalidText = view?.findViewById<TextView>(R.id.emailFormatErrorText2)
         invalidText?.visibility = View.GONE
+    }
+
+    /* 에러 메시지 표시 함수 */
+    private fun setErrorMessage(message: String) {
+        val errorText = view?.findViewById<TextView>(R.id.emailFormatErrorText2)
+        errorText?.text = message
+        errorText?.visibility = View.VISIBLE
+        errorText?.postDelayed({
+            hideInvalidCodeMessage()
+        }, 3000)
+    }
+
+    /* 응답 코드에 따른 분기 처리 함수 */
+    private fun handleErrorCode(code: String) {
+        when (code) {
+            "S001" -> setErrorMessage("잘못된 입력값입니다.")
+            "S002" -> setErrorMessage("서버 에러가 발생했습니다.")
+            "U001" -> setErrorMessage("존재하지 않는 사용자입니다.")
+        }
     }
 
     /* popup_code.xml을 화면 중앙에 띄우는 함수 */
@@ -109,7 +184,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         // popup_code.xml 안의 친구 닉네임 반영
         val friendDescription = popupView.findViewById<TextView>(R.id.friendDescription)
-        friendDescription.text = "$nickname 님과 친구가 되었어요!"
+        friendDescription.text = getString(R.string.friend_description, nickname)
 
         val confirmButton = popupView.findViewById<AppCompatButton>(R.id.confirmButton)
 
@@ -131,9 +206,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         /* popup의 확인 버튼 클릭 → CommunityIntroFragment로 이동 */
         confirmButton.setOnClickListener {
             popupWindow.dismiss()
-
-            val communityIntroFragment = CommunityIntroFragment.newInstance(friendNickname)
-            (requireActivity() as SignupActivity).navigateToFragment(communityIntroFragment)
+            val fragment = CommunityIntroFragment.newInstance(nickname)
+            (requireActivity() as SignupActivity).navigateToFragment(fragment)
         }
 
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
