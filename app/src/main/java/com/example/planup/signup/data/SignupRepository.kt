@@ -1,6 +1,5 @@
 package com.example.planup.signup.data
 
-
 import com.example.planup.network.SignupApi
 import retrofit2.Response
 
