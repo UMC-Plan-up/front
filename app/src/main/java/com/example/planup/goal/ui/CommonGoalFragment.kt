@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 
-
 class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
 
     private lateinit var backIcon: ImageView
@@ -77,7 +76,6 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
                 }
             }
             (requireActivity() as GoalActivity).navigateToFragment(goalInputFragment)
-
         }
     }
 

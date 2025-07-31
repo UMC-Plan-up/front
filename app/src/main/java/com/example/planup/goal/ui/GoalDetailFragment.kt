@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 
-
 class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
 
     private lateinit var backIcon: View
@@ -79,7 +78,6 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-
                     (requireActivity() as GoalActivity)
                         .navigateToFragment(timerFragment)
                 }

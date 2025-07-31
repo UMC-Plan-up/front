@@ -159,6 +159,38 @@ class PushAlertFragment : Fragment() {
 //        }
 //    }
 
+    /* 스피너 초기화 */
+    private fun setSpinner(
+        spinnerId: androidx.appcompat.widget.AppCompatSpinner,
+        stringId: Int
+    ) {
+        val items = resources.getStringArray(stringId)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_spinner_challenge_alert,
+            items
+        )
+        adapter.setDropDownViewResource(R.layout.dropdown_alert)
+        spinnerId.adapter = adapter
+        spinnerId.setSelection(0, false)
+
+        spinnerId.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selected = parent.getItemAtPosition(position).toString()
+                // 선택된 값 사용 가능 (예: Toast 등)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // 선택 안됨
+            }
+        }
+    }
+
     companion object {
         fun newInstance(showPopup: Boolean = false): PushAlertFragment {
             val fragment = PushAlertFragment()
