@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
         android:id="@id/back_iv"
@@ -14,28 +15,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/challenge_request_title_tv"
-        style="@style/Typography_2XL_Semibold"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="28dp"
-        android:text="@string/challenge_request_from"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_iv" />
-
     <ScrollView
         android:id="@+id/challenge_request_sv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_request_title_tv">
+        app:layout_constraintTop_toBottomOf="@id/back_iv"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="117dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/challenge_request_cl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/challenge_request_title_tv"
+                style="@style/Typography_2XL_Semibold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:text="@string/challenge_request_from"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/challenge_request_goal_tv"
@@ -46,7 +47,7 @@
             android:layout_marginTop="24dp"
             android:text="@string/goal_name"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/challenge_request_title_tv"/>
 
         <TextView
             android:id="@+id/challenge_request_goal_enter_tv"
@@ -97,8 +98,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/challenge_request_verify_enter_cl"
-            android:layout_width="320dp"
-            android:layout_height="102dp"
+            android:layout_width="331dp"
+            android:layout_height="67dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_challenge_request_verify"
@@ -315,8 +316,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/challenge_request_penalty_cl"
-                android:layout_width="320dp"
-                android:layout_height="102dp"
+                android:layout_width="327dp"
+                android:layout_height="67dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_challenge_request_verify"
@@ -359,7 +360,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"/>
             <TextView
-                android:id="@+id/btn_approve_tv"
+                android:id="@+id/btn_accept_tv"
                 style="@style/Typography_S_Semibold"
                 android:layout_width="155dp"
                 android:layout_height="37dp"
@@ -375,13 +376,15 @@
             <TextView
                 android:id="@+id/btn_ask_new_penalty_tv"
                 android:layout_width="320dp"
-                android:layout_height="46dp"
+                android:layout_height="37dp"
+                style="@style/Typography_S_Semibold"
                 android:text="@string/btn_ask_new_penalty"
+                android:textColor="@color/blue_300"
                 android:textAlignment="center"
                 android:gravity="center"
                 android:background="@drawable/bg_challenge_request_offer"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_approve_tv"
+                app:layout_constraintTop_toBottomOf="@id/btn_accept_tv"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
