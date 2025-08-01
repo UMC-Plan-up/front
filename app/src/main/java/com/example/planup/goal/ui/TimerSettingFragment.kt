@@ -11,11 +11,9 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
 
 class TimerSettingFragment : Fragment() {
-
     private lateinit var binding:FragmentTimerSettingBinding
     private var totalTime = 0 //타이머 설정 시간을 초 단위로 저장
 
@@ -68,6 +66,7 @@ class TimerSettingFragment : Fragment() {
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
+
             (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
         }
     }
@@ -128,6 +127,7 @@ class TimerSettingFragment : Fragment() {
             totalTime -= minute
             totalTime += 60*selected
         } else if (position == 2){
+
             totalTime -= second
             totalTime += selected
         }
@@ -137,6 +137,7 @@ class TimerSettingFragment : Fragment() {
         }else{
             binding.errorTv.visibility = View.GONE
             binding.challengeTimerNextBtn.isActivated = true
+
         }
     }
 }
