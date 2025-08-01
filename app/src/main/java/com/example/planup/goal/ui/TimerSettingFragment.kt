@@ -9,6 +9,7 @@ import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
 
 class TimerSettingFragment : Fragment() {
@@ -19,6 +20,8 @@ class TimerSettingFragment : Fragment() {
 
     private lateinit var nextButton: AppCompatButton
     private lateinit var backIcon: ImageView
+    private lateinit var binding: FragmentTimerSettingBinding
+    private var totalTime = 0 //타이머 설정 시간을 초 단위로 저장
 
     private var goalOwnerName: String? = null
 
@@ -61,6 +64,7 @@ class TimerSettingFragment : Fragment() {
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
+
             (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
         }
     }
@@ -73,7 +77,50 @@ class TimerSettingFragment : Fragment() {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalActivity).navigateToFragment(certFragment)
+
+        }
+        timerAdapter[1].setDropdownListener(object : TimerRVAdapter.DropdownListener{
+            //분 선택
+            override fun setTime(position: Int) {
+                binding.challengeTimerMinuteTv.text = minutes[position]
+                binding.challengeTimerMinuteRv.visibility = View.GONE
+                timeWatcher(minutes[position].toInt(),1) //전체 시간 업데이트
+            }
+        })
+        timerAdapter[2].setDropdownListener(object : TimerRVAdapter.DropdownListener{
+            //초 선택
+            override fun setTime(position: Int) {
+                binding.challengeTimerSecondTv.text = seconds[position]
+                binding.challengeTimerSecondRv.visibility = View.GONE
+                timeWatcher(seconds[position].toInt(),2) //전체 시간 업데이트
+            }
+        })
+    }
+    //타이머로 설정한 시간 업데이트
+    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
+    private fun timeWatcher(selected:Int,position:Int){
+        val hour = (totalTime / 3600) * 3600
+        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+        val second= totalTime - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+
+        if (position == 0){
+            totalTime -= hour
+            totalTime += 3600*selected
+        } else if (position == 1){
+            totalTime -= minute
+            totalTime += 60*selected
+        } else if (position == 2){
+
+            totalTime -= second
+            totalTime += selected
+        }
+        if (totalTime < 30){
+            binding.errorTv.visibility = View.VISIBLE
+            binding.challengeTimerNextBtn.isActivated = false
+        }else{
+            binding.errorTv.visibility = View.GONE
+            binding.challengeTimerNextBtn.isActivated = true
+
         }
     }
 }

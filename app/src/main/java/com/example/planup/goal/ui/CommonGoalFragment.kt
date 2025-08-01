@@ -76,6 +76,7 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
                 }
             }
             (requireActivity() as GoalActivity).navigateToFragment(goalInputFragment)
+
         }
     }
 
