@@ -143,12 +143,13 @@ class ChallengeSetTimerFragment:Fragment() {
         val second= totalTime - ((totalTime-(totalTime/3600)*3600)/60)
 
         if (position==0){
+
             totalTime -= hour
             totalTime += 3600*selected
         } else if (position == 1){
             totalTime -= minute
             totalTime += 60*selected
-        } else{
+        } else if (position == 2){
             totalTime -= second
             totalTime += selected
         }
@@ -156,6 +157,7 @@ class ChallengeSetTimerFragment:Fragment() {
             binding.errorTv.visibility = View.VISIBLE
         }else{
             binding.errorTv.visibility = View.GONE
+            binding.challengeTimerNextBtn.isActivated = true
         }
     }
 }
