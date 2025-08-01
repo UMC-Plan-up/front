@@ -111,6 +111,7 @@ class ChallengeSetTimerFragment:Fragment() {
 //        })
 //    }
 
+
     private fun showDropdown(items: ArrayList<String>, view: TextView, selected: Int){//리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.item_recycler_dropdown,null)
@@ -120,6 +121,7 @@ class ChallengeSetTimerFragment:Fragment() {
         val dropdownAdapter = TimerRVAdapter(items)
         popupWindow.showAsDropDown(view) //선택된 뷰 하단에 드롭다운 표시
         popupWindow.isOutsideTouchable = true //바깥 터치 허용
+
 
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = dropdownAdapter
         dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
