@@ -9,5 +9,6 @@ data class SignupResponseDto(
 
 data class ResultData(
     val id: Int,
-    val email: String
+    val email: String,
+    val friendNickname: String
 )
