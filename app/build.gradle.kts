@@ -55,4 +55,15 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.viewpager2)
     implementation(libs.mpandroidchart)
+    /*gson 사용하기 위한 라이브러리 다운*/
+    implementation(libs.gson)
+    //Retrofit 사용을 위한 lib 추가
+    implementation(libs.kotlin.stdlib)
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.adapter.rxjava2)
+    //Retrofit은 okhttp 기반으로 작성됨
+    implementation ("com.squareup.okhttp3:okhttp:5.1.0")
+    implementation (libs.logging.interceptor)
 }
