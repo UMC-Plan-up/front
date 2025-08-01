@@ -104,6 +104,7 @@
     <string name="kakao_app_key">d457e1de9a930076ef76a74e0bb30b6b</string>
 
 
+
     <!-- fragment_agreement.xml -->
     <string name="agreement_title">Plan-Up 이용 약관에\n동의해 주세요</string>
     <string name="agreement_select_all">전체 동의하기</string>
