@@ -9,6 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 const val BASE_URL = "http://54.180.207.84:8080/"
 
+
 fun getRetrofit(): Retrofit {
 
     val retrofit = Retrofit.Builder().baseUrl(BASE_URL)
@@ -16,6 +17,7 @@ fun getRetrofit(): Retrofit {
 
     return retrofit
 }
+
 
 //디버깅시 통신 로그를 보여주는 인터셉터
 val logging = HttpLoggingInterceptor().apply{
