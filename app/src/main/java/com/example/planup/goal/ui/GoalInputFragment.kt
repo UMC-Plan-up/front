@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 
+
 class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     private lateinit var backIcon: ImageView
@@ -104,6 +105,7 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             }
 
             (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
+
         }
     }
 

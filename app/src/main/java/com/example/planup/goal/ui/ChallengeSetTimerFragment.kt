@@ -65,7 +65,6 @@ class ChallengeSetTimerFragment:Fragment() {
         val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //분
         val seconds = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //초
 
-
         //각 드롭다운에 대한 어댑터 생성
         val timerAdapter = ArrayList<TimerRVAdapter>()
         timerAdapter.add(0, TimerRVAdapter(hours))
@@ -109,12 +108,14 @@ class ChallengeSetTimerFragment:Fragment() {
         val second= totalTime - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
 
         if (position == 0){
+
             totalTime -= hour
             totalTime += 3600*selected
         } else if (position == 1){
             totalTime -= minute
             totalTime += 60*selected
         } else if (position == 2){
+
             totalTime -= second
             totalTime += selected
         }
@@ -124,6 +125,7 @@ class ChallengeSetTimerFragment:Fragment() {
         }else{
             binding.errorTv.visibility = View.GONE
             binding.challengeTimerNextBtn.isActivated = true
+
         }
     }
 }
