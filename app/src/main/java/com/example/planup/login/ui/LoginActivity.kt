@@ -1,4 +1,4 @@
-package com.example.planup.login
+package com.example.planup.login.ui
 
 import android.content.Intent
 import android.os.Bundle

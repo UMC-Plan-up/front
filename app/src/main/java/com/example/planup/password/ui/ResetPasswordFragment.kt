@@ -14,7 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.login.LoginActivity
+import com.example.planup.login.ui.LoginActivity
 
 class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 

@@ -109,6 +109,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         }
 
 
+
         /* “다음에 할게요” 클릭 → CommunityIntroFragment로 이동 */
         textShareLater.setOnClickListener {
             val activity = requireActivity() as SignupActivity

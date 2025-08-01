@@ -13,9 +13,13 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
-import com.example.planup.login.LoginActivity
+import com.example.planup.login.ui.LoginActivity
+import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.ResetPasswordActivity
+import com.example.planup.password.data.PasswordRepository
+import kotlinx.coroutines.launch
 
 class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
 
@@ -77,23 +81,35 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
         val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
         if (!isFormatValid) {
-            // 이메일 형식 틀림
             showEmailFormatError()
             disableNextButton()
             return
         }
 
-        if (!registeredEmails.contains(email)) {
-            // 형식은 맞지만 등록되지 않은 이메일
-            showEmailNotFoundError()
-            disableNextButton()
-            return
-        }
+        // 이메일 형식이 맞으면 → 서버에서 확인
+        // TODO(2025-08-01): 이메일 유효성 검사는 임시 방식이며,
+        // 추후 서버 API(/users/email/check) 완성되면 아래 로직 대체 예정
+        lifecycleScope.launch {
+            try {
+                val repository = PasswordRepository(RetrofitInstance.passwordApi)
 
-        // 정상 이메일 → 버튼 활성화
-        hideAllErrors()
-        enableNextButton()
+                val userId = 1L // FIXME: 현재 userId 임시 고정됨. 실제 사용자의 ID로 대체 필요
+                val isCorrect = repository.verifyPassword(userId, email)
+
+                if (isCorrect) {
+                    hideAllErrors()
+                    enableNextButton()
+                } else {
+                    showEmailNotFoundError()
+                    disableNextButton()
+                }
+            } catch (e: Exception) {
+                showEmailNotFoundError()
+                disableNextButton()
+            }
+        }
     }
+
 
     private fun showEmailFormatError() {
         emailFormatErrorText.visibility = View.VISIBLE

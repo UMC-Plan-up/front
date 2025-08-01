@@ -12,21 +12,23 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.login.LoginActivity
+import com.example.planup.login.ui.LoginActivity
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
+import com.example.planup.signup.adapter.TermItemAdapter
+import com.example.planup.signup.data.TermItem
 import kotlinx.coroutines.launch
 
 class AgreementFragment : Fragment() {
 
-    private lateinit var checkAge: CheckBox
-    private lateinit var checkTerms: CheckBox
-    private lateinit var checkMarketing: CheckBox
-    private lateinit var checkAd: CheckBox
     private lateinit var checkAll: CheckBox
     private lateinit var nextButton: Button
-    private lateinit var progressBar: ProgressBar
+    private lateinit var termsRecyclerView: RecyclerView
+    private lateinit var adapter: TermItemAdapter
+    private val termsList = mutableListOf<TermItem>()
 
     private var isRequiredChecked = false
 
@@ -36,48 +38,42 @@ class AgreementFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_agreement, container, false)
 
+        checkAll = view.findViewById(R.id.checkAll)
+        nextButton = view.findViewById(R.id.nextButton)
+        termsRecyclerView = view.findViewById(R.id.termsRecyclerView)
+
         val errorBox = view.findViewById<TextView>(R.id.requiredErrorText)
         errorBox.visibility = View.GONE
 
-        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-        backIcon.setOnClickListener {
+        /* 뒤로가기 아이콘 → 로그인 화면으로 이동 */
+        view.findViewById<ImageView>(R.id.backIcon).setOnClickListener {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
-            requireActivity().finish()  // 현재 회원가입 플로우 종료
+            requireActivity().finish()
         }
 
-        progressBar = view.findViewById(R.id.progressBar)
+        adapter = TermItemAdapter(termsList,
+            onCheckedChanged = { checkRequiredAgreement() },
+            onDetailClicked = { showTermsDetailPopup(it) }
+        )
+        termsRecyclerView.adapter = adapter
+        termsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // 체크박스 초기화
-        checkAll = view.findViewById(R.id.checkAll)
-        checkAge = view.findViewById(R.id.checkAge)
-        checkTerms = view.findViewById(R.id.checkTerms)
-        checkMarketing = view.findViewById(R.id.checkMarketing)
-        checkAd = view.findViewById(R.id.checkAd)
-        nextButton = view.findViewById(R.id.nextButton)
+        // 약관 목록 불러오기
+        fetchTermsList()
 
-        setupCheckAllFeature()  // 전체동의 ↔ 개별 체크박스 연동
-        setupRequiredCheckFeature()  // [필수] 체크박스 상태 감지
+        // 전체동의 체크박스
+        checkAll.setOnCheckedChangeListener { _, isChecked ->
+            adapter.setAllChecked(isChecked)
+            checkRequiredAgreement()
+        }
 
-
-        // "자세히" 버튼 클릭 시 → 약관 상세 팝업 띄우기
-        val detail1 = view.findViewById<TextView>(R.id.detail1)
-        val detail2 = view.findViewById<TextView>(R.id.detail2)
-        val detail3 = view.findViewById<TextView>(R.id.detail3)
-
-        detail1.setOnClickListener { showTermsDetailPopup(termsId = 2) } // 서비스 이용약관
-        detail2.setOnClickListener { showTermsDetailPopup(termsId = 3) } // 마케팅 수신
-        detail3.setOnClickListener { showTermsDetailPopup(termsId = 4) } // 광고성 정보
-
-        /* 다음 버튼 클릭 → LoginEmailFragment로 이동 */
+        /* 다음 버튼 클릭 */
         nextButton.setOnClickListener {
             if (isRequiredChecked) {
-                // [필수] 모두 선택됨 → agreements 저장하고 LoginEmailFragment로 이동
                 saveAgreements()
                 openNextStep()
             } else {
-                // [필수] 미선택 → 에러 박스 표시
                 showRequiredError(view)
             }
         }
@@ -85,126 +81,131 @@ class AgreementFragment : Fragment() {
         return view
     }
 
-    /* LoginEmailFragment로 이동하는 메서드 */
+    /* 약관 목록 불러오는 API 요청 */
+    private fun fetchTermsList() {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.termsApi.getTermsList()
+                val body = response.body()
+
+                Log.d("AgreementFragment", "📦 전체 응답 body: $body")
+
+                // ✅ isSuccess를 신뢰하지 않고 result 기반으로 처리
+                val result = body?.result
+
+                if (response.isSuccessful && !result.isNullOrEmpty()) {
+                    Log.d("AgreementFragment", "✅ 약관 ${result.size}개 불러오기 성공")
+                    termsList.clear()
+                    termsList.addAll(result)
+                    adapter.notifyDataSetChanged()
+                } else {
+                    Log.e("AgreementFragment", "❌ result가 null이거나 비어있음, message: ${body?.message}")
+                    Toast.makeText(requireContext(), "약관 불러오기 실패: ${body?.message}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("AgreementFragment", "🔥 네트워크 오류: ${e.message}")
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+
+    /* 필수 약관 모두 체크되었는지 검사 */
+    private fun checkRequiredAgreement() {
+        val requiredTerms = termsList.filter { it.isRequired }
+        val checkedRequired = adapter.getCheckedTerms().filter { it.isRequired }
+
+        isRequiredChecked = requiredTerms.size == checkedRequired.size
+
+        if (isRequiredChecked) enableNextButton()
+        else disableNextButton()
+    }
+
+    /* 사용자 선택 약관 저장 */
+    private fun saveAgreements() {
+        val activity = requireActivity() as SignupActivity
+        val agreements = adapter.getCheckedTerms().map {
+            SignupActivity.Agreement(it.id, true)
+        }
+        activity.agreements = agreements
+    }
+
+    /* 다음 화면으로 이동 */
     private fun openNextStep() {
         requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, LoginEmailFragment()) // 다음 단계로 이동
-            .addToBackStack(null) // 뒤로가기 가능
+            .replace(R.id.signup_container, LoginEmailFragment())
+            .addToBackStack(null)
             .commit()
     }
 
-    private fun setupCheckAllFeature() {
-        val individualChecks = listOf(checkAge, checkTerms, checkMarketing, checkAd)
-
-        // 전체동의 → 나머지 전부 체크/해제
-        checkAll.setOnCheckedChangeListener { _, isChecked ->
-            individualChecks.forEach { it.isChecked = isChecked }
-        }
-
-        // 개별 체크박스 변경 → 전체동의 자동 업데이트
-        individualChecks.forEach { checkBox ->
-            checkBox.setOnCheckedChangeListener { _, _ ->
-                checkAll.isChecked = individualChecks.all { it.isChecked }
-            }
-        }
-    }
-
-    /* [필수] 체크박스 2개 모두 체크되어야 버튼 활성화 */
-    private fun setupRequiredCheckFeature() {
-        val requiredChecks = listOf(checkAge, checkTerms)
-
-        disableNextButton()
-
-        requiredChecks.forEach { cb ->
-            cb.setOnCheckedChangeListener { _, _ ->
-                isRequiredChecked = requiredChecks.all { it.isChecked }
-
-                if (isRequiredChecked) {
-                    enableNextButton()   // 둘 다 체크되면 파란색
-                } else {
-                    disableNextButton() // 하나라도 빠지면 회색
-                }
-            }
-        }
-    }
-
-    /* 다음 버튼 활성 ↔ 비활성 */
+    /* 다음 버튼 활성화 */
     private fun enableNextButton() {
-        nextButton.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
+        nextButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
         nextButton.backgroundTintList = null
     }
 
+    /* 다음 버튼 비활성화 */
     private fun disableNextButton() {
-        nextButton.background =
-            ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
-        nextButton.backgroundTintList =
-            ColorStateList.valueOf(requireContext().getColor(R.color.black_200))
+        nextButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
+        nextButton.backgroundTintList = ColorStateList.valueOf(requireContext().getColor(R.color.black_200))
     }
 
-    /* [필수] 항목 하나라도 미체크 시 에러 박스 표시 */
+    /* 필수 미체크 시 에러 표시 */
     private fun showRequiredError(rootView: View) {
         val errorBox = rootView.findViewById<TextView>(R.id.requiredErrorText)
         errorBox.alpha = 0f
         errorBox.visibility = View.VISIBLE
         errorBox.animate().alpha(1f).setDuration(300).start()
-
-        // 2초 뒤 자동 사라짐
         errorBox.postDelayed({
-            errorBox.animate().alpha(0f).setDuration(300)
-                .withEndAction { errorBox.visibility = View.GONE }
-                .start()
+            errorBox.animate().alpha(0f).setDuration(300).withEndAction {
+                errorBox.visibility = View.GONE
+            }.start()
         }, 2000)
     }
 
-    /* popup 띄우기 */
+    /* 약관 상세 팝업 띄우기 */
     private fun showTermsDetailPopup(termsId: Int) {
         val dialog = Dialog(requireContext())
         val popupView = LayoutInflater.from(requireContext()).inflate(R.layout.popup_terms, null)
         val contentText = popupView.findViewById<TextView>(R.id.termTitle)
 
         dialog.setContentView(popupView)
-        dialog.window?.apply {
-            setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-            setGravity(Gravity.CENTER)
-        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setGravity(Gravity.CENTER)
 
-        // 서버에서 약관 상세 내용 불러오기
+        // API로 약관 상세 불러오기
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.termsApi.getTermsDetail(termsId)
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    contentText.text = response.body()?.result?.content
+
+                val body = response.body()
+                Log.d("AgreementFragment", "📄 상세 응답 body: $body")
+                Log.d("AgreementFragment", "📄 상세 isSuccess: ${body?.isSuccess}")
+                Log.d("AgreementFragment", "📄 상세 result: ${body?.result}")
+                Log.d("AgreementFragment", "📄 상세 content: ${body?.result?.content}")
+
+                if (response.isSuccessful && body?.result?.content != null) {
+                    contentText.text = body.result.content
                 } else {
                     contentText.text = "약관 내용을 불러올 수 없습니다."
                 }
             } catch (e: Exception) {
                 contentText.text = "네트워크 오류가 발생했습니다."
+                Log.e("AgreementFragment", "🔥 예외: ${e.message}")
             }
         }
+
 
         popupView.findViewById<ImageView>(R.id.closeIcon).setOnClickListener {
             dialog.dismiss()
         }
 
         dialog.show()
-
-        val widthInPx = (320 * resources.displayMetrics.density).toInt()
-        val heightInPx = (347 * resources.displayMetrics.density).toInt()
-        dialog.window?.setLayout(widthInPx, heightInPx)
-    }
-
-
-    /* agreements 값 저장하는 함수 */
-    private fun saveAgreements() {
-        val activity = requireActivity() as SignupActivity
-        val agreements = mutableListOf<SignupActivity.Agreement>()
-
-        agreements.add(SignupActivity.Agreement(termsId = 1, isAgreed = checkAge.isChecked))   // 만 14세 이상 동의
-        agreements.add(SignupActivity.Agreement(termsId = 2, isAgreed = checkTerms.isChecked)) // 이용약관 동의
-        agreements.add(SignupActivity.Agreement(termsId = 3, isAgreed = checkMarketing.isChecked)) // 마케팅 수신 동의
-        agreements.add(SignupActivity.Agreement(termsId = 4, isAgreed = checkAd.isChecked))         // 광고성 정보 수신
-
-        activity.agreements = agreements
+        dialog.window?.setLayout(
+            (320 * resources.displayMetrics.density).toInt(),
+            (347 * resources.displayMetrics.density).toInt()
+        )
     }
 }

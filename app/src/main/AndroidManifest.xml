@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -28,12 +29,21 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.LoginActivity" />
+        <activity android:name=".login.ui.LoginActivity" />
         <activity android:name=".main.MainActivity" />
         <activity android:name=".signup.SignupActivity" />
         <activity android:name=".password.ResetPasswordActivity" />
-        <activity android:name=".goal.GoalActivity"/>
+        <activity android:name=".goal.GoalActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
 
     </application>
-
 </manifest>
