@@ -17,7 +17,6 @@ fun getRetrofit(): Retrofit {
     return retrofit
 }
 
-
 //디버깅시 통신 로그를 보여주는 인터셉터
 val logging = HttpLoggingInterceptor().apply{
     level=HttpLoggingInterceptor.Level.BODY
@@ -37,7 +36,6 @@ val okHttpClient = OkHttpClient.Builder()
     .addInterceptor(logging)
     // 필요 시 타임아웃 등 다른 설정 추가
     .build()
-
 
 fun getRetrofit2(): Retrofit {
     val retrofit = Retrofit.Builder()
