@@ -16,7 +16,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.login.ui.LoginActivity
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
