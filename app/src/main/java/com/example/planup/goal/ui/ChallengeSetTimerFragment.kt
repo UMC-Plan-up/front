@@ -20,7 +20,6 @@ import java.sql.Time
 class ChallengeSetTimerFragment:Fragment() {
     lateinit var binding: FragmentChallengeSetTimerBinding
     private var totalTime = 0
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,6 +64,7 @@ class ChallengeSetTimerFragment:Fragment() {
         val hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>()) //시간
         val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //분
         val seconds = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>()) //초
+
 
         //각 드롭다운에 대한 어댑터 생성
         val timerAdapter = ArrayList<TimerRVAdapter>()

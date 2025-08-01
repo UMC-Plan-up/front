@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
-import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.goal.ui.GoalSelectFragment
 
 class GoalActivity : AppCompatActivity() {
@@ -27,6 +26,16 @@ class GoalActivity : AppCompatActivity() {
 
             val goalSelectFragment = GoalSelectFragment().apply {
                     arguments = Bundle().apply {
+                    putString("goalOwnerName", nickname)
+                }
+            }
+            }
+
+
+        if (savedInstanceState == null) {
+
+            val goalSelectFragment = GoalSelectFragment().apply {
+                arguments = Bundle().apply {
                     putString("goalOwnerName", nickname)
                 }
             }
