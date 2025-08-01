@@ -201,7 +201,6 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         return File.createTempFile(fileName, ".jpg", storageDir)
     }
 
-
     /* editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
     private fun showProfilePopup(anchorView: View) {
         val popupView = LayoutInflater.from(requireContext())
