@@ -94,7 +94,7 @@ class ChallengeSetPhotoFragment : Fragment() {
 
         //다음 버튼 클릭: 페널티 설정 화면으로 이동
         binding.btnNextTv.setOnClickListener {
-            if (!finish || !duration || !often) return@setOnClickListener
+            if (!binding.btnNextTv.isActivated) return@setOnClickListener
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengePenaltyFragment())
                 .commitAllowingStateLoss()
@@ -119,6 +119,8 @@ class ChallengeSetPhotoFragment : Fragment() {
         selectBackground.isSelected = !selectBackground.isSelected
         selectText.setTextColor(selected)
         finish = true
+
+        binding.btnNextTv.isActivated = finish && duration && often //다음 버튼 활성화 여부 확인
     }
 
     private fun textListener() {
@@ -126,21 +128,21 @@ class ChallengeSetPhotoFragment : Fragment() {
         binding.photoOftenEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (binding.photoOftenEt.text.isNotEmpty()
-                    && binding.photoOftenEt.text.toString().toInt() < 1
+                    && binding.photoOftenEt.text.toString().toInt() >= 1
                 ) {
-                    binding.photoErrorTv.visibility = View.VISIBLE
-                    binding.photoErrorIv.visibility = View.VISIBLE
-                    often = false
-                } else {
                     binding.photoErrorTv.visibility = View.GONE
                     binding.photoErrorIv.visibility = View.GONE
                     often = true
+                } else {
+                    binding.photoErrorTv.visibility = View.VISIBLE
+                    binding.photoErrorIv.visibility = View.VISIBLE
+                    often = false
                 }
+                binding.btnNextTv.isActivated = finish && duration && often //다음 버튼 활성화 여부 확인
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
         })
     }
 
@@ -191,5 +193,7 @@ class ChallengeSetPhotoFragment : Fragment() {
             popupWindow.dismiss()
             duration = true
         }
+
+        binding.btnNextTv.isActivated = finish && duration && often //다음 버튼 활성화 여부 확인
     }
 }

@@ -1,0 +1,4 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_challenge_friend_select" android:state_selected="true"/>
+    <item android:drawable="@drawable/bg_challenge_friend_unselect" android:state_selected="false"/>
+</selector>

@@ -2,7 +2,8 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/challenge_penalty_back_iv"
@@ -253,7 +254,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"/>
     <TextView
-        android:id="@+id/challenge_penalty_complete_tv"
+        android:id="@+id/challenge_penalty_complete_btn"
         style="@style/Typography_SM_Medium"
         android:layout_width="67dp"
         android:layout_height="40dp"
@@ -267,16 +268,17 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"/>
     <TextView
-        android:id="@+id/challenge_penalty_length_tv"
+        android:id="@+id/challenge_penalty_error_tv"
         style="@style/Typography_XS_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/error_less_thirty_word"
-        android:textColor="@color/transparent"
+        android:textColor="@color/black_300"
         app:layout_constraintStart_toStartOf="@id/challenge_penalty_enter_et"
-        app:layout_constraintTop_toBottomOf="@id/challenge_penalty_enter_et"/>
+        app:layout_constraintTop_toBottomOf="@id/challenge_penalty_enter_et"
+        android:visibility="gone"/>
     <TextView
-        android:id="@+id/challenge_penalty_offer_complete_tv"
+        android:id="@+id/challenge_penalty_offer_complete_btn"
         style="@style/Typography_S_Semibold"
         android:layout_width="320dp"
         android:layout_height="44dp"
@@ -287,6 +289,6 @@
         android:background="@drawable/bg_btn_selector"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/challenge_penalty_length_tv"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="24dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
