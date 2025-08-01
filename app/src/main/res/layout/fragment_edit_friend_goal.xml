@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/edit_friend_back_arrow_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="35dp"/>
+    <TextView
+        android:id="@+id/edit_friend_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="친구와 함께하는 세부 목표 수정"
+        style="@style/Typography_2XL_Semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_back_arrow_iv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="28dp"/>
+    <TextView
+        android:id="@+id/edit_friend_title_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표 수정 시, 참여 중인 친구들의 목표도 변경돼요."
+        style="@style/Typography_S_Medium"
+        android:textColor="@color/black_300"
+        app:layout_constraintTop_toBottomOf="@+id/edit_friend_title_tv"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/edit_friend_goal_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표명"
+        style="@style/Typography_L_Semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_title_description_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"/>
+    <EditText
+        android:id="@+id/edit_friend_goal_name_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_goal_name_tv"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/edit_friend_goal_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1글자 이상 작성해 주세요.\n20자 이내로 작성해 주세요."
+        style="@style/Typography_XS_Medium"
+        android:textColor="@color/black_300"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_goal_name_et"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <TextView
+        android:id="@+id/edit_friend_goal_period_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1회 분량"
+        style="@style/Typography_L_Semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_goal_description_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp"/>
+
+    <TextView
+        android:id="@+id/edit_friend_goal_period_description_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표 수행에 도전할 때마다 무엇을 얼마만큼 수행할지 구체적 분량을 작성해 주세요."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_friend_goal_period_tv" />
+
+    <EditText
+        android:id="@+id/edit_friend_goal_period_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_friend_goal_period_description_tv" />
+
+    <TextView
+        style="@style/Typography_XS_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1글자 이상 작성해 주세요.\n30글자 이내로 작성해 주세요."
+        android:textColor="@color/black_300"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_friend_goal_period_et" />
+
+    <Button
+        android:id="@+id/edit_friend_goal_next_btn"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_rad6_rectangle"
+        android:fontFamily="@font/pretendard_regular"
+        android:letterSpacing="0.015"
+        android:lineSpacingExtra="12dp"
+        android:text="다음"
+        android:textColor="#FFFFFF"
+        android:textFontWeight="400"
+        android:textSize="16sp"
+        app:backgroundTint="@color/blue_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

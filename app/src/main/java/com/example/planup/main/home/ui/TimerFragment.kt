@@ -12,8 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerBinding
+import com.example.planup.main.home.adapter.FriendTimerAdapter
+import com.example.planup.main.home.data.FriendTimer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,10 +39,28 @@ class TimerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val selectedDate = arguments?.getString("selectedDate")
+        val dateTv = binding.goalListTextDateTv
+        val formattedDate = selectedDate?.replace("-", ".")
+        dateTv.text = formattedDate
 
         setupSpinner()
         setupCameraPopup()
         setupTimerButton()
+
+        val recyclerView = binding.friendTimerRv
+
+        val examplefriendList = listOf(
+            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background),
+            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background),
+            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background)
+        )
+
+        val adapter = FriendTimerAdapter(examplefriendList)
+
+        recyclerView.layoutManager =
+            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        recyclerView.adapter = adapter
     }
 
     private fun setupSpinner() {

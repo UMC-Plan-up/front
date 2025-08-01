@@ -1,11 +1,16 @@
 package com.example.planup.main.home.ui
 
+import android.content.Intent
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +21,16 @@ import com.example.planup.databinding.FragmentHomeBinding
 import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.view.CalendarView
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -23,6 +38,13 @@ class HomeFragment : Fragment() {
     private lateinit var dailyAdapter: DailyToDoAdapter
     private lateinit var friendRecyclerView: RecyclerView
     private lateinit var friendAdapter: FriendChallengeAdapter
+    private lateinit var calendarCardView : CardView
+    private val today = LocalDate.now()
+    private var selectedDate = today
+    private val eventMap: Map<LocalDate, List<String>> = mapOf(
+        LocalDate.of(2025, 7, 17) to listOf("토익 공부하기", "헬스장 가기", "스터디 모임"),
+        LocalDate.of(2025, 7, 18) to listOf("<인간관계론> 읽기")
+    )
 
     private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
@@ -63,8 +85,80 @@ class HomeFragment : Fragment() {
 
         friendAdapter = FriendChallengeAdapter(dummyData)
         friendRecyclerView.adapter = friendAdapter
+
+        //---------------------달력---------------------
+        val calendarView = view.findViewById<CalendarView>(R.id.home_calendarView)
+        val monthYearText = view.findViewById<TextView>(R.id.home_monthYearText)
+
+
+        val daysOfWeek = daysOfWeekFromLocale()
+        val currentMonth = YearMonth.now()
+        calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
+        calendarView.scrollToMonth(currentMonth)
+
+        monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+
+        calendarView.monthScrollListener = { month ->
+            monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        }
+
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
+                container.textView.text = data.date.dayOfMonth.toString()
+                container.textView.setBackgroundResource(
+                    if (data.date == selectedDate) R.drawable.bg_calendar_select else 0
+                )
+
+                val events = eventMap[data.date] ?: emptyList()
+                val bars = listOf(container.bar1, container.bar2, container.bar3)
+                container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
+                bars.forEach { it.visibility = View.GONE }
+
+                for (i in 0 until minOf(events.size, 3)) {
+                    bars[i].visibility = View.VISIBLE
+                }
+
+                container.view.setOnClickListener {
+                    selectedDate = data.date
+                    calendarView.notifyCalendarChanged()
+                }
+            }
+        }
+
+        calendarCardView = view.findViewById(R.id.home_calendar_cardView)
+        calendarCardView.setOnClickListener {
+            val intent = Intent(requireContext(), CalendarActivity::class.java)
+            startActivity(intent)
+        }
+
+        val fab = binding.homeFab
+        val fragmentTimer = TimerFragment()
+        val bundle = Bundle().apply {
+            putString("selectedDate", selectedDate.toString())
+        }
+        Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
+        fragmentTimer.arguments = bundle
+        fab.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragmentTimer)
+                .addToBackStack(null)  // 뒤로 가기 가능하게 하려면 필요
+                .commit()
+        }
+    }
+    inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendarDayText)
+        val barsContainer: LinearLayout = view.findViewById(R.id.eventBarsContainer)
+        val bar1: View = view.findViewById(R.id.eventBar1)
+        val bar2: View = view.findViewById(R.id.eventBar2)
+        val bar3: View = view.findViewById(R.id.eventBar3)
     }
 
+    fun daysOfWeekFromLocale(): List<DayOfWeek> {
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val days = DayOfWeek.values().toList()
+        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
+    }
     private fun clickListener(){
         binding.homeAlarmCl.setOnClickListener{
 //            (context as MainActivity).supportFragmentManager.beginTransaction()

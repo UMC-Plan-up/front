@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:paddingBottom="20dp">
+
+    <ImageView
+        android:id="@+id/friend_timer_profile_iv"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/bg_calendar_fab" />
+
+    <TextView
+        android:id="@+id/friend_timer_nickname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="닉네임"
+        style="@style/Typography_SM_Medium"
+        android:gravity="center"
+        android:layout_marginTop="10dp" />
+
+    <TextView
+        android:id="@+id/friend_timer_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00:00"
+        style="@style/Typography_L_Medium"
+        android:gravity="center"
+        android:layout_marginTop="4dp"/>
+</LinearLayout>
