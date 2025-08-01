@@ -109,6 +109,7 @@ class ChallengeSetTimerFragment:Fragment() {
 //        })
 //    }
 
+
     //타이머로 설정한 시간 업데이트
     //마지막 조건문으로 전체 시간이 30초 이상인지 확인
     private fun timeWatcher(item:Int, position:Int){
