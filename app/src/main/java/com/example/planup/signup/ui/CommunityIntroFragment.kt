@@ -11,7 +11,6 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
 import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
 
