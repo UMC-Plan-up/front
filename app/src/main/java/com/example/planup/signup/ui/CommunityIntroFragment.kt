@@ -144,6 +144,7 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 
         /* 목표 설정 시작하기 버튼 → GoalCategoryFragment로 이동 */
         nextButton.setOnClickListener {
+
             val context = requireContext()
             val intent = Intent(context, GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname) // 닉네임 전달
