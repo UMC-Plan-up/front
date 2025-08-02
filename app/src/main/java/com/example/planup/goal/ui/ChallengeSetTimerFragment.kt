@@ -29,6 +29,7 @@ class ChallengeSetTimerFragment:Fragment() {
         binding = FragmentChallengeSetTimerBinding.inflate(inflater,container,false)
         clickListener()
         init()
+
         return binding.root
     }
     private fun init(){
@@ -110,6 +111,31 @@ class ChallengeSetTimerFragment:Fragment() {
 //        })
 //    }
 
+    //타이머로 설정한 시간 업데이트
+    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
+    private fun timeWatcher(item:Int, position:Int){
+        val hour = (totalTime / 3600) * 3600
+        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+        val second= totalTime - (totalTime / 3600) * 3600 - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+
+        if (position == 0){
+            totalTime -= hour
+            totalTime += 3600*item
+        } else if (position == 1){
+            totalTime -= minute
+            totalTime += 60*item
+        } else if (position == 2){
+            totalTime -= second
+            totalTime += item
+        }
+        if (totalTime < 30){
+            Log.d("qhrkqelw;i","${totalTime} ${item}")
+            binding.errorTv.visibility = View.VISIBLE
+        }else{
+            binding.errorTv.visibility = View.GONE
+            binding.challengeTimerNextBtn.isActivated = true
+        }
+    }
 
     //타이머로 설정한 시간 업데이트
     //마지막 조건문으로 전체 시간이 30초 이상인지 확인

@@ -1,4 +1,4 @@
-package com.example.planup.network
+package com.example.planup.network.port
 
 import com.example.planup.main.my.data.GetKakao
 import com.example.planup.main.my.data.GetNickname
