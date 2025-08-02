@@ -114,6 +114,7 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             }
             view.performClick()
             false
+
         }
 
         view.setOnTouchListener { _, event ->

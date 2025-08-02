@@ -24,7 +24,7 @@ class GoalActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
 
             val goalSelectFragment = GoalSelectFragment().apply {
-                arguments = Bundle().apply {
+                    arguments = Bundle().apply {
                     putString("goalOwnerName", nickname)
                 }
             }
