@@ -2,7 +2,6 @@ package com.example.planup.goal
 // 회원가입 후 목표설정 플로우
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -30,7 +29,8 @@ class GoalActivity : AppCompatActivity() {
 
             supportFragmentManager.beginTransaction() //함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
                 .replace(R.id.goal_container, goalSelectFragment)
-                .commitAllowingStateLoss()}
+                .commitAllowingStateLoss()
+        }
     }
 
 

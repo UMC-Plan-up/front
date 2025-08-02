@@ -14,7 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.google.android.material.internal.ViewUtils.hideKeyboard
+
 
 
 class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
