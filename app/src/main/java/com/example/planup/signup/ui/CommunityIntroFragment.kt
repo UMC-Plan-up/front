@@ -11,7 +11,10 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+<<<<<<< HEAD
 import com.example.planup.goal.GoalSettingActivity
+=======
+>>>>>>> f95dd4d (수정)
 import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
 
@@ -145,6 +148,7 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 
         /* 목표 설정 시작하기 버튼 → GoalCategoryFragment로 이동 */
         startGoalSettingButton.setOnClickListener {
+<<<<<<< HEAD
 //            val context = requireContext()
 //            val intent = Intent(context, GoalSettingActivity::class.java).apply {
 //                putExtra("goalOwnerName", nickname) // 닉네임 전달
@@ -152,6 +156,11 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 //            startActivity(intent)
             val intent = Intent(context as SignupActivity,GoalActivity::class.java).apply {
                 putExtra("goalOwnerName",nickname)
+=======
+            val context = requireContext()
+            val intent = Intent(context, GoalActivity::class.java).apply {
+                putExtra("goalOwnerName", nickname) // 닉네임 전달
+>>>>>>> f95dd4d (수정)
             }
             startActivity(intent)
         }

@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
+
 
 class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
 
@@ -79,9 +79,9 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-                    (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container,timerFragment)
-                        .commitAllowingStateLoss()
+
+                    (requireActivity() as GoalActivity)
+                        .navigateToFragment(timerFragment)
                 }
                 "PICTURE" -> {
                     val certFragment = CertificationMethodFragment().apply {
@@ -89,7 +89,7 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-                    (requireActivity() as GoalSettingActivity)
+                    (requireActivity() as GoalActivity)
                         .navigateToFragment(certFragment)
                 }
                 else -> requireActivity().onBackPressedDispatcher.onBackPressed()
@@ -176,7 +176,7 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                (requireActivity() as GoalSettingActivity)
+                (requireActivity() as GoalActivity)
                     .navigateToFragment(participantFragment)
             }
         }

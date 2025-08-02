@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
@@ -120,7 +120,7 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
                 putString("selectedCategory", selectedCategoryText)
             }
 
-            (requireActivity() as GoalSettingActivity).navigateToFragment(nextFragment)
+            (requireActivity() as GoalActivity).navigateToFragment(nextFragment)
         }
     }
 

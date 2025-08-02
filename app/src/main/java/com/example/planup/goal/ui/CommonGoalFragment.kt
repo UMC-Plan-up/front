@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
+
 
 class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
 
@@ -41,7 +41,7 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
 
         /* 뒤로가기 아이콘 → 이전 화면(GoalCategoryFragment)으로 이동 */
         backIcon.setOnClickListener {
-            (requireActivity() as GoalSettingActivity)
+            (requireActivity() as GoalActivity)
                 .navigateToFragment(GoalCategoryFragment())
         }
 
@@ -76,9 +76,7 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,goalInputFragment)
-                .commitAllowingStateLoss()
+            (requireActivity() as GoalActivity).navigateToFragment(goalInputFragment)
         }
     }
 

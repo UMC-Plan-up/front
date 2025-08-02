@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
+
 
 class CertificationMethodFragment : Fragment(R.layout.fragment_certification_method) {
 
@@ -70,9 +70,7 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
                             putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
                         }
                     }
-                    (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container,timerFragment)
-                        .commitAllowingStateLoss()
+                    (requireActivity() as GoalActivity).navigateToFragment(timerFragment)
                 }
                 "PICTURE" -> {
                     // 사진 인증 → GoalDetailFragment로 이동
@@ -81,9 +79,8 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
                             putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
                         }
                     }
-                    (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container,detailFragment)
-                        .commitAllowingStateLoss()
+
+                    (requireActivity() as GoalActivity).navigateToFragment(detailFragment)
                 }
                 else -> {
                     // 선택되지 않았으면 아무 동작 안 함

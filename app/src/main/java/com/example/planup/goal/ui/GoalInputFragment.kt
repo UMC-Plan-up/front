@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.GoalSettingActivity
 
 class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
@@ -104,9 +103,7 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
                 }
             }
 
-            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,certificationFragment)
-                .commitAllowingStateLoss()
+            (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
         }
     }
 
