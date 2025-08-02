@@ -65,7 +65,8 @@ dependencies {
 //    implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.code.gson:gson:2.13.1")
     //Retrofit 사용을 위한 lib 추가
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation(libs.kotlin.stdlib.v190)
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")

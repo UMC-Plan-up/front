@@ -19,15 +19,6 @@ class GoalActivity : AppCompatActivity() {
 
         val nickname = intent.getStringExtra("goalOwnerName") ?: "사용자"
 
-        if (savedInstanceState == null) {
-
-            val goalSelectFragment = GoalSelectFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", nickname)
-                }
-            }
-            }
-
 
         if (savedInstanceState == null) {
 
