@@ -24,11 +24,10 @@ class GoalActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
 
             val goalSelectFragment = GoalSelectFragment().apply {
-                arguments = Bundle().apply {
+                    arguments = Bundle().apply {
                     putString("goalOwnerName", nickname)
                 }
             }
-            Log.d("sdafadfasfafafa", "ashkfasfkhasgha noNull")
 
             supportFragmentManager.beginTransaction() //함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
                 .replace(R.id.goal_container, goalSelectFragment)
