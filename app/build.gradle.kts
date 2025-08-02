@@ -67,14 +67,14 @@ dependencies {
     implementation("com.kakao.sdk:v2-user:2.19.0")
     implementation("com.kakao.sdk:v2-share:2.19.0")
     /*gson 사용하기 위한 라이브러리 다운*/
-    implementation(libs.gson)
+    implementation("com.google.code.gson:gson:2.8.7")
     //Retrofit 사용을 위한 lib 추가
-    implementation(libs.kotlin.stdlib)
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     //Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.adapter.rxjava2)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
     //Retrofit은 okhttp 기반으로 작성됨
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
-    implementation (libs.logging.interceptor)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
 }
