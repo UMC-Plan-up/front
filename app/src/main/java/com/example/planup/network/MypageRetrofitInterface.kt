@@ -11,6 +11,7 @@ import com.example.planup.main.my.data.PostMypageImage
 import com.example.planup.main.my.data.PostNickname
 import com.example.planup.main.my.data.PostPassword
 import com.example.planup.main.my.data.PostPasswordChange
+import com.example.planup.main.my.data.PostProfileImage
 import com.example.planup.main.my.data.Signup
 import retrofit2.Call
 import retrofit2.http.GET
