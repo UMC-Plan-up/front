@@ -13,6 +13,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetTimerBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+
 class ChallengeSetTimerFragment:Fragment() {
     lateinit var binding: FragmentChallengeSetTimerBinding
     private var totalTime = 0
@@ -118,18 +119,17 @@ class ChallengeSetTimerFragment:Fragment() {
         val second= totalTime - (totalTime / 3600) * 3600 - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
 
         if (position == 0){
-
             totalTime -= hour
             totalTime += 3600*item
         } else if (position == 1){
             totalTime -= minute
             totalTime += 60*item
         } else if (position == 2){
-
             totalTime -= second
             totalTime += item
         }
         if (totalTime < 30){
+            Log.d("qhrkqelw;i","${totalTime} ${item}")
             binding.errorTv.visibility = View.VISIBLE
         }else{
             binding.errorTv.visibility = View.GONE
