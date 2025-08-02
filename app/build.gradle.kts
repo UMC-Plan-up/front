@@ -56,14 +56,21 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation(libs.mpandroidchart)
     /*gson 사용하기 위한 라이브러리 다운*/
-    implementation("com.google.code.gson:gson:2.8.7")
+//    implementation("com.google.code.gson:gson:2.8.7")
+    implementation("com.google.code.gson:gson:2.13.1")
     //Retrofit 사용을 위한 lib 추가
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+//    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    implementation(libs.kotlin.stdlib.v190)
     //Retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+//    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+//    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+//    implementation("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:3.0.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:3.0.0")
     //Retrofit은 okhttp 기반으로 작성됨
-    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+//    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+//    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation (libs.okhttp)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
 }

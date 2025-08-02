@@ -55,7 +55,7 @@ class ChallengePenaltyFragment : Fragment() {
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = true //완료 버튼 활성화
                     binding.challengePenaltyNextBtn.isActivated = true //다음 버튼 활성화
-                } else if(binding.challengePenaltyEnterEt.text.isEmpty()){
+                } else if(binding.challengePenaltyEnterEt.text.length<1){
                     //페널티 입력되지 않은 경우 버튼 비활성화
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = false //완료 버튼 비활성화
@@ -125,6 +125,7 @@ class ChallengePenaltyFragment : Fragment() {
             if (!binding.challengePenaltyCompleteBtn.isActivated) return@setOnClickListener
             penalty = binding.challengePenaltyEnterEt.text.toString()
             binding.challengePenaltyNextBtn.isActivated= true //다음 버튼 활성화
+            binding.challengePenaltyCompleteBtn.isActivated = false
             binding.challengePenaltyEnterEt.clearFocus() //커서 해제
         }
         //다음 버튼 : 챌린지 신청 완료 화면으로 이동
