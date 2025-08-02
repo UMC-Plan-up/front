@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.main.home.ui.HomeFragment
 
 class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
@@ -27,6 +28,12 @@ class MypageFragment : Fragment() {
     }
 
     private fun clickListener(){
+
+        binding.mypageBackIv.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, HomeFragment())
+                .commitAllowingStateLoss()
+        }
 
         /*프로필 사진 변경*/
         binding.mypageMainRewriteIv.setOnClickListener{
