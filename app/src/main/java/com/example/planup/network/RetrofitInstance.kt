@@ -22,7 +22,6 @@ object RetrofitInstance {
         retrofit.create(TermsApi::class.java)
     }
 
-
     val passwordApi: PasswordApi by lazy {
         retrofit.create(PasswordApi::class.java)
     }
