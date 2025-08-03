@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
 import android.view.MotionEvent
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText

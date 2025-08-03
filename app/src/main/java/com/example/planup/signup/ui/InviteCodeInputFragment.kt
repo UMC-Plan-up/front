@@ -130,7 +130,9 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
                             val fragment =
                                 CommunityIntroFragment.newInstance(activity.nickname ?: "")
                             activity.navigateToFragment(fragment)
-                        } else { handleErrorCode(responseBody?.code ?: "") }
+                        } else {
+                            handleErrorCode(responseBody?.code ?: "")
+                        }
                     } else {
                         setErrorMessage("서버와의 통신에 실패했습니다.")
                     }
@@ -258,7 +260,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
 
         val container = popupWindow.contentView.rootView
-        val wm = requireActivity().getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
+        val wm =
+            requireActivity().getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
         val p = container.layoutParams as android.view.WindowManager.LayoutParams
         p.flags = p.flags or android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
         p.dimAmount = 0.4f
@@ -266,7 +269,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }
