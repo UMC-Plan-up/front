@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/kakaoShareText"
         android:layout_width="118dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:text="@string/share_kakao"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
@@ -21,7 +21,7 @@
     <TextView
         android:id="@+id/smsShareText"
         android:layout_width="118dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:text="@string/share_sms"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
@@ -32,7 +32,7 @@
     <TextView
         android:id="@+id/copyText"
         android:layout_width="118dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:text="@string/share_copy"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
@@ -43,7 +43,7 @@
     <TextView
         android:id="@+id/etcShareText"
         android:layout_width="118dp"
-        android:layout_height="32dp"
+        android:layout_height="wrap_content"
         android:text="@string/share_more"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"

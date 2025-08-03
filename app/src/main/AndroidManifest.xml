@@ -20,6 +20,10 @@
         android:theme="@style/Theme.PlanUP"
         android:usesCleartextTraffic="true">
 
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
+
         <activity
             android:name=".SplashActivity"
             android:exported="true">

@@ -14,6 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
@@ -41,7 +42,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
         backIcon = view.findViewById(R.id.backIcon)
         nextButton = view.findViewById(R.id.nextButton)
 
-
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
             requireActivity().finish()
@@ -51,7 +51,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
         challengeGoalLayout = view.findViewById(R.id.challengeGoalLayout)
         categorySettingTitle = view.findViewById(R.id.categorySettingTitle)
 
-        // 카테고리 레이아웃 초기화
         val categoryStudy = view.findViewById<LinearLayout>(R.id.categoryStudyLayout)
         val categoryReading = view.findViewById<LinearLayout>(R.id.categoryReadingLayout)
         val categoryDigitalDetox = view.findViewById<LinearLayout>(R.id.categoryDigitalDetoxLayout)
@@ -72,7 +71,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
         customCategoryEditText = view.findViewById(R.id.customCategoryEditText)
         customCategoryEditText.visibility = View.GONE
 
-        // 에러 메시지 숨김 초기화
         categoryErrorText = view.findViewById(R.id.categoryGuideText1)
         customCategoryErrorText = view.findViewById(R.id.categoryGuideText2)
 
@@ -83,7 +81,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
             layout.setOnClickListener { handleCategorySelection(layout) }
         }
 
-        // 커스텀 카테고리 입력 변화 감지
         customCategoryEditText.addTextChangedListener { checkNextButtonEnabled() }
 
         nextButton.isEnabled = false
@@ -108,7 +105,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
                 )?.text.toString()
             }
 
-            // 선택된 목표에 따라 다음 Fragment로 이동
             val nextFragment = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) {
                 GoalInputFragment()
             } else {
@@ -122,7 +118,19 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
             (requireActivity() as GoalActivity).navigateToFragment(nextFragment)
         }
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
+                customCategoryEditText.isFocused
+            ) {
+                customCategoryEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
+
 
     // 목표 선택
     private fun handleGoalSelection(layout: LinearLayout) {
@@ -177,6 +185,11 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
         val textView = layout.findViewById<TextView>(getCategoryTextId(layout.id))
         layout.backgroundTintList = null
         textView.setTextColor(Color.parseColor("#448AF7"))
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     private fun getCategoryTextId(layoutId: Int): Int {

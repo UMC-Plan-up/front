@@ -3,8 +3,9 @@ package com.example.planup.signup.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -60,7 +61,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         nextButton = view.findViewById(R.id.nextButton)
         disableNextButton()
 
-
         /* 클릭 시 ic_eye_off ↔ ic_eye_on */
         eyeIcon.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
@@ -88,8 +88,23 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
                 openNextStep()
             }
         }
-    }
 
+        /* [추가] EditText 외 영역 터치 시 키보드 숨기기 */
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (passwordEditText.isFocused) {
+                    passwordEditText.clearFocus()
+                    hideKeyboard()
+                }
+                if (confirmPasswordEditText.isFocused) {
+                    confirmPasswordEditText.clearFocus()
+                    hideKeyboard()
+                }
+                view.performClick()  // 접근성 이벤트
+            }
+            false
+        }
+    }
 
     /* LoginSentEmailFragment로 이동하는 메서드 */
     private fun openNextStep() {
@@ -106,7 +121,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
             .commit()
     }
 
-
     /* 비밀번호 보이기 ↔ 숨기기 */
     private fun togglePasswordVisibility(editText: EditText, icon: ImageView, isVisible: Boolean) {
         if (isVisible) {
@@ -118,7 +132,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         }
         editText.setSelection(editText.text?.length ?: 0)
     }
-
 
     /* 비밀번호 조건 검사 */
     private fun validateConditions() {
@@ -147,7 +160,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         }
     }
 
-
     /* 조건에 따라 색상 변경 */
     private fun updateConditionUI(icon: ImageView, textView: TextView, isValid: Boolean) {
         if (isValid) {
@@ -162,19 +174,21 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         }
     }
 
-
     /* 다음 버튼 활성 ↔ 비활성 */
-    private fun enableNextButton() {  // 다음 버튼 활성화
+    private fun enableNextButton() {
         nextButton.isEnabled = true
-        nextButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(),
-            R.color.blue_200
-        )
+        nextButton.backgroundTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.blue_200)
     }
 
-    private fun disableNextButton() {  // 다음 버튼 비활성화
+    private fun disableNextButton() {
         nextButton.isEnabled = false
-        nextButton.backgroundTintList = ContextCompat.getColorStateList(requireContext(),
-            R.color.black_200
-        )
+        nextButton.backgroundTintList =
+            ContextCompat.getColorStateList(requireContext(), R.color.black_200)
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

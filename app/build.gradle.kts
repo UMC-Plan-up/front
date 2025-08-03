@@ -26,10 +26,12 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
@@ -71,6 +73,8 @@ dependencies {
     //Retrofit은 okhttp 기반으로 작성됨
 //    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
 //    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
-    implementation (libs.okhttp)
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation(libs.okhttp)
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("com.kakao.sdk:v2-user:2.19.0")
+    implementation("com.kakao.sdk:v2-share:2.19.0")
 }

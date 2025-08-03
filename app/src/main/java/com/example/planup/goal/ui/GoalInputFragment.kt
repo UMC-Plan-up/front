@@ -8,7 +8,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
@@ -105,7 +104,20 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
             (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
         }
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
+                (goalNameEditText.isFocused || goalVolumeEditText.isFocused)
+            ) {
+                goalNameEditText.clearFocus()
+                goalVolumeEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
+
 
 
     /* 입력 감지 */
@@ -181,6 +193,11 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         }
 
         return valid
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     /* 다음 버튼 활성 ↔ 비활성 */
