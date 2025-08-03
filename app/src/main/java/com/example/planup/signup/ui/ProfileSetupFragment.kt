@@ -7,19 +7,14 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -45,7 +40,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     // TODO : API 연동하기
     private val takenNicknames = listOf("planup")
 
-    private var cameraImageUri: Uri? = null  // 카메라로 찍은 이미지 URI 저장
+    private var cameraImageUri: Uri? = null
 
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
@@ -103,9 +98,9 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             }
         }
 
-        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
+        // 뒤로가기 아이콘 → 이전 화면으로 이동
         backIcon.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            (requireActivity() as SignupActivity).navigateToFragment(LoginSentEmailFragment())
         }
 
         /* editIcon 클릭 → 프로필 수정 popup 띄우기 */
@@ -164,6 +159,17 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                     Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT).show()
                 }
             }
+        }
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (nicknameEditText.isFocused) {
+                    nicknameEditText.clearFocus()
+                    hideKeyboard()
+                }
+                view.performClick()
+            }
+            false
         }
     }
 
@@ -295,5 +301,10 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         } else {
             uri.lastPathSegment
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

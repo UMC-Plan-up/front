@@ -1,6 +1,10 @@
 package com.example.planup.signup.ui
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,12 +14,18 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
+import com.kakao.sdk.share.ShareClient
+import com.kakao.sdk.template.model.Button
+import com.kakao.sdk.template.model.Content
+import com.kakao.sdk.template.model.FeedTemplate
+import com.kakao.sdk.template.model.Link
 import kotlinx.coroutines.launch
 
 class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
@@ -24,6 +34,8 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
     private lateinit var nicknameEditText: EditText
     private lateinit var shareButton: AppCompatButton
     private lateinit var textShareLater: TextView
+
+    private var myInviteCode: String = "" // 서버에서 받아온 초대코드 저장용
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,28 +71,38 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
 
     // 초대코드를 서버에서 가져와 EditText에 표시
     private fun fetchInviteCode() {
-        val token = getAccessToken() ?: return
+
+        val token = getAccessToken()
+        if (token == null) {
+            return
+        }
+
         val accessToken = "Bearer $token"
 
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.inviteCodeApi.getInviteCode(accessToken)
+
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val inviteCode = response.body()?.result?.inviteCode ?: ""
+
+                    myInviteCode = inviteCode // 초대코드 저장
                     nicknameEditText.setText(inviteCode)
                 } else {
-                    Log.e("InviteCode", "API 실패: ${response.code()}")
+                    Log.e("InviteCode", "API 실패: ${response.code()} / ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Log.e("InviteCode", "예외 발생: ${e.message}")
+                Log.e("InviteCode", "예외 발생: ${e.message}", e)
             }
         }
     }
 
     // SharedPreferences에서 accessToken 불러오기
     private fun getAccessToken(): String? {
-        val prefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        return prefs.getString("accessToken", null)
+        val prefs = requireActivity().applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val token = prefs.getString("accessToken", null)
+        Log.d("InviteCode", "불러온 accessToken: $token")
+        return token
     }
 
     // 공유 팝업 보여주기
@@ -105,17 +127,74 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         val etcShare = popupView.findViewById<TextView>(R.id.etcShareText)
 
         kakaoShare.setOnClickListener {
-            // TODO: 카카오톡 공유 기능
+            val nickname = (requireActivity() as SignupActivity).nickname
+            val inviteCode = myInviteCode
+
+            val message = """
+                Plan-Up에서 함께 목표 달성에 참여해 보세요!
+                ${nickname}님의 친구 코드: $inviteCode
+            """.trimIndent()
+
+            val feedTemplate = FeedTemplate(
+                content = Content(
+                    title = "${nickname}님이 친구 신청을 보냈어요!",
+                    description = message,
+                    imageUrl = "https://via.placeholder.com/300.png?text=Plan-Up", // 실제 서비스 이미지로 교체
+                    link = Link(
+                        webUrl = "https://www.naver.com",
+                        mobileWebUrl = "https://www.naver.com"
+                    )
+                )
+            )
+
+
+            ShareClient.instance.shareDefault(requireContext(), feedTemplate) { result, error ->
+                if (error != null) {
+                    Log.e("KakaoShare", "카카오톡 공유 실패", error)
+                } else if (result != null) {
+                    startActivity(result.intent)
+                    Log.d("KakaoShare", "카카오톡 공유 성공")
+                }
+            }
+
             popupWindow.dismiss()
         }
+
         smsShare.setOnClickListener {
-            // TODO: 문자 공유 기능
+            val nickname = (requireActivity() as SignupActivity).nickname
+            val inviteCode = myInviteCode // EditText 대신 변수 사용
+
+            val message = """
+                ${nickname}님이 친구 신청을 보냈어요.
+                Plan-Up에서 함께 목표 달성에 참여해 보세요!
+                ${nickname}님의 친구 코드: $inviteCode
+            """.trimIndent()
+
+            val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("smsto:") // 번호 없이 문자 열기
+                putExtra("sms_body", message)
+            }
+
+            try {
+                startActivity(smsIntent)
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "문자 앱을 열 수 없습니다", Toast.LENGTH_SHORT).show()
+                Log.e("SMS_SHARE", "문자 공유 실패: ${e.message}")
+            }
+
             popupWindow.dismiss()
         }
+
         copyText.setOnClickListener {
-            // TODO: 코드 복사 기능
+            val inviteCode = myInviteCode // EditText 대신 변수 사용
+
+            val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("inviteCode", inviteCode)
+            clipboard.setPrimaryClip(clip)
+
             popupWindow.dismiss()
         }
+
         etcShare.setOnClickListener {
             ShareChannelBottomSheet().show(parentFragmentManager, "ShareChannel")
             popupWindow.dismiss()

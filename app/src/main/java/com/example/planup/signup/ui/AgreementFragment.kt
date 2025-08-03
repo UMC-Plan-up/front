@@ -77,6 +77,7 @@ class AgreementFragment : Fragment() {
                 showRequiredError(view)
             }
         }
+        disableNextButton()
 
         return view
     }
@@ -88,22 +89,16 @@ class AgreementFragment : Fragment() {
                 val response = RetrofitInstance.termsApi.getTermsList()
                 val body = response.body()
 
-                Log.d("AgreementFragment", "📦 전체 응답 body: $body")
-
-                // ✅ isSuccess를 신뢰하지 않고 result 기반으로 처리
                 val result = body?.result
 
                 if (response.isSuccessful && !result.isNullOrEmpty()) {
-                    Log.d("AgreementFragment", "✅ 약관 ${result.size}개 불러오기 성공")
                     termsList.clear()
                     termsList.addAll(result)
                     adapter.notifyDataSetChanged()
                 } else {
-                    Log.e("AgreementFragment", "❌ result가 null이거나 비어있음, message: ${body?.message}")
                     Toast.makeText(requireContext(), "약관 불러오기 실패: ${body?.message}", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Log.e("AgreementFragment", "🔥 네트워크 오류: ${e.message}")
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
@@ -126,11 +121,15 @@ class AgreementFragment : Fragment() {
     /* 사용자 선택 약관 저장 */
     private fun saveAgreements() {
         val activity = requireActivity() as SignupActivity
-        val agreements = adapter.getCheckedTerms().map {
-            SignupActivity.Agreement(it.id, true)
+        val agreements = termsList.map { term ->
+            SignupActivity.Agreement(
+                termsId = term.id,
+                isAgreed = adapter.getCheckedTerms().any { it.id == term.id }
+            )
         }
         activity.agreements = agreements
     }
+
 
     /* 다음 화면으로 이동 */
     private fun openNextStep() {
@@ -181,10 +180,6 @@ class AgreementFragment : Fragment() {
                 val response = RetrofitInstance.termsApi.getTermsDetail(termsId)
 
                 val body = response.body()
-                Log.d("AgreementFragment", "📄 상세 응답 body: $body")
-                Log.d("AgreementFragment", "📄 상세 isSuccess: ${body?.isSuccess}")
-                Log.d("AgreementFragment", "📄 상세 result: ${body?.result}")
-                Log.d("AgreementFragment", "📄 상세 content: ${body?.result?.content}")
 
                 if (response.isSuccessful && body?.result?.content != null) {
                     contentText.text = body.result.content
@@ -193,7 +188,6 @@ class AgreementFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 contentText.text = "네트워크 오류가 발생했습니다."
-                Log.e("AgreementFragment", "🔥 예외: ${e.message}")
             }
         }
 

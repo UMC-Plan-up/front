@@ -2,7 +2,9 @@ package com.example.planup.signup.ui
 
 import android.os.Bundle
 import android.util.Patterns
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -21,18 +23,16 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
     private lateinit var nextButton: AppCompatButton
 
     // [테스트용] 이미 사용중인 이메일 리스트
-    private val usedEmails = listOf("test@planup.com", "user@gmail.com")
+    private val usedEmails = listOf("user@gmail.com")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack() // 이전 Fragment로 돌아가기
         }
-
 
         emailEditText = view.findViewById(R.id.emailEditText)
         emailErrorText1 = view.findViewById(R.id.emailErrorText1)
@@ -76,10 +76,22 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
                 openNextStep()
             }
         }
+
+        /* EditText 외부 터치 시 키보드 자동 숨김 */
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (emailEditText.isFocused) {
+                    emailEditText.clearFocus()
+                    hideKeyboard()
+                }
+                view.performClick()
+            }
+            false
+        }
     }
 
 
-    /* LoginPasswordFragment로 이동하는 메서드 */
+        /* LoginPasswordFragment로 이동하는 메서드 */
     private fun openNextStep() {
         val email = emailEditText.text.toString().trim()
 
@@ -94,7 +106,6 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
             .commit()
     }
 
-
     /* 이메일 형식 에러 표시 */
     private fun showEmailFormatError() {
         emailErrorText1.visibility = View.VISIBLE   // 형식 에러 보여줌
@@ -107,12 +118,10 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
         emailErrorText2.visibility = View.VISIBLE   // 중복 에러 보여줌
     }
 
-
     private fun hideAllErrors() {
         emailErrorText1.visibility = View.GONE
         emailErrorText2.visibility = View.GONE
     }
-
 
     /* 다음 버튼 활성 ↔ 비활성 */
     private fun enableNextButton() {  // 다음 버튼 활성화
@@ -125,5 +134,11 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
         nextButton.isEnabled = false
         nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
+    }
+
+    /* [추가] 키보드 숨기는 메서드 */
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

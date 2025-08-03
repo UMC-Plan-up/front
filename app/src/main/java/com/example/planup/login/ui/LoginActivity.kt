@@ -3,8 +3,11 @@ package com.example.planup.login.ui
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.util.Patterns
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -39,9 +42,22 @@ class LoginActivity : AppCompatActivity() {
 
         initView()
         initClickListener()
+
+        window.decorView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                currentFocus?.let { view ->
+                    if (view is EditText) {
+                        view.clearFocus()
+                        hideKeyboard()
+                    }
+                }
+                v.performClick()
+            }
+            true
+        }
     }
 
-    private fun initView() {
+        private fun initView() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
@@ -166,12 +182,17 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()!!.result
 
-                    val prefs = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+                    val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
                         .putString("accessToken", result.accessToken)
                         .putString("nickname", result.nickname)
                         .putString("profileImgUrl", result.profileImgUrl)
-                        .apply()
+                        .commit()
+
+                    // 저장 후 확인 로그
+                    val savedToken = prefs.getString("accessToken", null)
+                    Log.d("Login", "저장된 accessToken: $savedToken")
+
 
                     // 로그인 성공 → MainActivity로 이동
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
@@ -225,5 +246,10 @@ class LoginActivity : AppCompatActivity() {
         if (!hasError) {
             loginWithServer(email, password)
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }

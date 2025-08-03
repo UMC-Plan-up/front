@@ -1,9 +1,12 @@
 package com.example.planup.signup.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -16,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
-import com.example.planup.signup.data.SignupRepository
-import com.example.planup.signup.data.SignupRequestDto
+import com.example.planup.signup.data.*
 import kotlinx.coroutines.launch
 
 class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
@@ -45,77 +47,64 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         /* 초대코드 입력란 클릭 */
         inviteCodeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                // 입력창 클릭 시
                 inviteCodeEditText.background = ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.bg_edittext_focused_blue
                 )
-                inviteCodeEditText.hint = "" // hint 제거
+                inviteCodeEditText.hint = ""
             } else {
-                // 포커스 해제 시
                 inviteCodeEditText.background = ContextCompat.getDrawable(
                     requireContext(),
                     R.drawable.bg_edittext_rounded
                 )
-                inviteCodeEditText.hint = "초대코드 입력란" // hint 복원
+                inviteCodeEditText.hint = "초대코드 입력란"
             }
         }
 
-        /* 입력 버튼 클릭 → 입력된 코드 검증 */
+        /* 입력 버튼 클릭 → 초대코드 실시간 검증 API 요청 */
         inputButton.setOnClickListener {
             val enteredCode = inviteCodeEditText.text.toString().trim()
 
-            if (enteredCode.isNotEmpty()) {
-                // (1) SignupActivity에 값 저장
-                val activity = requireActivity() as SignupActivity
-                activity.inviteCode = enteredCode
-                activity.agreements = listOf(SignupActivity.Agreement(termsId = 1, isAgreed = true))
+            Log.d("InviteCode", "입력한 코드: $enteredCode")
 
-                // (2) 회원가입 API 요청
-                val request = SignupRequestDto(
-                    email = activity.email ?: "",
-                    password = activity.password ?: "",
-                    passwordCheck = activity.password ?: "",
-                    nickname = activity.nickname ?: "",
-                    inviteCode = enteredCode,
-                    profileImg = activity.profileImgUrl ?: "",
-                    agreements = activity.agreements!!.map {
-                        com.example.planup.signup.data.Agreement(it.termsId, it.isAgreed)
-                    }
-                )
+            lifecycleScope.launch {
+                try {
+                    val request = InviteCodeValidateRequest(inviteCode = enteredCode)
+                    val response = RetrofitInstance.inviteCodeApi.validateInviteCode(request)
 
-                lifecycleScope.launch {
-                    try {
-                        val repository = SignupRepository(RetrofitInstance.signupApi)
-                        val response = repository.signup(request)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody?.isSuccess == true) {
+                            val result = responseBody.result
 
-                        if (response.isSuccess) {
-                            // (3) 올바른 초대코드 → 팝업 띄우기
-                            hideInvalidCodeMessage()
-                            //val nickname = response.result.nickname
-                            //showPopupCenter(view, nickname)
+                            if (result.valid) {
+                                hideInvalidCodeMessage()
+                                showPopupCenter(view, result.targetUserNickname, enteredCode)
+                            } else {
+                                showInvalidCodeMessage()
+                            }
 
                         } else {
-                            // (4) 서버 응답 실패 → 코드별 처리
-                            handleErrorCode(response.code)
+                            setErrorMessage("서버 응답이 올바르지 않습니다.")
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        // (5) 네트워크 등 예외 발생 시 처리
-                        setErrorMessage("네트워크 오류가 발생했습니다.")
+                    } else {
+                        setErrorMessage("서버와의 통신에 실패했습니다.")
                     }
+
+                } catch (e: Exception) {
+                    setErrorMessage("네트워크 오류가 발생했습니다.")
                 }
             }
         }
 
-
-
-        /* “다음에 할게요” 클릭 → CommunityIntroFragment로 이동 */
+        /* “다음에 입력할게요” 클릭 → 초대코드 없이 회원가입 진행 */
         textShareLater.setOnClickListener {
             val activity = requireActivity() as SignupActivity
             activity.inviteCode = ""
-            activity.agreements = listOf(SignupActivity.Agreement(termsId = 1, isAgreed = true))
 
+            val agreements = activity.agreements ?: emptyList()
+
+            // 회원가입 요청 객체 생성
             val request = SignupRequestDto(
                 email = activity.email ?: "",
                 password = activity.password ?: "",
@@ -123,28 +112,45 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
                 nickname = activity.nickname ?: "",
                 inviteCode = "",
                 profileImg = activity.profileImgUrl ?: "",
-                agreements = activity.agreements!!.map {
-                    com.example.planup.signup.data.Agreement(it.termsId, it.isAgreed)
+                agreements = agreements.map {
+                    Agreement(it.termsId, it.isAgreed)
                 }
             )
+
+            Log.d("SignupRequest", request.toString())
 
             lifecycleScope.launch {
                 try {
                     val repository = SignupRepository(RetrofitInstance.signupApi)
                     val response = repository.signup(request)
 
-                    if (response.isSuccess) {
-                        //val nickname = response.result.nickname
-                        //val fragment = CommunityIntroFragment.newInstance(nickname)
-                        //activity.navigateToFragment(fragment)
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody?.isSuccess == true) {
+                            val fragment =
+                                CommunityIntroFragment.newInstance(activity.nickname ?: "")
+                            activity.navigateToFragment(fragment)
+                        } else { handleErrorCode(responseBody?.code ?: "") }
                     } else {
-                        handleErrorCode(response.code)
+                        setErrorMessage("서버와의 통신에 실패했습니다.")
                     }
+
                 } catch (e: Exception) {
                     e.printStackTrace()
                     setErrorMessage("네트워크 오류가 발생했습니다.")
                 }
             }
+        }
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                if (inviteCodeEditText.isFocused) {
+                    inviteCodeEditText.clearFocus()
+                    hideKeyboard()
+                }
+                view.performClick()
+            }
+            false
         }
     }
 
@@ -178,12 +184,11 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         }
     }
 
-    /* popup_code.xml을 화면 중앙에 띄우는 함수 */
-    private fun showPopupCenter(anchorView: View, nickname: String) {
+    /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 회원가입 API 호출 */
+    private fun showPopupCenter(anchorView: View, nickname: String, inviteCode: String) {
         val popupView = LayoutInflater.from(requireContext())
             .inflate(R.layout.popup_code, null)
 
-        // popup_code.xml 안의 친구 닉네임 반영
         val friendDescription = popupView.findViewById<TextView>(R.id.friendDescription)
         friendDescription.text = getString(R.string.friend_description, nickname)
 
@@ -204,21 +209,64 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         popupWindow.isOutsideTouchable = false
         popupWindow.isFocusable = true
 
-        /* popup의 확인 버튼 클릭 → CommunityIntroFragment로 이동 */
+        /* popup 확인 버튼 → 회원가입 API 호출 */
         confirmButton.setOnClickListener {
             popupWindow.dismiss()
-            val fragment = CommunityIntroFragment.newInstance(nickname)
-            (requireActivity() as SignupActivity).navigateToFragment(fragment)
+
+            val activity = requireActivity() as SignupActivity
+            activity.inviteCode = inviteCode
+
+            val agreements = activity.agreements ?: emptyList()
+
+            val request = SignupRequestDto(
+                email = activity.email ?: "",
+                password = activity.password ?: "",
+                passwordCheck = activity.password ?: "",
+                nickname = activity.nickname ?: "",
+                inviteCode = inviteCode,
+                profileImg = activity.profileImgUrl ?: "",
+                agreements = agreements.map {
+                    Agreement(it.termsId, it.isAgreed)
+                }
+            )
+
+            lifecycleScope.launch {
+                try {
+                    val repository = SignupRepository(RetrofitInstance.signupApi)
+                    val response = repository.signup(request)
+
+                    if (response.isSuccessful) {
+                        val responseBody = response.body()
+                        if (responseBody?.isSuccess == true) {
+                            val fragment =
+                                CommunityIntroFragment.newInstance(activity.nickname ?: "")
+                            activity.navigateToFragment(fragment)
+                        } else {
+                            handleErrorCode(responseBody?.code ?: "")
+                        }
+                    } else {
+                        setErrorMessage("서버와의 통신에 실패했습니다.")
+                    }
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    setErrorMessage("네트워크 오류가 발생했습니다.")
+                }
+            }
         }
 
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
 
-        // dim 효과 추가
         val container = popupWindow.contentView.rootView
         val wm = requireActivity().getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
         val p = container.layoutParams as android.view.WindowManager.LayoutParams
         p.flags = p.flags or android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
         p.dimAmount = 0.4f
         wm.updateViewLayout(container, p)
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

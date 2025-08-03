@@ -1,6 +1,7 @@
 package com.example.planup.signup
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -36,7 +37,7 @@ class SignupActivity : AppCompatActivity() {
     fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.signup_container, fragment)
-            .addToBackStack(null) // 뒤로가기 가능
+            .addToBackStack(null)
             .commit()
     }
 }
