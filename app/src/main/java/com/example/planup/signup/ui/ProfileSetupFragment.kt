@@ -156,7 +156,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 if (extension == "jpg" || extension == "jpeg" || extension == "png") {
                     uploadProfileImage(uri)
                 } else {
-                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -304,7 +305,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }
