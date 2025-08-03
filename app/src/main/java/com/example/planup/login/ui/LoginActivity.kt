@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun initView() {
+        private fun initView() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)

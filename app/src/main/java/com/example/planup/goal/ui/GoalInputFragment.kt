@@ -116,6 +116,18 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             view.performClick()
             false
         }
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
+                (goalNameEditText.isFocused || goalVolumeEditText.isFocused)
+            ) {
+                goalNameEditText.clearFocus()
+                goalVolumeEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
 
 
