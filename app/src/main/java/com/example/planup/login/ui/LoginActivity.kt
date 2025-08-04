@@ -41,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
         initView()
         initClickListener()
 
@@ -58,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-        private fun initView() {
+    private fun initView() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
