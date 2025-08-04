@@ -128,7 +128,6 @@ class ChallengeSetTimerFragment:Fragment() {
             totalTime += item
         }
         if (totalTime < 30){
-            Log.d("qhrkqelw;i","${totalTime} ${item}")
             binding.errorTv.visibility = View.VISIBLE
             binding.challengeTimerNextBtn.isActivated = false
         }else{

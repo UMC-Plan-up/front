@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">PlanUP</string>
 
+    <string name="plan">Plan</string>
+    <string name="dash">-</string>
+    <string name="u_letter">U</string>
+    <string name="p_letter">p</string>
+    <string name="or_text">or</string>
+
     <!-- 회원가입 -->
     <string name="signup">회원가입하기</string>
     <string name="hint_email">이메일을 입력하세요.</string>

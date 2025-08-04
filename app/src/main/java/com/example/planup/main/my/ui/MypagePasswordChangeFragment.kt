@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
-import com.example.planup.databinding.FragmentMypagePasswordThirdBinding
 import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.databinding.FragmentMypagePasswordChangeBinding
+import com.example.planup.network.controller.UserController
 
-class MypagePasswordThirdFragment : Fragment() {
-    lateinit var binding: FragmentMypagePasswordThirdBinding
+class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
+    lateinit var binding: FragmentMypagePasswordChangeBinding
     /*새로운 비밀번호, 재확인 모두 통과하면 완료버튼 활성화*/
     private var length:Boolean = false
     private var special:Boolean = false
@@ -28,7 +30,7 @@ class MypagePasswordThirdFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypagePasswordThirdBinding.inflate(inflater, container, false)
+        binding = FragmentMypagePasswordChangeBinding.inflate(inflater, container, false)
         clickListener()
         textListener()
         return binding.root
@@ -38,12 +40,15 @@ class MypagePasswordThirdFragment : Fragment() {
         /*뒤로 가기*/
         binding.passwordThirdBackIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordSecondFragment())
+                .replace(R.id.main_container, MypagePasswordLinkFragment())
                 .commitAllowingStateLoss()
         }
         /*비밀번호 재설정 완료버튼*/
         binding.btnPasswordCompleteTv.setOnClickListener{
-            if (binding.btnPasswordCompleteTv.isActivated) makePopup()
+            if (!binding.btnPasswordCompleteTv.isActivated) return@setOnClickListener
+            val service = UserController()
+            service.setResponseViewer(this)
+            service.passwordService(1234,binding.passwordThirdCheckEnterEt.text.toString())
         }
     }
 
@@ -141,6 +146,15 @@ class MypagePasswordThirdFragment : Fragment() {
         }
         dialog.setCanceledOnTouchOutside(false)
         dialog.show()
+    }
+
+    //API 결과에 따른 UI 처리
+    override fun onResponseSuccess() {
+        makePopup()
+    }
+    override fun onResponseError(message: String, code: String) {
+        //디버깅
+        Log.d("okHttp","message: $message\ncode: $code")
     }
 
 }

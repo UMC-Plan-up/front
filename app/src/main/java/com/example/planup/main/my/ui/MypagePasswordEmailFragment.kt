@@ -3,20 +3,25 @@ package com.example.planup.main.my.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
-import com.example.planup.databinding.FragmentMypagePasswordFirstBinding
+import com.example.planup.databinding.FragmentMypagePasswordEmailBinding
+import com.example.planup.network.controller.UserController
 
-class MypagePasswordFirstFragment : Fragment() {
+class MypagePasswordEmailFragment : Fragment(),ResponseViewer {
 
-    lateinit var binding: FragmentMypagePasswordFirstBinding
+    lateinit var binding: FragmentMypagePasswordEmailBinding
     lateinit var mailAddr: String
     lateinit var popupView: View //이메일 드롭다운 아이템
     var curCheck: Int = 0 //지금 선택된 도메인에 체크
@@ -28,8 +33,7 @@ class MypagePasswordFirstFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypagePasswordFirstBinding.inflate(inflater, container, false)
-
+        binding = FragmentMypagePasswordEmailBinding.inflate(inflater, container, false)
         clickListener()
         textListener()
         return binding.root
@@ -51,28 +55,7 @@ class MypagePasswordFirstFragment : Fragment() {
         binding.btnPasswordLinkTv.setOnClickListener {
             /* 버튼 활성화된 경우만 클릭 이벤트 처리함 */
             if (!binding.btnPasswordLinkTv.isActivated) return@setOnClickListener
-
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordSecondFragment())
-                .commitAllowingStateLoss()
-
-            /*형식 오류와 인증번호 버튼 활성화 기준이 필요함*/
-//            if (binding.myPasswordEmailAddrEt.text.toString()
-//                    .isNotEmpty() && binding.myPasswordEmailDomainAtv.text.toString().isNotEmpty()
-//            ) {
-//                mailAddr =
-//                    binding.myPasswordEmailAddrEt.text.toString() + "@" + binding.myPasswordEmailDomainAtv.text.toString()
-//
-//                (context as MainActivity).supportFragmentManager.beginTransaction()
-//                    .replace(R.id.main_container, MypagePasswordSecondFragment())
-//                    .commitAllowingStateLoss()
-//            }else if(binding.myPasswordEmailAddrEt.text.toString()
-//                    .isEmpty() || binding.myPasswordEmailDomainAtv.text.toString().isEmpty()){
-//                ToastIncorrectEmail.createToast(context as MainActivity)
-//            }else{
-//                /*이메일 유효성 검사 로직 필요*/
-//                ToastInvalidEmail.createToast(context as MainActivity)
-//            }
+            checkMail()
         }
     }
 
@@ -164,7 +147,12 @@ class MypagePasswordFirstFragment : Fragment() {
     private fun textListener() {
         binding.emailEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-                checkMail()
+                if (binding.emailEt.text.toString().isNotEmpty()
+                ) {
+                    binding.btnPasswordLinkTv.isActivated = true
+                } else {
+                    binding.btnPasswordLinkTv.isActivated = false
+                }
             }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -174,11 +162,40 @@ class MypagePasswordFirstFragment : Fragment() {
 
     /*이메일로 인증 링크 받기 버튼 활성화*/
     private fun checkMail() {
-        if (binding.emailEt.text.toString().isNotEmpty()
-        ) {
-            binding.btnPasswordLinkTv.isActivated = true
-        } else {
-            binding.btnPasswordLinkTv.isActivated = false
+        if (binding.emailEt.text.toString().indexOf('@',0) == -1
+            || binding.emailEt.text.toString().indexOf('.',0) == -1)
+                makeToast(R.string.toast_incorrect_email)
+        else{
+            val mailService = UserController()
+            mailService.setResponseViewer(this)
+            mailService.emailService(0,binding.emailEt.text.toString())
         }
+    }
+    private fun makeToast(text:Int){
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(text)
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.show()
+    }
+
+    override fun onResponseSuccess() {
+        val emailAddr = binding.emailEt.text.toString()
+        val nextFragment = MypagePasswordLinkFragment().apply {
+            arguments = Bundle().apply {
+                putString("email",emailAddr)
+            }
+        }
+        (context as MainActivity).navigateFragment(nextFragment)
+    }
+
+    override fun onResponseError(code: String, message: String ) {
+        //디버깅
+        Log.d("okhttp", "code: ${code}\nmessage: ${message}")
+        makeToast(R.string.toast_invalid_email)
     }
 }
