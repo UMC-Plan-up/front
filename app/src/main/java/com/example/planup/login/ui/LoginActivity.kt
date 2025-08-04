@@ -40,6 +40,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
         initView()
         initClickListener()
 
@@ -185,6 +186,7 @@ class LoginActivity : AppCompatActivity() {
 
                     //로그인 직후 발급된 JWT를 레트로핏에 전달
                     App.prefs.token = result.accessToken
+
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
                         .putString("accessToken", result.accessToken)
