@@ -106,8 +106,7 @@
 
             </LinearLayout>
 
-
-            <!-- 규칙 정보 섹션 (생략 가능) -->
+            <!-- 규칙 정보 섹션 -->
             <LinearLayout
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="200dp"
@@ -176,8 +175,62 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <!-- 오늘의 타이머 기록 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="17dp"
+                android:gravity="center">
 
+                <LinearLayout
+                    android:layout_width="228dp"
+                    android:layout_height="79dp"
+                    android:orientation="vertical"
+                    android:elevation="1dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/bg_goal_list_recyclerview">
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="오늘의 타이머 기록"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="00:00:00"
+                        android:gravity="center"
+                        android:textSize="35sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="107dp"
+                    android:layout_height="82dp"
+                    android:orientation="vertical"
+                    android:elevation="1dp"
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/bg_goal_list_recyclerview">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="사진 인증"
+                        android:gravity="center"
+                        android:layout_marginTop="5dp"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/img_camera"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="10dp"/>
+
+                </LinearLayout>
+            </LinearLayout>
 
             <!-- 랭킹 제목 -->
             <LinearLayout
@@ -190,177 +243,214 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="커뮤니티 참여자 랭킹"
+                    android:text="참여자 랭킹"
                     android:textSize="16sp"
                     android:textStyle="bold"
                     android:layout_marginStart="10dp"
                     android:layout_marginTop="20dp"/>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="사진 인증 횟수 기반 누적 기록 랭킹"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="15dp"/>
+
                 <!-- 커뮤니티 참여자 랭킹 리스트 -->
-                <!-- 상위 1~3위 -->
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:layout_marginTop="24dp"
-                    android:layout_marginBottom="12dp">
+                    android:paddingBottom="12dp"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp">
 
-                    <!-- 2위 -->
+                    <!-- 하단 닉네임 박스 (2위/3위) -->
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:src="@drawable/img_friend_profile_sample2"
-                            android:scaleType="centerCrop"
-                            android:background="@drawable/circle_bg"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="2위"
-                            android:textSize="14sp"
-                            android:textColor="#000000"/>
-                    </LinearLayout>
-
-                    <!-- 1위 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:src="@drawable/img_friend_profile_sample1"
-                            android:scaleType="centerCrop"
-                            android:background="@drawable/circle_bg"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="1위"
-                            android:textSize="14sp"
-                            android:textColor="#000000"/>
-                    </LinearLayout>
-
-                    <!-- 3위 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <ImageView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            android:src="@drawable/img_friend_profile_sample3"
-                            android:scaleType="centerCrop"
-                            android:background="@drawable/circle_bg"
-                            android:layout_marginBottom="4dp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="3위"
-                            android:textSize="14sp"
-                            android:textColor="#000000"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- 상위 랭커 닉네임 박스 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
-                    android:paddingBottom="24dp">
-
-                    <!-- 예: 2위 박스 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="80dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rank_box_bg"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                        android:orientation="horizontal"
+                        android:layout_gravity="bottom"
+                        android:gravity="center"
+                        android:background="@drawable/rank_box_bg">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="닉네임"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"/>
+                        <!-- 2위 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="사진인증 N회"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"/>
+                            <TextView
+                                android:text="닉네임"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:text="사진인증 N회"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+
+                        <!-- 3위 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center">
+
+                            <TextView
+                                android:text="닉네임"
+                                android:textColor="#FFFFFF"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+
+                            <TextView
+                                android:text="사진인증 N회"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
                     </LinearLayout>
 
-                    <!-- 1위 박스 -->
+                    <!-- 중앙 1위 박스 -->
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/rank_box_bg"
-                        android:orientation="vertical"
-                        android:gravity="center"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="닉네임"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="사진인증 N회"
-                            android:textColor="#FFFFFF"
-                            android:textSize="12sp"/>
-                    </LinearLayout>
-
-                    <!-- 3위 박스 -->
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="80dp"
-                        android:layout_weight="1"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:layout_marginBottom="40dp"
                         android:background="@drawable/rank_box_bg"
                         android:orientation="vertical"
                         android:gravity="center">
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:text="닉네임"
                             android:textColor="#FFFFFF"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
 
                         <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
                             android:text="사진인증 N회"
                             android:textColor="#FFFFFF"
-                            android:textSize="12sp"/>
+                            android:textSize="12sp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"/>
                     </LinearLayout>
-                </LinearLayout>
+
+                    <!-- 상단 프로필 사진 + 텍스트 (2위, 1위, 3위) -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_gravity="bottom"
+                        android:gravity="center_horizontal"
+                        android:layout_marginBottom="88dp"> <!-- 닉네임 박스 높이 + 중앙 박스 돌출 고려 -->
+
+                        <!-- 2위 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:layout_marginTop="60dp">
+
+                            <ImageView
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:src="@drawable/img_friend_profile_sample2"
+                                android:scaleType="centerCrop"
+                                android:background="@drawable/circle_bg"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:text="2위"
+                                android:textColor="#000000"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+
+                        <!-- 1위 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:gravity="center"
+                            android:layout_marginBottom="60dp">
+
+                            <!-- 프로필 이미지 + 메달을 겹치기 위해 FrameLayout 사용 -->
+                            <FrameLayout
+                                android:layout_width="72dp"
+                                android:layout_height="72dp">
+
+                                <!-- 프로필 이미지 -->
+                                <ImageView
+                                    android:id="@+id/imageProfile"
+                                    android:layout_width="52dp"
+                                    android:layout_height="52dp"
+                                    android:src="@drawable/img_friend_profile_sample1"
+                                    android:scaleType="centerCrop"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/circle_bg" />
+
+                                <!-- 우측 상단 메달 이미지 -->
+                                <ImageView
+                                    android:id="@+id/imageMedal"
+                                    android:layout_width="40dp"
+                                    android:layout_height="40dp"
+                                    android:layout_gravity="top|end"
+                                    android:src="@drawable/img_first_medal"
+                                    android:layout_marginTop="-4dp"
+                                    android:layout_marginEnd="-4dp" />
+                            </FrameLayout>
+
+                            <!-- 순위 텍스트 -->
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1위"
+                                android:textSize="14sp"
+                                android:textColor="#000000"
+                                android:layout_marginTop="4dp"/>
+                        </LinearLayout>
+
+                        <!-- 3위 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:layout_marginTop="60dp"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:src="@drawable/img_friend_profile_sample3"
+                                android:scaleType="centerCrop"
+                                android:background="@drawable/circle_bg"
+                                android:layout_marginBottom="4dp"/>
+
+                            <TextView
+                                android:text="3위"
+                                android:textColor="#000000"
+                                android:textSize="14sp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </FrameLayout>
 
                 <!-- 랭킹 리스트 (4위~) -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -372,8 +462,6 @@
 
 
             </LinearLayout>
-
-
 
             <!-- 댓글 입력 -->
             <LinearLayout
@@ -476,13 +564,13 @@
 
                     </LinearLayout>
 
-                    <TextView
+                    <EditText
                         android:id="@+id/textSpeech2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/bg_speech_box_blue"
-                        android:padding="16dp"
-                        android:text="댓글을 입력하세요"
+                        android:background="@drawable/img_speech_ballon"
+                        android:padding="26dp"
+                        android:hint="댓글을 입력하세요"
                         android:textColor="#333333"
                         android:textSize="14sp"
                         android:lineSpacingExtra="4dp"
