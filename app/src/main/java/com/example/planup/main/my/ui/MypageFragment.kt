@@ -49,13 +49,13 @@ class MypageFragment : Fragment() {
         /*이메일 변경*/
         binding.mypageEmailIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailFirstFragment())
+                .replace(R.id.main_container, MypageEmailCheckFragment())
                 .commitAllowingStateLoss()
         }
         /*비밀번호 변경*/
         binding.mypagePasswordIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordFirstFragment())
+                .replace(R.id.main_container, MypagePasswordEmailFragment())
                 .commitAllowingStateLoss()
         }
         /*카카오톡 계정 연동*/

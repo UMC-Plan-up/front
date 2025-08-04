@@ -5,13 +5,18 @@ import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.util.Patterns
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.network.App
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
 
@@ -35,15 +40,29 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
         initView()
         initClickListener()
+
+        window.decorView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                currentFocus?.let { view ->
+                    if (view is EditText) {
+                        view.clearFocus()
+                        hideKeyboard()
+                    }
+                }
+                v.performClick()
+            }
+            true
+        }
     }
 
     private fun initView() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
-        signupText = findViewById(R.id.signupText)
+        signupText = findViewById(R.id.signupButton)
         forgotPasswordText = findViewById(R.id.forgotPasswordText)
 
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
@@ -79,15 +98,13 @@ class LoginActivity : AppCompatActivity() {
             isPwVisible = !isPwVisible // 상태 반전
 
             if (isPwVisible) {
-                // 비밀번호 보이도록 변경
                 passwordEditText.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                passwordToggleIcon.setImageResource(R.drawable.ic_eye_on) // 눈 icon으로 변경
+                passwordToggleIcon.setImageResource(R.drawable.ic_eye_on)
             } else {
-                // 비밀번호 숨기도록 변경
                 passwordEditText.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                passwordToggleIcon.setImageResource(R.drawable.ic_eye_off) // 눈+작대기 icon으로 변경
+                passwordToggleIcon.setImageResource(R.drawable.ic_eye_off)
             }
 
             passwordEditText.setSelection(passwordEditText.text?.length ?: 0)
@@ -99,11 +116,8 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    // PopupWindow로 이메일 도메인 선택 UI 띄우기
     private fun showEmailDomainPopup() {
-
         val popupView = layoutInflater.inflate(R.layout.popup_email, null)
-
         popupView.measure(
             View.MeasureSpec.UNSPECIFIED,
             View.MeasureSpec.UNSPECIFIED
@@ -117,12 +131,10 @@ class LoginActivity : AppCompatActivity() {
             true
         )
 
-        // 도메인 TextView 가져오기
         val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
         val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
         val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
 
-        // 공통 함수: 도메인 추가 후 popup 닫기
         val addDomain: (String) -> Unit = { domain ->
             val currentText = emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {
@@ -132,53 +144,87 @@ class LoginActivity : AppCompatActivity() {
             }
             emailEditText.setText(updatedText)
             emailEditText.setSelection(updatedText.length)
-
-            popupWindow.dismiss() // 선택 후 닫기
+            popupWindow.dismiss()
         }
 
-        // 각 도메인 클릭 리스너 (선택 후 popup 닫기만)
         domainGmail.setOnClickListener { addDomain("gmail.com") }
         domainNaver.setOnClickListener { addDomain("naver.com") }
         domainKakao.setOnClickListener { addDomain("kakao.com") }
 
-        // PopupWindow 속성
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
-
 
         val offsetX = emailEditText.width - popupWidth
         popupWindow.showAsDropDown(emailEditText, offsetX, 0)
     }
 
     private fun fadeInView(view: View) {
-        view.alpha = 0f              // 처음엔 투명하게
+        view.alpha = 0f
         view.visibility = View.VISIBLE
-        view.animate()
-            .alpha(1f)               // 점점 보이게
-            .setDuration(300)        // 0.3초 동안 애니메이션
-            .start()
-
-        // 2초 후 자동으로 사라지게
-        view.postDelayed({
-            fadeOutView(view)
-        }, 2000)
+        view.animate().alpha(1f).setDuration(300).start()
+        view.postDelayed({ fadeOutView(view) }, 2000)
     }
 
     private fun fadeOutView(view: View) {
         view.animate()
-            .alpha(0f)               // 점점 투명하게
-            .setDuration(300)        // 0.3초 동안 애니메이션
-            .withEndAction {
-                view.visibility = View.GONE
-            }
+            .alpha(0f)
+            .setDuration(300)
+            .withEndAction { view.visibility = View.GONE }
             .start()
+    }
+
+    private fun loginWithServer(email: String, password: String) {
+        lifecycleScope.launch {
+            try {
+                val request = com.example.planup.login.data.LoginRequestDto(email, password)
+                val response = com.example.planup.network.RetrofitInstance.loginApi.login(request)
+
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    val result = response.body()!!.result
+
+                    //로그인 직후 발급된 JWT를 레트로핏에 전달
+                    App.prefs.token = result.accessToken
+
+                    val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
+                    prefs.edit()
+                        .putString("accessToken", result.accessToken)
+                        .putString("nickname", result.nickname)
+                        .putString("profileImgUrl", result.profileImgUrl)
+                        .commit()
+
+                    // 저장 후 확인 로그
+                    val savedToken = prefs.getString("accessToken", null)
+                    Log.d("Login", "저장된 accessToken: $savedToken")
+
+
+                    // 로그인 성공 → MainActivity로 이동
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                } else {
+                    val code = response.body()?.code ?: "UNKNOWN"
+                    when (code) {
+                        "S001" -> fadeInView(emailFormatErrorText)
+                        "U001" -> fadeInView(emailNotFoundErrorText)
+                        "S002" -> {
+                            fadeInView(emailNotFoundErrorText)
+                            fadeInView(passwordNotFoundErrorText)
+                        }
+
+                        else -> fadeInView(passwordNotFoundErrorText)
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this@LoginActivity, "서버와의 통신에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun checkLogin() {
         val email = emailEditText.text.toString().trim()
         val password = passwordEditText.text.toString().trim()
 
+        // 에러 메시지 숨기기
         emailFormatErrorText.visibility = View.GONE
         emailNotFoundErrorText.visibility = View.GONE
         passwordNotFoundErrorText.visibility = View.GONE
@@ -191,25 +237,24 @@ class LoginActivity : AppCompatActivity() {
             hasError = true
         }
 
-        // [테스트용] 회원가입 완료 된 계정
-        val dummyEmail = "test@test.com"
-        val dummyPassword = "1234"
-
-        if (email.isNotEmpty() && email != dummyEmail) {
+        if (email.isEmpty()) {
             fadeInView(emailNotFoundErrorText)
             hasError = true
         }
 
-        if (password.isNotEmpty() && password != dummyPassword) {
+        if (password.isEmpty()) {
             fadeInView(passwordNotFoundErrorText)
             hasError = true
         }
 
-        // 로그인 성공 → MainActivity로 이동
+        // 오류 없으면 서버에 로그인 요청
         if (!hasError) {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            loginWithServer(email, password)
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }
