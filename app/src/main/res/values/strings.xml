@@ -408,6 +408,7 @@
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
+
     <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
     <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
     <string name="toast_goal_activate">목표가 활성화되었어요.</string>
