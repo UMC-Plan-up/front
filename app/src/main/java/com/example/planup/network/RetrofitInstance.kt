@@ -34,4 +34,7 @@ object RetrofitInstance {
         retrofit.create(InviteCodeApi::class.java)
     }
 
+    val passwordApi: PasswordApi by lazy {
+        retrofit.create(PasswordApi::class.java)
+    }
 }

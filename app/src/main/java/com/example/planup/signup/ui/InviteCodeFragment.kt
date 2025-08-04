@@ -126,27 +126,31 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         val copyText = popupView.findViewById<TextView>(R.id.copyText)
         val etcShare = popupView.findViewById<TextView>(R.id.etcShareText)
 
+        /* TODO : 아직 수정 중 */
         kakaoShare.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode
 
-            val message = """
-                Plan-Up에서 함께 목표 달성에 참여해 보세요!
-                ${nickname}님의 친구 코드: $inviteCode
-            """.trimIndent()
-
             val feedTemplate = FeedTemplate(
                 content = Content(
-                    title = "${nickname}님이 친구 신청을 보냈어요!",
-                    description = message,
-                    imageUrl = "https://via.placeholder.com/300.png?text=Plan-Up", // 실제 서비스 이미지로 교체
+                    title = "Plan-Up에서 {$nickname}님이 친구가 되고 싶어요!",
+                    description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: $inviteCode",
+                    imageUrl = "", // 이미지 Url 넣기
                     link = Link(
-                        webUrl = "https://www.naver.com",
-                        mobileWebUrl = "https://www.naver.com"
+                        webUrl = null,
+                        mobileWebUrl = null
+                    )
+                ),
+                buttons = listOf(
+                    Button(
+                        title = "친구 초대 수락",
+                        link = Link(
+                            webUrl = "https://www.naver.com/", // TODO : 실제 Url로 변경하기
+                            mobileWebUrl = "https://www.naver.com/" // TODO : 실제 Url로 변경하기
+                        )
                     )
                 )
             )
-
 
             ShareClient.instance.shareDefault(requireContext(), feedTemplate) { result, error ->
                 if (error != null) {
@@ -156,6 +160,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                     Log.d("KakaoShare", "카카오톡 공유 성공")
                 }
             }
+
 
             popupWindow.dismiss()
         }
@@ -203,7 +208,6 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         popupWindow.showAsDropDown(anchorView, 0, dpToPx(7.5f))
     }
 
-    // dp를 픽셀로 변환
     private fun dpToPx(dp: Float): Int {
         return (dp * resources.displayMetrics.density).toInt()
     }
