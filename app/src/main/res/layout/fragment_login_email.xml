@@ -57,6 +57,8 @@
         android:layout_width="0dp"
         android:layout_height="37dp"
         android:hint="planup@email.com"
+        android:textColorHint="@color/black_200"
+        android:textColor="@color/black_300"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
         android:padding="8dp"

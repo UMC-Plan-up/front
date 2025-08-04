@@ -246,7 +246,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
         val safeEmail = userEmail ?: "이메일"
         val popupMessage = dialogView.findViewById<TextView>(R.id.resetCompleteDesc)
-        popupMessage.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
+        popupMessage.text = "입력하신 {$safeEmail} 계정의\n비밀번호가 변경되었어요."
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -263,13 +263,12 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // 화면 너비의 80% 비율로 가로 폭 설정
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
         val dialogWidth = (screenWidth * 0.8).toInt()
 
         dialog.window?.setLayout(
-            dialogWidth, // 가로 폭: 화면의 80%
+            dialogWidth,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
     }
