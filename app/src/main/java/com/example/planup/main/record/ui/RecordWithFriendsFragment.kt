@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
@@ -24,7 +25,6 @@ import com.github.mikephil.charting.formatter.PercentFormatter
 
 class RecordWithFriendsFragment : Fragment() {
     lateinit var binding: FragmentRecordWithFriendsBinding
-    private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
 
     override fun onCreateView(
@@ -34,20 +34,32 @@ class RecordWithFriendsFragment : Fragment() {
     ): View? {
         binding = FragmentRecordWithFriendsBinding.inflate(inflater, container, false)
 
-        recyclerView = binding.photoRecyclerView
 
         val sampleImages = listOf(
             R.drawable.img_sample1, R.drawable.img_sample2, R.drawable.img_sample3,
             R.drawable.img_sample4, R.drawable.img_sample5, R.drawable.img_sample6
         )
 
-        photoAdapter = PhotoAdapter(sampleImages)
-        recyclerView.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-        recyclerView.adapter = photoAdapter
+        val gridRecyclerView = binding.photoGridrv
+        val gridAdapter = PhotoAdapter(sampleImages)
+        gridRecyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
+        gridRecyclerView.adapter = gridAdapter
+        val spacingInPixels = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
+        binding.photoGridrv.addItemDecoration(object : RecyclerView.ItemDecoration(){
+            override fun getItemOffsets(
+                outRect: android.graphics.Rect,
+                view: View,
+                parent: RecyclerView,
+                state: RecyclerView.State
+            ){
+                val position = parent.getChildAdapterPosition(view)
+                if(position >= 0){
+                    outRect.top = spacingInPixels / 2
+                    outRect.bottom = spacingInPixels / 2
+                }
+            }
+        })
 
-        val progressBar = binding.weekUploadPicturePb
-        progressBar.progress = 75
 
         val barChart = binding.barChart
 

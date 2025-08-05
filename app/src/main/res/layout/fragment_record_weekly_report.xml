@@ -357,7 +357,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -394,7 +394,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -426,12 +426,10 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:background="@android:color/white"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="6dp"
                         app:cardElevation="4dp"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true">
-
-
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -469,7 +467,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -506,7 +504,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -556,7 +554,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -593,7 +591,7 @@
                             android:layout_height="80dp"
                             android:layout_margin="8dp"
                             android:background="@android:color/white"
-                            app:cardCornerRadius="16dp"
+                            app:cardCornerRadius="6dp"
                             app:cardElevation="4dp"
                             app:cardPreventCornerOverlap="false"
                             app:cardUseCompatPadding="true">
@@ -627,7 +625,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:background="@android:color/white"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="6dp"
                         app:cardElevation="4dp"
                         app:cardPreventCornerOverlap="false"
                         app:cardUseCompatPadding="true">
@@ -649,6 +647,235 @@
 
                 </LinearLayout>
             </LinearLayout>
+
+            <!-- 1:1 챌린지 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1:1 챌린지"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginStart="16sp"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="22dp"/>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="280dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@android:color/white"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
+
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="19dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="결과"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:textColor="@color/blue_400"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="승리"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:layout_marginStart="5dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="챌린지 상대"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:textColor="@color/blue_400"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="그린"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:layout_marginStart="5dp"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="5dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="패널티"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:textColor="@color/blue_400"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="커피 사기"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:layout_marginStart="5dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="110dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- 친구 이미지 (원형) -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="12dp"
+                            android:clipToOutline="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_friend_profile_sample1" />
+
+                        <!-- 텍스트와 ProgressBar 묶음 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="친구1"
+                                android:fontFamily="@font/pretendard_semibold"
+                                android:textSize="16sp" />
+
+                            <ProgressBar
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:layout_marginBottom="4dp"
+                                android:backgroundTint="#E0E0E0"
+                                android:max="100"
+                                android:progress="45"
+                                android:progressDrawable="@drawable/bg_progress_chacol3" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- 친구 이미지 (원형) -->
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_marginEnd="12dp"
+                            android:clipToOutline="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/img_friend_profile_sample2" />
+
+                        <!-- 텍스트와 ProgressBar 묶음 -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="친구2"
+                                android:fontFamily="@font/pretendard_semibold"
+                                android:textSize="16sp" />
+
+                            <ProgressBar
+                                style="?android:attr/progressBarStyleHorizontal"
+                                android:layout_width="match_parent"
+                                android:layout_height="10dp"
+                                android:layout_marginTop="4dp"
+                                android:layout_marginEnd="4dp"
+                                android:layout_marginBottom="4dp"
+                                android:backgroundTint="#E0E0E0"
+                                android:max="100"
+                                android:progress="40"
+                                android:progressDrawable="@drawable/bg_progress_chacol1" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="37dp"
+                    android:background="@drawable/rounded_blue_button"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="100dp"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:paddingHorizontal="24dp"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="기록 확인하러 가기"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/pretendard_medium"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_right_white"
+                        android:layout_marginStart="8dp"/>
+
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
             <!-- 이번주 받은 활동 배지 -->
             <TextView
