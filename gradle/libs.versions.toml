@@ -13,8 +13,8 @@ constraintlayout = "2.2.1"
 mpandroidchart = "v3.1.0"
 navigationFragmentKtx = "2.9.1"
 navigationUiKtx = "2.9.1"
-okhttp = "5.1.0"
-retrofit = "3.0.0"
+
+retrofit = "2.9.0"
 viewpager2 = "1.1.0"
 recyclerview = "1.4.0"
 
