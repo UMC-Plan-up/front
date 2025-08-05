@@ -3,6 +3,7 @@ package com.example.planup.password.ui
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,7 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.login.LoginActivity
+import com.example.planup.login.ui.LoginActivity
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
@@ -65,9 +67,21 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         passwordMatchHint = view.findViewById(R.id.passwordMatchHint)
         nextButton = view.findViewById(R.id.nextButton)
 
-
         disableNextButton()
         hideAllConditions()
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN &&
+                (passwordEditText.isFocused || confirmPasswordEditText.isFocused)) {
+                passwordEditText.clearFocus()
+                confirmPasswordEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
+
+
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
@@ -174,6 +188,11 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         }
     }
 
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
     /* 처음엔 조건 숨기기 */
     private fun hideAllConditions() {
         checkLengthIcon.visibility = View.GONE
@@ -227,7 +246,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
         val safeEmail = userEmail ?: "이메일"
         val popupMessage = dialogView.findViewById<TextView>(R.id.resetCompleteDesc)
-        popupMessage.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
+        popupMessage.text = "입력하신 {$safeEmail} 계정의\n비밀번호가 변경되었어요."
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -244,13 +263,12 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
-        // 화면 너비의 80% 비율로 가로 폭 설정
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
         val dialogWidth = (screenWidth * 0.8).toInt()
 
         dialog.window?.setLayout(
-            dialogWidth, // 가로 폭: 화면의 80%
+            dialogWidth,
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
     }

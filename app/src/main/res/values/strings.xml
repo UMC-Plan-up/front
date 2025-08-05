@@ -27,6 +27,7 @@
     <string name="invite_code_input_hint">초대코드 입력란</string>
 
     <string name="friend_added_message">____님과 친구가 되었어요!</string>
+    <string name="friend_description">%s 님과 친구가 되었어요!</string>
     <string name="friend_new">새로운 친구</string>
 
     <string name="community_welcome_message">다양한 커뮤니티들이\n____님을 기다리고 있어요!</string>
@@ -91,11 +92,23 @@
     <string name="share_copy">복사</string>
     <string name="share_more">기타</string>
 
+    <string name="plan">Plan</string>
+    <string name="dash">-</string>
+    <string name="u_letter">U</string>
+    <string name="p_letter">p</string>
+    <string name="or_text">or</string>
+
+    <string name="community_greeting">다양한 커뮤니티들이\n%s님을 기다리고 있어요!</string>
+
+    <string name="kakao_app_key">d457e1de9a930076ef76a74e0bb30b6b</string>
+
+
+
 
     <!-- fragment_agreement.xml -->
     <string name="agreement_title">Plan-Up 이용 약관에\n동의해 주세요</string>
     <string name="agreement_select_all">전체 동의하기</string>
-    <string name="agreement_optional_notice">선택 사항에 대한 동의를 거부하는 경우에도\n서비스는 이용이 가능합니다.</string>
+    <string name="agreement_optional_notice">선택 사항에 대한 동의를 거부하는 경우에도 서비스는 이용이 가능합니다.</string>
     <string name="agreement_required_age">[필수] 만 14세 이상입니다</string>
     <string name="agreement_required_terms">[필수] 이용약관 동의</string>
     <string name="agreement_optional_marketing">[선택] 마케팅 목적의 개인정보 수집 및 이용 동의</string>
@@ -395,6 +408,10 @@
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
+    <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
+    <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
+    <string name="toast_goal_activate">목표가 활성화되었어요.</string>
+    <string name="toast_goal_delete">목표가 삭제되었어요.</string>
 
     <!-- 에러 메시지 -->
     <string name="error_more_one_word">1글자 이상 작성해주세요.</string>

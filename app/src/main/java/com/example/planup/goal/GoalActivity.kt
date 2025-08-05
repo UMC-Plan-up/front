@@ -26,10 +26,10 @@ class GoalActivity : AppCompatActivity() {
             val goalCategoryFragment = GoalCategoryFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", nickname)
+
                 }
             }
 
-            // 함께 목표 설정 또는 챌린지 설정 선택하는 프레그먼트를 기본 프레그먼트로 사용
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, goalCategoryFragment)
                 .commit()

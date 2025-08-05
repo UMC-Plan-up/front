@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@color/white" >
+
+    <androidx.appcompat.widget.AppCompatCheckBox
+        android:id="@+id/termCheckBox"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:buttonTint="@color/black_400"
+        android:layout_marginStart="25dp" />
+
+    <TextView
+        android:id="@+id/termSummary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginStart="8dp"
+        android:text="약관 요약 텍스트"
+        android:textSize="12sp"
+        android:textColor="@color/black_300"
+        android:fontFamily="@font/pretendard_medium" />
+
+    <TextView
+        android:id="@+id/termDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/detail_text"
+        android:textSize="12sp"
+        android:textColor="@color/black_400"
+        android:fontFamily="@font/pretendard_medium"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:layout_marginEnd="15dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

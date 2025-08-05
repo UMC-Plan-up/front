@@ -1,20 +1,19 @@
 package com.example.planup.password.ui
 
+import android.content.Context
 import android.content.Intent
-import android.view.LayoutInflater
-import android.widget.PopupWindow
-import android.widget.LinearLayout
-import android.util.Patterns
 import android.os.Bundle
+import android.util.Patterns
+import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.inputmethod.InputMethodManager
+import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.login.LoginActivity
+import com.example.planup.login.ui.LoginActivity
 import com.example.planup.password.ResetPasswordActivity
 
 class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
@@ -22,75 +21,74 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
     private lateinit var emailEditText: EditText
     private lateinit var emailFormatErrorText: TextView
     private lateinit var emailNotFoundErrorText: TextView
-    private lateinit var sendVerificationButton: AppCompatButton
+    private lateinit var nextButton: AppCompatButton
     private lateinit var emailDropdownIcon: ImageView
 
-    /* [테스트용] 가입된 이메일 */
-    private val registeredEmails = listOf("test@planup.com", "user@gmail.com")
+    private val registeredEmails = listOf("user@gmail.com")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         emailEditText = view.findViewById(R.id.emailEditText)
         emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
-        sendVerificationButton = view.findViewById(R.id.sendVerificationButton)
+        nextButton = view.findViewById(R.id.nextButton)
         emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
 
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
 
-        // 처음엔 버튼 비활성화 & 에러 숨김
         disableNextButton()
         hideAllErrors()
 
-        /* 이메일 입력 변화 감지 → 실시간 검증 */
         emailEditText.addTextChangedListener {
             val email = it.toString().trim()
             validateEmail(email)
         }
 
-        /* 다음 버튼 클릭 → FindPasswordEmailSentFragment로 이동 */
-        sendVerificationButton.setOnClickListener {
-            if (sendVerificationButton.isEnabled) {
+        nextButton.setOnClickListener {
+            if (nextButton.isEnabled) {
                 (requireActivity() as ResetPasswordActivity)
                     .navigateToFragment(FindPasswordEmailSentFragment())
             }
         }
 
-        /* 뒤로가기 아이콘 → LoginActivity로 이동 */
         backIcon.setOnClickListener {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
 
-
-        // 이메일 도메인 드롭다운 → PopupWindow 열기
         emailDropdownIcon.setOnClickListener {
             showEmailDomainPopup()
         }
+
+        // EditText 외부 터치 시 키보드 숨기기
+        view.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN && emailEditText.isFocused) {
+                emailEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
 
-    /* 이메일 형식 + 등록 여부 체크 */
+
     private fun validateEmail(email: String) {
         val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 
         if (!isFormatValid) {
-            // 이메일 형식 틀림
             showEmailFormatError()
             disableNextButton()
             return
         }
 
         if (!registeredEmails.contains(email)) {
-            // 형식은 맞지만 등록되지 않은 이메일
             showEmailNotFoundError()
             disableNextButton()
             return
         }
 
-        // 정상 이메일 → 버튼 활성화
         hideAllErrors()
         enableNextButton()
     }
@@ -111,18 +109,17 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
     }
 
     private fun enableNextButton() {
-        sendVerificationButton.isEnabled = true
-        sendVerificationButton.backgroundTintList =
+        nextButton.isEnabled = true
+        nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.blue_200)
     }
 
     private fun disableNextButton() {
-        sendVerificationButton.isEnabled = false
-        sendVerificationButton.backgroundTintList =
+        nextButton.isEnabled = false
+        nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.black_200)
     }
 
-    /* FindPasswordEmailSentFragment로 이동하는 메서드 */
     private fun openNextStep() {
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.resetPasswordContainer, FindPasswordEmailSentFragment())
@@ -130,12 +127,9 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
             .commit()
     }
 
-
-    /* popup 띄우기 */
     private fun showEmailDomainPopup() {
         val inflater = LayoutInflater.from(requireContext())
         val popupView = inflater.inflate(R.layout.popup_email, null)
-
 
         popupView.measure(
             View.MeasureSpec.UNSPECIFIED,
@@ -150,12 +144,10 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
             true
         )
 
-        // 도메인 TextView 가져오기
         val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
         val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
         val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
 
-        // 공통 함수: 도메인 추가 후 popup 닫기
         val addDomain: (String) -> Unit = { domain ->
             val currentText = emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {
@@ -165,21 +157,24 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
             }
             emailEditText.setText(updatedText)
             emailEditText.setSelection(updatedText.length)
-            popupWindow.dismiss() // 선택 후 닫기
+            popupWindow.dismiss()
         }
 
-        // 각 도메인 클릭 리스너
         domainGmail.setOnClickListener { addDomain("gmail.com") }
         domainNaver.setOnClickListener { addDomain("naver.com") }
         domainKakao.setOnClickListener { addDomain("kakao.com") }
 
-        // PopupWindow 속성
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
 
-
         val offsetX = emailEditText.width - popupWidth
         popupWindow.showAsDropDown(emailEditText, offsetX, 0)
+    }
+
+    private fun hideKeyboard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

@@ -18,7 +18,10 @@ import com.github.mikephil.charting.data.PieEntry
 
 class GoalAdapter(
     private val items: List<GoalItem>,
-    private val onItemClick: (GoalItem) -> Unit) :
+    private val onItemClick: (GoalItem) -> Unit,
+    private val onDeactivateConfirmed: () -> Unit,
+    private val onActivateConfirmed: () -> Unit,
+    private val onDeleteConfirmed: () -> Unit) :
     RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
     private var isEditMode: Boolean = false
@@ -46,7 +49,7 @@ class GoalAdapter(
         setupDonutChart(holder.pieChart, item.percent)
 
         holder.buttonLayout.visibility = if (isEditMode) View.VISIBLE else View.GONE
-        holder.editIcon.visibility = if (isEditMode) View.VISIBLE else View.GONE
+        // holder.editIcon.visibility = if (isEditMode) View.VISIBLE else View.GONE
 
         holder.toggleBtn.text = if (item.isActive) "비활성화하기" else "활성화하기"
 
@@ -144,6 +147,7 @@ class GoalAdapter(
         yesBtn.setOnClickListener {
             item.isActive = !item.isActive // 상태 전환
             notifyItemChanged(position)
+            onDeactivateConfirmed()
             dialog.dismiss()
         }
 
@@ -166,6 +170,7 @@ class GoalAdapter(
         yesBtn.setOnClickListener {
             item.isActive = !item.isActive // 상태 전환
             notifyItemChanged(position)
+            onActivateConfirmed()
             dialog.dismiss()
         }
 
@@ -186,10 +191,13 @@ class GoalAdapter(
         }
 
         yesBtn.setOnClickListener {
+            onDeleteConfirmed()
             dialog.dismiss()
         }
 
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
+
+
 }
