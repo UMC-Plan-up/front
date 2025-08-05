@@ -27,6 +27,7 @@
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity"/>
         <activity android:name=".main.home.ui.CalendarActivity"/>
+        <activity android:name=".main.goal.ui.EditFriendGoalActivity"/>"
 
     </application>
 

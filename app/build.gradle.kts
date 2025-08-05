@@ -57,4 +57,6 @@ dependencies {
     implementation(libs.mpandroidchart)
     implementation("com.kizitonwose.calendar:view:2.6.2")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
+    implementation("com.squareup.retrofit2:retrofit:3.0.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }

@@ -14,7 +14,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.home.adapter.GoalAdapter
+import com.example.planup.main.goal.item.GoalAdapter
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -46,9 +46,9 @@ class GoalFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val goals = listOf(
-            GoalItem("목표명", "[기준 기간]&[빈도]&\"이상\"", 82),
-            GoalItem("토익 공부하기", "매주 5번 이상", 82),
-            GoalItem("헬스장 가기", "매일 30분 이상", 82)
+            GoalItem(1, "목표명", "[기준 기간]&[빈도]&\"이상\"", 82),
+            GoalItem(2, "토익 공부하기", "매주 5번 이상", 82),
+            GoalItem(3, "헬스장 가기", "매일 30분 이상", 82)
         )
 
         adapter = GoalAdapter(goals) { goalItem ->
