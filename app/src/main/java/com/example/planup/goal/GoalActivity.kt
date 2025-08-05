@@ -36,7 +36,6 @@ class GoalActivity : AppCompatActivity() {
         }
     }
 
-
     fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.goal_container, fragment)

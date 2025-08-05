@@ -27,7 +27,17 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     private lateinit var backIcon: ImageView
     private lateinit var inviteCodeEditText: EditText
     private lateinit var inputButton: AppCompatButton
-    private lateinit var textShareLater: TextView
+    private lateinit var nextButton: AppCompatButton
+    private var myInviteCode: String = ""
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val code = arguments?.getString("inviteCode") // 전달받은 code를 꺼냄
+        if (!code.isNullOrBlank()) {
+            myInviteCode = code
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +45,11 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         backIcon = view.findViewById(R.id.backIcon)
         inviteCodeEditText = view.findViewById(R.id.nicknameEditText)
         inputButton = view.findViewById(R.id.inputButton)
-        textShareLater = view.findViewById(R.id.textShareLater)
+        nextButton = view.findViewById(R.id.nextButton)
+
+        if (myInviteCode.isNotBlank()) {
+            inviteCodeEditText.setText(myInviteCode)
+        }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
@@ -67,6 +81,11 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
             Log.d("InviteCode", "입력한 코드: $enteredCode")
 
+            if (enteredCode.isBlank()) {
+                proceedSignup("")
+                return@setOnClickListener
+            }
+
             lifecycleScope.launch {
                 try {
                     val request = InviteCodeValidateRequest(inviteCode = enteredCode)
@@ -97,49 +116,9 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
             }
         }
 
-        /* “다음에 입력할게요” 클릭 → 초대코드 없이 회원가입 진행 */
-        textShareLater.setOnClickListener {
-            val activity = requireActivity() as SignupActivity
-            activity.inviteCode = ""
-
-            val agreements = activity.agreements ?: emptyList()
-
-            // 회원가입 요청 객체 생성
-            val request = SignupRequestDto(
-                email = activity.email ?: "",
-                password = activity.password ?: "",
-                passwordCheck = activity.password ?: "",
-                nickname = activity.nickname ?: "",
-                inviteCode = "",
-                profileImg = activity.profileImgUrl ?: "",
-                agreements = agreements.map {
-                    Agreement(it.termsId, it.isAgreed)
-                }
-            )
-
-            Log.d("SignupRequest", request.toString())
-
-            lifecycleScope.launch {
-                try {
-                    val repository = SignupRepository(RetrofitInstance.signupApi)
-                    val response = repository.signup(request)
-
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        if (responseBody?.isSuccess == true) {
-                            val fragment =
-                                CommunityIntroFragment.newInstance(activity.nickname ?: "")
-                            activity.navigateToFragment(fragment)
-                        } else { handleErrorCode(responseBody?.code ?: "") }
-                    } else {
-                        setErrorMessage("서버와의 통신에 실패했습니다.")
-                    }
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    setErrorMessage("네트워크 오류가 발생했습니다.")
-                }
-            }
+        nextButton.setOnClickListener {
+            val code = inviteCodeEditText.text.toString().trim()
+            proceedSignup(code)
         }
 
         view.setOnTouchListener { _, event ->
@@ -151,6 +130,49 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
                 view.performClick()
             }
             false
+        }
+    }
+
+    private fun proceedSignup(inviteCode: String) {
+        val activity = requireActivity() as SignupActivity
+        activity.inviteCode = inviteCode
+
+        val agreements = activity.agreements ?: emptyList()
+
+        val request = SignupRequestDto(
+            email = activity.email ?: "",
+            password = activity.password ?: "",
+            passwordCheck = activity.password ?: "",
+            nickname = activity.nickname ?: "",
+            inviteCode = inviteCode,
+            profileImg = activity.profileImgUrl ?: "",
+            agreements = agreements.map {
+                Agreement(it.termsId, it.isAgreed)
+            }
+        )
+
+        lifecycleScope.launch {
+            try {
+                val repository = SignupRepository(RetrofitInstance.signupApi)
+                val response = repository.signup(request)
+
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody?.isSuccess == true) {
+                        val fragment =
+                            CommunityIntroFragment.newInstance(activity.nickname ?: "")
+                        activity.navigateToFragment(fragment)
+                    } else {
+                        handleErrorCode(responseBody?.code ?: "")
+                    }
+                } else {
+                    setErrorMessage("서버와의 통신에 실패했습니다.")
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                setErrorMessage("네트워크 오류가 발생했습니다.")
+            }
         }
     }
 
@@ -212,47 +234,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         /* popup 확인 버튼 → 회원가입 API 호출 */
         confirmButton.setOnClickListener {
             popupWindow.dismiss()
-
-            val activity = requireActivity() as SignupActivity
-            activity.inviteCode = inviteCode
-
-            val agreements = activity.agreements ?: emptyList()
-
-            val request = SignupRequestDto(
-                email = activity.email ?: "",
-                password = activity.password ?: "",
-                passwordCheck = activity.password ?: "",
-                nickname = activity.nickname ?: "",
-                inviteCode = inviteCode,
-                profileImg = activity.profileImgUrl ?: "",
-                agreements = agreements.map {
-                    Agreement(it.termsId, it.isAgreed)
-                }
-            )
-
-            lifecycleScope.launch {
-                try {
-                    val repository = SignupRepository(RetrofitInstance.signupApi)
-                    val response = repository.signup(request)
-
-                    if (response.isSuccessful) {
-                        val responseBody = response.body()
-                        if (responseBody?.isSuccess == true) {
-                            val fragment =
-                                CommunityIntroFragment.newInstance(activity.nickname ?: "")
-                            activity.navigateToFragment(fragment)
-                        } else {
-                            handleErrorCode(responseBody?.code ?: "")
-                        }
-                    } else {
-                        setErrorMessage("서버와의 통신에 실패했습니다.")
-                    }
-
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    setErrorMessage("네트워크 오류가 발생했습니다.")
-                }
-            }
+            proceedSignup(inviteCode)
         }
 
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
