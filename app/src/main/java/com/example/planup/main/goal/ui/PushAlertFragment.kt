@@ -47,7 +47,7 @@ class PushAlertFragment : Fragment() {
     ): View? {
         binding = FragmentPushAlertBinding.inflate(inflater, container, false)
 
-        binding.saveButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             val request = EditGoalRequest(
                 title = title,
                 oneDose = oneDose,
