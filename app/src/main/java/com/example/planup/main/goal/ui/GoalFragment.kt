@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -51,14 +52,67 @@ class GoalFragment : Fragment() {
             GoalItem("헬스장 가기", "매일 30분 이상", 82)
         )
 
-        adapter = GoalAdapter(goals) { goalItem ->
-            val fragment = GoalDescriptionFragment()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
+//        adapter = GoalAdapter(goals) { goalItem ->
+//            val fragment = GoalDescriptionFragment()
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.main_container, fragment)
+//                .addToBackStack(null)
+//                .commit()
+//        }
+
+        adapter = GoalAdapter(
+            goals,
+            onItemClick = { goalItem ->
+                val fragment = GoalDescriptionFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            },
+            onDeactivateConfirmed = {
+                showDeactivateToast()
+            },
+            onActivateConfirmed = {
+                showActivateToast()
+            },
+            onDeleteConfirmed = {
+                showDeleteToast()
+            }
+        )
         recyclerView.adapter = adapter
+    }
+
+    private fun showDeactivateToast() {
+        val inflater = layoutInflater
+        val layout = inflater.inflate(R.layout.toast_goal_deactivate, binding.root, false)
+
+        val toast = Toast(requireContext())
+        toast.view = layout
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
+    }
+
+    private fun showActivateToast(){
+        val inflater = layoutInflater
+        val layout = inflater.inflate(R.layout.toast_goal_activate, binding.root, false)
+
+        val toast = Toast(requireContext())
+        toast.view = layout
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
+    }
+
+    private fun showDeleteToast(){
+        val inflater = layoutInflater
+        val layout = inflater.inflate(R.layout.toast_goal_delete, binding.root, false)
+
+        val toast = Toast(requireContext())
+        toast.view = layout
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
     }
 
     private fun setupPieChart(pieChart: PieChart, progress: Int) {

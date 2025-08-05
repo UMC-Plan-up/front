@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
 
@@ -39,28 +39,10 @@ class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
         /* Plan-Up 사용 시작하기 버튼 */
         startPlanUpButton.setOnClickListener {
             // PushAlertFragment로 이동 (화면 먼저 전환)
-            (requireActivity() as GoalSettingActivity)
+            (requireActivity() as GoalActivity)
                 .navigateToFragment(PushAlertFragment.newInstance(showPopup = true))
         }
 
-    }
-
-    /* Push 알림 설정 팝업 띄우기 */
-    private fun showPushAlertPopup() {
-        val dialog = PushAlertPopupDialog(requireContext())
-
-        dialog.setOnConfirmClickListener {
-            // [네] 클릭 → Push 허용 저장 후 PushAlertFragment 이동
-            savePushAlertEnabled(true)
-            goToPushAlertFragment()
-        }
-
-        dialog.setOnCancelClickListener {
-            // [아니오] 클릭 → TODO: 나중에 다른 화면 이동할 예정
-            savePushAlertEnabled(false)
-        }
-
-        dialog.show()
     }
 
     /* Push 허용 여부 저장 */
@@ -70,7 +52,7 @@ class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
 
     /* PushAlertFragment 이동 */
     private fun goToPushAlertFragment() {
-        (requireActivity() as GoalSettingActivity)
+        (requireActivity() as GoalActivity)
             .navigateToFragment(PushAlertFragment())
     }
 

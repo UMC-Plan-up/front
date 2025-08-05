@@ -11,7 +11,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.goal.GoalSettingActivity
+import com.example.planup.goal.GoalActivity
 
 class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
@@ -103,7 +103,7 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
                 }
             }
 
-            (requireActivity() as GoalSettingActivity).navigateToFragment(certificationFragment)
+            (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
         }
     }
 
