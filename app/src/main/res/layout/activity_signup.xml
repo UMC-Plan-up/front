@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- SignupActivity 안에서 Fragment들이 교체될 영역 -->
     <FrameLayout
         android:id="@+id/signup_container"
         android:layout_width="match_parent"

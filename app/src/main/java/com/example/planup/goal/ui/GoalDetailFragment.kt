@@ -44,7 +44,19 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
         setupPeriodButtons()
         setupFrequencyInput()
         setupNextButton()
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
+                frequencyEditText.isFocused
+            ) {
+                frequencyEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
+
 
     private fun initViews(view: View) {
         backIcon = view.findViewById(R.id.backIcon)
@@ -163,6 +175,11 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
             nextButton.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
         }
+    }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     /* 다음 버튼 → ParticipantLimitFragment 이동 */

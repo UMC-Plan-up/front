@@ -17,7 +17,7 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 
     private lateinit var backIcon: ImageView
     private lateinit var titleText: TextView
-    private lateinit var startGoalSettingButton: AppCompatButton
+    private lateinit var nextButton: AppCompatButton
     private lateinit var goalListContainer: LinearLayout
 
     // 카테고리별 목표 데이터
@@ -125,12 +125,12 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
         // 초기화
         backIcon = view.findViewById(R.id.backIcon)
         titleText = view.findViewById(R.id.titleText)
-        startGoalSettingButton = view.findViewById(R.id.startGoalSettingButton)
+        nextButton = view.findViewById(R.id.nextButton)
         goalListContainer = view.findViewById(R.id.goalListContainer)
 
         // 전달받은 닉네임 적용
         val nickname = arguments?.getString(ARG_NICKNAME) ?: "사용자"
-        titleText.text = "다양한 커뮤니티들이\n${nickname}님을 기다리고 있어요!"
+        titleText.text = getString(R.string.community_greeting, nickname)
 
 
         setupCategoryClickListeners(view)
@@ -142,7 +142,7 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
         }
 
         /* 목표 설정 시작하기 버튼 → GoalCategoryFragment로 이동 */
-        startGoalSettingButton.setOnClickListener {
+        nextButton.setOnClickListener {
             val context = requireContext()
             val intent = Intent(context, GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname) // 닉네임 전달

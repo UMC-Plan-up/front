@@ -55,7 +55,19 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
         setupClickListeners()
         setupInputValidation()
+
+        view.setOnTouchListener { _, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
+                participantLimitEditText.isFocused
+            ) {
+                participantLimitEditText.clearFocus()
+                hideKeyboard()
+            }
+            view.performClick()
+            false
+        }
     }
+
 
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
@@ -120,6 +132,12 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         nextButton.background =
             ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
     }
+
+    private fun hideKeyboard() {
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
+    }
+
 
     /* 버튼 활성화 */
     private fun enableNextButton() {
