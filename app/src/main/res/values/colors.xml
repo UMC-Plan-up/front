@@ -37,7 +37,9 @@
     <color name="blue_300">#5383E3</color>
     <color name="blue_100">#CCDDFE</color>
     <color name="blue_50">#E3F2FD</color>
+    <color name="blue_500">#0360FF</color>
 
+    <color name="red_50">#E46262</color>
     <color name="red_300">#F81E1E</color>
     <color name="red_200">#CA3535</color>
     <color name="red_100">#F5C2C2</color>
@@ -50,6 +52,7 @@
     <color name="charcolor4">#F3A998</color>
     <color name="charcolor5">#FF7C7C</color>
 
+    <color name="purple">#852FEE</color>
 
 
     <color name="background_color">#FAFCFF</color>

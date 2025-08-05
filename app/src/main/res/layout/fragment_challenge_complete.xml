@@ -1,6 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/service_back_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_mypage_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp" />
+
+            <LinearLayout
+                android:id="@+id/title_ll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintTop_toBottomOf="@id/service_back_iv"
+                android:layout_marginTop="15dp">
+
+                <ImageView
+                    android:id="@+id/title_iv"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:src="@drawable/img_congratulation"/>
+
+                <TextView
+                    android:id="@+id/title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1:1 챌린지가 종료되었어요!"
+                    android:textSize="22sp"
+                    android:fontFamily="@font/pretendard_semibold" />
+
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/challenge_cv"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:layout_marginTop="23dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@android:color/white"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="@id/title_ll"
+                app:layout_constraintTop_toBottomOf="@+id/title_ll">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Win"
+                            android:textSize="22sp"
+                            android:textColor="@color/blue_500"
+                            android:fontFamily="@font/pretendard_medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="토끼"
+                            android:textSize="22sp"
+                            android:fontFamily="@font/pretendard_medium"/>
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/img_rabbiti_profile"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="60dp"
+                        android:layout_marginEnd="60dp"
+                        android:layout_marginTop="20dp"
+                        android:text="vs"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/pretendard_medium"/>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Win"
+                            android:textSize="22sp"
+                            android:textColor="@color/red_300"
+                            android:fontFamily="@font/pretendard_medium"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="토끼"
+                            android:textSize="22sp"
+                            android:fontFamily="@font/pretendard_medium"/>
+
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="60dp"
+                            android:src="@drawable/img_rabbiti_profile"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/penalty_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="패널티"
+                android:textSize="20sp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/pretendard_semibold"
+                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintTop_toBottomOf="@id/challenge_cv"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/penalty_cv"
+                android:layout_width="match_parent"
+                android:layout_height="114dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@android:color/white"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="@id/penalty_title_tv"
+                app:layout_constraintTop_toBottomOf="@+id/penalty_title_tv">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/penalty_content_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="커피 사기"
+                        android:gravity="center"
+                        android:layout_marginBottom="12dp"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/pretendard_semibold"/>
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/penalty_btn"
+                        android:layout_width="282dp"
+                        android:layout_height="40dp"
+                        android:text="패널티 리마인드 보내기"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:background="@drawable/btn_next_background"
+                        android:gravity="center" />
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <TextView
+                android:id="@+id/goal_amount_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="목표 달성률"
+                android:textSize="20sp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/pretendard_semibold"
+                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintTop_toBottomOf="@id/penalty_cv"/>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/goal_amount_cv"
+                android:layout_width="match_parent"
+                android:layout_height="312dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
+                android:background="@android:color/white"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="@id/goal_amount_tv"
+                app:layout_constraintTop_toBottomOf="@+id/goal_amount_tv">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="87%"
+                            android:textColor="@color/key"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                        <View
+                            android:id="@+id/rabbit_bar"
+                            android:layout_width="60dp"
+                            android:layout_height="174dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:background="@drawable/rounded_blue_bar"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="토끼"
+                            android:textSize="22sp"
+                            android:layout_marginTop="22dp"
+                            android:layout_marginBottom="24dp"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="vs"
+                        android:textSize="22sp"
+                        android:layout_marginTop="150dp"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:gravity="center_vertical"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginTop="70dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="78%"
+                            android:textColor="@color/red_50"
+                            android:textSize="16sp"
+                            android:textStyle="bold"/>
+
+                        <View
+                            android:id="@+id/dog_bar"
+                            android:layout_width="60dp"
+                            android:layout_height="100dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:background="@drawable/rounded_red_bar"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="강아지"
+                            android:textSize="22sp"
+                            android:layout_marginTop="22dp"
+                            android:layout_marginBottom="24dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </androidx.cardview.widget.CardView>
+
+
+            <!-- 도전 문구 -->
+            <TextView
+                android:id="@+id/retry_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="다시 한 번 도전해 볼까요?"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_semibold"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintTop_toBottomOf="@id/goal_amount_cv"/>
+
+            <!-- 생성 버튼 -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="23dp"
+                android:layout_marginEnd="17dp"
+                android:layout_marginTop="12dp"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="4dp"
+                app:cardUseCompatPadding="true"
+                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintTop_toBottomOf="@id/retry_title_tv"
+                android:background="@android:color/transparent">
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/new_challenge_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:text="새로운 1:1 챌린지 생성하기"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:background="@android:color/white"
+                    android:elevation="0dp"
+                android:stateListAnimator="@null"/> <!-- 클릭 시 튀는 애니메이션 제거 -->
+        </androidx.cardview.widget.CardView>
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</ScrollView>
