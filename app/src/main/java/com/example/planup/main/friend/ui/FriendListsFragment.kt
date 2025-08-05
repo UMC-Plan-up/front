@@ -23,20 +23,20 @@ class FriendListsFragment : Fragment() {
 
         clickListener()
 
-        val recyclerView = binding.friendListsRecyclerView
-
-        val sampleList = listOf(
-            FriendLists("친구1"),
-            FriendLists("친구2"),
-            FriendLists("친구3"),
-            FriendLists("친구4"),
-            FriendLists("친구5"),
-            FriendLists("친구6"),
-            FriendLists("친구7"),
-        )
-
-        recyclerView.adapter = FriendListsAdapter(sampleList)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
+//        val recyclerView = binding.friendListsRecyclerView
+//
+//        val sampleList = listOf(
+//            FriendLists("친구1"),
+//            FriendLists("친구2"),
+//            FriendLists("친구3"),
+//            FriendLists("친구4"),
+//            FriendLists("친구5"),
+//            FriendLists("친구6"),
+//            FriendLists("친구7"),
+//        )
+//
+//        recyclerView.adapter = FriendListsAdapter(sampleList)
+//        recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         return binding.root
     }
