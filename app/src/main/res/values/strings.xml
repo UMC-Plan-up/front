@@ -409,6 +409,9 @@
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
+    <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
+    <string name="toast_goal_activate">목표가 활성화되었어요.</string>
+    <string name="toast_goal_delete">목표가 삭제되었어요.</string>
 
     <!-- 에러 메시지 -->
     <string name="error_more_one_word">1글자 이상 작성해주세요.</string>
