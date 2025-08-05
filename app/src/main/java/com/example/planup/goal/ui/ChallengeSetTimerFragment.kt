@@ -21,6 +21,7 @@ class ChallengeSetTimerFragment:Fragment() {
     lateinit var minutes: ArrayList<String>// 분
     lateinit var seconds: ArrayList<String>// 초
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -29,7 +30,6 @@ class ChallengeSetTimerFragment:Fragment() {
         binding = FragmentChallengeSetTimerBinding.inflate(inflater,container,false)
         clickListener()
         init()
-        //setTimer()
         return binding.root
     }
     private fun init(){
@@ -57,6 +57,7 @@ class ChallengeSetTimerFragment:Fragment() {
         binding.challengeTimerSecondTv.setOnClickListener { //초
     //        binding.challengeTimerSecondRv.visibility = View.VISIBLE
             showDropdown(seconds, binding.challengeTimerSecondTv, 2)
+
         }
 
         //다음 버튼 -> 페널티 설정 페이지로 이동
@@ -148,7 +149,7 @@ class ChallengeSetTimerFragment:Fragment() {
         popupWindow.isOutsideTouchable = true //바깥 터치 허용
 
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = dropdownAdapter
-        dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener{
+        dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
                 view.text = items[position]
                 timeWatcher(items[position].toInt(), selected)
