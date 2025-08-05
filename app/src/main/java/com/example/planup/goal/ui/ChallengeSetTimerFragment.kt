@@ -21,7 +21,6 @@ class ChallengeSetTimerFragment:Fragment() {
     lateinit var minutes: ArrayList<String>// 분
     lateinit var seconds: ArrayList<String>// 초
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -111,32 +110,6 @@ class ChallengeSetTimerFragment:Fragment() {
 //            }
 //        })
 //    }
-    //타이머로 설정한 시간 업데이트
-    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
-    private fun timeWatcher(item:Int, position:Int){
-        val hour = (totalTime / 3600) * 3600
-        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
-        val second= totalTime - (totalTime / 3600) * 3600 - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
-
-        if (position == 0){
-            totalTime -= hour
-            totalTime += 3600*item
-        } else if (position == 1){
-            totalTime -= minute
-            totalTime += 60*item
-        } else if (position == 2){
-            totalTime -= second
-            totalTime += item
-        }
-        if (totalTime < 30){
-            binding.errorTv.visibility = View.VISIBLE
-            binding.challengeTimerNextBtn.isActivated = false
-        }else{
-            binding.errorTv.visibility = View.GONE
-            binding.challengeTimerNextBtn.isActivated = true
-
-        }
-    }
 
     private fun showDropdown(items: ArrayList<String>, view: TextView, selected: Int){//리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
@@ -154,7 +127,33 @@ class ChallengeSetTimerFragment:Fragment() {
                 view.text = items[position]
                 timeWatcher(items[position].toInt(), selected)
                 popupWindow.dismiss()
+                binding.challengeTimerHourTv.text = hours[position]
+                binding.challengeTimerHourRv.visibility = View.GONE
+                timeWatcher(3600*hours[position].toInt(),0) //전체 시간 업데이트
             }
         })
+    }
+    //타이머로 설정한 시간 업데이트
+    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
+    private fun timeWatcher(selected:Int,position:Int){
+        val hour = (totalTime/3600)*3600
+        val minute = (totalTime-(totalTime/3600)*3600)/60
+        val second= totalTime - ((totalTime-(totalTime/3600)*3600)/60)
+
+        if (position==0){
+            totalTime -= hour
+            totalTime += 3600*selected
+        } else if (position == 1){
+            totalTime -= minute
+            totalTime += 60*selected
+        } else{
+            totalTime -= second
+            totalTime += selected
+        }
+        if (totalTime < 30){
+            binding.errorTv.visibility = View.VISIBLE
+        }else{
+            binding.errorTv.visibility = View.GONE
+        }
     }
 }
