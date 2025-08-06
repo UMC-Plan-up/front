@@ -36,4 +36,8 @@ object RetrofitInstance {
     val inviteCodeApi: InviteCodeApi by lazy {
         retrofit.create(InviteCodeApi::class.java)
     }
+
+    val GoalApi: GoalApi by lazy {
+        retrofit.create(GoalApi::class.java)
+    }
 }
