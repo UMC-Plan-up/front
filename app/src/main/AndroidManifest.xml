@@ -45,6 +45,7 @@
         <activity android:name=".main.home.ui.CalendarActivity"/>
         <activity android:name=".main.goal.ui.EditFriendGoalActivity"/>
 
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

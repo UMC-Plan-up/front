@@ -33,7 +33,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
     private lateinit var backIcon: ImageView
     private lateinit var nicknameEditText: EditText
     private lateinit var shareButton: AppCompatButton
-    private lateinit var textShareLater: TextView
+    private lateinit var nextButton: TextView
 
     private var myInviteCode: String = "" // 서버에서 받아온 초대코드 저장용
 
@@ -43,7 +43,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         backIcon = view.findViewById(R.id.backIcon)
         nicknameEditText = view.findViewById(R.id.nicknameEditText)
         shareButton = view.findViewById(R.id.shareButton)
-        textShareLater = view.findViewById(R.id.textShareLater)
+        nextButton = view.findViewById(R.id.nextButton)
 
         // 입력창 클릭 불가 처리
         nicknameEditText.isFocusable = false
@@ -61,7 +61,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
 
         // “다음에 공유할게요” → InviteCodeInputFragment 이동
-        textShareLater.setOnClickListener {
+        nextButton.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
         }
 
@@ -127,26 +127,29 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         val etcShare = popupView.findViewById<TextView>(R.id.etcShareText)
 
         /* TODO : 아직 수정 중 */
+        // 카카오톡 공유
         kakaoShare.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode
 
             val feedTemplate = FeedTemplate(
                 content = Content(
-                    title = "Plan-Up에서 {$nickname}님이 친구가 되고 싶어요!",
-                    description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: $inviteCode",
-                    imageUrl = "", // 이미지 Url 넣기
+                    title = "Plan-Up에서 ${nickname}님이 친구가 되고 싶어요!",
+                    description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: ${inviteCode}",
+                    imageUrl = "https://i.postimg.cc/fRpYNvqR/planup-kakao.png",
                     link = Link(
-                        webUrl = null,
-                        mobileWebUrl = null
+                        mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup" // ✅ 콤마 추가
                     )
                 ),
                 buttons = listOf(
                     Button(
                         title = "친구 초대 수락",
                         link = Link(
-                            webUrl = "https://www.naver.com/", // TODO : 실제 Url로 변경하기
-                            mobileWebUrl = "https://www.naver.com/" // TODO : 실제 Url로 변경하기
+                            mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup",
+                            androidExecutionParams = mapOf(
+                                "action" to "copy_code",
+                                "code" to inviteCode
+                            )
                         )
                     )
                 )
@@ -161,10 +164,10 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                 }
             }
 
-
             popupWindow.dismiss()
         }
 
+        // 문자 공유
         smsShare.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode // EditText 대신 변수 사용
@@ -172,7 +175,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
             val message = """
                 ${nickname}님이 친구 신청을 보냈어요.
                 Plan-Up에서 함께 목표 달성에 참여해 보세요!
-                ${nickname}님의 친구 코드: $inviteCode
+                ${nickname}님의 친구 코드: ${inviteCode}
             """.trimIndent()
 
             val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
@@ -190,25 +193,43 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
             popupWindow.dismiss()
         }
 
+        // 복사
         copyText.setOnClickListener {
-            val inviteCode = myInviteCode // EditText 대신 변수 사용
+            val inviteCode = myInviteCode
 
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("inviteCode", inviteCode)
             clipboard.setPrimaryClip(clip)
 
+            Toast.makeText(requireContext(), "초대코드가 복사되었습니다", Toast.LENGTH_SHORT).show()
+
             popupWindow.dismiss()
         }
 
+        // 기타
         etcShare.setOnClickListener {
-            ShareChannelBottomSheet().show(parentFragmentManager, "ShareChannel")
+            val nickname = (requireActivity() as SignupActivity).nickname
+            val inviteCode = myInviteCode
+
+            val shareMessage = """
+                ${nickname}님이 친구 신청을 보냈어요.
+                Plan-Up에서 함께 목표 달성에 참여해 보세요!
+                친구 코드: $inviteCode
+            """.trimIndent()
+
+            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, shareMessage)
+            }
+
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            startActivity(shareIntent)
+
             popupWindow.dismiss()
         }
-
-        popupWindow.showAsDropDown(anchorView, 0, dpToPx(7.5f))
     }
 
-    private fun dpToPx(dp: Float): Int {
+        private fun dpToPx(dp: Float): Int {
         return (dp * resources.displayMetrics.density).toInt()
     }
 }
