@@ -39,5 +39,9 @@ object RetrofitInstance {
 
     val GoalApi: GoalApi by lazy {
         retrofit.create(GoalApi::class.java)
+        }
+
+    val friendApi: FriendApi by lazy{
+        retrofit.create(FriendApi::class.java)
     }
 }

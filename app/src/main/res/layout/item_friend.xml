@@ -8,7 +8,7 @@
 
     <!-- 프로필 이미지 -->
     <ImageView
-        android:id="@+id/ivProfile"
+        android:id="@+id/profile_iv"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="centerCrop"
@@ -18,21 +18,20 @@
 
     <!-- 텍스트 영역 -->
     <LinearLayout
-        android:id="@+id/llText"
+        android:id="@+id/friend_profile_ll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginStart="12dp"
-        app:layout_constraintStart_toEndOf="@id/ivProfile"
+        app:layout_constraintStart_toEndOf="@id/profile_iv"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/llBottomInfo"
-        app:layout_constraintEnd_toStartOf="@id/ivArrow">
+        app:layout_constraintEnd_toStartOf="@id/arrow_right_ic">
 
         <TextView
-            android:id="@+id/tvNickname"
+            android:id="@+id/nickname_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="친구 3"
+            android:text="친구 1"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -42,25 +41,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/tv_goal_count"
+                android:id="@+id/goal_count_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="N"
+                android:text="N 개의 목표 진행 중"
                 android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tvGoalCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="개의 목표 진행 중"
-                android:textSize="14sp" />
         </LinearLayout>
 
     </LinearLayout>
 
     <!-- 오른쪽 화살표 -->
     <ImageView
-        android:id="@+id/ivArrow"
+        android:id="@+id/arrow_right_ic"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow_right"
@@ -68,41 +61,69 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!-- 오늘 진행 시간 & 사진 인증 하단 섹션 -->
+
     <LinearLayout
-        android:id="@+id/llBottomInfo"
-        android:layout_width="0dp"
+        android:id="@+id/friend_info_ll"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/ivProfile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:gravity="center"
+        android:layout_marginTop="14dp"
+        app:layout_constraintStart_toStartOf="@id/profile_iv"
+        app:layout_constraintTop_toBottomOf="@id/profile_iv">
 
-        <!-- 진행 시간 -->
-        <TextView
-            android:id="@+id/tv_today_time"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="##:##:##"
-            android:textSize="14sp"
-            android:background="@drawable/rounded_box_gray"
-            android:paddingHorizontal="8dp"/>
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/today_time_cv"
+            android:layout_width="280dp"
+            android:layout_height="42dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="10dp"
+            app:cardBackgroundColor="#FFFFFF"
+            app:cardUseCompatPadding="true"
+            app:cardPreventCornerOverlap="false"
+            app:layout_constraintStart_toStartOf="@id/profile_iv"
+            app:layout_constraintTop_toBottomOf="@id/friend_profile_ll">
 
+            <!-- 진행 시간 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘 진행 시간 "/>
+
+                <TextView
+                    android:id="@+id/today_time_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="##:##:##"/>
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- 사진 인증 버튼 -->
         <TextView
-            android:id="@+id/btnPhotoVerify"
+            android:id="@+id/photo_verify_btn"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="42dp"
             android:layout_marginStart="8dp"
             android:paddingHorizontal="16dp"
             android:gravity="center"
             android:text="사진 인증"
             android:textSize="14sp"
+            android:elevation="4dp"
             android:background="@drawable/rounded_box_lightblue"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toEndOf="@id/today_time_cv"
+            app:layout_constraintTop_toBottomOf="@id/friend_profile_ll"/>
+
     </LinearLayout>
+
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,8 +47,8 @@ class FriendListsAdapter(
         private val btnDelete: TextView = view.findViewById(R.id.btn_delete_friend1)
         private val btnBan: TextView = view.findViewById(R.id.btn_ban_friend1)
         private val btnReport: TextView = view.findViewById(R.id.btn_report_friend1)
-        val tvGoalCount: TextView = view.findViewById(R.id.tv_goal_count)
-        val tvTodayTime: TextView = view.findViewById(R.id.tv_today_time)
+        val tvGoalCount: TextView = view.findViewById(R.id.goal_count_tv)
+        val tvTodayTime: TextView = view.findViewById(R.id.today_time_tv)
 
         init {
             btnDelete.setOnClickListener {
