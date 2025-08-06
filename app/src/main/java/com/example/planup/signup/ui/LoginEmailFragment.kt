@@ -136,7 +136,7 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
     }
 
-    /* [추가] 키보드 숨기는 메서드 */
+    /* 키보드 숨기는 메서드 */
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
