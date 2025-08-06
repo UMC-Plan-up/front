@@ -76,21 +76,21 @@
             android:id="@+id/edit_timer_hour_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_timer_spinner"
+            android:background="@drawable/bg_alert_spinner"
             android:layout_marginEnd="4dp" />
 
         <Spinner
             android:id="@+id/edit_timer_minute_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_timer_spinner"
+            android:background="@drawable/bg_alert_spinner"
             android:layout_marginEnd="4dp"/>
 
         <Spinner
             android:id="@+id/edit_timer_second_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_timer_spinner"/>
+            android:background="@drawable/bg_alert_spinner"/>
     </LinearLayout>
 
     <LinearLayout

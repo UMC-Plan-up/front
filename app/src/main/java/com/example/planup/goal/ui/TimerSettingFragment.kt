@@ -43,9 +43,9 @@ class TimerSettingFragment : Fragment() {
 
     /* 뷰 초기화 */
     private fun initViews(view: View) {
-        hourEditText = view.findViewById(R.id.hourEditText)
-        minuteEditText = view.findViewById(R.id.minuteEditText)
-        secondEditText = view.findViewById(R.id.secondEditText)
+        hourEditText = view.findViewById(R.id.challenge_timer_hour_rv)
+        minuteEditText = view.findViewById(R.id.challenge_timer_minute_tv)
+        secondEditText = view.findViewById(R.id.challenge_timer_second_tv)
 
         nextButton = view.findViewById(R.id.nextButton)
         backIcon = view.findViewById(R.id.backIcon)
@@ -78,22 +78,6 @@ class TimerSettingFragment : Fragment() {
             }
 
         }
-        timerAdapter[1].setDropdownListener(object : TimerRVAdapter.DropdownListener{
-            //분 선택
-            override fun setTime(position: Int) {
-                binding.challengeTimerMinuteTv.text = minutes[position]
-                binding.challengeTimerMinuteRv.visibility = View.GONE
-                timeWatcher(minutes[position].toInt(),1) //전체 시간 업데이트
-            }
-        })
-        timerAdapter[2].setDropdownListener(object : TimerRVAdapter.DropdownListener{
-            //초 선택
-            override fun setTime(position: Int) {
-                binding.challengeTimerSecondTv.text = seconds[position]
-                binding.challengeTimerSecondRv.visibility = View.GONE
-                timeWatcher(seconds[position].toInt(),2) //전체 시간 업데이트
-            }
-        })
     }
     //타이머로 설정한 시간 업데이트
     //마지막 조건문으로 전체 시간이 30초 이상인지 확인
