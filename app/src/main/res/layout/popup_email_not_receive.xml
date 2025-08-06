@@ -13,25 +13,36 @@
         android:text="이메일을 받지 못하셨나요?"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="39dp"/>
     <TextView
-        style="@style/TextAppearance.Pretendard.Medium.SM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/popup_email_send_again_tv"
+        style="@style/Typography_SM_Medium"
+        android:layout_width="360dp"
+        android:layout_height="40dp"
+        android:background="@drawable/bg_popup_email_item"
         android:text="이메일 다시 보내기"
+        android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="31dp"
         app:layout_constraintTop_toBottomOf="@id/popup_email_title_tv"
         android:layout_marginTop="22dp"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/black_100"
+        app:layout_constraintStart_toStartOf="@id/popup_email_send_again_tv"
+        app:layout_constraintEnd_toEndOf="@id/popup_email_send_again_tv"
+        app:layout_constraintTop_toBottomOf="@id/popup_email_send_again_tv"/>
     <TextView
         style="@style/TextAppearance.Pretendard.Medium.SM"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="360dp"
+        android:layout_height="40dp"
         android:text="카카오톡 소셜로그인 사용하기"
+        android:background="@drawable/bg_popup_email_item"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/popup_email_title_tv"
-        android:layout_marginStart="40dp"
+        android:layout_marginStart="31dp"
         android:layout_marginTop="65dp"/>
     <TextView
         android:id="@+id/btn_popup_cancel_tv"
@@ -46,5 +57,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="31dp"/>
+        android:layout_marginBottom="35dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

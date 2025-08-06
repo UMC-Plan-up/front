@@ -1,5 +1,6 @@
 package com.example.planup.signup.data
 
+
 data class SignupResponseDto(
     val isSuccess: Boolean,
     val code: String,

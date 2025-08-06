@@ -2,6 +2,7 @@ package com.example.planup.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
@@ -22,6 +23,11 @@ class MainActivity : AppCompatActivity() {
         initBottomNavigation()
     }
 
+    fun navigateFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, fragment)
+            .commitAllowingStateLoss()
+    }
     private fun initBottomNavigation() {
 
         binding.bottomNavigationView.selectedItemId = R.id.fragment_home

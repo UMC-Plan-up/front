@@ -22,6 +22,9 @@ object RetrofitInstance {
         retrofit.create(TermsApi::class.java)
     }
 
+    val passwordApi: PasswordApi by lazy {
+        retrofit.create(PasswordApi::class.java)
+    }
     val loginApi: LoginApi by lazy {
         retrofit.create(LoginApi::class.java)
     }
@@ -33,9 +36,4 @@ object RetrofitInstance {
     val inviteCodeApi: InviteCodeApi by lazy {
         retrofit.create(InviteCodeApi::class.java)
     }
-
-    val passwordApi: PasswordApi by lazy {
-        retrofit.create(PasswordApi::class.java)
-    }
 }
-
