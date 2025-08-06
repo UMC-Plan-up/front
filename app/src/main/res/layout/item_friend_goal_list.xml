@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="6dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_item_goal_list_rv">
+
+        <!-- 도넛 차트 -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/friend_goal_list_pc"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="16dp"/>
+
+        <!-- 텍스트 내용 -->
+
+        <!-- 버튼들 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/friend_goal_list_pc"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/friend_goal_list_title_tv"
+                    style="@style/Typography_SM_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="토익 공부"
+                    android:textColor="@color/black_400" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/certification_type_cbtn"
+                    style="@style/Typography_S_Medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="28dp"
+                    android:layout_marginStart="15dp"
+                    android:background="@drawable/bg_manage_button"
+                    android:elevation="2dp"
+                    android:text="01:30:00" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/friend_goal_list_number_tv"
+                style="@style/Typography_SM_Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="매주 3번 이상"
+                android:textColor="@color/black_400" />
+
+            <TextView
+                android:id="@+id/friend_goal_list_description_tv"
+                style="@style/Typography_SM_Medium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="헬스장 가서 30분 채우고 오기"
+                android:textColor="@color/black_400" />
+
+            <LinearLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/supportbtn_tv"
+                    style="@style/Typography_S_Semibold"
+                    android:layout_width="80dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/bg_friend_goal_btn_green"
+                    android:gravity="center"
+                    android:text="응원해요"
+                    android:textColor="@color/green_300" />
+
+                <TextView
+                    android:id="@+id/motivatebtn_tv"
+                    style="@style/Typography_S_Semibold"
+                    android:layout_width="80dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_friend_goal_btn_blue"
+                    android:gravity="center"
+                    android:text="분발해요"
+                    android:textColor="@color/blue_400" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

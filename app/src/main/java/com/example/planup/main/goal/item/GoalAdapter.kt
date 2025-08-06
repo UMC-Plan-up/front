@@ -1,6 +1,7 @@
-package com.example.planup.main.home.adapter
+package com.example.planup.main.goal.item
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.R
+import com.example.planup.main.goal.ui.EditFriendGoalActivity
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -31,7 +32,7 @@ class GoalAdapter(
         val description: TextView = view.findViewById(R.id.goal_list_description_tv)
         val deleteBtn: TextView = view.findViewById(R.id.goal_delete_btn)
         val toggleBtn: TextView = view.findViewById(R.id.goal_toggle_btn)
-        val editIcon: ImageView = view.findViewById(R.id.goal_edit_icon)
+        val editIcon: ImageView = view.findViewById(R.id.goal_edit_icon_iv)
         val buttonLayout: View = view.findViewById(R.id.goal_button_container)
     }
 
@@ -81,6 +82,13 @@ class GoalAdapter(
             if (!isEditMode) {
                 onItemClick(item)
             }
+        }
+
+        holder.editIcon.setOnClickListener {
+            val context = holder.itemView.context
+            val intent = Intent(context, EditFriendGoalActivity::class.java)
+            intent.putExtra("goalId", item.goalId)  // 필요한 정보 전달
+            context.startActivity(intent)
         }
     }
 

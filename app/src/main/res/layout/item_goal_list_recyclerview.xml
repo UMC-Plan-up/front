@@ -27,7 +27,7 @@
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@id/goal_list_rv_pc"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/goal_edit_icon"
+        app:layout_constraintEnd_toStartOf="@id/goal_edit_icon_iv"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="8dp" />
 
@@ -81,7 +81,7 @@
 
     <!-- 수정 아이콘 -->
     <ImageView
-        android:id="@+id/goal_edit_icon"
+        android:id="@+id/goal_edit_icon_iv"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:src="@drawable/ic_edit_black"
