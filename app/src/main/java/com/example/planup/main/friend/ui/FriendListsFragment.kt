@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendListsBinding
-import com.example.planup.main.friend.data.FriendLists
 import com.example.planup.main.friend.adapter.FriendListsAdapter
 
 class FriendListsFragment : Fragment() {
