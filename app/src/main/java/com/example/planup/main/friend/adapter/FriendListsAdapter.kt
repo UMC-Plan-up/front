@@ -1,5 +1,6 @@
 package com.example.planup.main.friend.adapter
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
@@ -9,10 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.main.friend.data.FriendLists
+import com.example.planup.main.friend.data.FriendInfo
 
 class FriendListsAdapter(
-    private val items: List<FriendLists>
+    private val items: List<FriendInfo>
 ) : RecyclerView.Adapter<FriendListsAdapter.FriendListsViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -24,12 +25,18 @@ class FriendListsAdapter(
         return FriendListsViewHolder(view, parent.context)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(
         holder: FriendListsViewHolder,
         position: Int
     ) {
         val item = items[position]
-        holder.tvNickname.text = item.nickname
+        holder.tvNickname.text = "${item.goalCnt}개의 목표 진행 중"
+        holder.tvTodayTime.text = if (item.isNewPhotoVerify) {
+            "오늘 인증 완료"
+        } else {
+            "오늘 인증 없음"
+        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -40,6 +47,8 @@ class FriendListsAdapter(
         private val btnDelete: TextView = view.findViewById(R.id.btn_delete_friend1)
         private val btnBan: TextView = view.findViewById(R.id.btn_ban_friend1)
         private val btnReport: TextView = view.findViewById(R.id.btn_report_friend1)
+        val tvGoalCount: TextView = view.findViewById(R.id.tv_goal_count)
+        val tvTodayTime: TextView = view.findViewById(R.id.tv_today_time)
 
         init {
             btnDelete.setOnClickListener {

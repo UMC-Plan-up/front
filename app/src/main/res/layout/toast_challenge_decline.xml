@@ -9,7 +9,7 @@
         style="@style/TextAppearance.Pretendard.Medium.SM"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/toast_challenge_decline"
+        android:text="@string/toast_challenge_reject"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:background="@drawable/bg_toast_grey_template"

@@ -2,6 +2,7 @@ package com.example.planup.main.my.ui
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -16,74 +17,71 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageFriendBlockBinding
 import com.example.planup.main.my.adapter.BlockFriendRVAdapter
 import com.example.planup.main.my.data.BlockFriend
+import com.example.planup.main.my.data.User
+import com.example.planup.network.adapter.FriendReportAdapter
+import com.example.planup.network.adapter.FriendsBlockedAdapter
+import com.example.planup.network.adapter.FriendsUnblockedAdapter
+import com.example.planup.network.controller.UserController
+import com.example.planup.network.data.BlockedFriend
+import com.example.planup.network.data.BlockedFriends
+import com.example.planup.network.entity.FriendReportDto
+import com.example.planup.network.entity.FriendUnblockDto
 
-class MypageFriendBlockFragment:Fragment() {
+class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendReportAdapter, FriendsUnblockedAdapter {
     lateinit var binding: FragmentMypageFriendBlockBinding
     private val friends = ArrayList<BlockFriend>()
-    lateinit var rvAdapter: BlockFriendRVAdapter
+    private lateinit var rvAdapter: BlockFriendRVAdapter
+    private lateinit var controller: UserController
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageFriendBlockBinding.inflate(inflater,container,false)
+        binding = FragmentMypageFriendBlockBinding.inflate(inflater, container, false)
+        init()
         clickListener()
-        showBlockFriend()
         return binding.root
     }
 
-    private fun clickListener(){
-        /*뒤로 가기*/
-        binding.emailSecondBackIv.setOnClickListener{
+    //프레그먼트 초기화
+    private fun init(){
+        controller = UserController()
+        controller.setFriendsBlockedAdapter(this)
+        controller.setFriendReportAdapter(this)
+        controller.setFriendUnblockedAdapter(this)
+    }
+    //클릭 이벤트 관리
+    private fun clickListener() {
+        //뒤로 가기
+        binding.emailSecondBackIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFragment())
                 .commitAllowingStateLoss()
         }
-
-
     }
-    private fun showBlockFriend(){
-        friends.add(BlockFriend("친구1", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구2", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구3", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구4", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구5", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구6", R.drawable.ic_profile))
-        friends.add(BlockFriend("친구7", R.drawable.ic_profile))
 
-        rvAdapter = BlockFriendRVAdapter(friends)
-        binding.friendBlockListRv.adapter = rvAdapter
-
-        rvAdapter.setFriendHandler(object : BlockFriendRVAdapter.FriendHandler{
-            override fun manageFriend(position: Int, action: Int) {
-                if (action == 0){
-                    dialogUnblock(position, friends[position])
-                } else{
-                    dialogReport(position)
-                }
-            }
-        })
-
-    }
-    private fun dialogUnblock(position: Int, friend:BlockFriend){
+    //차단 해제 여부를 묻는 팝업
+    private fun dialogUnblock(position: Int, friend: BlockFriend) {
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.popup_unblock)
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         }
-        dialog.findViewById<View>(R.id.popup_unblock_no_btn).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_unblock_no_btn).setOnClickListener {
             dialog.dismiss()
         }
-        dialog.findViewById<View>(R.id.popup_unblock_yes_btn).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_unblock_yes_btn).setOnClickListener {
+            controller.friendsUnblockedService(FriendUnblockDto(123, friend.name))
             rvAdapter.notifyItemRemoved(position)
             dialog.dismiss()
-            makeToast(getString(R.string.toast_unblock,friend.name))
         }
         dialog.setCanceledOnTouchOutside(true)
         dialog.show()
     }
+
+    //신고 사유를 입력하는 팝업
     private fun dialogReport(position: Int) {
         val dialog = Dialog(context as MainActivity)
         var selected = R.id.popup_report_swear_tv
@@ -94,37 +92,37 @@ class MypageFriendBlockFragment:Fragment() {
         }
 
         // 신고 사유 선택 효과
-        dialog.findViewById<View>(R.id.popup_report_swear_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_swear_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_swear_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_sexual_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_sexual_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_sexual_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_spam_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_spam_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_spam_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_fraud_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_fraud_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_fraud_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_personal_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_personal_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_personal_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_improper_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_improper_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_improper_tv
             dialog.findViewById<View>(selected).isSelected = true
         }
-        dialog.findViewById<View>(R.id.popup_report_other_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_report_other_tv).setOnClickListener {
             dialog.findViewById<View>(selected).isSelected = false
             selected = R.id.popup_report_other_tv
             dialog.findViewById<View>(selected).isSelected = true
@@ -142,16 +140,18 @@ class MypageFriendBlockFragment:Fragment() {
 
         //신고 완료 버튼
         dialog.findViewById<View>(R.id.popup_report_complete_btn).setOnClickListener {
+            val reportService = UserController()
+            reportService.reportFriendService(FriendReportDto(1, 2, selected.toString(), true))
             dialog.dismiss()
-            makeToast(getString(R.string.toast_report))
         }
         dialog.setCanceledOnTouchOutside(true)
         dialog.show()
     }
 
-    private fun makeToast(message: String){
+    //토스트 메시지
+    private fun makeToast(message: String) {
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_blue_template,null)
+        val layout = inflater.inflate(R.layout.toast_blue_template, null)
         layout.findViewById<TextView>(R.id.toast_blue_template_tv).text = message
 
         val toast = Toast(context)
@@ -159,5 +159,53 @@ class MypageFriendBlockFragment:Fragment() {
         toast.view = layout
         toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
+    }
+
+    //차단 친구 목록 출력
+    private fun showBlockFriend() {
+        rvAdapter = BlockFriendRVAdapter(friends)
+        binding.friendBlockListRv.adapter = rvAdapter
+
+        rvAdapter.setFriendHandler(object : BlockFriendRVAdapter.FriendHandler {
+            override fun manageFriend(position: Int, action: Int) {
+                if (action == 0) {
+                    dialogUnblock(position, friends[position])
+                } else {
+                    dialogReport(position)
+                }
+            }
+        })
+
+    }
+
+    //차단 친구 목룍 불러오기 완료
+    override fun successBlockFriend(blockedFriendsList: List<BlockedFriend>?) {
+        blockedFriendsList?.let { list ->
+            for (friend in list) {
+                friends.add(BlockFriend(friend.friendNickname, friend.friendId))
+            }
+        }
+        showBlockFriend()
+    }
+    //차단 친구 목록 불러오기 실패
+    override fun failBlockFriend(code: String, message: String) {}
+
+    //친구 신고 완료
+    override fun successReportFriend() {
+        makeToast(getString(R.string.toast_report))
+    }
+    //친구 신고 실패
+    override fun failReportFriend(code: String, message: String) {
+        Log.d("okhttp", "code: $code\nmessage: $message")
+    }
+
+    //친구 차단 완료
+    override fun successFriendUnblock(name: String) {
+        makeToast(getString(R.string.toast_unblock, name))
+    }
+
+    //친구 차단 실패
+    override fun failFriendUnblock(code: String, message: String) {
+        Log.d("okhttp","code: $code\nmessage: $message")
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.planup.login.ui
 
 import android.content.Intent
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.network.App
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import kotlinx.coroutines.launch
@@ -57,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-        private fun initView() {
+    private fun initView() {
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         loginButton = findViewById(R.id.loginButton)
@@ -182,6 +184,9 @@ class LoginActivity : AppCompatActivity() {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()!!.result
 
+
+                    //로그인 직후 발급된 JWT를 레트로핏에 전달
+                    App.prefs.token = result.accessToken
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
                         .putString("accessToken", result.accessToken)

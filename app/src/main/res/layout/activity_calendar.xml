@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:calendar="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="55dp"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/calendar_back_home_ll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        calendar:layout_constraintTop_toTopOf="parent"
+        calendar:layout_constraintStart_toStartOf="parent"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/calendar_back_home_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="back"
+            android:src="@drawable/ic_arrow_back"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="홈"
+            style="@style/Typography_2XL_Medium"
+            android:textColor="@color/black_400"/>
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/calendar_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        calendar:layout_constraintTop_toBottomOf="@id/calendar_back_home_ll"
+        calendar:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="30dp">
+        <!-- 상단 년/월 텍스트 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/calendar_top_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            calendar:layout_constraintTop_toTopOf="parent"
+            calendar:layout_constraintStart_toStartOf="parent"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp">
+
+            <TextView
+                android:id="@+id/monthYearText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                calendar:layout_constraintTop_toTopOf="parent"
+                calendar:layout_constraintStart_toStartOf="parent"
+                android:text="January 2025"
+                style="@style/Typography_L_Medium"
+                android:layout_gravity="center_horizontal"
+                android:paddingBottom="8dp" />
+            <ImageView
+                android:id="@+id/calendar_arrow_next_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                calendar:layout_constraintEnd_toEndOf="parent"
+                calendar:layout_constraintTop_toTopOf="parent"
+                calendar:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_calendar_arrow"
+                android:rotation="180"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                calendar:layout_constraintEnd_toStartOf="@id/calendar_arrow_next_iv"
+                calendar:layout_constraintTop_toTopOf="parent"
+                calendar:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/ic_calendar_arrow"
+                android:layout_marginEnd="24dp"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/calendar_v1"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            calendar:layout_constraintTop_toBottomOf="@id/calendar_top_ll"
+            calendar:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="10dp"
+            android:background="@color/neutral_blueblack_40"/>
+
+        <LinearLayout
+            android:id="@+id/calendar_head_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            calendar:layout_constraintTop_toBottomOf="@id/calendar_v1"
+            calendar:layout_constraintStart_toStartOf="parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="15dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Mon"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Tue"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Wed"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Thu"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Fri"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Sat"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:text="Sun"
+                style="@style/Typography_SM_Semibold"
+                android:textColor="#7E818C"
+                android:layout_weight="1"
+                android:gravity="center"/>
+        </LinearLayout>
+
+        <!-- 달력 뷰 -->
+        <com.kizitonwose.calendar.view.CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            calendar:layout_constraintTop_toBottomOf="@id/calendar_head_ll"
+            calendar:layout_constraintStart_toStartOf="parent"
+            calendar:cv_dayViewResource="@layout/item_calendar_day" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+    <!-- 선택한 날짜 하단 일정 목록 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/eventsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        calendar:layout_constraintTop_toBottomOf="@id/calendar_cl"
+        calendar:layout_constraintStart_toStartOf="parent"
+        android:layout_weight="1"
+        android:paddingTop="16dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,15 +47,24 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     private fun updateToggleSelection() {
+
+
         binding.btnPublic.isSelected = isPublic
         binding.btnPrivate.isSelected = !isPublic
 
-        binding.btnPublic.setTextColor(
-            if (isPublic) Color.WHITE else Color.BLACK
-        )
-        binding.btnPrivate.setTextColor(
-            if (isPublic) Color.BLACK else Color.WHITE
-        )
+        if (isPublic) {
+            binding.btnPublic.setBackgroundResource(R.drawable.toggle_selected_left)
+            binding.btnPublic.setTextColor(Color.WHITE)
+
+            binding.btnPrivate.setBackgroundResource(R.drawable.toggle_selected_right)
+            binding.btnPrivate.setTextColor(Color.BLACK)
+        } else {
+            binding.btnPublic.setBackgroundResource(R.drawable.toggle_selected_left)
+            binding.btnPublic.setTextColor(Color.WHITE)
+
+            binding.btnPrivate.setBackgroundResource(R.drawable.toggle_selected_right)
+            binding.btnPrivate.setTextColor(Color.BLACK)
+        }
     }
 
     private fun showPrivateDialog() {

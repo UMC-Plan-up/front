@@ -4,13 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetAlertBinding
+import com.example.planup.goal.adapter.AlertRVAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 
@@ -24,13 +22,11 @@ class ChallengeSetAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeSetAlertBinding.inflate(inflater, container, false)
-        setSpinner(binding.alertTimeSp,R.array.spinner_morning_afternoon)
-        setSpinner(binding.alertHourSp,R.array.spinner_hour)
-        setSpinner(binding.alertMinuteSp,R.array.spinner_minute_second)
         clickListener()
         return binding.root
     }
 
+    //클릭 이벤트
     private fun clickListener() {
         //알림받기 토글
         binding.alertReceiveOnIv.setOnClickListener {
@@ -64,102 +60,116 @@ class ChallengeSetAlertFragment : Fragment() {
             }
         }
 
-        /* 요일 선택 효과 */
+        //정기 알림 시간 설정
+        binding.alertTimeTv.setOnClickListener {
+            binding.alertTimeCl.visibility = View.VISIBLE
+        }
+        binding.alertMorningTv.setOnClickListener {
+            binding.alertTimeTv.setText(R.string.morning)
+            binding.alertTimeCl.visibility = View.GONE
+        }
+        binding.alertAfternoonTv.setOnClickListener {
+            binding.alertTimeTv.setText(R.string.afternoon)
+            binding.alertTimeCl.visibility = View.GONE
+        }
+        //시각 설정
+        binding.alertHourTv.setOnClickListener {
+            binding.alertHourRv.visibility = View.VISIBLE
+        }
+        //분 설정
+        binding.alertMinuteTv.setOnClickListener {
+            binding.alertMinuteRv.visibility = View.VISIBLE
+        }
+        //정기 알림 요일 설정
         val selected = ContextCompat.getColor(context, R.color.blue_200)
         val unselected = ContextCompat.getColor(context, R.color.black_300)
 
         // 매일
-        binding.alertEverydayCl.setOnClickListener {
-            binding.alertEverydayCl.isActivated = !binding.alertEverydayCl.isActivated
+        binding.alertEverydayTv.setOnClickListener {
+            binding.alertEverydayTv.isSelected = !binding.alertEverydayTv.isSelected
             binding.alertEverydayTv.setTextColor(
-                if (binding.alertEverydayCl.isActivated) selected else unselected
+                if (binding.alertEverydayTv.isSelected) selected else unselected
             )
         }
 
         // 월요일
-        binding.alertMondayCl.setOnClickListener {
-            binding.alertMondayCl.isActivated = !binding.alertMondayCl.isActivated
+        binding.alertMondayTv.setOnClickListener {
+            binding.alertMondayTv.isSelected = !binding.alertMondayTv.isSelected
             binding.alertMondayTv.setTextColor(
-                if (binding.alertMondayCl.isActivated) selected else unselected
+                if (binding.alertMondayTv.isSelected) selected else unselected
             )
         }
 
         // 화요일
-        binding.alertTuesdayCl.setOnClickListener {
-            binding.alertTuesdayCl.isActivated = !binding.alertTuesdayCl.isActivated
+        binding.alertTuesdayTv.setOnClickListener {
+            binding.alertTuesdayTv.isSelected = !binding.alertTuesdayTv.isSelected
             binding.alertTuesdayTv.setTextColor(
-                if (binding.alertTuesdayCl.isActivated) selected else unselected
+                if (binding.alertTuesdayTv.isSelected) selected else unselected
             )
         }
 
         // 수요일
-        binding.alertWednesdayCl.setOnClickListener {
-            binding.alertWednesdayCl.isActivated = !binding.alertWednesdayCl.isActivated
+        binding.alertWednesdayTv.setOnClickListener {
+            binding.alertWednesdayTv.isSelected = !binding.alertWednesdayTv.isSelected
             binding.alertWednesdayTv.setTextColor(
-                if (binding.alertWednesdayCl.isActivated) selected else unselected
+                if (binding.alertWednesdayTv.isSelected) selected else unselected
             )
         }
 
         // 목요일
-        binding.alertThursdayCl.setOnClickListener {
-            binding.alertThursdayCl.isActivated = !binding.alertThursdayCl.isActivated
+        binding.alertThursdayTv.setOnClickListener {
+            binding.alertThursdayTv.isSelected = !binding.alertThursdayTv.isSelected
             binding.alertThursdayTv.setTextColor(
-                if (binding.alertThursdayCl.isActivated) selected else unselected
+                if (binding.alertThursdayTv.isSelected) selected else unselected
             )
         }
 
         // 금요일
-        binding.alertFridayCl.setOnClickListener {
-            binding.alertFridayCl.isActivated = !binding.alertFridayCl.isActivated
+        binding.alertFridayTv.setOnClickListener {
+            binding.alertFridayTv.isSelected = !binding.alertFridayTv.isSelected
             binding.alertFridayTv.setTextColor(
-                if (binding.alertFridayCl.isActivated) selected else unselected
+                if (binding.alertFridayTv.isSelected) selected else unselected
             )
         }
 
         // 토요일
-        binding.alertSaturdayCl.setOnClickListener {
-            binding.alertSaturdayCl.isActivated = !binding.alertSaturdayCl.isActivated
+        binding.alertSaturdayTv.setOnClickListener {
+            binding.alertSaturdayTv.isSelected = !binding.alertSaturdayTv.isSelected
             binding.alertSaturdayTv.setTextColor(
-                if (binding.alertSaturdayCl.isActivated) selected else unselected
+                if (binding.alertSaturdayTv.isSelected) selected else unselected
             )
         }
 
         // 일요일
-        binding.alertSundayCl.setOnClickListener {
-            binding.alertSundayCl.isActivated = !binding.alertSundayCl.isActivated
+        binding.alertSundayTv.setOnClickListener {
+            binding.alertSundayTv.isSelected = !binding.alertSundayTv.isSelected
             binding.alertSundayTv.setTextColor(
-                if (binding.alertSundayCl.isActivated) selected else unselected
+                if (binding.alertSundayTv.isSelected) selected else unselected
             )
         }
 
+
     }
+    //알림설정 시간 드롭다운
+    private fun showDropdown(){
+        val hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>())
+        val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>())
+        val adapter = ArrayList<AlertRVAdapter>()
+        adapter.add(0,AlertRVAdapter(hours))
+        adapter.add(1, AlertRVAdapter(minutes))
 
-    private fun setSpinner (spinnerId:AppCompatSpinner, stringId: Int) {
-        val spinner = spinnerId
-        val items = resources.getStringArray(stringId)
-        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_challenge_alert, items)//스피너 위젯 설정
-        adapter.setDropDownViewResource(R.layout.dropdown_alert)//드롭다운 메뉴 설정
-        spinner.adapter = adapter
+        binding.alertHourRv.adapter = adapter[0]
+        binding.alertMinuteRv.adapter = adapter[1]
 
-        // spinner에 띄울 기본값 설정 (0번째)
-        spinner.setSelection(0, false)
-
-        // 리스너 연결
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selected = parent.getItemAtPosition(position).toString()
-                // 선택된 값(selected)을 필요에 맞게 사용 (예: TextView에 반영 등)
-                // 예시 Toast 표시
+        adapter[0].setDropdownListener(object : AlertRVAdapter.DropdownListener{
+            override fun setTime(position: Int) {
+                binding.alertHourTv.text = hours[position]
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // 아무것도 선택하지 않았을 때 동작 (선택사항)
+        })
+        adapter[1].setDropdownListener(object : AlertRVAdapter.DropdownListener{
+            override fun setTime(position: Int) {
+                binding.alertMinuteTv.text = minutes[position]
             }
-        }
+        })
     }
 }

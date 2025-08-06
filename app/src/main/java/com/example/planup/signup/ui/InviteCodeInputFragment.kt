@@ -116,6 +116,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
             }
         }
 
+        /* 다음 버튼 클릭 → 입력된 초대코드로 회원가입 진행 */
         nextButton.setOnClickListener {
             val code = inviteCodeEditText.text.toString().trim()
             proceedSignup(code)
@@ -240,7 +241,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)
 
         val container = popupWindow.contentView.rootView
-        val wm = requireActivity().getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
+        val wm =
+            requireActivity().getSystemService(android.content.Context.WINDOW_SERVICE) as android.view.WindowManager
         val p = container.layoutParams as android.view.WindowManager.LayoutParams
         p.flags = p.flags or android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
         p.dimAmount = 0.4f
@@ -249,7 +251,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
     /* 키보드 숨기는 메서드 */
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

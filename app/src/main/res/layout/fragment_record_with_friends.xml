@@ -132,24 +132,22 @@
                         android:textColor="@color/black_400"/>
                 </LinearLayout>
 
-                <ProgressBar
-                    android:id="@+id/week_upload_picture_pb"
-                    style="@style/DailyToDoProgressBar"
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:max="100"
-                    android:progress="50"
-                    android:progressTint="#5383E3"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="장"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/black_400"/>
+                </LinearLayout>
 
                 <!-- RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/photoRecyclerView"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/photo_gridrv"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="12dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:clipToPadding="false"
@@ -536,8 +534,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
