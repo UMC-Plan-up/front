@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">PlanUP</string>
 
+    <string name="premium_policy">임시 스트링</string>
+    <string name="benefit_question">임시 스트링</string>
+    <string name="choose_plan">임시 스트링</string>
+
 
 
     <!-- 회원가입 -->
@@ -94,6 +98,11 @@
     <string name="share_copy">복사</string>
     <string name="share_more">기타</string>
 
+    <string name="plan">Plan</string>
+    <string name="dash">-</string>
+    <string name="u_letter">U</string>
+    <string name="p_letter">p</string>
+    <string name="or_text">or</string>
 
     <string name="community_greeting">다양한 커뮤니티들이\n%s님을 기다리고 있어요!</string>
     <string name="kakao_app_key">d457e1de9a930076ef76a74e0bb30b6b</string>
