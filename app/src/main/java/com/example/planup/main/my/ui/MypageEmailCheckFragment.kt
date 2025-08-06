@@ -1,0 +1,208 @@
+package com.example.planup.main.my.ui
+
+import android.content.Context
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.example.planup.main.MainActivity
+import com.example.planup.R
+import com.example.planup.databinding.FragmentMypageEmailCheckBinding
+import com.example.planup.network.controller.UserController
+
+class MypageEmailCheckFragment : Fragment(), ResponseViewer {
+
+    lateinit var binding: FragmentMypageEmailCheckBinding
+    lateinit var mailAddr: String
+    lateinit var popupView: View
+    private var lastDomain: Int = 0 //가장 최근에 선택된 도메인
+    private var curDomain: Int = 0 //지금 선택된 도메인
+    private var curCheck: Int = 0 //지금 선택된 도메인에 체크
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentMypageEmailCheckBinding.inflate(inflater, container, false)
+
+        clickListener()
+        textListener()
+
+        return binding.root
+    }
+
+    // 터치 이벤트
+    private fun clickListener() {
+        /*뒤로 가기*/
+        binding.backIv.setOnClickListener {
+            (context as MainActivity).navigateFragment(MypageFragment())
+        }
+        /*인증번호 받기 버튼 클릭*/
+        binding.btnGetLinkTv.setOnClickListener {
+            if (!binding.btnGetLinkTv.isActivated) return@setOnClickListener
+            /*이메일 형식 확인 후 이메일 유효성 검사
+            * 적절한 이메일인 경우 이메일 링크 수신여부 확인 페이지로 이동*/
+            checkMail()
+        }
+        /* 이메일 도메인 드롭다운 */
+        binding.emailDropdownIv.setOnClickListener {
+            dropDown(binding.emailEt)
+        }
+    }
+
+    //이메일 입력 여부 확인
+    private fun textListener() {
+        binding.emailEt.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if (binding.emailEt.text.toString().isNotEmpty()) {
+                    binding.btnGetLinkTv.isActivated = true
+                } else {
+                    binding.btnGetLinkTv.isActivated = false
+                }
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
+    // 이메일 유효성 확인
+    private fun checkMail() {
+        val findAt = binding.emailEt.text.toString().indexOf('@',0)
+        val findDot = binding.emailEt.text.toString().indexOf('.',0)
+
+        if (findAt != -1 || findDot != -1) //이메일 형식 확인
+            showToast(context as MainActivity, R.string.toast_incorrect_email)
+        else{ //이메일 중복 여부 확인
+            val emailService = UserController()
+            emailService.setResponseViewer(this)
+            emailService.emailService(0, binding.emailEt.text.toString())
+        }
+    }
+
+    // 이메일 도메인 드롭다운
+    private fun dropDown(view: View) {
+        val inflater = LayoutInflater.from(context)
+        popupView = inflater.inflate(R.layout.dropdown_email_domain, null)
+        val popupWindow = PopupWindow(
+            popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        popupWindow.showAsDropDown(view)
+        popupWindow.isOutsideTouchable = true
+
+
+        /* 지메일 선택 */
+        popupView.findViewById<View>(R.id.email_domain_gmail_cl).setOnClickListener {
+            if (lastDomain != 0
+                && lastDomain == R.id.email_domain_gmail_cl
+            ) return@setOnClickListener
+
+            lastDomain = R.id.email_domain_gmail_cl //선택된 도메인 업데이트
+            showSelected(R.id.gmail_tv, R.id.gmail_check_iv)
+            mailAddr = mailEditor(getString(R.string.dropdown_gmail))//현재 선택된 도메인
+            binding.emailEt.setText(mailAddr) //입력란에 최종 메일 주소 출력
+            popupWindow.dismiss()
+        }
+
+        /*네이버 메일 선택*/
+        popupView.findViewById<View>(R.id.email_domain_naver_cl).setOnClickListener {
+            if (lastDomain != 0
+                && lastDomain == R.id.email_domain_naver_cl
+            ) return@setOnClickListener
+
+            lastDomain = R.id.email_domain_naver_cl //선택된 도메인 업데이트
+            showSelected(R.id.naver_tv, R.id.naver_check_iv)
+            mailAddr = mailEditor(getString(R.string.dropdown_naver)) //입력한 메일주소 + 선택한 도메인
+            binding.emailEt.setText(mailAddr) //입력란에 최종 메일 주소 출력
+            popupWindow.dismiss()
+        }
+
+        /* 카카오 메일 선택 */
+        popupView.findViewById<View>(R.id.email_domain_kakao_cl).setOnClickListener {
+            if (lastDomain != 0
+                && lastDomain == R.id.email_domain_kakao_cl
+            ) return@setOnClickListener
+
+            lastDomain = R.id.email_domain_kakao_cl //선택된 도메인 업데이트
+            showSelected(R.id.kakao_tv, R.id.kakao_check_iv)
+            mailAddr = mailEditor(getString(R.string.dropdown_kakao)) //현재 선택된 도메인
+            binding.emailEt.setText(mailAddr) //입력란에 최종 메일 주소 출력
+            popupWindow.dismiss()
+        }
+    }
+
+    // 드롭다운에서 선택한 이메일 도메인 표시
+    private fun showSelected(selectedDomain: Int, checkSelected: Int) {
+        val colorSelected = ContextCompat.getColor(context, R.color.blue_300) //선택된 도메인
+        val colorUnselected = ContextCompat.getColor(context, R.color.email_domain) //나머지 도메인
+
+        //첫 선택인 경우
+        if (curCheck == 0) {
+            curCheck = checkSelected
+            curDomain = selectedDomain
+        }
+        //기존 도메인 선택 해제
+        popupView.findViewById<View>(curCheck).visibility = View.GONE
+        popupView.findViewById<TextView>(curDomain).setTextColor(colorUnselected)
+        //선택된 도메인 표시
+        popupView.findViewById<View>(checkSelected).visibility = View.VISIBLE
+        popupView.findViewById<TextView>(selectedDomain).setTextColor(colorSelected)
+        //선택된 도메인 멉데이트
+        curCheck = checkSelected
+        curDomain = selectedDomain
+    }
+
+    // 드롭다운에서 선택한 이메일 도메인 추가
+    private fun mailEditor(domain: String): String {
+        val emailInput = binding.emailEt.text.toString()
+        val atIndex = emailInput.indexOf('@')
+        return if (atIndex != -1) {
+            "${emailInput.substring(0, atIndex)}@$domain"
+        } else {
+            "$emailInput@$domain"
+        }
+    }
+
+    // 토스트 메시지 작성
+    private fun showToast(context: Context, message: Int) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(message)
+
+        val toast = Toast(context)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = layout
+        toast.setGravity(Gravity.CENTER_HORIZONTAL or Gravity.CENTER_VERTICAL, 0, 300)
+        toast.show()
+    }
+
+    // 입력한 이메일이 유효할 때
+    override fun onResponseSuccess() {
+        /*다음 페이지에서 이메일 전송을 다시 요청하는 경우
+         *현재 작성한 이메일을 전달해야 함*/
+        val emailLinkFragment = MypageEmailLinkFragment()
+        emailLinkFragment.arguments = Bundle().apply{
+            putString("email",binding.emailEt.text.toString())
+        }
+        //이메일 링크 수신여부 확인 페이지로 이동
+        (context as MainActivity).navigateFragment(emailLinkFragment)
+    }
+    //입력한 이메일이 유효하지 않을 때
+    override fun onResponseError(code: String, message: String ) {
+        //디버깅
+        Log.d("okhttp", "code: ${code}\nmessage: ${message}")
+        //토스트 메시지 출력
+        showToast(context as MainActivity, R.string.toast_invalid_email)
+    }
+
+}

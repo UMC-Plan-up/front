@@ -38,6 +38,7 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {

@@ -1,15 +1,18 @@
 package com.example.planup.main.home.ui
 
 import android.content.Intent
+import android.app.Dialog
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -35,6 +38,8 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import com.example.planup.main.home.item.HomeRetrofitInstance
 import com.example.planup.main.home.item.MyGoalApiResponse
+import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.main.record.ui.ReceiveChallengeFragment
 
 class HomeFragment : Fragment() {
 
@@ -55,7 +60,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomeBinding.inflate(inflater,container,false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         clickListener()
         return binding.root
     }
@@ -163,16 +168,35 @@ class HomeFragment : Fragment() {
         val days = DayOfWeek.values().toList()
         return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
     }
-    private fun clickListener(){
-        binding.homeAlarmCl.setOnClickListener{
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_container, HomeAlertFragment())
-//                .commitAllowingStateLoss()
+    private fun clickListener() {
+        binding.homeAlarmCl.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, HomeAlertFragment())
+                .commitAllowingStateLoss()
+        }
+        binding.imageView5.setOnClickListener {
+            showPopup()
+        }
+    }
+    private fun showPopup(){
+        val dialog = Dialog(context as MainActivity)
+        dialog.setContentView(R.layout.popup_challenge)
+        dialog.window?.apply {
+            setGravity(Gravity.CENTER)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+        dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
+            dialog.dismiss()
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,ReceiveChallengeFragment())
                 .replace(R.id.main_container, ChallengeAlertFragment())
                 .commitAllowingStateLoss()
         }
+        dialog.show()
     }
+
 
     private fun fetchGoals() {
         lifecycleScope.launch {
@@ -212,5 +236,8 @@ class HomeFragment : Fragment() {
                 showToast("네트워크 오류 발생")
             }
         }
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

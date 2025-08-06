@@ -1,56 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF"
-    android:padding="24dp"
     android:clipChildren="false"
-    android:clipToPadding="false" >
+    android:clipToPadding="false"
+    android:padding="24dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:clipChildren="false"
-        android:clipToPadding="false" >
+        android:clipToPadding="false"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/backIcon"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            android:layout_marginTop="38dp" />
+            android:layout_marginTop="38dp"
+            android:src="@drawable/ic_arrow_back" />
 
         <TextView
             android:id="@+id/resetPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="유료 정책"
-            android:textSize="20sp"
+            android:layout_marginTop="20dp"
             android:fontFamily="@font/pretendard_semibold"
+            android:text="@string/premium_policy"
             android:textColor="@color/black_400"
-            android:layout_marginTop="20dp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/text_benefit_question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="어떤 혜택을 누릴 수 있나요?"
+            android:layout_marginTop="16dp"
             android:fontFamily="@font/pretendard_semibold"
-            android:textSize="18sp"
+            android:text="@string/benefit_question"
             android:textColor="@color/black_300"
-            android:layout_marginTop="16dp" />
+            android:textSize="18sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
             android:background="@drawable/bg_benefit_item"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:gravity="center_vertical"
-            android:layout_marginTop="20dp">
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
                 android:layout_width="24dp"
@@ -60,31 +60,31 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="혜택 1"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="혜택 1"
                 android:textColor="@color/green_200"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="개인 목표 개수 제한 해제"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="개인 목표 개수 제한 해제"
                 android:textColor="@color/black_400"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_benefit_item"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
                 android:layout_width="24dp"
@@ -94,31 +94,31 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="혜택 2"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="혜택 2"
                 android:textColor="@color/green_200"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1:1 챌린지 개수 제한 해제"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="1:1 챌린지 개수 제한 해제"
                 android:textColor="@color/black_400"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_benefit_item"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
                 android:layout_width="24dp"
@@ -128,31 +128,31 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="혜택 3"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="혜택 3"
                 android:textColor="@color/green_200"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="목표 자동 종료일 설정 기능"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="목표 자동 종료일 설정 기능"
                 android:textColor="@color/black_400"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bg_benefit_item"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
             android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp">
 
             <ImageView
                 android:layout_width="24dp"
@@ -162,38 +162,37 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="혜택 4"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="혜택 4"
                 android:textColor="@color/green_200"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="광고 제거"
+                android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:textSize="16sp"
+                android:text="광고 제거"
                 android:textColor="@color/black_400"
-                android:layout_marginStart="8dp" />
+                android:textSize="16sp" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/choose_plan"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="플랜을 선택해 주세요!"
+            android:layout_height="wrap_content"            android:layout_marginTop="32dp"
             android:fontFamily="@font/pretendard_semibold"
-            android:textSize="18sp"
+            android:text="@string/choose_plan"
             android:textColor="@color/black_300"
-            android:layout_marginTop="32dp" />
+            android:textSize="18sp" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:clipChildren="false"
-            android:clipToPadding="false" >
+            android:clipToPadding="false">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -201,139 +200,139 @@
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="6dp"
                 app:cardElevation="3dp"
-                app:cardUseCompatPadding="true"
-                app:cardPreventCornerOverlap="false">
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/pretendard_semibold"
                         android:text="Basic Plan"
                         android:textColor="@color/blue_200"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_semibold"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginBottom="16dp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1,900 원 / 1개월"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_semibold"
                         android:layout_marginStart="20dp"
+                        android:layout_marginBottom="4dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="1,900 원 / 1개월"
                         android:textColor="#252323"
-                        android:layout_marginBottom="4dp" />
+                        android:textSize="18sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="18.5dp">
+                        android:layout_marginBottom="18.5dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="20,520 원 / 1년"
-                            android:textSize="18sp"
-                            android:fontFamily="@font/pretendard_semibold"
                             android:layout_marginStart="20dp"
-                            android:textColor="#252323" />
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:text="20,520 원 / 1년"
+                            android:textColor="#252323"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10% 할인"
-                            android:textSize="11sp"
-                            android:textColor="@color/blue_400"
-                            android:background="@drawable/bg_discount_blue"
-                            android:layout_marginStart="8dp"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_discount_blue"
                             android:fontFamily="@font/pretendard_semibold"
                             android:paddingLeft="8dp"
-                            android:paddingRight="8dp"
                             android:paddingTop="4.5dp"
-                            android:paddingBottom="4.5dp" />
+                            android:paddingRight="8dp"
+                            android:paddingBottom="4.5dp"
+                            android:text="10% 할인"
+                            android:textColor="@color/blue_400"
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="4dp">
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:layout_marginBottom="13dp"
-                            android:paddingStart="20dp"
-                            android:gravity="center_vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/ic_check_blue"
-                                android:layout_marginEnd="5dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="최대 10개까지 개인 목표 추가"
-                                android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="20dp"
-                            android:layout_marginBottom="13dp"
-                            android:gravity="center_vertical">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/ic_check_blue"
-                                android:layout_marginEnd="5dp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="목표 자동 종료일 설정 기능"
-                                android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="20dp"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="20dp">
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_check_blue"
-                                android:layout_marginEnd="5dp" />
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_blue" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="광고 표시 횟수 50% 감소"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
+                                android:text="최대 10개까지 개인 목표 추가"
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="13dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_blue" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semibold"
+                                android:text="목표 자동 종료일 설정 기능"
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="20dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_blue" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semibold"
+                                android:text="광고 표시 횟수 50% 감소"
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -342,19 +341,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="최대 할인 적용"
-                android:background="@drawable/bg_discount_label"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
                 android:layout_gravity="top|end"
                 android:layout_marginTop="-5dp"
                 android:layout_marginEnd="20dp"
-                android:elevation="8dp" />
+                android:background="@drawable/bg_discount_label"
+                android:elevation="8dp"
+                android:fontFamily="@font/pretendard_semibold"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:text="최대 할인 적용"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
 
         </FrameLayout>
 
@@ -365,7 +364,7 @@
             android:layout_marginTop="22dp"
             android:layout_marginBottom="72dp"
             android:clipChildren="false"
-            android:clipToPadding="false" >
+            android:clipToPadding="false">
 
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
@@ -373,162 +372,162 @@
                 android:backgroundTint="@android:color/white"
                 app:cardCornerRadius="6dp"
                 app:cardElevation="3dp"
-                app:cardUseCompatPadding="true"
-                app:cardPreventCornerOverlap="false">
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginBottom="16dp"
+                        android:fontFamily="@font/pretendard_semibold"
                         android:text="Pro Plan"
                         android:textColor="@color/red_200"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_semibold"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginBottom="16dp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2,900 원 / 1개월"
-                        android:textSize="18sp"
-                        android:fontFamily="@font/pretendard_semibold"
                         android:layout_marginStart="20dp"
+                        android:layout_marginBottom="4dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="2,900 원 / 1개월"
                         android:textColor="#252323"
-                        android:layout_marginBottom="4dp" />
+                        android:textSize="18sp" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="18.5dp">
+                        android:layout_marginBottom="18.5dp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="31,320 원 / 1년"
-                            android:textSize="18sp"
-                            android:fontFamily="@font/pretendard_semibold"
                             android:layout_marginStart="20dp"
-                            android:textColor="#252323" />
+                            android:fontFamily="@font/pretendard_semibold"
+                            android:text="31,320 원 / 1년"
+                            android:textColor="#252323"
+                            android:textSize="18sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="10% 할인"
-                            android:textSize="11sp"
-                            android:textColor="@color/blue_400"
-                            android:background="@drawable/bg_discount_blue"
-                            android:layout_marginStart="8dp"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_discount_blue"
                             android:fontFamily="@font/pretendard_semibold"
                             android:paddingLeft="8dp"
-                            android:paddingRight="8dp"
                             android:paddingTop="4.5dp"
-                            android:paddingBottom="4.5dp" />
+                            android:paddingRight="8dp"
+                            android:paddingBottom="4.5dp"
+                            android:text="10% 할인"
+                            android:textColor="@color/blue_400"
+                            android:textSize="11sp" />
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="4dp">
+                        android:layout_marginTop="4dp"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
                             android:layout_marginBottom="13dp"
-                            android:paddingStart="20dp"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_check_red"
-                                android:layout_marginEnd="5dp" />
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_red" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semibold"
                                 android:text="개수 제한 없이 목표 추가"
-                                android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="20dp"
                             android:layout_marginBottom="13dp"
-                            android:gravity="center_vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_check_red"
-                                android:layout_marginEnd="5dp" />
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_red" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semibold"
                                 android:text="목표 자동 종료일 설정 기능"
-                                android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="20dp"
+                            android:layout_marginBottom="13dp"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="13dp">
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_check_red"
-                                android:layout_marginEnd="5dp" />
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_red" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semibold"
                                 android:text="1:1 챌린지 개수 제한 해제"
-                                android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
                         </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:paddingStart="20dp"
+                            android:layout_marginBottom="20dp"
                             android:gravity="center_vertical"
-                            android:layout_marginBottom="20dp">
+                            android:orientation="horizontal"
+                            android:paddingStart="20dp">
 
                             <ImageView
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
-                                android:src="@drawable/ic_check_red"
-                                android:layout_marginEnd="5dp" />
+                                android:layout_marginEnd="5dp"
+                                android:src="@drawable/ic_check_red" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="광고 삭제"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:textSize="16sp"
-                                android:textColor="#252323" />
+                                android:text="광고 삭제"
+                                android:textColor="#252323"
+                                android:textSize="16sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -537,19 +536,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="최대 할인 적용"
-                android:background="@drawable/bg_discount_label"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
                 android:layout_gravity="top|end"
                 android:layout_marginTop="-5dp"
                 android:layout_marginEnd="20dp"
-                android:elevation="8dp" />
+                android:background="@drawable/bg_discount_label"
+                android:elevation="8dp"
+                android:fontFamily="@font/pretendard_semibold"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp"
+                android:text="최대 할인 적용"
+                android:textColor="@android:color/white"
+                android:textSize="14sp" />
 
         </FrameLayout>
     </LinearLayout>

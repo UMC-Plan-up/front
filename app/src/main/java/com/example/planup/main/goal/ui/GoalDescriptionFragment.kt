@@ -48,6 +48,7 @@ class GoalDescriptionFragment : Fragment() {
 
     private fun updateToggleSelection() {
 
+
         binding.btnPublic.isSelected = isPublic
         binding.btnPrivate.isSelected = !isPublic
 
