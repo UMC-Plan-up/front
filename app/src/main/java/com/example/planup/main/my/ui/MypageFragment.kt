@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.main.home.ui.HomeFragment
 
 class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
@@ -28,6 +29,12 @@ class MypageFragment : Fragment() {
 
     private fun clickListener(){
 
+        binding.mypageBackIv.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, HomeFragment())
+                .commitAllowingStateLoss()
+        }
+
         /*프로필 사진 변경*/
         binding.mypageMainRewriteIv.setOnClickListener{
             showPopupMenu(binding.mypageMainRewriteIv)
@@ -42,13 +49,13 @@ class MypageFragment : Fragment() {
         /*이메일 변경*/
         binding.mypageEmailIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailFirstFragment())
+                .replace(R.id.main_container, MypageEmailCheckFragment())
                 .commitAllowingStateLoss()
         }
         /*비밀번호 변경*/
         binding.mypagePasswordIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordFirstFragment())
+                .replace(R.id.main_container, MypagePasswordEmailFragment())
                 .commitAllowingStateLoss()
         }
         /*카카오톡 계정 연동*/

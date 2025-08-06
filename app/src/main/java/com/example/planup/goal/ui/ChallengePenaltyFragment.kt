@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -33,7 +35,7 @@ class ChallengePenaltyFragment : Fragment() {
     //프레그먼트 초기화 및 데이터 세팅
     private fun init() {
         certification = "timer"//현재 챌린지 인증 방식이 타이머라고 가정
-        curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 쵝화
+        curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 초기화
         if (!isFirst) binding.challengePenaltyNextBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
     }
 
@@ -53,7 +55,7 @@ class ChallengePenaltyFragment : Fragment() {
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = true //완료 버튼 활성화
                     binding.challengePenaltyNextBtn.isActivated = true //다음 버튼 활성화
-                } else if(binding.challengePenaltyEnterEt.text.isEmpty()){
+                } else if(binding.challengePenaltyEnterEt.text.length<1){
                     //페널티 입력되지 않은 경우 버튼 비활성화
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = false //완료 버튼 비활성화
@@ -111,23 +113,26 @@ class ChallengePenaltyFragment : Fragment() {
         binding.challengePenaltySkipCl.setOnClickListener {
             selectListener(binding.challengePenaltySkipCl)
         }
-//        //직접입력 et 클릭 시 선택된 페널티 비활성화
-//        binding.challengePenaltyEnterEt.setOnTouchListener { _, _ ->
-//            isFirst = true
-//            curPenalty.isSelected = false
-//            false // false를 반환해야 EditText의 기본 동작(포커스 + 키보드 열기)이 함께 작동
-//        }
+        //직접입력 et 클릭 시 선택된 페널티 비활성화
+        binding.challengePenaltyEnterEt.setOnFocusChangeListener{ v, hasFocus ->
+            if (hasFocus) {
+                isFirst = true
+                curPenalty.isSelected = false
+            }
+        }
         //페널티 직접입력 완료 버튼: 조건 만족한 경우만 활성화
         binding.challengePenaltyCompleteBtn.setOnClickListener {
             if (!binding.challengePenaltyCompleteBtn.isActivated) return@setOnClickListener
             penalty = binding.challengePenaltyEnterEt.text.toString()
-            binding.challengePenaltyNextBtn.isActivated= true
+            binding.challengePenaltyNextBtn.isActivated= true //다음 버튼 활성화
+            binding.challengePenaltyCompleteBtn.isActivated = false
+            binding.challengePenaltyEnterEt.clearFocus() //커서 해제
         }
         //다음 버튼 : 챌린지 신청 완료 화면으로 이동
         binding.challengePenaltyNextBtn.setOnClickListener {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, Fragment())
+                .replace(R.id.goal_container, ChallengeFriendFragment())
                 .commitAllowingStateLoss()
         }
     }

@@ -1,6 +1,7 @@
 package com.example.planup.main.my.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,9 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageAlertBinding
+import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.my.adapter.AlertRVAdapter
+import kotlin.math.min
 
 class MypageAlertFragment : Fragment() {
     lateinit var binding: FragmentMypageAlertBinding
@@ -22,13 +26,12 @@ class MypageAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageAlertBinding.inflate(inflater, container, false)
-        setSpinner(binding.serviceTimeSp,R.array.spinner_morning_afternoon)
-        setSpinner(binding.serviceHourSp,R.array.spinner_hour)
-        setSpinner(binding.serviceMinuteSp,R.array.spinner_minute_second)
+        showDropdown()
         clickListener()
         return binding.root
     }
 
+    //클릭 이벤트
     private fun clickListener() {
         /*뒤로 가기*/
         binding.serviceBackIv.setOnClickListener {
@@ -62,6 +65,9 @@ class MypageAlertFragment : Fragment() {
             binding.serviceRegularOnIv.visibility = View.GONE
             binding.serviceRegularOffIv.visibility = View.VISIBLE
             binding.serviceDayCl.visibility = View.GONE
+            binding.serviceTimeCl.visibility = View.GONE
+            binding.serviceHourRv.visibility = View.GONE
+            binding.serviceMinuteRv.visibility = View.GONE
         }
         binding.serviceRegularOffIv.setOnClickListener {
             binding.serviceRegularOnIv.visibility = View.VISIBLE
@@ -70,87 +76,123 @@ class MypageAlertFragment : Fragment() {
         }
 
         /* 시간 설정 */
+        //오전, 오후
+        binding.serviceTimeTv.setOnClickListener {
+            binding.serviceTimeCl.visibility = View.VISIBLE
+        }
+        binding.serviceMorningTv.setOnClickListener {
+            binding.serviceTimeTv.text = binding.serviceMorningTv.text.toString()
+            binding.serviceTimeCl.visibility = View.GONE
+        }
+        binding.serviceAfternoonTv.setOnClickListener {
+            binding.serviceTimeTv.text = binding.serviceAfternoonTv.text.toString()
+            binding.serviceTimeCl.visibility = View.GONE
+        }
+        //시각
+        binding.serviceHourTv.setOnClickListener {
+            binding.serviceHourRv.visibility = View.VISIBLE
+        }
+        //분
+        binding.serviceMinuteTv.setOnClickListener {
+            binding.serviceMinuteRv.visibility = View.VISIBLE
+        }
 
         /* 요일 선택 효과 */
         val selected = ContextCompat.getColor(context, R.color.blue_200)
         val unselected = ContextCompat.getColor(context, R.color.black_300)
-        binding.serviceEverydayCl.setOnClickListener { //매일
-            binding.serviceEverydayCl.isActivated = !binding.serviceEverydayCl.isActivated
+        // 매일
+        binding.serviceEverydayTv.setOnClickListener {
+            binding.serviceEverydayTv.isSelected = !binding.serviceEverydayTv.isSelected
             binding.serviceEverydayTv.setTextColor(
-                if (binding.serviceEverydayCl.isActivated) selected else unselected
+                if (binding.serviceEverydayTv.isSelected) selected else unselected
             )
         }
+
         // 월요일
-        binding.serviceMondayCl.setOnClickListener {
-            binding.serviceMondayCl.isActivated = !binding.serviceMondayCl.isActivated
+        binding.serviceMondayTv.setOnClickListener {
+            binding.serviceMondayTv.isSelected = !binding.serviceMondayTv.isSelected
             binding.serviceMondayTv.setTextColor(
-                if (binding.serviceMondayCl.isActivated) selected else unselected
+                if (binding.serviceMondayTv.isSelected) selected else unselected
             )
         }
 
         // 화요일
-        binding.serviceTuesdayCl.setOnClickListener {
-            binding.serviceTuesdayCl.isActivated = !binding.serviceTuesdayCl.isActivated
+        binding.serviceTuesdayTv.setOnClickListener {
+            binding.serviceTuesdayTv.isSelected = !binding.serviceTuesdayTv.isSelected
             binding.serviceTuesdayTv.setTextColor(
-                if (binding.serviceTuesdayCl.isActivated) selected else unselected
+                if (binding.serviceTuesdayTv.isSelected) selected else unselected
             )
         }
 
         // 수요일
-        binding.serviceWednesdayCl.setOnClickListener {
-            binding.serviceWednesdayCl.isActivated = !binding.serviceWednesdayCl.isActivated
+        binding.serviceWednesdayTv.setOnClickListener {
+            binding.serviceWednesdayTv.isSelected = !binding.serviceWednesdayTv.isSelected
             binding.serviceWednesdayTv.setTextColor(
-                if (binding.serviceWednesdayCl.isActivated) selected else unselected
+                if (binding.serviceWednesdayTv.isSelected) selected else unselected
             )
         }
 
         // 목요일
-        binding.serviceThursdayCl.setOnClickListener {
-            binding.serviceThursdayCl.isActivated = !binding.serviceThursdayCl.isActivated
+        binding.serviceThursdayTv.setOnClickListener {
+            binding.serviceThursdayTv.isSelected = !binding.serviceThursdayTv.isSelected
             binding.serviceThursdayTv.setTextColor(
-                if (binding.serviceThursdayCl.isActivated) selected else unselected
+                if (binding.serviceThursdayTv.isSelected) selected else unselected
             )
         }
 
         // 금요일
-        binding.serviceFridayCl.setOnClickListener {
-            binding.serviceFridayCl.isActivated = !binding.serviceFridayCl.isActivated
+        binding.serviceFridayTv.setOnClickListener {
+            binding.serviceFridayTv.isSelected = !binding.serviceFridayTv.isSelected
             binding.serviceFridayTv.setTextColor(
-                if (binding.serviceFridayCl.isActivated) selected else unselected
+                if (binding.serviceFridayTv.isSelected) selected else unselected
             )
         }
 
         // 토요일
-        binding.serviceSaturdayCl.setOnClickListener {
-            binding.serviceSaturdayCl.isActivated = !binding.serviceSaturdayCl.isActivated
+        binding.serviceSaturdayTv.setOnClickListener {
+            binding.serviceSaturdayTv.isSelected = !binding.serviceSaturdayTv.isSelected
             binding.serviceSaturdayTv.setTextColor(
-                if (binding.serviceSaturdayCl.isActivated) selected else unselected
+                if (binding.serviceSaturdayTv.isSelected) selected else unselected
             )
         }
 
         // 일요일
-        binding.serviceSundayCl.setOnClickListener {
-            binding.serviceSundayCl.isActivated = !binding.serviceSundayCl.isActivated
+        binding.serviceSundayTv.setOnClickListener {
+            binding.serviceSundayTv.isSelected = !binding.serviceSundayTv.isSelected
             binding.serviceSundayTv.setTextColor(
-                if (binding.serviceSundayCl.isActivated) selected else unselected
+                if (binding.serviceSundayTv.isSelected) selected else unselected
             )
         }
 
 
+
     }
+    //알림설정 드롭다운 시간/분
+    private fun showDropdown(){
+        //시간, 분 어레이 생성
+        val hours:ArrayList<String> = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList())
+        val minutes:ArrayList<String> = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList())
+        //리사이클러 뷰 어댑터 설정
+        val adapter = ArrayList<AlertRVAdapter>()
+        adapter.add(0, AlertRVAdapter(hours))
+        adapter.add(1, AlertRVAdapter(minutes))
 
-    private fun setSpinner(spinnerId:AppCompatSpinner, stringId: Int){
-        val spinner = spinnerId
-        val items = resources.getStringArray(stringId)
-        val adapter = ArrayAdapter(requireContext(), R.layout.item_spinner_challenge_alert, items)//스피너 위젯 설정
-        adapter.setDropDownViewResource(R.layout.dropdown_alert)//드롭다운 메뉴 설정
-        spinner.adapter = adapter
+        binding.serviceHourRv.adapter = adapter[0]
+        binding.serviceMinuteRv.adapter = adapter[1]
 
-        spinner.setSelection(0,false)
-
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {}
-            override fun onNothingSelected(p0: AdapterView<*>?) {}
-        }
+        //드롭다운을 통한 시간 설정
+        adapter[0].setDropdownListener(object : AlertRVAdapter.DropdownListener{
+            override fun setTime(position: Int) {
+                binding.serviceHourTv.text = hours[position]
+                binding.serviceHourRv.visibility = View.GONE
+            }
+        })
+        //드롭다운을 통한 분 설정
+        adapter[1].setDropdownListener(object : AlertRVAdapter.DropdownListener{
+            override fun setTime(position: Int) {
+                binding.serviceMinuteTv.text = minutes[position]
+                binding.serviceMinuteRv.visibility = View.GONE
+            }
+        })
     }
 }

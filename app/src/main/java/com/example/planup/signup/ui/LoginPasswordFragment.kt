@@ -38,6 +38,7 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
         backIcon.setOnClickListener {
@@ -186,6 +187,7 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
     }
 
+    /* 키보드 숨기는 메서드 */
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)

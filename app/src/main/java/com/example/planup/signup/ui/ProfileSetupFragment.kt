@@ -156,7 +156,8 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 if (extension == "jpg" || extension == "jpeg" || extension == "png") {
                     uploadProfileImage(uri)
                 } else {
-                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
@@ -290,7 +291,6 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         return path
     }
 
-    /* URI에서 파일 이름 추출 */
     private fun getFileNameFromUri(uri: Uri): String? {
         val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
         return if (cursor != null && cursor.moveToFirst()) {
@@ -303,8 +303,10 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         }
     }
 
+    /* 키보드 숨기는 메서드 */
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 }

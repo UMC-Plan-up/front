@@ -28,9 +28,9 @@ class PushAlertFragment : Fragment() {
         binding = FragmentPushAlertBinding.inflate(inflater, container, false)
         shouldShowPopup = arguments?.getBoolean("SHOW_POPUP") ?: false
 
-        setSpinner(binding.alertTimeSp, R.array.spinner_morning_afternoon)
-        setSpinner(binding.alertHourSp, R.array.spinner_hour)
-        setSpinner(binding.alertMinuteSp, R.array.spinner_minute_second)
+//        setSpinner(binding.alertTimeSp, R.array.spinner_morning_afternoon)
+//        setSpinner(binding.alertHourSp, R.array.spinner_hour)
+//        setSpinner(binding.alertMinuteSp, R.array.spinner_minute_second)
 
         clickListener()
 
@@ -127,37 +127,69 @@ class PushAlertFragment : Fragment() {
         }
     }
 
+//    /* 스피너 초기화 */
+//    private fun setSpinner(
+//        spinnerId: androidx.appcompat.widget.AppCompatSpinner,
+//        stringId: Int
+//    ) {
+//        val items = resources.getStringArray(stringId)
+//        val adapter = ArrayAdapter(
+//            requireContext(),
+//            R.layout.item_spinner_challenge_alert,
+//            items
+//        )
+//        adapter.setDropDownViewResource(R.layout.dropdown_alert)
+//        spinnerId.adapter = adapter
+//        spinnerId.setSelection(0, false)
+//
+//        spinnerId.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parent: AdapterView<*>,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                val selected = parent.getItemAtPosition(position).toString()
+//                // 선택된 값 사용 가능 (예: Toast 등)
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {
+//                // 선택 안됨
+//            }
+//        }
+//    }
+
     /* 스피너 초기화 */
-    private fun setSpinner(
-        spinnerId: androidx.appcompat.widget.AppCompatSpinner,
-        stringId: Int
-    ) {
-        val items = resources.getStringArray(stringId)
-        val adapter = ArrayAdapter(
-            requireContext(),
-            R.layout.item_spinner_challenge_alert,
-            items
-        )
-        adapter.setDropDownViewResource(R.layout.dropdown_alert)
-        spinnerId.adapter = adapter
-        spinnerId.setSelection(0, false)
-
-        spinnerId.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val selected = parent.getItemAtPosition(position).toString()
-                // 선택된 값 사용 가능 (예: Toast 등)
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // 선택 안됨
-            }
-        }
-    }
+//    private fun setSpinner(
+//        spinnerId: androidx.appcompat.widget.AppCompatSpinner,
+//        stringId: Int
+//    ) {
+//        val items = resources.getStringArray(stringId)
+//        val adapter = ArrayAdapter(
+//            requireContext(),
+//            R.layout.item_spinner_challenge_alert,
+//            items
+//        )
+//        adapter.setDropDownViewResource(R.layout.dropdown_alert)
+//        spinnerId.adapter = adapter
+//        spinnerId.setSelection(0, false)
+//
+//        spinnerId.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parent: AdapterView<*>,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                val selected = parent.getItemAtPosition(position).toString()
+//                // 선택된 값 사용 가능 (예: Toast 등)
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>) {
+//                // 선택 안됨
+//            }
+//        }
+//    }
 
     companion object {
         fun newInstance(showPopup: Boolean = false): PushAlertFragment {

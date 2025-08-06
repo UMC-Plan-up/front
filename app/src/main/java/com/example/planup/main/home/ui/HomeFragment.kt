@@ -1,21 +1,45 @@
 package com.example.planup.main.home.ui
 
+import android.content.Intent
+import android.app.Dialog
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
-import com.example.planup.goal.ui.ChallengeSetAlertFragment
+import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
+import com.kizitonwose.calendar.core.CalendarDay
+import com.kizitonwose.calendar.view.CalendarView
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
+import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
+import java.util.Locale
+import com.example.planup.main.home.item.HomeRetrofitInstance
+import com.example.planup.main.home.item.MyGoalApiResponse
+import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.main.record.ui.ReceiveChallengeFragment
 
 class HomeFragment : Fragment() {
 
@@ -23,13 +47,20 @@ class HomeFragment : Fragment() {
     private lateinit var dailyAdapter: DailyToDoAdapter
     private lateinit var friendRecyclerView: RecyclerView
     private lateinit var friendAdapter: FriendChallengeAdapter
+    private lateinit var calendarCardView : CardView
+    private val today = LocalDate.now()
+    private var selectedDate = today
+    private val eventMap: Map<LocalDate, List<String>> = mapOf(
+        LocalDate.of(2025, 7, 17) to listOf("토익 공부하기", "헬스장 가기", "스터디 모임"),
+        LocalDate.of(2025, 7, 18) to listOf("<인간관계론> 읽기")
+    )
 
     private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHomeBinding.inflate(inflater,container,false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         clickListener()
         return binding.root
     }
@@ -63,16 +94,150 @@ class HomeFragment : Fragment() {
 
         friendAdapter = FriendChallengeAdapter(dummyData)
         friendRecyclerView.adapter = friendAdapter
+
+        //---------------------달력---------------------
+        val calendarView = view.findViewById<CalendarView>(R.id.home_calendarView)
+        val monthYearText = view.findViewById<TextView>(R.id.home_monthYearText)
+
+
+        val daysOfWeek = daysOfWeekFromLocale()
+        val currentMonth = YearMonth.now()
+        calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
+        calendarView.scrollToMonth(currentMonth)
+
+        monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+
+        calendarView.monthScrollListener = { month ->
+            monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        }
+
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+            override fun create(view: View): DayViewContainer = DayViewContainer(view)
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
+                container.textView.text = data.date.dayOfMonth.toString()
+                container.textView.setBackgroundResource(
+                    if (data.date == selectedDate) R.drawable.bg_calendar_select else 0
+                )
+
+                val events = eventMap[data.date] ?: emptyList()
+                val bars = listOf(container.bar1, container.bar2, container.bar3)
+                container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
+                bars.forEach { it.visibility = View.GONE }
+
+                for (i in 0 until minOf(events.size, 3)) {
+                    bars[i].visibility = View.VISIBLE
+                }
+
+                container.view.setOnClickListener {
+                    selectedDate = data.date
+                    calendarView.notifyCalendarChanged()
+                }
+            }
+        }
+
+        calendarCardView = view.findViewById(R.id.home_calendar_cardView)
+        calendarCardView.setOnClickListener {
+            val intent = Intent(requireContext(), CalendarActivity::class.java)
+            startActivity(intent)
+        }
+
+        val fab = binding.homeFab
+        val fragmentTimer = TimerFragment()
+        val bundle = Bundle().apply {
+            putString("selectedDate", selectedDate.toString())
+        }
+        Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
+        fragmentTimer.arguments = bundle
+        fab.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragmentTimer)
+                .addToBackStack(null)  // 뒤로 가기 가능하게 하려면 필요
+                .commit()
+        }
+    }
+    inner class DayViewContainer(view: View) : ViewContainer(view) {
+        val textView: TextView = view.findViewById(R.id.calendarDayText)
+        val barsContainer: LinearLayout = view.findViewById(R.id.eventBarsContainer)
+        val bar1: View = view.findViewById(R.id.eventBar1)
+        val bar2: View = view.findViewById(R.id.eventBar2)
+        val bar3: View = view.findViewById(R.id.eventBar3)
     }
 
-    private fun clickListener(){
-        binding.homeAlarmCl.setOnClickListener{
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_container, HomeAlertFragment())
-//                .commitAllowingStateLoss()
+    fun daysOfWeekFromLocale(): List<DayOfWeek> {
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val days = DayOfWeek.values().toList()
+        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
+    }
+    private fun clickListener() {
+        binding.homeAlarmCl.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, ChallengeSetAlertFragment())
+                .replace(R.id.main_container, HomeAlertFragment())
                 .commitAllowingStateLoss()
         }
+        binding.imageView5.setOnClickListener {
+            showPopup()
+        }
+    }
+    private fun showPopup(){
+        val dialog = Dialog(context as MainActivity)
+        dialog.setContentView(R.layout.popup_challenge)
+        dialog.window?.apply {
+            setGravity(Gravity.CENTER)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+        }
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+        dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
+            dialog.dismiss()
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,ReceiveChallengeFragment())
+                .replace(R.id.main_container, ChallengeAlertFragment())
+                .commitAllowingStateLoss()
+        }
+        dialog.show()
+    }
+
+
+    private fun fetchGoals() {
+        lifecycleScope.launch {
+            try {
+                val response = HomeRetrofitInstance.api.getMyGoals()
+
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    if (body != null && body.isSuccess) {
+                        when (body.code) {
+                            "200" -> {
+                                val goals = body.result
+                                Log.d("HomeFragment", "조회 성공: $goals")
+                                // goals RecyclerView 등에서 사용
+                            }
+                            "S001" -> {
+                                showToast("잘못된 입력값입니다.")
+                            }
+                            "S002" -> {
+                                showToast("서버 에러가 발생했습니다.")
+                            }
+                            "U001" -> {
+                                showToast("존재하지 않는 사용자입니다.")
+                            }
+                            else -> {
+                                showToast("알 수 없는 오류 코드: ${body.code}")
+                            }
+                        }
+                    } else {
+                        showToast("서버 응답 실패: ${body?.message ?: "응답 없음"}")
+                    }
+                } else {
+                    showToast("HTTP 오류: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                Log.e("HomeFragment", "예외 발생: ${e.localizedMessage}")
+                showToast("네트워크 오류 발생")
+            }
+        }
+    }
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

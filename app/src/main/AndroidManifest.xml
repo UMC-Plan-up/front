@@ -4,7 +4,11 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".network.App"
         android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,7 +18,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanUP"
-        android:name=".MyApplication" >
+        android:usesCleartextTraffic="true">
+
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="@string/kakao_app_key" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
@@ -34,6 +42,9 @@
         <activity android:name=".signup.SignupActivity" />
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity" />
+        <activity android:name=".main.home.ui.CalendarActivity"/>
+        <activity android:name=".main.goal.ui.EditFriendGoalActivity"/>
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
