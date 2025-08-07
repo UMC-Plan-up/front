@@ -1,9 +1,32 @@
 <resources>
     <string name="app_name">PlanUP</string>
 
-    <string name="premium_policy">임시 스트링</string>
-    <string name="benefit_question">임시 스트링</string>
-    <string name="choose_plan">임시 스트링</string>
+    <string name="premium_policy">유료 정책</string>
+    <string name="benefit_question">어떤 혜택을 누릴 수 있나요?</string>
+    <string name="choose_plan">플랜을 선택해 주세요!</string>
+    <string name="benefit_title_1">혜택 1</string>
+    <string name="benefit_desc_1">개인 목표 개수 제한 해제</string>
+    <string name="benefit_title_2">혜택 2</string>
+    <string name="benefit_desc_2">1:1 챌린지 개수 제한 해제</string>
+    <string name="benefit_title_3">혜택 3</string>
+    <string name="benefit_desc_3">목표 자동 종료일 설정 기능</string>
+    <string name="benefit_title_4">혜택 4</string>
+    <string name="benefit_desc_4">광고 제거</string>
+    <string name="discount_10_percent">10% 할인</string>
+    <string name="label_max_discount">최대 할인 적용</string>
+    <string name="basic_plan_title">Basic Plan</string>
+    <string name="basic_plan_monthly_price">1,900 원 / 1개월</string>
+    <string name="basic_plan_yearly_price">20,520 원 / 1년</string>
+    <string name="basic_plan_benefit_1">최대 10개까지 개인 목표 추가</string>
+    <string name="basic_plan_benefit_2">목표 자동 종료일 설정 기능</string>
+    <string name="basic_plan_benefit_3">광고 표시 횟수 50% 감소</string>
+    <string name="pro_plan_title">Pro Plan</string>
+    <string name="pro_plan_monthly_price">2,900 원 / 1개월</string>
+    <string name="pro_plan_yearly_price">31,320 원 / 1년</string>
+    <string name="pro_plan_benefit_1">개수 제한 없이 목표 추가</string>
+    <string name="pro_plan_benefit_2">목표 자동 종료일 설정 기능</string>
+    <string name="pro_plan_benefit_3">1:1 챌린지 개수 제한 해제</string>
+    <string name="pro_plan_benefit_4">광고 삭제</string>
 
 
 

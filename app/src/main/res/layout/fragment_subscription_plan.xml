@@ -62,7 +62,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="혜택 1"
+                android:text="@string/benefit_title_1"
                 android:textColor="@color/green_200"
                 android:textSize="16sp" />
 
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="개인 목표 개수 제한 해제"
+                android:text="@string/benefit_desc_1"
                 android:textColor="@color/black_400"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="혜택 2"
+                android:text="@string/benefit_title_2"
                 android:textColor="@color/green_200"
                 android:textSize="16sp" />
 
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="1:1 챌린지 개수 제한 해제"
+                android:text="@string/benefit_desc_2"
                 android:textColor="@color/black_400"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -130,7 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="혜택 3"
+                android:text="@string/benefit_title_3"
                 android:textColor="@color/green_200"
                 android:textSize="16sp" />
 
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="목표 자동 종료일 설정 기능"
+                android:text="@string/benefit_desc_3"
                 android:textColor="@color/black_400"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -164,7 +164,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="혜택 4"
+                android:text="@string/benefit_title_4"
                 android:textColor="@color/green_200"
                 android:textSize="16sp" />
 
@@ -173,7 +173,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:fontFamily="@font/pretendard_semibold"
-                android:text="광고 제거"
+                android:text="@string/benefit_desc_4"
                 android:textColor="@color/black_400"
                 android:textSize="16sp" />
         </LinearLayout>
@@ -216,7 +216,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="@font/pretendard_semibold"
-                        android:text="Basic Plan"
+                        android:text="@string/basic_plan_title"
                         android:textColor="@color/blue_200"
                         android:textSize="18sp" />
 
@@ -226,7 +226,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="@font/pretendard_semibold"
-                        android:text="1,900 원 / 1개월"
+                        android:text="@string/basic_plan_monthly_price"
                         android:textColor="#252323"
                         android:textSize="18sp" />
 
@@ -241,7 +241,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:fontFamily="@font/pretendard_semibold"
-                            android:text="20,520 원 / 1년"
+                            android:text="@string/basic_plan_yearly_price"
                             android:textColor="#252323"
                             android:textSize="18sp" />
 
@@ -256,7 +256,7 @@
                             android:paddingTop="4.5dp"
                             android:paddingRight="8dp"
                             android:paddingBottom="4.5dp"
-                            android:text="10% 할인"
+                            android:text="@string/discount_10_percent"
                             android:textColor="@color/blue_400"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -285,7 +285,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="최대 10개까지 개인 목표 추가"
+                                android:text="@string/label_max_discount"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -308,7 +308,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="목표 자동 종료일 설정 기능"
+                                android:text="@string/basic_plan_benefit_2"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -331,7 +331,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="광고 표시 횟수 50% 감소"
+                                android:text="@string/basic_plan_benefit_3"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -352,7 +352,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
-                android:text="최대 할인 적용"
+                android:text="@string/label_max_discount"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
@@ -388,7 +388,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginBottom="16dp"
                         android:fontFamily="@font/pretendard_semibold"
-                        android:text="Pro Plan"
+                        android:text="@string/pro_plan_title"
                         android:textColor="@color/red_200"
                         android:textSize="18sp" />
 
@@ -398,7 +398,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginBottom="4dp"
                         android:fontFamily="@font/pretendard_semibold"
-                        android:text="2,900 원 / 1개월"
+                        android:text="@string/pro_plan_monthly_price"
                         android:textColor="#252323"
                         android:textSize="18sp" />
 
@@ -413,7 +413,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="20dp"
                             android:fontFamily="@font/pretendard_semibold"
-                            android:text="31,320 원 / 1년"
+                            android:text="@string/pro_plan_yearly_price"
                             android:textColor="#252323"
                             android:textSize="18sp" />
 
@@ -428,7 +428,7 @@
                             android:paddingTop="4.5dp"
                             android:paddingRight="8dp"
                             android:paddingBottom="4.5dp"
-                            android:text="10% 할인"
+                            android:text="@string/discount_10_percent"
                             android:textColor="@color/blue_400"
                             android:textSize="11sp" />
                     </LinearLayout>
@@ -457,7 +457,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="개수 제한 없이 목표 추가"
+                                android:text="@string/pro_plan_benefit_1"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -480,7 +480,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="목표 자동 종료일 설정 기능"
+                                android:text="@string/pro_plan_benefit_2"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -503,7 +503,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="1:1 챌린지 개수 제한 해제"
+                                android:text="@string/pro_plan_benefit_3"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -526,7 +526,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/pretendard_semibold"
-                                android:text="광고 삭제"
+                                android:text="@string/pro_plan_benefit_4"
                                 android:textColor="#252323"
                                 android:textSize="16sp" />
                         </LinearLayout>
@@ -547,7 +547,7 @@
                 android:paddingTop="4dp"
                 android:paddingEnd="8dp"
                 android:paddingBottom="4dp"
-                android:text="최대 할인 적용"
+                android:text="@string/label_max_discount"
                 android:textColor="@android:color/white"
                 android:textSize="14sp" />
 
