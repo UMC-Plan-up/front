@@ -1,9 +1,15 @@
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/dropdown_recycler_rv"
-    android:layout_width="70dp"
-    android:layout_height="219dp"
-    android:paddingStart="12dp"
-    android:background="@drawable/bg_timer_dropdown"
-    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    android:orientation="vertical"/>
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/dropdown_recycler_rv"
+        android:layout_width="70dp"
+        android:layout_height="219dp"
+        android:paddingStart="12dp"
+        android:background="@drawable/bg_timer_dropdown"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
