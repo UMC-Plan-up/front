@@ -167,11 +167,13 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
                         handleErrorCode(responseBody?.code ?: "")
                     }
                 } else {
+                    Log.d("okhttp","signupApi")
                     setErrorMessage("서버와의 통신에 실패했습니다.")
                 }
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                Log.d("okhttp","signupApi")
                 setErrorMessage("네트워크 오류가 발생했습니다.")
             }
         }

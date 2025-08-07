@@ -52,17 +52,17 @@ class MypagePasswordLinkFragment: Fragment(),ResponseViewer {
                 setGravity(Gravity.BOTTOM)
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
                 //취소 버튼 클릭: 팝업 종료
-                dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+                dialog.findViewById<View>(R.id.popup_cancel_btn).setOnClickListener{
                     dialog.dismiss()
                 }
                 //이메일 다시 받기 클릭
-                dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+                dialog.findViewById<View>(R.id.popup_cancel_btn).setOnClickListener{
                     val emailService = UserController()
                     emailService.setResponseViewer(this@MypagePasswordLinkFragment)
                     emailService.emailService(0, email)
                 }
                 //카카오 로그인 클릭
-                dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+                dialog.findViewById<View>(R.id.popup_cancel_btn).setOnClickListener{
 
                 }
                 dialog.setCanceledOnTouchOutside(false)

@@ -13,7 +13,7 @@ import com.example.planup.network.data.PostFriendsReport
 import com.example.planup.network.data.PostFriendsUnblocked
 import com.example.planup.network.entity.FriendReportDto
 import com.example.planup.network.entity.FriendUnblockDto
-import com.example.planup.network.getRetrofit2
+import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserControllerInterface
 import retrofit2.Call
 import retrofit2.Callback
@@ -46,7 +46,7 @@ class UserController {
 
     //닉네임 변경
     fun nicknameService(userId: Int, nickname: String) {
-        val nicknameService = getRetrofit2().create(UserControllerInterface::class.java)
+        val nicknameService = getRetrofit().create(UserControllerInterface::class.java)
         nicknameService.changeNickname(userId, nickname).enqueue(object : Callback<PostNickname> {
             override fun onResponse(call: Call<PostNickname>, response: Response<PostNickname>) {
                 when (response.isSuccessful) {
@@ -72,7 +72,7 @@ class UserController {
 
     //이메일 변경
     fun emailService(userId: Int, email: String) {
-        val emailService = getRetrofit2().create(UserControllerInterface::class.java)
+        val emailService = getRetrofit().create(UserControllerInterface::class.java)
         emailService.changeEmail(userId, email).enqueue(object : Callback<PostEmail> {
             override fun onResponse(call: Call<PostEmail>, response: Response<PostEmail>) {
                 when (response.isSuccessful) {
@@ -98,7 +98,7 @@ class UserController {
 
     //비밀번호 변경
     fun passwordService(userId: Int, password: String) {
-        val passwordService = getRetrofit2().create(UserControllerInterface::class.java)
+        val passwordService = getRetrofit().create(UserControllerInterface::class.java)
         passwordService.changePassword(userId, password)
             .enqueue(object : Callback<PostPasswordChange> {
                 override fun onResponse(
@@ -120,29 +120,28 @@ class UserController {
                 }
 
                 override fun onFailure(call: Call<PostPasswordChange>, t: Throwable) {
-                    Log.d("asfddafa", t.toString())
+                    Log.d("okhttp", "fail: $t")
                 }
 
             })
     }
 
     //차단 친구 조회
-    fun friendsBlockedService(userId: Int) {
-        val blockFriendService = getRetrofit2().create(UserControllerInterface::class.java)
-        blockFriendService.blockedFriend(userId).enqueue(object : Callback<BlockedFriends> {
+    fun friendsBlockedService() {
+        val blockFriendService = getRetrofit().create(UserControllerInterface::class.java)
+        blockFriendService.blockedFriend().enqueue(object : Callback<BlockedFriends> {
             override fun onResponse(
                 call: Call<BlockedFriends>,
                 response: Response<BlockedFriends>
             ) {
                 when (response.isSuccessful) {
                     true -> {
-                        friendsBlockedAdapter.successBlockFriend(response.body()?.result)
+                        friendsBlockedAdapter.successBlockedFriends(response.body()?.result)
                     }
-
                     else -> {
-                        friendsBlockedAdapter.failBlockFriend(
-                            response.body()!!.code,
-                            response.body()!!.message
+                        friendsBlockedAdapter.failBlockedFriends(
+                            response.body()?.code,
+                            response.body()?.message
                         )
                     }
                 }
@@ -155,8 +154,8 @@ class UserController {
     }
 
     //차단 친구 해제
-    fun friendsUnblockedService(friendUnblockDto: FriendUnblockDto){
-        val friendUnblockService = getRetrofit2().create(UserControllerInterface::class.java)
+    fun friendsUnblockService(friendUnblockDto: FriendUnblockDto){
+        val friendUnblockService = getRetrofit().create(UserControllerInterface::class.java)
         friendUnblockService.unblockedFriend(friendUnblockDto).enqueue(object : Callback<PostFriendsUnblocked>{
             override fun onResponse(
                 call: Call<PostFriendsUnblocked>,
@@ -164,10 +163,12 @@ class UserController {
             ) {
                 when (response.isSuccessful) {
                     true -> {
+                        Log.d("okhttp","success ${response.body()}")
                         friendUnblockedAdapter.successFriendUnblock(friendUnblockDto.friendNickname)
                     }
 
                     else -> {
+                        Log.d("okhttp","error ${response.body()}")
                         friendUnblockedAdapter.failFriendUnblock(response.code().toString(),response.message().toString())
                     }
                 }
@@ -182,7 +183,7 @@ class UserController {
 
     //친구 신고
     fun reportFriendService(friend: FriendReportDto){
-        val reportFriendService = getRetrofit2().create(UserControllerInterface::class.java)
+        val reportFriendService = getRetrofit().create(UserControllerInterface::class.java)
         reportFriendService.reportFriend(friend).enqueue(object : Callback<PostFriendsReport>{
             override fun onResponse(
                 call: Call<PostFriendsReport>,
