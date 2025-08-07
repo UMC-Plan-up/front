@@ -1,14 +1,11 @@
 package com.example.planup.goal.ui
 
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
@@ -64,8 +61,12 @@ class ChallengeSetTimerFragment:Fragment() {
         //다음 버튼 -> 페널티 설정 페이지로 이동
         binding.challengeTimerNextBtn.setOnClickListener{
             if (!binding.challengeTimerNextBtn.isActivated) return@setOnClickListener
+            val penaltyFragment = ChallengePenaltyFragment()
+            penaltyFragment.arguments = Bundle().apply {
+                putString("certification","timer")
+            }
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengePenaltyFragment())
+                .replace(R.id.goal_container,penaltyFragment)
                 .commitAllowingStateLoss()
         }
     }
@@ -100,7 +101,7 @@ class ChallengeSetTimerFragment:Fragment() {
 
     private fun showDropdown(items: ArrayList<String>, view: TextView, selected: Int){//리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
-        val popupView = inflater.inflate(R.layout.item_recycler_dropdown,null)
+        val popupView = inflater.inflate(R.layout.item_recycler_dropdown_long,null)
         val popupWindow = PopupWindow(
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,

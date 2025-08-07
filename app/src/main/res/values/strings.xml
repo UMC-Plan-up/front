@@ -265,7 +265,7 @@
     <string name="challenge_finish_setting_content">플랜업애서 설정한 목표들은 기본적으로 친구와 공유됩니다. 목표 공유 설정은 추후에도 \'목표\’탭에서 변경 가능해요!</string>
     <!-- fragment_challenge_finish_request.xml -->
     <string name="challenge_finish_request_title">챌린지 참여 요청을 보냈어요!</string>
-    <string name="challenge_finish_request_subtitle">%$s에게 챌린지 참여를 요청했어요.</string>
+    <string name="challenge_finish_request_subtitle">%1$s에게 챌린지 참여를 요청했어요.</string>
     <string name="challenge_finish_request_content">친구에게 답변이 오면, 바로 알려드릴게요!</string>
     <!-- fragment_challenge_setting.xml -->
     <string name="set_challenge_subtitle">친구와 1:1로 단기 목표 성취에 도전해 보세요!</string>

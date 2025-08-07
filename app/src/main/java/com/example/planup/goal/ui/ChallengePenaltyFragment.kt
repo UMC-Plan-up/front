@@ -34,7 +34,7 @@ class ChallengePenaltyFragment : Fragment() {
 
     //프레그먼트 초기화 및 데이터 세팅
     private fun init() {
-        certification = "timer"//현재 챌린지 인증 방식이 타이머라고 가정
+        certification = arguments?.getString("certification","null").toString()//현재 챌린지 인증 방식이 타이머라고 가정
         curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 초기화
         if (!isFirst) binding.challengePenaltyNextBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
     }
