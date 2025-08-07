@@ -179,7 +179,7 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val request = com.example.planup.login.data.LoginRequestDto(email, password)
-                val response = com.example.planup.network.RetrofitInstance.loginApi.login(request)
+                val response = com.example.planup.network.RetrofitInstance.userApi.login(request)
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()!!.result

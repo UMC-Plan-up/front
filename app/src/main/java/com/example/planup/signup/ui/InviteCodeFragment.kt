@@ -81,7 +81,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
 
         lifecycleScope.launch {
             try {
-                val response = RetrofitInstance.inviteCodeApi.getInviteCode(accessToken)
+                val response = RetrofitInstance.userApi.getInviteCode(accessToken)
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val inviteCode = response.body()?.result?.inviteCode ?: ""

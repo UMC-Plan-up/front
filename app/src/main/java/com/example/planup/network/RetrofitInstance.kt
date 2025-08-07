@@ -2,7 +2,6 @@ package com.example.planup.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 object RetrofitInstance {
     private const val BASE_URL = "http://54.180.207.84:8080/"
@@ -14,34 +13,28 @@ object RetrofitInstance {
             .build()
     }
 
-    val signupApi: SignupApi by lazy {
-        retrofit.create(SignupApi::class.java)
-    }
-
     val termsApi: TermsApi by lazy {
         retrofit.create(TermsApi::class.java)
-    }
-
-    val passwordApi: PasswordApi by lazy {
-        retrofit.create(PasswordApi::class.java)
-    }
-    val loginApi: LoginApi by lazy {
-        retrofit.create(LoginApi::class.java)
     }
 
     val profileApi: ProfileApi by lazy {
         retrofit.create(ProfileApi::class.java)
     }
 
-    val inviteCodeApi: InviteCodeApi by lazy {
-        retrofit.create(InviteCodeApi::class.java)
+    val userApi: UserApi by lazy {
+        retrofit.create(UserApi::class.java)
     }
 
-    val GoalApi: GoalApi by lazy {
+    val goalApi: GoalApi by lazy {
         retrofit.create(GoalApi::class.java)
-        }
+    }
 
     val friendApi: FriendApi by lazy{
         retrofit.create(FriendApi::class.java)
     }
+
+    val myPageApi: MyPageApi by lazy {
+        retrofit.create(MyPageApi::class.java)
+    }
+
 }

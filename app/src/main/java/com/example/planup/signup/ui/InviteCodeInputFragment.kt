@@ -89,7 +89,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
             lifecycleScope.launch {
                 try {
                     val request = InviteCodeValidateRequest(inviteCode = enteredCode)
-                    val response = RetrofitInstance.inviteCodeApi.validateInviteCode(request)
+                    val response = RetrofitInstance.userApi.validateInviteCode(request)
 
                     if (response.isSuccessful) {
                         val responseBody = response.body()
@@ -154,7 +154,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         lifecycleScope.launch {
             try {
-                val repository = SignupRepository(RetrofitInstance.signupApi)
+                val repository = SignupRepository(RetrofitInstance.userApi)
                 val response = repository.signup(request)
 
                 if (response.isSuccessful) {
