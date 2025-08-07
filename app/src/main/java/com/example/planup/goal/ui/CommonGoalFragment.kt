@@ -26,10 +26,13 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        
         // GoalCategoryFragment → CommonGoalFragment에서 넘겨준 닉네임 받기
-//        goalOwnerName = requireArguments().getString("goalOwnerName") ?: "사용자"
-        goalOwnerName = savedInstanceState?.getString("goalOwnerName", "사용자").toString()
+        goalOwnerName = if (savedInstanceState != null) {
+            savedInstanceState.getString("goalOwnerName", "사용자") ?: "사용자"
+        } else {
+            requireArguments().getString("goalOwnerName") ?: "사용자"
+        }
 
         // 초기화
         backIcon = view.findViewById(R.id.backIcon)
@@ -38,7 +41,7 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
         moreButton = view.findViewById(R.id.moreButton)
         createCommunityButton = view.findViewById(R.id.createCommunityButton)
 
-        /* 뒤로가기 아이콘 → 이전 화면(GoalCategoryFragment)으로 이동 */
+        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
             (requireActivity() as GoalActivity)
                 .navigateToFragment(GoalCategoryFragment())
