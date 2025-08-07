@@ -95,8 +95,12 @@ class ChallengeSetPhotoFragment : Fragment() {
         //다음 버튼 클릭: 페널티 설정 화면으로 이동
         binding.btnNextTv.setOnClickListener {
             if (!binding.btnNextTv.isActivated) return@setOnClickListener
+            val penaltyFragment = ChallengePenaltyFragment()
+            penaltyFragment.arguments = Bundle().apply {
+                putString("certification","photo")
+            }
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, ChallengePenaltyFragment())
+                .replace(R.id.goal_container, penaltyFragment)
                 .commitAllowingStateLoss()
         }
     }
