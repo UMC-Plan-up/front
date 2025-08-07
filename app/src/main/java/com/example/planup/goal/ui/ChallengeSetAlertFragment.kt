@@ -1,20 +1,37 @@
 package com.example.planup.goal.ui
 
+import android.app.Dialog
+import android.content.Intent
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.text.Layout
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetAlertBinding
 import com.example.planup.goal.adapter.AlertRVAdapter
+import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
+import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.goal.GoalActivity
 
 class ChallengeSetAlertFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetAlertBinding
-    private var isFirst = true
+    private var isFirst = true //해당 페이지 처음 들어온 경우 알림설정에 대한 팝업을 보여줘야 함
+
+    private lateinit var hours: ArrayList<String> //시간
+    private lateinit var minutes: ArrayList<String> //분
+    private lateinit var times: ArrayList<String>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,63 +39,65 @@ class ChallengeSetAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeSetAlertBinding.inflate(inflater, container, false)
+        init()
         clickListener()
         return binding.root
     }
 
+    //프레그먼트 초기화
+    private fun init(){
+        hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>())
+        minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>())
+        times = resources.getStringArray((R.array.spinner_morning_afternoon)).toCollection(ArrayList<String>())
+        if (isFirst) showPopup()
+    }
     //클릭 이벤트
     private fun clickListener() {
-        //알림받기 토글
+        //알림받기 토글 끄기
         binding.alertReceiveOnIv.setOnClickListener {
             binding.alertReceiveOnIv.visibility = View.GONE
             binding.alertReceiveOffIv.visibility = View.VISIBLE
         }
+        //알림받기 토글 켜기
         binding.alertReceiveOffIv.setOnClickListener {
             binding.alertReceiveOnIv.visibility = View.VISIBLE
             binding.alertReceiveOffIv.visibility = View.GONE
         }
-        //정기알림 토글
+        //정기알림 토글 끄기
         binding.alertRegularOnIv.setOnClickListener {
             binding.alertRegularOnIv.visibility = View.GONE
             binding.alertRegularOffIv.visibility = View.VISIBLE
         }
+        //정기알림 토글 켜기
         binding.alertRegularOffIv.setOnClickListener {
             binding.alertRegularOnIv.visibility = View.VISIBLE
             binding.alertRegularOffIv.visibility = View.GONE
         }
         //저장 버튼 클릭
         binding.alertSaveBtn.setOnClickListener {
+            makeToast()
             if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
                 isFirst = false
-                (context as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, HomeFragment())
-                    .commitAllowingStateLoss()
+                val intent = Intent((context as GoalActivity), MainActivity::class.java)
+                startActivity(intent)
             } else {//첫 방문이 아닌 경우 홈 페이지로 이동
-                (context as MainActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, HomeFragment())
-                    .commitAllowingStateLoss()
+                val intent = Intent((context as GoalActivity), MainActivity::class.java)
+                startActivity(intent)
             }
         }
 
         //정기 알림 시간 설정
+        //오전/오후
         binding.alertTimeTv.setOnClickListener {
-            binding.alertTimeCl.visibility = View.VISIBLE
-        }
-        binding.alertMorningTv.setOnClickListener {
-            binding.alertTimeTv.setText(R.string.morning)
-            binding.alertTimeCl.visibility = View.GONE
-        }
-        binding.alertAfternoonTv.setOnClickListener {
-            binding.alertTimeTv.setText(R.string.afternoon)
-            binding.alertTimeCl.visibility = View.GONE
+            showDropDown(times,binding.alertTimeTv)
         }
         //시각 설정
         binding.alertHourTv.setOnClickListener {
-            binding.alertHourRv.visibility = View.VISIBLE
+            showDropDown(hours,binding.alertHourTv)
         }
         //분 설정
         binding.alertMinuteTv.setOnClickListener {
-            binding.alertMinuteRv.visibility = View.VISIBLE
+            showDropDown(minutes,binding.alertMinuteTv)
         }
         //정기 알림 요일 설정
         val selected = ContextCompat.getColor(context, R.color.blue_200)
@@ -150,26 +169,71 @@ class ChallengeSetAlertFragment : Fragment() {
 
 
     }
+    //첫 방문인 경우 알림설정 관련 팝업 출력
+    private fun showPopup(){
+        val dialog = Dialog(context as GoalActivity)
+        dialog.setContentView(R.layout.popup_push_alert)
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
+        }
+        //아니오 클릭
+        dialog.findViewById<TextView>(R.id.popup_push_no_btn).setOnClickListener {
+            isFirst = false
+            dialog.dismiss()
+            //경우에 따라 홈 또는 온보딩으로 이동
+            (context as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container,HomeFragment())
+                .commitAllowingStateLoss()
+        }
+        //네 클릭
+        dialog.findViewById<TextView>(R.id.popup_push_yes_btn).setOnClickListener {
+            dialog.dismiss()
+        }
+        //외부 터치 시 팝업 종료
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.show()
+    }
     //알림설정 시간 드롭다운
-    private fun showDropdown(){
-        val hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>())
-        val minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>())
-        val adapter = ArrayList<AlertRVAdapter>()
-        adapter.add(0,AlertRVAdapter(hours))
-        adapter.add(1, AlertRVAdapter(minutes))
+    private fun showDropDown(items: ArrayList<String>, view: TextView){
+        val inflater = LayoutInflater.from(context)
+        //드롭다운 레이아웃 적용 후 rvAdapter 적용
+        val popupView = inflater.inflate(R.layout.item_recycler_dropdown,null)
+        //드롭다운에 사용할 팝업 만들기
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        //외부 터치 시 드롭다운 사라지게 하기 위한 설정
+        popupWindow.setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())//배경 투명하게 설정
+        popupWindow.isOutsideTouchable = true //외부 터치 시 사라짐
 
-        binding.alertHourRv.adapter = adapter[0]
-        binding.alertMinuteRv.adapter = adapter[1]
+        //앵커뷰 위에 드롭다운 표시
+        popupWindow.showAsDropDown(view,0,0, Gravity.TOP)
 
-        adapter[0].setDropdownListener(object : AlertRVAdapter.DropdownListener{
+        //드롭다운 뷰에 사용되는 어댑터 생성 및 설정
+        val adapter = TimerRVAdapter(items)
+        adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener{
             override fun setTime(position: Int) {
-                binding.alertHourTv.text = hours[position]
+                view.text = items[position]
+                popupWindow.dismiss()
             }
         })
-        adapter[1].setDropdownListener(object : AlertRVAdapter.DropdownListener{
-            override fun setTime(position: Int) {
-                binding.alertMinuteTv.text = minutes[position]
-            }
-        })
+        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = adapter
+    }
+    //설정 완료 후 토스트 메시지 출력
+    private fun makeToast(){
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = R.string.toast_alert_setting.toString()
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 }

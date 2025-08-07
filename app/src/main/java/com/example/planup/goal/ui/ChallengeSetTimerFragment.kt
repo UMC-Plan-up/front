@@ -30,9 +30,8 @@ class ChallengeSetTimerFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeSetTimerBinding.inflate(inflater,container,false)
-        clickListener()
         init()
-
+        clickListener()
         return binding.root
     }
     private fun init(){
