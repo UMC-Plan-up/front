@@ -33,8 +33,11 @@ class ChallengeFinishRequestFragment:Fragment() {
         }
         //완료 버튼: 메인 액티비티, 홈 프레그먼트로 이동
         binding.challengeFinishCompleteBtn.setOnClickListener {
-            val intent = Intent(context as GoalActivity,MainActivity::class.java)
-            startActivity(intent)
+            (context as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container,ChallengeSetAlertFragment())
+                .commitAllowingStateLoss()
+//            val intent = Intent(context as GoalActivity,MainActivity::class.java)
+//            startActivity(intent)
         }
     }
 }

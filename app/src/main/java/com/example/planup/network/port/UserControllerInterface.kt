@@ -47,7 +47,7 @@ interface UserControllerInterface {
     fun changeEmail(@Query("userId") userId: Int, @Query("newEmail") email: String): Call<PostEmail>
 
     @GET("friends/blocked")
-    fun blockedFriend(@Query("userId") userId: Int): Call<BlockedFriends>
+    fun blockedFriend(): Call<BlockedFriends>
     @POST("friends/unblocked")
     fun unblockedFriend(@Body friend: FriendUnblockDto): Call<PostFriendsUnblocked>
     @POST("friends/report")

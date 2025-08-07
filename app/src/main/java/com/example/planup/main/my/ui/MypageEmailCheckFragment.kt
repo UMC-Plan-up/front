@@ -60,7 +60,7 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         }
     }
 
-    //이메일 입력 여부 확인
+    //이메일 입력 여부 확인: 이메일이 입력되어야 다음 버튼 활성화 됨
     private fun textListener() {
         binding.emailEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -76,12 +76,12 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         })
     }
 
-    // 이메일 유효성 확인
+    // 이메일 유효성 확인: 형식과 중복 여부 확인
     private fun checkMail() {
         val findAt = binding.emailEt.text.toString().indexOf('@',0)
         val findDot = binding.emailEt.text.toString().indexOf('.',0)
 
-        if (findAt != -1 || findDot != -1) //이메일 형식 확인
+        if (findAt == -1 || findDot == -1) //이메일 형식 확인
             showToast(context as MainActivity, R.string.toast_incorrect_email)
         else{ //이메일 중복 여부 확인
             val emailService = UserController()
@@ -90,7 +90,7 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         }
     }
 
-    // 이메일 도메인 드롭다운
+    // 이메일 도메인 드롭다운 메뉴로 제공
     private fun dropDown(view: View) {
         val inflater = LayoutInflater.from(context)
         popupView = inflater.inflate(R.layout.dropdown_email_domain, null)
@@ -141,7 +141,7 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         }
     }
 
-    // 드롭다운에서 선택한 이메일 도메인 표시
+    // 선택한 도메인을 드롭다운에 표시
     private fun showSelected(selectedDomain: Int, checkSelected: Int) {
         val colorSelected = ContextCompat.getColor(context, R.color.blue_300) //선택된 도메인
         val colorUnselected = ContextCompat.getColor(context, R.color.email_domain) //나머지 도메인

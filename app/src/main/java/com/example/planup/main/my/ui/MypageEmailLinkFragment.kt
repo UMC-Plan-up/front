@@ -27,8 +27,9 @@ class MypageEmailLinkFragment:Fragment(),ResponseViewer {
         binding = FragmentMypageEmailLinkBinding.inflate(inflater,container,false)
 
         //이전 프레그먼트에서 전달받은 이메일
-        email = savedInstanceState?.getString("email",null)!!
-
+        //email = savedInstanceState!!.getString("email","not received")
+        email = arguments?.getString("email","not received").toString()
+        //email = "june5355@naver.com"
         clickListener()
         return binding.root
     }
@@ -48,20 +49,22 @@ class MypageEmailLinkFragment:Fragment(),ResponseViewer {
                 setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
                 setGravity(Gravity.BOTTOM)
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
-                dialog.setCanceledOnTouchOutside(false)
+                dialog.setCanceledOnTouchOutside(true)
             }
             //취소 버튼 클릭
-            dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+            dialog.findViewById<View>(R.id.popup_cancel_btn).setOnClickListener{
                 dialog.dismiss()
             }
             //이메일 재전송 클릭
-            dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+            dialog.findViewById<View>(R.id.popup_email_send_again_tv).setOnClickListener{
                 val emailService = UserController()
                 emailService.setResponseViewer(this)
                 emailService.emailService(123,email)
+                dialog.dismiss()
             }
             //카카오 소셜 로그인 클릭
-            dialog.findViewById<View>(R.id.btn_popup_cancel_tv).setOnClickListener{
+            dialog.findViewById<View>(R.id.popup_use_kakao).setOnClickListener{
+                dialog.dismiss()
             }
             dialog.show()
         }
