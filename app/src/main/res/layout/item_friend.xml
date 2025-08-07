@@ -2,7 +2,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="130dp"
     android:padding="12dp"
     android:background="@android:color/white">
 
@@ -57,6 +57,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:src="@drawable/ic_arrow_right"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -74,8 +75,8 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/today_time_cv"
-            android:layout_width="280dp"
-            android:layout_height="42dp"
+            android:layout_width="227dp"
+            android:layout_height="37dp"
             app:cardElevation="2dp"
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="#FFFFFF"
@@ -92,11 +93,6 @@
                 android:layout_gravity="center">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="오늘 진행 시간 "/>
-
-                <TextView
                     android:id="@+id/today_time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -108,8 +104,8 @@
         <!-- 사진 인증 버튼 -->
         <TextView
             android:id="@+id/photo_verify_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
+            android:layout_width="95dp"
+            android:layout_height="32dp"
             android:layout_marginStart="8dp"
             android:paddingHorizontal="16dp"
             android:gravity="center"
