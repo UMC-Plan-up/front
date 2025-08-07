@@ -35,6 +35,7 @@
         app:layout_constraintEnd_toEndOf="@id/popup_email_send_again_tv"
         app:layout_constraintTop_toBottomOf="@id/popup_email_send_again_tv"/>
     <TextView
+        android:id="@+id/popup_use_kakao"
         style="@style/TextAppearance.Pretendard.Medium.SM"
         android:layout_width="360dp"
         android:layout_height="40dp"
@@ -45,7 +46,7 @@
         android:layout_marginStart="31dp"
         android:layout_marginTop="65dp"/>
     <TextView
-        android:id="@+id/btn_popup_cancel_tv"
+        android:id="@+id/popup_cancel_btn"
         android:layout_width="320dp"
         android:layout_height="44dp"
         android:text="@string/btn_cancel"
