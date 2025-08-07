@@ -2,9 +2,7 @@ package com.example.planup.goal.ui
 
 import android.app.Dialog
 import android.content.Intent
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.text.Layout
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,7 +16,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetAlertBinding
-import com.example.planup.goal.adapter.AlertRVAdapter
 import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
@@ -89,15 +86,15 @@ class ChallengeSetAlertFragment : Fragment() {
         //정기 알림 시간 설정
         //오전/오후
         binding.alertTimeTv.setOnClickListener {
-            showDropDown(times,binding.alertTimeTv)
+            showDropDown(times,R.layout.item_recycler_dropdown_short,binding.alertTimeTv)
         }
         //시각 설정
         binding.alertHourTv.setOnClickListener {
-            showDropDown(hours,binding.alertHourTv)
+            showDropDown(hours,R.layout.item_recycler_dropdown_long,binding.alertHourTv)
         }
         //분 설정
         binding.alertMinuteTv.setOnClickListener {
-            showDropDown(minutes,binding.alertMinuteTv)
+            showDropDown(minutes,R.layout.item_recycler_dropdown_long,binding.alertMinuteTv)
         }
         //정기 알림 요일 설정
         val selected = ContextCompat.getColor(context, R.color.blue_200)
@@ -196,12 +193,14 @@ class ChallengeSetAlertFragment : Fragment() {
         dialog.show()
     }
     //알림설정 시간 드롭다운
-    private fun showDropDown(items: ArrayList<String>, view: TextView){
+    //드롭다운에 사용할 아이템, 드롭다운에 사용할 레이아웃, 앵커 뷰를 전달받음
+    private fun showDropDown(items: ArrayList<String>, layout: Int, view: TextView){
         val inflater = LayoutInflater.from(context)
         //드롭다운 레이아웃 적용 후 rvAdapter 적용
-        val popupView = inflater.inflate(R.layout.item_recycler_dropdown,null)
+        val popupView = inflater.inflate(layout,null)
         //드롭다운에 사용할 팝업 만들기
-        val popupWindow = PopupWindow(
+
+        var popupWindow = PopupWindow(
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -228,7 +227,7 @@ class ChallengeSetAlertFragment : Fragment() {
     private fun makeToast(){
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(R.layout.toast_grey_template,null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = R.string.toast_alert_setting.toString()
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_alert_setting)
 
         val toast = Toast(context)
         toast.view = layout

@@ -14,6 +14,7 @@ import com.example.planup.main.MainActivity
 
 class ChallengeFinishRequestFragment:Fragment() {
     lateinit var binding: FragmentChallengeFinishRequestBinding
+    lateinit var friend: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,8 +22,13 @@ class ChallengeFinishRequestFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeFinishRequestBinding.inflate(inflater,container,false)
+        init()
         clickListener()
         return binding.root
+    }
+    private fun init(){
+        friend = arguments?.getString("friend","친구").toString()
+        binding.challengeFinishRequestSubtitleTv.text = getString(R.string.challenge_finish_request_subtitle,friend)
     }
     private fun clickListener(){
         //뒤로가기: 친구에 챌린지 신청 프레그먼트로 이동
