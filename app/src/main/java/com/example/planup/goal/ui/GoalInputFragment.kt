@@ -92,17 +92,22 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         goalVolumeEditText.addTextChangedListener(inputWatcher)
 
         /* 다음 버튼 클릭 */
+        // nextButton 클릭 시
         nextButton.setOnClickListener {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
-            // 다음 화면으로 이동
+            val activity = requireActivity() as GoalActivity
+            activity.goalName = goalNameEditText.text.toString()
+            activity.goalAmount = goalVolumeEditText.text.toString()
+
             val certificationFragment = CertificationMethodFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
+            activity.navigateToFragment(certificationFragment)
         }
+
 
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&

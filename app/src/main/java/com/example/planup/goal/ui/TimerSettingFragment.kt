@@ -58,15 +58,20 @@ class TimerSettingFragment : Fragment() {
     /* 다음 버튼 클릭 → GoalDetailFragment로 이동 */
     private fun setupNextButton() {
         nextButton.setOnClickListener {
+            val activity = requireActivity() as GoalActivity
+            activity.goalTime = totalTime
+            activity.verificationType = "TIMER"
+
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
-            (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
+            activity.navigateToFragment(goalDetailFragment)
         }
     }
+
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupBackButton() {

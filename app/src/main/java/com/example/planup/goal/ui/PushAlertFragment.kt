@@ -3,17 +3,20 @@ package com.example.planup.goal.ui
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPushAlertBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.network.RetrofitInstance
+import kotlinx.coroutines.launch
 
 class PushAlertFragment : Fragment() {
 
@@ -77,7 +80,7 @@ class PushAlertFragment : Fragment() {
             binding.alertReceiveOffIv.visibility = View.GONE
         }
 
-        //정기알림 토글
+        // 정기알림 토글
         binding.alertRegularOnIv.setOnClickListener {
             binding.alertRegularOnIv.visibility = View.GONE
             binding.alertRegularOffIv.visibility = View.VISIBLE
@@ -87,17 +90,42 @@ class PushAlertFragment : Fragment() {
             binding.alertRegularOffIv.visibility = View.GONE
         }
 
-        //저장 버튼 클릭
+        // 저장 버튼 클릭
         binding.nextButton.setOnClickListener {
-            // TODO: 저장 버튼 클릭 시 Push 알림 설정 저장
+            val activity = requireActivity() as GoalActivity
 
-            binding.notificationSaveMessage.visibility = View.VISIBLE
+            val request = GoalCreateRequest(
+                goalName = activity.goalName,
+                goalAmount = activity.goalAmount,
+                goalCategory = activity.goalCategory,
+                goalType = activity.goalType,
+                oneDose = activity.oneDose,
+                frequency = activity.frequency,
+                period = activity.period,
+                endDate = activity.endDate,
+                verificationType = activity.verificationType,
+                limitFriendCount = activity.limitFriendCount,
+                goalTime = activity.goalTime
+            )
 
-            // 2초 후 HomeFragment로 이동
-            Handler(Looper.getMainLooper()).postDelayed({
-                (requireActivity() as GoalActivity)
-                    .navigateToFragment(HomeFragment())
-            }, 2000)
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val response = RetrofitInstance.goalApi.createGoal(request)
+
+                    if (response.isSuccessful && response.body() != null) {
+                        binding.notificationSaveMessage.visibility = View.VISIBLE
+
+                        // 2초 후 HomeFragment로 이동
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            activity.navigateToFragment(HomeFragment())
+                        }, 2000)
+                    } else {
+                        Log.e("PushAlertFragment", "목표 생성 실패: ${response.errorBody()?.string()}")
+                    }
+                } catch (e: Exception) {
+                    Log.e("PushAlertFragment", "서버 오류 발생", e)
+                }
+            }
         }
 
         /* 요일 선택 효과 */
@@ -126,38 +154,6 @@ class PushAlertFragment : Fragment() {
                 .navigateToFragment(GoalCompleteFragment())
         }
     }
-
-//    /* 스피너 초기화 */
-//    private fun setSpinner(
-//        spinnerId: androidx.appcompat.widget.AppCompatSpinner,
-//        stringId: Int
-//    ) {
-//        val items = resources.getStringArray(stringId)
-//        val adapter = ArrayAdapter(
-//            requireContext(),
-//            R.layout.item_spinner_challenge_alert,
-//            items
-//        )
-//        adapter.setDropDownViewResource(R.layout.dropdown_alert)
-//        spinnerId.adapter = adapter
-//        spinnerId.setSelection(0, false)
-//
-//        spinnerId.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(
-//                parent: AdapterView<*>,
-//                view: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                val selected = parent.getItemAtPosition(position).toString()
-//                // 선택된 값 사용 가능 (예: Toast 등)
-//            }
-//
-//            override fun onNothingSelected(parent: AdapterView<*>) {
-//                // 선택 안됨
-//            }
-//        }
-//    }
 
     /* 스피너 초기화 */
 //    private fun setSpinner(

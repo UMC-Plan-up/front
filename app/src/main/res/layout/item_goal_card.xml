@@ -1,0 +1,101 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/goalCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_bottomsheet_goal"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_profile_green"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/goalOwner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="닉네임"
+            android:textSize="16sp"
+            android:textColor="@color/black_400"
+            android:fontFamily="@font/pretendard_semibold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="7dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:src="@drawable/ic_person" />
+
+            <TextView
+                android:id="@+id/memberCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="35명"
+                android:textSize="14sp"
+                android:textColor="@color/black_300"
+                android:layout_marginStart="3dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/goalTime"
+            android:layout_width="108dp"
+            android:layout_height="28dp"
+            android:text="목표 투자 시간"
+            android:textSize="16sp"
+            android:textColor="@color/black_300"
+            android:fontFamily="@font/pretendard_medium"
+            android:background="@drawable/bg_time_chip"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="3dp"
+            android:layout_marginStart="5dp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/goalTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:text="목표명"
+        android:textColor="@color/black_400"
+        android:textSize="15sp" />
+
+    <TextView
+        android:id="@+id/goalFrequency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="[기준 기간]&amp;[빈도]&amp;&quot;이상&quot;"
+        android:textSize="13sp"
+        android:textColor="@color/black_300"
+        android:fontFamily="@font/pretendard_medium"
+        android:layout_marginTop="4dp"
+        android:layout_marginStart="50dp" />
+
+    <TextView
+        android:id="@+id/goalDescription"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1회 분량"
+        android:textSize="13sp"
+        android:textColor="@color/black_300"
+        android:fontFamily="@font/pretendard_medium"
+        android:layout_marginTop="2dp"
+        android:layout_marginStart="50dp" />
+</LinearLayout>

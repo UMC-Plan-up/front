@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -79,4 +80,8 @@ dependencies {
 
     implementation("com.kizitonwose.calendar:view:2.6.2")
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
+
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
+
 }

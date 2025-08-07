@@ -85,13 +85,16 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         // 다음 버튼 → GoalCompleteFragment 이동
         nextButton.setOnClickListener {
             if (isInputValid) {
+                val activity = requireActivity() as GoalActivity
+
+                activity.limitFriendCount = participantLimitEditText.text.toString().toIntOrNull() ?: 0
+
                 val goalCompleteFragment = GoalCompleteFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                (requireActivity() as GoalActivity)
-                    .navigateToFragment(goalCompleteFragment)
+                activity.navigateToFragment(goalCompleteFragment)
             }
         }
     }
