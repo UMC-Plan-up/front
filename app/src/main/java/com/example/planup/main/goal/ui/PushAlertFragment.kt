@@ -49,13 +49,17 @@ class PushAlertFragment : Fragment() {
 
         binding.nextButton.setOnClickListener {
             val request = EditGoalRequest(
-                title = title,
-                oneDose = oneDose,
-                authType = authType,
-                time = "$hour:$minute:$second",
-                duration = hour,
+                goalName = title,
+                goalAmount = oneDose,
+                goalCategory = "STUDYING",
+                goalType = "FRIEND",
+                oneDose = 0,
                 frequency = frequency.toInt(),
-                endDate = endDate
+                period = hour,
+                endDate = endDate,
+                verificationType = "PHOTO",
+                limitFriendCount = 3,
+                goalTime = hour.toInt() //??
             )
             updateGoal(goalId = goalId, request = request)
         }

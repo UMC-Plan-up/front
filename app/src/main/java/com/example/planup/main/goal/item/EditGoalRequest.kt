@@ -1,13 +1,17 @@
 package com.example.planup.main.goal.item
 
 data class EditGoalRequest(
-    val title: String,
-    val oneDose: String,
-    val authType: String,
-    val time: String?, // "HH:mm:ss" 형식
-    val duration: String,
+    val goalName: String,
+    val goalAmount: String,
+    val goalCategory: String,
+    val goalType: String,
+    val oneDose: Int,
     val frequency: Int,
-    val endDate: String // "yyyy-MM-dd"
+    val period: String,
+    val endDate: String,
+    val verificationType: String,
+    val limitFriendCount: Int,
+    val goalTime: Int
 )
 
 data class EditGoalResponse(
