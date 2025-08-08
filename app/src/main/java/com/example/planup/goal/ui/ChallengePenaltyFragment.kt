@@ -1,14 +1,13 @@
 package com.example.planup.goal.ui
 
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengePenaltyBinding
@@ -16,10 +15,13 @@ import com.example.planup.goal.GoalActivity
 
 class ChallengePenaltyFragment : Fragment() {
     lateinit var binding: FragmentChallengePenaltyBinding
-    private lateinit var certification: String //챌린지 인증 방식: 타이머 or 사진
     private lateinit var curPenalty: View //현재 선택된 페널티
     private var isFirst: Boolean = true //비활성화할 페널티가 없는 경우
     private lateinit var penalty: String //최종 페널티
+
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,7 +36,6 @@ class ChallengePenaltyFragment : Fragment() {
 
     //프레그먼트 초기화 및 데이터 세팅
     private fun init() {
-        certification = arguments?.getString("certification","null").toString()//현재 챌린지 인증 방식이 타이머라고 가정
         curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 초기화
         if (!isFirst) binding.challengePenaltyNextBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
     }
@@ -70,19 +71,11 @@ class ChallengePenaltyFragment : Fragment() {
 
     //클릭 이벤트
     private fun clickListener() {
-        //이전 버튼 : 사진 설정 또는 타이머 설정 페이지로 이동
+        //이전 버튼 : 종료일, 빈도, 기준기간 설정 페이지로 이동
         binding.challengePenaltyBackIv.setOnClickListener {
-            when (certification) {
-                "photo" ->
-                    (context as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container, ChallengeSetPhotoFragment())
-                        .commitAllowingStateLoss()
-
-                "timer" ->
-                    (context as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container, ChallengeSetTimerFragment())
-                        .commitAllowingStateLoss()
-            }
+            (context as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container,ChallengeSetFrequencyFragment())
+                .commitAllowingStateLoss()
         }
         //페널티 : 커피
         binding.challengePenaltyCoffeeCl.setOnClickListener {
@@ -131,6 +124,7 @@ class ChallengePenaltyFragment : Fragment() {
         //다음 버튼 : 챌린지 신청 완료 화면으로 이동
         binding.challengePenaltyNextBtn.setOnClickListener {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
+
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengeFriendFragment())
                 .commitAllowingStateLoss()
