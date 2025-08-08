@@ -12,6 +12,7 @@ import com.example.planup.databinding.FragmentChallengeFriendBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
 
+//1:1 챌린지 신청 완료되었을 때 페이지
 class ChallengeFinishRequestFragment:Fragment() {
     lateinit var binding: FragmentChallengeFinishRequestBinding
     lateinit var friend: String
@@ -31,12 +32,6 @@ class ChallengeFinishRequestFragment:Fragment() {
         binding.challengeFinishRequestSubtitleTv.text = getString(R.string.challenge_finish_request_subtitle,friend)
     }
     private fun clickListener(){
-        //뒤로가기: 친구에 챌린지 신청 프레그먼트로 이동
-        binding.challengeFinishRequestBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeFriendFragment())
-                .commitAllowingStateLoss()
-        }
         //완료 버튼: 메인 액티비티, 홈 프레그먼트로 이동
         binding.challengeFinishCompleteBtn.setOnClickListener {
             (context as GoalActivity).supportFragmentManager.beginTransaction()

@@ -239,6 +239,7 @@
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
+    <string name="end_day">"%1$d/%1$d (%1$s)</string>
 
     <!-- fragment_challenge_request.xml -->
     <string name="challenge_request_verify">인증 방식</string>
@@ -309,21 +310,23 @@
     <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
     <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
 
-    <!-- fragment_challenge_set_photo.xml -->
-    <string name="one">01</string>
-    <string name="two">02</string>
-    <string name="three">03</string>
-    <string name="four">04</string>
-    <string name="five">05</string>
-    <string name="six">06</string>
-    <string name="seven">07</string>
+    <!-- fragment_challenge_set_frequency.xml -->
+    <string-array name="dropdown_duration">
+        <item name="one">01</item>
+        <item name="two">02</item>
+        <item name="three">03</item>
+        <item name="four">04</item>
+        <item name="five">05</item>
+        <item name="six">06</item>
+        <item name="seven">07</item>
+    </string-array>
 
     <!-- 스피너 드롭다운 -->
-    <string-array name="spinner_morning_afternoon">
+    <string-array name="dropdown_morning_afternoon">
         <item name="morning">오전</item>
         <item name="afternoon">오후</item>
     </string-array>
-    <string-array name="spinner_hour">
+    <string-array name="dropdown_hour">
         <item name="zeor">00</item>
         <item name="one">01</item>
         <item name="two">02</item>
@@ -338,7 +341,7 @@
         <item name="eleven">11</item>
         <item name="twelve">12</item>
     </string-array>
-    <string-array name="spinner_minute_second">
+    <string-array name="dropdown_minute_second">
         <item name="zeor">00</item>
         <item name="one">01</item>
         <item name="two">02</item>
