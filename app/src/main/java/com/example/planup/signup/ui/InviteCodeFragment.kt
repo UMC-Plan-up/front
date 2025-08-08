@@ -16,6 +16,10 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -35,10 +39,28 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
     private lateinit var shareButton: AppCompatButton
     private lateinit var nextButton: TextView
 
-    private var myInviteCode: String = "" // 서버에서 받아온 초대코드 저장용
+    private var myInviteCode: String = ""
+
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         backIcon = view.findViewById(R.id.backIcon)
         nicknameEditText = view.findViewById(R.id.nicknameEditText)
@@ -50,17 +72,17 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         nicknameEditText.isClickable = false
         nicknameEditText.isLongClickable = false
 
-        // 뒤로가기 아이콘 → 이전 화면으로 이동
+        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(ProfileSetupFragment())
         }
 
-        // 공유 버튼 → popup_share.xml 띄우기
+        /* 공유 버튼 → popup_share.xml 띄우기 */
         shareButton.setOnClickListener {
             showSharePopup(it)
         }
 
-        // “다음에 공유할게요” → InviteCodeInputFragment 이동
+        /* “다음에 공유할게요” → InviteCodeInputFragment 이동 */
         nextButton.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
         }
@@ -69,7 +91,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         fetchInviteCode()
     }
 
-    // 초대코드를 서버에서 가져와 EditText에 표시
+    /* 초대코드를 서버에서 가져와 EditText에 표시 */
     private fun fetchInviteCode() {
 
         val token = getAccessToken()
@@ -97,7 +119,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
     }
 
-    // SharedPreferences에서 accessToken 불러오기
+    /* SharedPreferences에서 accessToken 불러오기 */
     private fun getAccessToken(): String? {
         val prefs = requireActivity().applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
@@ -105,7 +127,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         return token
     }
 
-    // 공유 팝업 보여주기
+    /* 공유 팝업 보여주기 */
     private fun showSharePopup(anchorView: View) {
         val popupView = LayoutInflater.from(requireContext())
             .inflate(R.layout.popup_share, null)
@@ -170,7 +192,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         // 문자 공유
         smsShare.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
-            val inviteCode = myInviteCode // EditText 대신 변수 사용
+            val inviteCode = myInviteCode
 
             val message = """
                 ${nickname}님이 친구 신청을 보냈어요.

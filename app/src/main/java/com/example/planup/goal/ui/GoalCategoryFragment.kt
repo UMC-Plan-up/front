@@ -15,9 +15,6 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 
-
-
-
 class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
     private lateinit var backIcon: ImageView
@@ -107,6 +104,12 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
                 )?.text.toString()
             }
 
+
+            val activity = requireActivity() as GoalActivity
+            activity.goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "challenge" else "community"
+            activity.goalCategory = selectedCategoryText
+
+
             val nextFragment = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) {
                 GoalInputFragment()
             } else {
@@ -132,7 +135,6 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
             false
         }
     }
-
 
     // 목표 선택
     private fun handleGoalSelection(layout: LinearLayout) {

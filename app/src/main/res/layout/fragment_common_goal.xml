@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:padding="24dp">
 
     <LinearLayout
@@ -87,327 +87,13 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/goalCard1"
+            android:id="@+id/goalCardContainer"
             android:layout_width="match_parent"
-            android:layout_height="138dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/bg_bottomsheet_goal"
-            android:padding="12dp" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/profileImage1"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_profile_green"
-                    android:scaleType="centerCrop" />
-
-                <TextView
-                    android:id="@+id/goalOwner1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="닉네임"
-                    android:textSize="16sp"
-                    android:textColor="@color/black_400"
-                    android:fontFamily="@font/pretendard_semibold" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="7dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
-                        android:src="@drawable/ic_person" />
-
-                    <TextView
-                        android:id="@+id/memberCount1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="35명"
-                        android:textSize="14sp"
-                        android:textColor="@color/black_300"
-                        android:layout_marginStart="3dp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/goalTime1"
-                    android:layout_width="108dp"
-                    android:layout_height="28dp"
-                    android:text="목표 투자 시간"
-                    android:textSize="16sp"
-                    android:textColor="@color/black_300"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:background="@drawable/bg_time_chip"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="3dp"
-                    android:layout_marginStart="5dp" />
-            </LinearLayout>
+            android:layout_marginTop="16dp" />
 
 
-            <TextView
-                android:id="@+id/goalTitle1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="목표명"
-                android:textColor="@color/black_400"
-                android:textSize="15sp" />
-
-
-            <TextView
-                android:id="@+id/goalFrequency1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="[기준 기간]&amp;[빈도]&amp;&quot;이상&quot;"
-                android:textSize="13sp"
-                android:textColor="@color/black_300"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="50dp" />
-
-            <TextView
-                android:id="@+id/goalDescription1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="1회 분량"
-                android:textSize="13sp"
-                android:textColor="@color/black_300"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_marginTop="2dp"
-                android:layout_marginStart="50dp" />
-        </LinearLayout>
-
-        <View
-            android:id="@+id/divider1"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#D2D2D2" />
-
-
-        <LinearLayout
-            android:id="@+id/goalCard2"
-            android:layout_width="match_parent"
-            android:layout_height="138dp"
-            android:orientation="vertical"
-            android:background="@drawable/bg_bottomsheet_goal"
-            android:padding="12dp" >
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/profileImage2"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_profile_green"
-                    android:scaleType="centerCrop" />
-
-                <TextView
-                    android:id="@+id/goalOwner2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:text="그린"
-                    android:textSize="16sp"
-                    android:textColor="@color/black_400"
-                    android:fontFamily="@font/pretendard_semibold" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="7dp"
-                    android:gravity="center_vertical">
-
-                    <ImageView
-                        android:layout_width="17dp"
-                        android:layout_height="17dp"
-                        android:src="@drawable/ic_person" />
-
-                    <TextView
-                        android:id="@+id/memberCount2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="35명"
-                        android:textSize="14sp"
-                        android:textColor="@color/black_300"
-                        android:layout_marginStart="3dp" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/goalTime2"
-                    android:layout_width="83dp"
-                    android:layout_height="28dp"
-                    android:text="01:30:00"
-                    android:textSize="16sp"
-                    android:textColor="@color/black_300"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:background="@drawable/bg_time_chip"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="3dp"
-                    android:layout_marginStart="5dp" />
-            </LinearLayout>
-
-
-            <TextView
-                android:id="@+id/goalTitle2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="50dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="토익 공부"
-                android:textColor="@color/black_400"
-                android:textSize="15sp" />
-
-
-            <TextView
-                android:id="@+id/goalFrequency2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="매주 3번 이상"
-                android:textSize="13sp"
-                android:textColor="@color/black_300"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="50dp" />
-
-            <TextView
-                android:id="@+id/goalDescription2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="토익 교재 1챕터씩 공부하기"
-                android:textSize="13sp"
-                android:textColor="@color/black_300"
-                android:fontFamily="@font/pretendard_medium"
-                android:layout_marginTop="2dp"
-                android:layout_marginStart="50dp" />
-        </LinearLayout>
-
-
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#D2D2D2" />
-
-    <LinearLayout
-        android:id="@+id/goalCard3"
-        android:layout_width="match_parent"
-        android:layout_height="138dp"
-        android:orientation="vertical"
-        android:background="@drawable/bg_bottomsheet_goal"
-        android:padding="12dp" >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <ImageView
-                android:id="@+id/profileImage3"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_profile_green"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/goalOwner3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="그린"
-                android:textSize="16sp"
-                android:textColor="@color/black_400"
-                android:fontFamily="@font/pretendard_semibold" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="7dp"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
-                    android:src="@drawable/ic_person" />
-
-                <TextView
-                    android:id="@+id/memberCount3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="35명"
-                    android:textSize="14sp"
-                    android:textColor="@color/black_300"
-                    android:layout_marginStart="3dp" />
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/goalTime3"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:src="@drawable/ic_camera"
-                android:background="@drawable/bg_time_chip"
-                android:padding="7dp"
-                android:layout_marginStart="5dp"
-                android:scaleType="centerInside" />
-
-        </LinearLayout>
-
-
-        <TextView
-            android:id="@+id/goalTitle3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/pretendard_semibold"
-            android:text="토익 공부"
-            android:textColor="@color/black_400"
-            android:textSize="15sp" />
-
-
-        <TextView
-            android:id="@+id/goalFrequency3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="매주 3번 이상"
-            android:textSize="13sp"
-            android:textColor="@color/black_300"
-            android:fontFamily="@font/pretendard_medium"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="50dp" />
-
-        <TextView
-            android:id="@+id/goalDescription3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="토익 교재 1챕터씩 공부하기"
-            android:textSize="13sp"
-            android:textColor="@color/black_300"
-            android:fontFamily="@font/pretendard_medium"
-            android:layout_marginTop="2dp"
-            android:layout_marginStart="50dp" />
-    </LinearLayout>
-
-        <!-- 더보기 버튼 -->
         <LinearLayout
             android:id="@+id/moreButton"
             android:layout_width="match_parent"
@@ -453,7 +139,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/community_create_new"
                 android:textSize="14sp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:fontFamily="@font/pretendard_medium" />
 
             <ImageView
@@ -462,7 +148,7 @@
                 android:layout_height="23dp"
                 android:src="@drawable/ic_arrow_right"
                 android:layout_marginStart="2dp"
-                app:tint="#FFFFFF" />
+                app:tint="@color/white" />
         </LinearLayout>
 
     </LinearLayout>

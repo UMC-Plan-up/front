@@ -5,12 +5,11 @@
     android:layout_height="match_parent"
     android:background="@color/white">
 
-
     <ImageView
         android:id="@+id/back_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginStart="20dp"
@@ -40,6 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="24dp"
         android:layout_marginStart="20dp" />
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,14 +65,17 @@
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="58dp"
-        android:layout_marginStart="16dp"/>
+        android:layout_marginStart="20dp"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_down_timer"
+        android:src="@drawable/ic_arrow_down"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_hour_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_hour_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_hour_tv"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/challenge_timer_hour_rv"
         android:layout_width="70dp"
@@ -99,13 +102,16 @@
         app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_tv"
         android:layout_marginTop="58dp"
         android:layout_marginStart="4dp"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_down_timer"
+        android:src="@drawable/ic_arrow_down"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_minute_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_minute_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_minute_tv"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/challenge_timer_minute_rv"
         android:layout_width="70dp"
@@ -132,6 +138,7 @@
         app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_tv"
         android:layout_marginTop="58dp"
         android:layout_marginStart="4dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/challenge_timer_second_rv"
         android:layout_width="70dp"
@@ -144,10 +151,12 @@
         app:layout_constraintStart_toStartOf="@id/challenge_timer_second_tv"
         app:layout_constraintTop_toBottomOf="@id/challenge_timer_second_tv"
         android:visibility="gone"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_down_timer"
+        android:src="@drawable/ic_arrow_down"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_second_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_second_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_second_tv"/>

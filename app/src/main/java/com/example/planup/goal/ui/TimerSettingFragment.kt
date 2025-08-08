@@ -21,7 +21,7 @@ class TimerSettingFragment : Fragment() {
     private lateinit var nextButton: AppCompatButton
     private lateinit var backIcon: ImageView
     private lateinit var binding: FragmentTimerSettingBinding
-    private var totalTime = 0 //타이머 설정 시간을 초 단위로 저장
+    private var totalTime = 0  //타이머 설정 시간을 초 단위로 저장
 
     private var goalOwnerName: String? = null
 
@@ -58,15 +58,20 @@ class TimerSettingFragment : Fragment() {
     /* 다음 버튼 클릭 → GoalDetailFragment로 이동 */
     private fun setupNextButton() {
         nextButton.setOnClickListener {
+            val activity = requireActivity() as GoalActivity
+            activity.goalTime = totalTime
+            activity.verificationType = "TIMER"
+
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                     putString("SELECTED_METHOD", "TIMER")
                 }
             }
-            (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
+            activity.navigateToFragment(goalDetailFragment)
         }
     }
+
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupBackButton() {

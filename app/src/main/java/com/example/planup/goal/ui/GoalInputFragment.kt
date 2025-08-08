@@ -8,6 +8,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
@@ -30,8 +34,26 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     private lateinit var goalOwnerName: String
 
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         // 닉네임 전달
         goalOwnerName = requireArguments().getString("goalOwnerName")
@@ -92,17 +114,22 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         goalVolumeEditText.addTextChangedListener(inputWatcher)
 
         /* 다음 버튼 클릭 */
+        // nextButton 클릭 시
         nextButton.setOnClickListener {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
-            // 다음 화면으로 이동
+            val activity = requireActivity() as GoalActivity
+            activity.goalName = goalNameEditText.text.toString()
+            activity.goalAmount = goalVolumeEditText.text.toString()
+
             val certificationFragment = CertificationMethodFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalActivity).navigateToFragment(certificationFragment)
+            activity.navigateToFragment(certificationFragment)
         }
+
 
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&

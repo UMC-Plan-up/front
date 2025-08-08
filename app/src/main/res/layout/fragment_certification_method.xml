@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:padding="24dp">
 
     <ImageView
@@ -17,8 +17,8 @@
 
     <TextView
         android:id="@+id/goalDetailTitle"
-        android:layout_width="286dp"
-        android:layout_height="33dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/goal_friend_detail"
         android:textSize="22sp"
         android:fontFamily="@font/pretendard_semibold"
@@ -29,8 +29,8 @@
 
     <TextView
         android:id="@+id/goalDetailSubtitle"
-        android:layout_width="295dp"
-        android:layout_height="21dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/goal_friend_detail_description"
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
@@ -41,8 +41,8 @@
 
     <TextView
         android:id="@+id/authMethodTitle"
-        android:layout_width="103dp"
-        android:layout_height="27dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/set_certification_method"
         android:textSize="18sp"
         android:fontFamily="@font/pretendard_semibold"

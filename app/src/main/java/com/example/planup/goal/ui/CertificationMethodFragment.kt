@@ -61,29 +61,30 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
 
         /* 다음 버튼 클릭 시 */
         nextButton.setOnClickListener {
-            when (selectedMethod) {
-                "TIMER" -> {
-                    // 타이머 인증 → TimerSettingFragment로 이동
-                    val timerFragment = TimerSettingFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
-                        }
-                    }
-                    (requireActivity() as GoalActivity).navigateToFragment(timerFragment)
-                }
-                "PICTURE" -> {
-                    // 사진 인증 → GoalDetailFragment로 이동
-                    val detailFragment = GoalDetailFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
-                        }
-                    }
+            val activity = requireActivity() as GoalActivity
 
+            selectedMethod?.let { method ->
+                activity.verificationType = method
 
-                    (requireActivity() as GoalActivity).navigateToFragment(detailFragment)
-                }
-                else -> {
-                    // 선택되지 않았으면 아무 동작 안 함
+                when (method) {
+                    "TIMER" -> {
+                        // 타이머 인증 → TimerSettingFragment로 이동
+                        val timerFragment = TimerSettingFragment().apply {
+                            arguments = Bundle().apply {
+                                putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
+                            }
+                        }
+                        activity.navigateToFragment(timerFragment)
+                    }
+                    "PICTURE" -> {
+                        // 사진 인증 → GoalDetailFragment로 이동
+                        val detailFragment = GoalDetailFragment().apply {
+                            arguments = Bundle().apply {
+                                putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
+                            }
+                        }
+                        activity.navigateToFragment(detailFragment)
+                    }
                 }
             }
         }

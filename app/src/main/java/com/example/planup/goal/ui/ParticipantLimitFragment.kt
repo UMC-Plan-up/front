@@ -9,7 +9,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
@@ -25,10 +29,27 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
     private lateinit var participantDescriptionText: TextView
     private var isInputValid = false
     private var goalOwnerName: String? = null
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         // GoalDetailFragment에서 닉네임 받기
         goalOwnerName = arguments?.getString("goalOwnerName")
@@ -85,13 +106,16 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         // 다음 버튼 → GoalCompleteFragment 이동
         nextButton.setOnClickListener {
             if (isInputValid) {
+                val activity = requireActivity() as GoalActivity
+
+                activity.limitFriendCount = participantLimitEditText.text.toString().toIntOrNull() ?: 0
+
                 val goalCompleteFragment = GoalCompleteFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                (requireActivity() as GoalActivity)
-                    .navigateToFragment(goalCompleteFragment)
+                activity.navigateToFragment(goalCompleteFragment)
             }
         }
     }
