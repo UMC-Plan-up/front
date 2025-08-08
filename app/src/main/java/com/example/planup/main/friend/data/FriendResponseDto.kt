@@ -1,21 +1,13 @@
 package com.example.planup.main.friend.data
 
-data class FriendLists(
-    val id: Int,
-    val nickname: String,
-    val goalCnt: Int,
-    val todayTime: String,
-    val isNewPhotoVerify: Boolean
-)
-
-data class FriendListResponse(
+data class FriendResponseDto(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: List<FriendListResult>
+    val result: List<FriendResult>
 )
 
-data class FriendListResult(
+data class FriendResult(
     val cnt: Int,
     val friendInfoSummaryList: List<FriendInfo>
 )
@@ -24,6 +16,6 @@ data class FriendInfo(
     val id: Int,
     val nickname: String,
     val goalCnt: Int,
-    val todayTime: String,
+    val todayTime: String?,
     val isNewPhotoVerify: Boolean
 )

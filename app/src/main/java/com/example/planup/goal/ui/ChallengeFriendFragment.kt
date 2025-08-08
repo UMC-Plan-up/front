@@ -15,6 +15,7 @@ import com.example.planup.goal.data.ChallengeFriend
 
 class ChallengeFriendFragment: Fragment() {
     lateinit var binding: FragmentChallengeFriendBinding
+    lateinit var friend:String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,11 +23,15 @@ class ChallengeFriendFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeFriendBinding.inflate(inflater,container,false)
+        init()
         clickListener()
         setFriendList()
         return binding.root
     }
 
+    private fun init(){
+        friend = "friend"
+    }
     private fun clickListener(){
         //뒤로가기: 페널티 선택 페이지로 이동
         binding.challengeSendBackIv.setOnClickListener {
@@ -37,8 +42,14 @@ class ChallengeFriendFragment: Fragment() {
         //완료 버튼: 챌린지 참여 완료 페이지로 이동
         binding.challengeSendCompleteBtn.setOnClickListener {
             if (!binding.challengeSendCompleteBtn.isActivated) return@setOnClickListener
+            //최종으로 선택된 친구 이름 전달
+            //sharedPreferences로 관리하거나 DTO에 넣어서 관리하는거로 수정해도 될듯
+            val finishRequestFragment = ChallengeFinishRequestFragment()
+            finishRequestFragment.arguments = Bundle().apply {
+                putString("friend",friend)
+            }
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeFinishRequestFragment())
+                .replace(R.id.goal_container,finishRequestFragment)
                 .commitAllowingStateLoss()
         }
     }
@@ -56,6 +67,7 @@ class ChallengeFriendFragment: Fragment() {
             override fun selectFriend(position: Int) {
                 Toast.makeText(context,friends[position].name,LENGTH_SHORT).show()
                 binding.challengeSendCompleteBtn.isActivated = true
+                friend = friends[position].name
             }
         })
         binding.challengeSendFriendRv.adapter = adapter

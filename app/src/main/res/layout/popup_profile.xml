@@ -18,56 +18,57 @@
     android:layout_marginTop="4dp"
     android:paddingBottom="4dp"
     android:paddingStart="8dp"
-    android:paddingEnd="8dp">
-
+    android:paddingEnd="8dp"
+    android:layout_gravity="center" >
 
         <LinearLayout
             android:id="@+id/selectFromGallery"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="38dp"
             android:orientation="horizontal"
             android:gravity="center_vertical"
             android:paddingStart="3dp"
             android:paddingEnd="0dp"
             android:background="?android:selectableItemBackground"
             android:clickable="true"
-            android:focusable="true">
+            android:focusable="true"
+            android:layout_gravity="center" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dropdown_profile_album"
             android:textSize="14sp"
-            android:textColor="#000000"
+            android:textColor="@color/black_400"
             android:fontFamily="@font/pretendard_medium" />
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="9dp"
-            android:src="@drawable/ic_photo" />
+            android:src="@drawable/ic_photo"
+            app:tint="@color/black_300" />
     </LinearLayout>
-
-
 
     <LinearLayout
         android:id="@+id/takePhoto"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="38dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:background="?android:selectableItemBackground"
         android:clickable="true"
-        android:focusable="true" >
+        android:focusable="true"
+        android:layout_gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dropdown_profile_camera"
             android:textSize="14sp"
-            android:textColor="#000000"
+            android:textColor="@color/black_400"
             android:fontFamily="@font/pretendard_medium" />
 
         <ImageView
@@ -75,34 +76,36 @@
             android:layout_height="22dp"
             android:layout_marginStart="22dp"
             android:src="@drawable/ic_camera2"
-            app:tint="@color/black_400" />
+            app:tint="@color/black_300" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/selectFile"
         android:layout_width="match_parent"
-        android:layout_height="32dp"
+        android:layout_height="38dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:paddingStart="3dp"
         android:paddingEnd="0dp"
         android:background="?android:selectableItemBackground"
         android:clickable="true"
-        android:focusable="true" >
+        android:focusable="true"
+        android:layout_gravity="center">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dropdown_profile_file"
             android:textSize="14sp"
-            android:textColor="#000000"
+            android:textColor="@color/black_400"
             android:fontFamily="@font/pretendard_medium" />
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginStart="22dp"
-            android:src="@drawable/ic_file" />
+            android:src="@drawable/ic_file"
+            app:tint="@color/black_300"/>
     </LinearLayout>
 
 </LinearLayout>

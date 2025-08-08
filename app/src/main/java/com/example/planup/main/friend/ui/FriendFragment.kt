@@ -1,17 +1,22 @@
 package com.example.planup.main.friend.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendBinding
+import com.example.planup.databinding.FragmentFriendListsBinding
+import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.friend.adapter.FriendListsAdapter
-import com.example.planup.main.friend.network.RetrofitInstance
+import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,27 +30,41 @@ class FriendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentFriendBinding.inflate(inflater, container, false)
-
+        fetchData()
         clickListener()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    fun getAccessToken(): String? {
+        val prefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return prefs.getString("accessToken", null)
+    }
 
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun fetchData(){
+        lifecycleScope.launch {
             try {
-                val response = RetrofitInstance.api.getFriendList()
+                val token = getAccessToken()
+                if (token == null) {
+                    Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val response = RetrofitInstance.friendApi.getFriendSummary("Bearer $token")
+
+                Log.d("FriendFragment", "HTTP Status Code: ${response.code()}")
+                Log.d("FriendFragment", "Raw Response: $response")
+                Log.d("FriendFragment", "Body: ${response.body()}")
+
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val friends = response.body()?.result?.get(0)?.friendInfoSummaryList ?: emptyList()
-                    withContext(Dispatchers.Main) {
-                        val adapter = FriendListsAdapter(friends)
-                        binding.rvFriendList.adapter = adapter
-                        binding.rvFriendList.layoutManager = LinearLayoutManager(requireContext())
-                    }
+                    val friendList = response.body()!!.result.first().friendInfoSummaryList
+                    binding.rvFriendList.layoutManager = LinearLayoutManager(requireContext())
+                    binding.rvFriendList.adapter = FriendAdapter(friendList)
+                } else {
+                    Toast.makeText(requireContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
-                Log.e("FriendFragment", "API error: ${e.message}")
+                Toast.makeText(requireContext(), "서버 오류", Toast.LENGTH_SHORT).show()
+                Log.e("FriendFragment", "Error fetching data", e)
             }
         }
     }

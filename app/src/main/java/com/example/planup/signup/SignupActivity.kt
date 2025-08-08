@@ -1,11 +1,11 @@
 package com.example.planup.signup
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.signup.ui.AgreementFragment
+import com.example.planup.signup.ui.InviteCodeInputFragment
 
 class SignupActivity : AppCompatActivity() {
 
@@ -20,11 +20,25 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.signup_container, AgreementFragment())
-                .commit()
+            val code = intent?.getStringExtra("code")
+
+            if (!code.isNullOrBlank()) {
+                val bundle = Bundle().apply {
+                    putString("inviteCode", code)
+                }
+
+                val fragment = InviteCodeInputFragment()
+                fragment.arguments = bundle
+
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.signup_container, fragment)
+                    .commit()
+            } else {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.signup_container, AgreementFragment())
+                    .commit()
+            }
         }
     }
 
@@ -33,7 +47,6 @@ class SignupActivity : AppCompatActivity() {
         val isAgreed: Boolean
     )
 
-    // Fragment 이동 공용 메서드
     fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.signup_container, fragment)

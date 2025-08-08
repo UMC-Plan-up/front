@@ -1,9 +1,0 @@
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/dropdown_recycler_rv"
-    android:layout_width="70dp"
-    android:layout_height="219dp"
-    android:paddingStart="12dp"
-    android:background="@drawable/bg_timer_dropdown"
-    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-    android:orientation="vertical"/>

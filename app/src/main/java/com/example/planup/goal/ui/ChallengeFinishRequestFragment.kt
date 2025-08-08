@@ -14,6 +14,7 @@ import com.example.planup.main.MainActivity
 
 class ChallengeFinishRequestFragment:Fragment() {
     lateinit var binding: FragmentChallengeFinishRequestBinding
+    lateinit var friend: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -21,8 +22,13 @@ class ChallengeFinishRequestFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeFinishRequestBinding.inflate(inflater,container,false)
+        init()
         clickListener()
         return binding.root
+    }
+    private fun init(){
+        friend = arguments?.getString("friend","친구").toString()
+        binding.challengeFinishRequestSubtitleTv.text = getString(R.string.challenge_finish_request_subtitle,friend)
     }
     private fun clickListener(){
         //뒤로가기: 친구에 챌린지 신청 프레그먼트로 이동
@@ -33,8 +39,11 @@ class ChallengeFinishRequestFragment:Fragment() {
         }
         //완료 버튼: 메인 액티비티, 홈 프레그먼트로 이동
         binding.challengeFinishCompleteBtn.setOnClickListener {
-            val intent = Intent(context as GoalActivity,MainActivity::class.java)
-            startActivity(intent)
+            (context as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container,ChallengeSetAlertFragment())
+                .commitAllowingStateLoss()
+//            val intent = Intent(context as GoalActivity,MainActivity::class.java)
+//            startActivity(intent)
         }
     }
 }

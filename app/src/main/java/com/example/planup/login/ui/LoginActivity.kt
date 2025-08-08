@@ -179,14 +179,15 @@ class LoginActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val request = com.example.planup.login.data.LoginRequestDto(email, password)
-                val response = com.example.planup.network.RetrofitInstance.loginApi.login(request)
+                val response = com.example.planup.network.RetrofitInstance.userApi.login(request)
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val result = response.body()!!.result
 
 
                     //로그인 직후 발급된 JWT를 레트로핏에 전달
-                    App.prefs.token = result.accessToken
+                    App.prefs.token = "Bearer "+result.accessToken
+
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
                         .putString("accessToken", result.accessToken)
