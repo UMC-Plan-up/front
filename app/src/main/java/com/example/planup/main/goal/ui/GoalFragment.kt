@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
+import com.example.planup.main.friend.ui.FriendListsFragment
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalAdapter
 import com.github.mikephil.charting.charts.PieChart
@@ -51,14 +52,6 @@ class GoalFragment : Fragment() {
             GoalItem(2, "토익 공부하기", "매주 5번 이상", 82),
             GoalItem(3, "헬스장 가기", "매일 30분 이상", 82)
         )
-
-//        adapter = GoalAdapter(goals) { goalItem ->
-//            val fragment = GoalDescriptionFragment()
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.main_container, fragment)
-//                .addToBackStack(null)
-//                .commit()
-//        }
 
         adapter = GoalAdapter(
             goals,
@@ -148,7 +141,11 @@ class GoalFragment : Fragment() {
             binding.manageButton.text = if (isEditMode) "완료" else "관리"
         }
 
-
+        binding.unlockTextLl.setOnClickListener{
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, SubscriptionPlanFragment())
+                .commitAllowingStateLoss()
+        }
     }
 
 }
