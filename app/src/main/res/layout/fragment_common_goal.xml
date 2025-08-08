@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     android:padding="24dp">
 
     <LinearLayout
@@ -94,7 +94,6 @@
             android:layout_marginTop="16dp" />
 
 
-        <!-- 더보기 버튼 -->
         <LinearLayout
             android:id="@+id/moreButton"
             android:layout_width="match_parent"
@@ -140,7 +139,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/community_create_new"
                 android:textSize="14sp"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/white"
                 android:fontFamily="@font/pretendard_medium" />
 
             <ImageView
@@ -149,7 +148,7 @@
                 android:layout_height="23dp"
                 android:src="@drawable/ic_arrow_right"
                 android:layout_marginStart="2dp"
-                app:tint="#FFFFFF" />
+                app:tint="@color/white" />
         </LinearLayout>
 
     </LinearLayout>

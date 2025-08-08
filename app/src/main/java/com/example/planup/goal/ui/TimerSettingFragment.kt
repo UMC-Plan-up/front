@@ -21,7 +21,7 @@ class TimerSettingFragment : Fragment() {
     private lateinit var nextButton: AppCompatButton
     private lateinit var backIcon: ImageView
     private lateinit var binding: FragmentTimerSettingBinding
-    private var totalTime = 0 //타이머 설정 시간을 초 단위로 저장
+    private var totalTime = 0  //타이머 설정 시간을 초 단위로 저장
 
     private var goalOwnerName: String? = null
 
