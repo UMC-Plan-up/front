@@ -11,7 +11,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -22,24 +26,20 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
     private lateinit var passwordEditText: EditText
     private lateinit var confirmPasswordEditText: EditText
-
     private lateinit var eyeIcon: ImageView
     private lateinit var eyeIconConfirm: ImageView
-
     private lateinit var checkLengthIcon: ImageView
     private lateinit var lengthCondition: TextView
     private lateinit var checkComplexIcon: ImageView
     private lateinit var complexCondition: TextView
     private lateinit var checkMatchIcon: ImageView
     private lateinit var matchCondition: TextView
-
     private lateinit var passwordMatchHint: TextView
     private lateinit var nextButton: AppCompatButton
-
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
-
     private var userEmail: String? = null
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,6 +49,22 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         // 초기화
         passwordEditText = view.findViewById(R.id.passwordEditText)

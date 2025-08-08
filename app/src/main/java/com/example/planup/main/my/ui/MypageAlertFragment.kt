@@ -1,21 +1,15 @@
 package com.example.planup.main.my.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageAlertBinding
-import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.main.my.adapter.AlertRVAdapter
-import kotlin.math.min
 
 class MypageAlertFragment : Fragment() {
     lateinit var binding: FragmentMypageAlertBinding
@@ -170,8 +164,8 @@ class MypageAlertFragment : Fragment() {
     //알림설정 드롭다운 시간/분
     private fun showDropdown(){
         //시간, 분 어레이 생성
-        val hours:ArrayList<String> = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList())
-        val minutes:ArrayList<String> = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList())
+        val hours:ArrayList<String> = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList())
+        val minutes:ArrayList<String> = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList())
         //리사이클러 뷰 어댑터 설정
         val adapter = ArrayList<AlertRVAdapter>()
         adapter.add(0, AlertRVAdapter(hours))

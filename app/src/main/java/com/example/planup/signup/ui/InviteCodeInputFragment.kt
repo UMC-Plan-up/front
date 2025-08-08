@@ -13,7 +13,11 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -29,6 +33,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     private lateinit var inputButton: AppCompatButton
     private lateinit var nextButton: AppCompatButton
     private var myInviteCode: String = ""
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +46,22 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         backIcon = view.findViewById(R.id.backIcon)
         inviteCodeEditText = view.findViewById(R.id.nicknameEditText)

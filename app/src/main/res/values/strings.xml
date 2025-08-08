@@ -28,9 +28,14 @@
     <string name="pro_plan_benefit_3">1:1 챌린지 개수 제한 해제</string>
     <string name="pro_plan_benefit_4">광고 삭제</string>
 
+    <string name="goal_member_count">%1$d명</string>
+    <string name="goal_time">%1$d분 투자</string>
+    <string name="goal_frequency">%1$d분 기준 • %2$d회 이상</string>
+    <string name="error_invalid_email">* 이메일 형식을 다시 확인해주세요 :)</string>
+    <string name="error_email_already_in_use">* 이미 사용 중인 이메일 주소예요.</string>
+    <string name="planup_email">planup@email.com</string>
 
 
-    <!-- 회원가입 -->
     <string name="signup">회원가입하기</string>
     <string name="hint_email">이메일을 입력하세요.</string>
     <string name="hint_password">비밀번호를 입력하세요.</string>
@@ -76,7 +81,7 @@
     <string name="reset_password">비밀번호 재설정</string>
     <string name="password">비밀번호</string>
     <string name="password_requirement_text">비밀번호는 영문, 숫자, 특수문자 중 두 가지 이상을 포함하여 8글자 이상 입력해 주세요.</string>
-    <string name="password_confirm_hint">위에서 설정한 비밀번호와 동일하게 다시 입력해 주세요.</string>
+    <string name="password_confirm_hint">* 위에서 설정한 비밀번호와 동일하게 다시 입력해 주세요.</string>
     <string name="password_change_success_message">입력하신 이메일@email.com 계정의\n비밀번호가 변경되었어요.</string>
 
     <string name="category_setting">카테고리 설정</string>
@@ -234,6 +239,7 @@
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
+    <string name="end_day">"%1$d/%1$d (%1$s)</string>
 
     <!-- fragment_challenge_request.xml -->
     <string name="challenge_request_verify">인증 방식</string>
@@ -304,21 +310,23 @@
     <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
     <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
 
-    <!-- fragment_challenge_set_photo.xml -->
-    <string name="one">01</string>
-    <string name="two">02</string>
-    <string name="three">03</string>
-    <string name="four">04</string>
-    <string name="five">05</string>
-    <string name="six">06</string>
-    <string name="seven">07</string>
+    <!-- fragment_challenge_set_frequency.xml -->
+    <string-array name="dropdown_duration">
+        <item name="one">01</item>
+        <item name="two">02</item>
+        <item name="three">03</item>
+        <item name="four">04</item>
+        <item name="five">05</item>
+        <item name="six">06</item>
+        <item name="seven">07</item>
+    </string-array>
 
     <!-- 스피너 드롭다운 -->
-    <string-array name="spinner_morning_afternoon">
+    <string-array name="dropdown_morning_afternoon">
         <item name="morning">오전</item>
         <item name="afternoon">오후</item>
     </string-array>
-    <string-array name="spinner_hour">
+    <string-array name="dropdown_hour">
         <item name="zeor">00</item>
         <item name="one">01</item>
         <item name="two">02</item>
@@ -333,7 +341,7 @@
         <item name="eleven">11</item>
         <item name="twelve">12</item>
     </string-array>
-    <string-array name="spinner_minute_second">
+    <string-array name="dropdown_minute_second">
         <item name="zeor">00</item>
         <item name="one">01</item>
         <item name="two">02</item>

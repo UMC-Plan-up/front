@@ -10,6 +10,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -26,8 +30,26 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
 
     private val registeredEmails = listOf("user@gmail.com")
 
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         emailEditText = view.findViewById(R.id.emailEditText)
         emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)

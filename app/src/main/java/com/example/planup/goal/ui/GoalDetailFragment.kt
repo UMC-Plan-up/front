@@ -187,14 +187,20 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
     private fun setupNextButton() {
         nextButton.setOnClickListener {
             if (nextButton.isEnabled) {
+                val activity = requireActivity() as GoalActivity
+
+                activity.verificationType = selectedMethod ?: ""
+                activity.period = selectedPeriodButton?.text?.toString() ?: ""
+                activity.frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
+
                 val participantFragment = ParticipantLimitFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                (requireActivity() as GoalActivity)
-                    .navigateToFragment(participantFragment)
+                activity.navigateToFragment(participantFragment)
             }
         }
     }
+
 }

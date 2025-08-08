@@ -9,7 +9,7 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,7 +20,8 @@
             android:id="@+id/scroll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="50dp">
+            android:paddingTop="50dp"
+            android:layout_marginBottom="-50dp">
 
             <!-- 일별 목표 카드 -->
             <androidx.cardview.widget.CardView
@@ -173,8 +174,13 @@
                     style="@style/Typography_SM_Semibold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="잠금 해제까지 얼마 남지 않았어요!"
+                    android:text="개수 제한 없이 목표를 입력하고 싶다면?"
                     android:textColor="@color/blue_200" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_right_blue"/>
             </LinearLayout>
 
             <!-- 하단 카드 -->
@@ -184,6 +190,7 @@
                 android:layout_marginTop="12dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginBottom="50dp"
                 android:background="@drawable/bg_rad6_rectangle"
                 android:backgroundTint="@color/black_100"
                 app:layout_constraintTop_toBottomOf="@id/unlock_text_ll"
