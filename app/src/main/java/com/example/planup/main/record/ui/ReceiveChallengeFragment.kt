@@ -10,18 +10,18 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.databinding.FragmentReceiveChallengeBinding
+import com.example.planup.databinding.FragmentChallengeReceivedBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 
 class ReceiveChallengeFragment:Fragment() {
-    lateinit var binding: FragmentReceiveChallengeBinding
+    lateinit var binding: FragmentChallengeReceivedBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentReceiveChallengeBinding.inflate(inflater,container,false)
+        binding = FragmentChallengeReceivedBinding.inflate(inflater,container,false)
         clickListener()
         return binding.root
     }

@@ -43,9 +43,9 @@ class ChallengeSetAlertFragment : Fragment() {
 
     //프레그먼트 초기화
     private fun init(){
-        hours = resources.getStringArray(R.array.spinner_hour).toCollection(ArrayList<String>())
-        minutes = resources.getStringArray(R.array.spinner_minute_second).toCollection(ArrayList<String>())
-        times = resources.getStringArray((R.array.spinner_morning_afternoon)).toCollection(ArrayList<String>())
+        hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
+        minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
+        times = resources.getStringArray((R.array.dropdown_morning_afternoon)).toCollection(ArrayList<String>())
         if (isFirst) showPopup()
     }
     //클릭 이벤트
@@ -86,15 +86,15 @@ class ChallengeSetAlertFragment : Fragment() {
         //정기 알림 시간 설정
         //오전/오후
         binding.alertTimeTv.setOnClickListener {
-            showDropDown(times,R.layout.item_recycler_dropdown_short,binding.alertTimeTv)
+            showDropDown(times,R.layout.item_recycler_dropdown_morining,binding.alertTimeTv)
         }
         //시각 설정
         binding.alertHourTv.setOnClickListener {
-            showDropDown(hours,R.layout.item_recycler_dropdown_long,binding.alertHourTv)
+            showDropDown(hours,R.layout.item_recycler_dropdown_time,binding.alertHourTv)
         }
         //분 설정
         binding.alertMinuteTv.setOnClickListener {
-            showDropDown(minutes,R.layout.item_recycler_dropdown_long,binding.alertMinuteTv)
+            showDropDown(minutes,R.layout.item_recycler_dropdown_time,binding.alertMinuteTv)
         }
         //정기 알림 요일 설정
         val selected = ContextCompat.getColor(context, R.color.blue_200)

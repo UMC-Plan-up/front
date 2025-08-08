@@ -2,6 +2,9 @@ package com.example.planup.goal.ui
 /*1:1 챌린지 설정 플로우 챌린지 목표 설정하기
 *목표명 및 1회 분량 입력하는 페이지
 */
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
