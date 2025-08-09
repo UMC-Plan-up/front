@@ -104,9 +104,6 @@ class AgreementFragment : Fragment() {
         }
     }
 
-
-
-
     /* 필수 약관 모두 체크되었는지 검사 */
     private fun checkRequiredAgreement() {
         val requiredTerms = termsList.filter { it.isRequired }

@@ -55,22 +55,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
-
+        // 초기화
         backIcon = view.findViewById(R.id.backIcon)
         editIcon = view.findViewById(R.id.editIcon)
         nicknameEditText = view.findViewById(R.id.nicknameEditText)
@@ -78,11 +63,24 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         nicknameGuide2 = view.findViewById(R.id.nicknameGuide2)
         nextButton = view.findViewById(R.id.nextButton)
 
-        /* 처음엔 안내문 숨김 */
         nicknameGuide1.visibility = View.GONE
         nicknameGuide2.visibility = View.GONE
+        setNextButtonEnabled(false)
 
-        /* 처음에는 다음 버튼 비활성화 */
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
+
         setNextButtonEnabled(false)
 
         /* 닉네임 입력 변화 감지 → 유효성 검사 */

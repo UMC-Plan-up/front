@@ -47,6 +47,17 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        backIcon = view.findViewById(R.id.backIcon)
+        inviteCodeEditText = view.findViewById(R.id.nicknameEditText)
+        inputButton = view.findViewById(R.id.inputButton)
+        nextButton = view.findViewById(R.id.nextButton)
+
+        if (myInviteCode.isNotBlank()) {
+            inviteCodeEditText.setText(myInviteCode)
+        }
+
+        hideInvalidCodeMessage()
+
         val baseMargin = 33.dp()
         val gapFromKeyboard = 25.dp()
         val nextBtn = nextButton
@@ -63,34 +74,22 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
             insets
         }
 
-        backIcon = view.findViewById(R.id.backIcon)
-        inviteCodeEditText = view.findViewById(R.id.nicknameEditText)
-        inputButton = view.findViewById(R.id.inputButton)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        if (myInviteCode.isNotBlank()) {
-            inviteCodeEditText.setText(myInviteCode)
-        }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
         }
 
-        hideInvalidCodeMessage()
-
         /* 초대코드 입력란 클릭 */
         inviteCodeEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 inviteCodeEditText.background = ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.bg_edittext_focused_blue
+                    requireContext(), R.drawable.bg_edittext_focused_blue
                 )
                 inviteCodeEditText.hint = ""
             } else {
                 inviteCodeEditText.background = ContextCompat.getDrawable(
-                    requireContext(),
-                    R.drawable.bg_edittext_rounded
+                    requireContext(), R.drawable.bg_edittext_rounded
                 )
                 inviteCodeEditText.hint = "초대코드 입력란"
             }

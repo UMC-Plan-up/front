@@ -46,6 +46,11 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        backIcon = view.findViewById(R.id.backIcon)
+        nicknameEditText = view.findViewById(R.id.nicknameEditText)
+        shareButton = view.findViewById(R.id.shareButton)
+        nextButton = view.findViewById(R.id.nextButton)
+
         val baseMargin = 33.dp()
         val gapFromKeyboard = 25.dp()
         val nextBtn = nextButton
@@ -62,12 +67,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
             insets
         }
 
-        backIcon = view.findViewById(R.id.backIcon)
-        nicknameEditText = view.findViewById(R.id.nicknameEditText)
-        shareButton = view.findViewById(R.id.shareButton)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        // 입력창 클릭 불가 처리
+        // 입력창 클릭 불가
         nicknameEditText.isFocusable = false
         nicknameEditText.isClickable = false
         nicknameEditText.isLongClickable = false
@@ -108,7 +108,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val inviteCode = response.body()?.result?.inviteCode ?: ""
 
-                    myInviteCode = inviteCode // 초대코드 저장
+                    myInviteCode = inviteCode
                     nicknameEditText.setText(inviteCode)
                 } else {
                     Log.e("InviteCode", "API 실패: ${response.code()} / ${response.errorBody()?.string()}")
@@ -119,7 +119,6 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
     }
 
-    /* SharedPreferences에서 accessToken 불러오기 */
     private fun getAccessToken(): String? {
         val prefs = requireActivity().applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
@@ -186,7 +185,8 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                 }
             }
 
-            popupWindow.dismiss()
+            val popupWindowField = anchorView.rootView.findViewById<View>(android.R.id.content)
+            (popupWindowField?.parent as? PopupWindow)?.dismiss() ?: popupWindow.dismiss()
         }
 
         // 문자 공유
@@ -201,7 +201,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
             """.trimIndent()
 
             val smsIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("smsto:") // 번호 없이 문자 열기
+                data = Uri.parse("smsto:")
                 putExtra("sms_body", message)
             }
 
@@ -251,7 +251,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
     }
 
-        private fun dpToPx(dp: Float): Int {
+    private fun dpToPx(dp: Float): Int {
         return (dp * resources.displayMetrics.density).toInt()
     }
 }
