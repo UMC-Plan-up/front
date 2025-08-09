@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
@@ -38,6 +39,8 @@ class ChallengePenaltyFragment : Fragment() {
     private fun init() {
         curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 초기화
         if (!isFirst) binding.challengePenaltyNextBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
+        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        editor = prefs.edit()
     }
 
     //페널티 직접입력 관리
@@ -124,7 +127,7 @@ class ChallengePenaltyFragment : Fragment() {
         //다음 버튼 : 챌린지 신청 완료 화면으로 이동
         binding.challengePenaltyNextBtn.setOnClickListener {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
-
+            editor.putString("penalty",penalty)
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengeFriendFragment())
                 .commitAllowingStateLoss()

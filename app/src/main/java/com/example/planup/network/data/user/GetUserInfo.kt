@@ -1,4 +1,4 @@
-package com.example.planup.main.my.data
+package com.example.planup.network.data.user
 
 import com.google.gson.annotations.SerializedName
 
