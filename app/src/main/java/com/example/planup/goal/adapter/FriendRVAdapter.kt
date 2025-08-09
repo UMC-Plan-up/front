@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.ItemChallengeFriendBinding
 import com.example.planup.goal.data.ChallengeFriend
+import com.example.planup.network.data.challenge.ChallengeFriends
 
-class FriendRVAdapter(val friends:ArrayList<ChallengeFriend>): RecyclerView.Adapter<FriendRVAdapter.ViewHolder>(){
+class FriendRVAdapter(val friends:List<ChallengeFriends>): RecyclerView.Adapter<FriendRVAdapter.ViewHolder>(){
 
     interface FriendListener{
         fun selectFriend(position: Int)
@@ -46,10 +47,10 @@ class FriendRVAdapter(val friends:ArrayList<ChallengeFriend>): RecyclerView.Adap
     }
 
     inner class ViewHolder(val binding:ItemChallengeFriendBinding):RecyclerView.ViewHolder(binding.root){
-        fun bind(friend: ChallengeFriend){
-            binding.challengeFriendProfileIv.setImageResource(friend.profile)
-            binding.challengeFriendNameTv.text = friend.name
-            binding.challengeFriendGoalTv.text = binding.root.context.getString(R.string.challenge_friend_goal, friend.goal)
+        fun bind(friend: ChallengeFriends){
+            binding.challengeFriendProfileIv.setImageResource(R.drawable.profile_example)
+            binding.challengeFriendNameTv.text = friend.nickname
+            binding.challengeFriendGoalTv.text = binding.root.context.getString(R.string.challenge_friend_goal, friend.goalCnt)
         }
     }
 }

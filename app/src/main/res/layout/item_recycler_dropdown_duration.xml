@@ -5,7 +5,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dropdown_recycler_rv"
         android:layout_width="55dp"
-        android:layout_height="193dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/bg_challenge_duration"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"

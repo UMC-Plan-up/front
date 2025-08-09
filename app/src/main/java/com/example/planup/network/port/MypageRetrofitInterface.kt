@@ -1,17 +1,17 @@
 package com.example.planup.network.port
 
-import com.example.planup.main.my.data.GetKakao
-import com.example.planup.main.my.data.GetNickname
-import com.example.planup.main.my.data.GetUserInfo
+import com.example.planup.network.data.user.GetKakao
+import com.example.planup.network.data.user.GetNickname
+import com.example.planup.network.data.user.GetUserInfo
 import com.example.planup.main.my.data.Login
 import com.example.planup.main.my.data.Logout
-import com.example.planup.main.my.data.PatchNotificationAgreement
-import com.example.planup.main.my.data.PostEmail
-import com.example.planup.main.my.data.PostMypageImage
-import com.example.planup.main.my.data.PostNickname
-import com.example.planup.main.my.data.PostPassword
-import com.example.planup.main.my.data.PostPasswordChange
-import com.example.planup.main.my.data.PostProfileImage
+import com.example.planup.network.data.user.PatchNotificationAgreement
+import com.example.planup.network.data.user.PostEmail
+import com.example.planup.network.data.user.PostMypageImage
+import com.example.planup.network.data.user.PostNickname
+import com.example.planup.network.data.user.PostPassword
+import com.example.planup.network.data.user.PostPasswordChange
+import com.example.planup.network.data.user.PostProfileImage
 import com.example.planup.main.my.data.Signup
 import retrofit2.Call
 import retrofit2.http.GET

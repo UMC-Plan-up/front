@@ -1,10 +1,10 @@
-package com.example.planup.main.my.data
+package com.example.planup.network.data.user
 
 import com.google.gson.annotations.SerializedName
 
-data class PostPasswordChange(
+data class PostNickname(
     @SerializedName(value = "isSuccess") val isSuccess: Boolean,
     @SerializedName(value = "code") val code: String,
     @SerializedName(value = "message") val message: String,
-    @SerializedName(value = "result") val result: Boolean
+    @SerializedName(value = "result") val result: String
 )
