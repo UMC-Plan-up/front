@@ -44,29 +44,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
-
-        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-        backIcon.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-
-        // 초기화
         passwordEditText = view.findViewById(R.id.passwordEditText)
         confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText)
         eyeIcon = view.findViewById(R.id.eyeIcon)
@@ -81,6 +58,26 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
         nextButton = view.findViewById(R.id.nextButton)
         disableNextButton()
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
+
+        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
+        view.findViewById<ImageView>(R.id.backIcon).setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
 
         /* 클릭 시 ic_eye_off ↔ ic_eye_on */
         eyeIcon.setOnClickListener {
@@ -104,13 +101,13 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         }
 
         // 다음 버튼 클릭 → LoginSentEmailFragment로 이동
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {  // 활성화된 경우만 이동 가능
+        nextBtn.setOnClickListener {
+            if (nextBtn.isEnabled) {  // 활성화된 경우만
                 openNextStep()
             }
         }
 
-        /* [추가] EditText 외 영역 터치 시 키보드 숨기기 */
+        /* EditText 외 영역 터치 시 키보드 숨기기 */
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if (passwordEditText.isFocused) {

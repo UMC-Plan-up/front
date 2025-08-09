@@ -202,5 +202,4 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
             }
         }
     }
-
 }

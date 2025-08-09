@@ -39,22 +39,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
-
         // 닉네임 전달
         goalOwnerName = requireArguments().getString("goalOwnerName")
             ?: throw IllegalStateException("GoalInputFragment must receive goalOwnerName!")
@@ -130,20 +114,21 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             activity.navigateToFragment(certificationFragment)
         }
 
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
 
-        view.setOnTouchListener { _, event ->
-            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                (goalNameEditText.isFocused || goalVolumeEditText.isFocused)
-            ) {
-                goalNameEditText.clearFocus()
-                goalVolumeEditText.clearFocus()
-                hideKeyboard()
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
             }
-            view.performClick()
-            false
-
+            insets
         }
 
+        // 바깥 터치 시 키보드 숨김
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
                 (goalNameEditText.isFocused || goalVolumeEditText.isFocused)
@@ -156,8 +141,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             false
         }
     }
-
-
 
     /* 입력 감지 */
     private val inputWatcher = object : TextWatcher {

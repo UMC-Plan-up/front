@@ -114,23 +114,27 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
     private fun fetchGoalsFromServer(goalType: String) {
         lifecycleScope.launch {
             try {
-                val response = RetrofitInstance.goalApi.getGoalsByCategory(goalCategory)
+                val res = RetrofitInstance.goalApi.getGoalsByCategory(goalCategory)
+                if (res.isSuccessful) {
+                    val all = res.body()?.result.orEmpty()
+                    Log.d("GoalAPI", "all size=${all.size}")
+                    all.take(5).forEachIndexed { i, g ->
+                        Log.d("GoalAPI", "[$i] type=${g.goalType}, name=${g.goalName}")
+                    }
 
-                if (response.isSuccessful) {
-                    val allGoals = response.body()?.result ?: emptyList()
-                    val filteredGoals = allGoals.filter { it.goalType == goalType }
-
-                    currentFilteredGoals = filteredGoals
-                    displayGoalCards(filteredGoals)
-                    Log.d("GoalAPI", "불러온 $goalType 목표 개수: ${filteredGoals.size}")
+                    // 일단 필터 끄고(바로 화면 뜨는지 확인)
+                    currentFilteredGoals = all
+                    displayGoalCards(all)
+                    moreButton.visibility = if (!showAll && all.size > 3) View.VISIBLE else View.GONE
                 } else {
-                    Log.e("GoalAPI", "API 오류: ${response.errorBody()?.string()}")
+                    Log.e("GoalAPI", "API 오류 ${res.code()} / ${res.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                Log.e("GoalAPI", "네트워크 예외 발생: $e")
+                Log.e("GoalAPI", "네트워크 예외", e)
             }
         }
     }
+
 
     /* 목표 카드를 goalContainer에 추가 */
     private fun displayGoalCards(goals: List<GoalItemDto>) {

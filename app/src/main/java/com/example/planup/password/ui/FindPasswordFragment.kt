@@ -35,6 +35,17 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 초기화
+        emailEditText = view.findViewById(R.id.emailEditText)
+        emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
+        emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
+        nextButton = view.findViewById(R.id.nextButton)
+        emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
+        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
+
+        disableNextButton()
+        hideAllErrors()
+
         val baseMargin = 33.dp()
         val gapFromKeyboard = 25.dp()
         val nextBtn = nextButton
@@ -50,17 +61,6 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
             }
             insets
         }
-
-        emailEditText = view.findViewById(R.id.emailEditText)
-        emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
-        emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
-        nextButton = view.findViewById(R.id.nextButton)
-        emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
-
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-
-        disableNextButton()
-        hideAllErrors()
 
         emailEditText.addTextChangedListener {
             val email = it.toString().trim()
@@ -94,7 +94,6 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
             false
         }
     }
-
 
     private fun validateEmail(email: String) {
         val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
