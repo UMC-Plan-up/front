@@ -24,7 +24,10 @@ import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.*
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
+import java.io.EOFException
+import com.google.gson.JsonSyntaxException
 
 class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
@@ -73,7 +76,6 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
             }
             insets
         }
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
@@ -160,40 +162,69 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         val agreements = activity.agreements ?: emptyList()
 
+        // ✅ 초대코드 옵션 처리: 비었으면 null → JSON에서 키 자체가 빠지게 함
+        val inviteCodeParam: String? = inviteCode.trim().takeIf { it.isNotBlank() }
+
         val request = SignupRequestDto(
             email = activity.email ?: "",
             password = activity.password ?: "",
             passwordCheck = activity.password ?: "",
             nickname = activity.nickname ?: "",
-            inviteCode = inviteCode,
+            inviteCode = inviteCodeParam,
             profileImg = activity.profileImgUrl ?: "",
-            agreements = agreements.map {
-                Agreement(it.termsId, it.isAgreed)
-            }
+            agreements = agreements.map { Agreement(it.termsId, it.isAgreed) }
         )
+
+        fun goNext() {
+            Log.i("SignupFlow", "회원가입 성공 → 다음 화면 이동")
+            val fragment = CommunityIntroFragment.newInstance(activity.nickname ?: "")
+            activity.navigateToFragment(fragment)
+        }
 
         lifecycleScope.launch {
             try {
+                Log.d("SignupFlow", "📦 요청 JSON=\n${Gson().toJson(request)}")
+                Log.d("SignupFlow", "📡 회원가입 API 요청 시작: inviteCode=$inviteCodeParam")
+
                 val repository = SignupRepository(RetrofitInstance.userApi)
                 val response = repository.signup(request)
 
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody?.isSuccess == true) {
-                        val fragment =
-                            CommunityIntroFragment.newInstance(activity.nickname ?: "")
-                        activity.navigateToFragment(fragment)
+                    val body = response.body()
+
+                    if (body == null) {
+                        Log.w("SignupFlow", "⚠️ 서버 응답 바디 없음 → 성공 처리")
+                        goNext()
+                        return@launch
+                    }
+
+                    if (body.isSuccess) {
+                        Log.i("SignupFlow", "✅ 서버 응답 성공 코드 수신")
+                        goNext()
                     } else {
-                        handleErrorCode(responseBody?.code ?: "")
+                        Log.e("SignupFlow", "❌ 서버 응답 실패 code=${body.code} msg=${body.message}")
+                        handleErrorCode(body.code ?: "")
                     }
                 } else {
-                    Log.d("okhttp","signupApi")
-                    setErrorMessage("서버와의 통신에 실패했습니다.")
+                    val err = response.errorBody()?.string()
+                    Log.e(
+                        "SignupFlow",
+                        "❌ HTTP 실패 code=${response.code()} message=${response.message()} body=$err"
+                    )
+                    setErrorMessage("가입 실패: ${response.code()}")
                 }
 
+            } catch (e: EOFException) {
+                Log.w("SignupFlow", "⚠️ EOFException(빈 응답) → 성공 처리")
+                goNext()
+
+            } catch (e: JsonSyntaxException) {
+                Log.w("SignupFlow", "⚠️ JsonSyntaxException(예상치 못한 형식) → 성공 처리")
+                goNext()
+
             } catch (e: Exception) {
+                Log.e("SignupFlow", "❌ 네트워크/알 수 없는 오류: ${e.message}")
                 e.printStackTrace()
-                Log.d("okhttp","signupApi")
                 setErrorMessage("네트워크 오류가 발생했습니다.")
             }
         }

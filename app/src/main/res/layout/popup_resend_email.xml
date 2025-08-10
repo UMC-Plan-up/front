@@ -68,5 +68,4 @@
             android:gravity="center" />
 
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

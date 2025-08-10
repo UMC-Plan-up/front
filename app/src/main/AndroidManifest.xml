@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -24,18 +22,10 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
 
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="@string/kakao_app_key" />
-
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true" />
 
-
-        <activity android:name=".login.ui.LoginActivity"
-            android:windowSoftInputMode="adjustResize" />
         <activity android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
@@ -43,7 +33,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".signup.SignupActivity" />
+
+        <activity
+            android:name=".signup.SignupActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="planup"
+                    android:host="profile"
+                    android:pathPrefix="/setup" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".login.ui.LoginActivity"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity" />
         <activity android:name=".main.home.ui.CalendarActivity"/>

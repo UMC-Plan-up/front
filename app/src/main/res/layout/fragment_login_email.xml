@@ -1,115 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="24dp"
+    android:fillViewport="true"
     android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/backIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_arrow_back"
-        android:layout_marginTop="38dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
-        android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:progress="28"
-        android:progressDrawable="@drawable/ic_progress_drawable"
-        android:layout_marginTop="28dp"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/titleText"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/signup_id_input"
-        android:textSize="22dp"
-        android:fontFamily="@font/pretendard_medium"
-        android:lineSpacingExtra="4dp"
-        android:textColor="@color/black_400"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="43dp" />
+        android:padding="24dp">
 
-    <TextView
-        android:id="@+id/inputEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/signup_email"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretendard_semibold"
-        android:textColor="#0F0F0F"
-        app:layout_constraintTop_toBottomOf="@id/titleText"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="77dp" />
+        <ImageView
+            android:id="@+id/backIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_back"
+            android:layout_marginTop="38dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <EditText
-        android:id="@+id/emailEditText"
-        android:layout_width="0dp"
-        android:layout_height="37dp"
-        android:hint="@string/planup_email"
-        android:textColorHint="@color/black_200"
-        android:textColor="@color/black_300"
-        android:textSize="14sp"
-        android:fontFamily="@font/pretendard_medium"
-        android:padding="8dp"
-        android:background="@drawable/bg_edittext_background1"
-        app:layout_constraintTop_toBottomOf="@id/progressBar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="208dp" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:progress="28"
+            android:progressDrawable="@drawable/ic_progress_drawable"
+            android:layout_marginTop="28dp"
+            app:layout_constraintTop_toBottomOf="@id/backIcon"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/emailErrorText1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/error_invalid_email"
-        android:fontFamily="@font/pretendard_medium"
-        android:textSize="12sp"
-        android:textColor="#5C91FC"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/emailEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signup_id_input"
+            android:textSize="22dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:lineSpacingExtra="4dp"
+            android:textColor="@color/black_400"
+            app:layout_constraintTop_toBottomOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="43dp" />
 
-    <TextView
-        android:id="@+id/emailErrorText2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/error_email_already_in_use"
-        android:fontFamily="@font/pretendard_medium"
-        android:textSize="12sp"
-        android:textColor="#5C91FC"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/emailEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <TextView
+            android:id="@+id/inputEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signup_email"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_semibold"
+            android:textColor="#0F0F0F"
+            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="77dp" />
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/nextButton"
-        android:layout_width="0dp"
-        android:layout_height="44dp"
-        android:text="@string/btn_next"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/pretendard_medium"
-        android:background="@drawable/btn_next_background_gray"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="33dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <EditText
+            android:id="@+id/emailEditText"
+            android:layout_width="0dp"
+            android:layout_height="37dp"
+            android:hint="@string/planup_email"
+            android:textColorHint="@color/black_200"
+            android:textColor="@color/black_300"
+            android:textSize="14sp"
+            android:fontFamily="@font/pretendard_medium"
+            android:padding="8dp"
+            android:background="@drawable/bg_edittext_background1"
+            app:layout_constraintTop_toBottomOf="@id/progressBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="208dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/emailErrorText1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/error_invalid_email"
+            android:fontFamily="@font/pretendard_medium"
+            android:textSize="12sp"
+            android:textColor="#5C91FC"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/emailEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/emailErrorText2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/error_email_already_in_use"
+            android:fontFamily="@font/pretendard_medium"
+            android:textSize="12sp"
+            android:textColor="#5C91FC"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/emailEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/nextButton"
+            android:layout_width="0dp"
+            android:layout_height="44dp"
+            android:text="@string/btn_next"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_medium"
+            android:background="@drawable/btn_next_background_gray"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="33dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
