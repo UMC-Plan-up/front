@@ -1,6 +1,11 @@
 package com.example.planup.network.controller
 
 import android.util.Log
+import com.example.planup.main.my.adapter.BenefitAdapter
+import com.example.planup.main.my.adapter.CloseAccountAdapter
+import com.example.planup.main.my.adapter.KakaoAdapter
+import com.example.planup.main.my.adapter.LogoutAdapter
+import com.example.planup.main.my.data.Logout
 import com.example.planup.network.data.user.PostEmail
 import com.example.planup.network.data.user.PostNickname
 import com.example.planup.network.data.user.PostPasswordChange
@@ -11,6 +16,9 @@ import com.example.planup.network.adapter.FriendsUnblockedAdapter
 import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.data.PostFriendsReport
 import com.example.planup.network.data.PostFriendsUnblocked
+import com.example.planup.network.data.user.GetKakao
+import com.example.planup.network.data.user.PatchNotificationAgreement
+import com.example.planup.network.data.user.PatchWithdraw
 import com.example.planup.network.dto.FriendReportDto
 import com.example.planup.network.dto.FriendUnblockDto
 import com.example.planup.network.getRetrofit
@@ -18,6 +26,8 @@ import com.example.planup.network.port.UserControllerInterface
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.create
+import kotlin.math.log
 
 class UserController {
     //서버 응답에 따른 마이페이지 관련레이아웃 관리를 위한 변수
@@ -44,7 +54,29 @@ class UserController {
         this.friendReportAdapter = adapter
     }
 
-    //닉네임 변경
+    //회원탈퇴에 대한 레이아웃 관리
+    private lateinit var closeAccountAdapter: CloseAccountAdapter
+    fun setCloseAccountAdapter(adapter: CloseAccountAdapter){
+        this.closeAccountAdapter = adapter
+    }
+
+    //로그아웃에 대한 레이아웃 관리
+    private lateinit var logoutAdapter: LogoutAdapter
+    fun setLogoutAdapter(adapter: LogoutAdapter){
+        this.logoutAdapter = adapter
+    }
+
+    //카카오톡 연동 상태 확인에 대한 레이아웃 관리
+    private lateinit var kakaoAdapter: KakaoAdapter
+    fun setKakaoAdapter(adapter: KakaoAdapter){
+        this.kakaoAdapter = adapter
+    }
+    //혜택 및 마케팅 동의 여부에 대한 토글 관리
+    private lateinit var benefitAdapter: BenefitAdapter
+    fun setBenefitAdapter(adapter: BenefitAdapter){
+        this.benefitAdapter = adapter
+    }
+    //새로운 nickname으로 수정
     fun nicknameService(userId: Int, nickname: String) {
         val nicknameService = getRetrofit().create(UserControllerInterface::class.java)
         nicknameService.changeNickname(userId, nickname).enqueue(object : Callback<PostNickname> {
@@ -126,7 +158,55 @@ class UserController {
             })
     }
 
-    //차단 친구 조회
+    //카카오 계정 연동상태 확인
+    fun kakaoService(){
+        val kakaoService = getRetrofit().create(UserControllerInterface::class.java)
+        kakaoService.getKakao().enqueue(object : Callback<GetKakao>{
+            override fun onResponse(call: Call<GetKakao>, response: Response<GetKakao>) {
+                when (response.isSuccessful) {
+                    true -> {
+                        val responseBody = response.body()
+                        responseBody?.result?.let { kakaoAdapter.successKakao(it.kakaoEmail) }
+                    }
+
+                    else -> {
+                        kakaoAdapter.failKakao()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<GetKakao>, t: Throwable) {
+                Log.d("okhttp","fail\n$t")
+            }
+
+        })
+    }
+
+    //혜택 및 마케팅 동의 변경
+    fun notificationAgreementService(condition: Boolean){
+        val notificationAgreementService = getRetrofit().create(UserControllerInterface::class.java)
+        notificationAgreementService.patchNoticeAgree().enqueue(object : Callback<PatchNotificationAgreement>{
+            override fun onResponse(
+                call: Call<PatchNotificationAgreement>,
+                response: Response<PatchNotificationAgreement>
+            ) {
+                when(response.isSuccessful){
+                    true -> {
+                        Log.d("okhttp",response.code().toString())
+                        benefitAdapter.successBenefitSetting(condition)
+                    }
+                    else -> {
+                        Log.d("okhttp",response.code().toString())
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PatchNotificationAgreement>, t: Throwable) {
+                Log.d("okhttp","fail\n$t")
+            }
+
+        })
+    }
+    //차단 친구 목록 조회
     fun friendsBlockedService() {
         val blockFriendService = getRetrofit().create(UserControllerInterface::class.java)
         blockFriendService.blockedFriend().enqueue(object : Callback<BlockedFriends> {
@@ -154,7 +234,7 @@ class UserController {
         })
     }
 
-    //차단 친구 해제
+    //친구 차단 해제
     fun friendsUnblockService(friendUnblockDto: FriendUnblockDto){
         val friendUnblockService = getRetrofit().create(UserControllerInterface::class.java)
         friendUnblockService.unblockedFriend(friendUnblockDto).enqueue(object : Callback<PostFriendsUnblocked>{
@@ -201,6 +281,50 @@ class UserController {
 
             override fun onFailure(call: Call<PostFriendsReport>, t: Throwable) {
                 Log.d("okhttp",t.toString())
+            }
+
+        })
+    }
+
+    //로그아웃
+    fun logoutService(){
+        val logoutService = getRetrofit().create(UserControllerInterface::class.java)
+        logoutService.logout().enqueue(object : Callback<Logout>{
+            override fun onResponse(call: Call<Logout>, response: Response<Logout>) {
+                when(response.isSuccessful){
+                    true ->{
+                        logoutAdapter.successLogout()
+                    }
+                    else ->{
+                        logoutAdapter.failLogout()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Logout>, t: Throwable) {
+                Log.d("okhttp","fail\n$t")
+            }
+
+        })
+    }
+
+    //회원 탈퇴
+    fun closeAccountService(reason: String){
+        val closeAccountService = getRetrofit().create(UserControllerInterface::class.java)
+        closeAccountService.withdrawAccount(reason).enqueue(object : Callback<PatchWithdraw>{
+            override fun onResponse(call: Call<PatchWithdraw>, response: Response<PatchWithdraw>) {
+                when(response.isSuccessful){
+                    true -> {
+                        closeAccountAdapter.successCloseAccount()
+                    }
+                    else -> {
+                        closeAccountAdapter.failCloseAccount()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PatchWithdraw>, t: Throwable) {
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
