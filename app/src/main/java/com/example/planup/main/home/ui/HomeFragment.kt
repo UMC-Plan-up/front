@@ -196,48 +196,4 @@ class HomeFragment : Fragment() {
         }
         dialog.show()
     }
-
-
-    private fun fetchGoals() {
-        lifecycleScope.launch {
-            try {
-                val response = HomeRetrofitInstance.api.getMyGoals()
-
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    if (body != null && body.isSuccess) {
-                        when (body.code) {
-                            "200" -> {
-                                val goals = body.result
-                                Log.d("HomeFragment", "조회 성공: $goals")
-                                // goals RecyclerView 등에서 사용
-                            }
-                            "S001" -> {
-                                showToast("잘못된 입력값입니다.")
-                            }
-                            "S002" -> {
-                                showToast("서버 에러가 발생했습니다.")
-                            }
-                            "U001" -> {
-                                showToast("존재하지 않는 사용자입니다.")
-                            }
-                            else -> {
-                                showToast("알 수 없는 오류 코드: ${body.code}")
-                            }
-                        }
-                    } else {
-                        showToast("서버 응답 실패: ${body?.message ?: "응답 없음"}")
-                    }
-                } else {
-                    showToast("HTTP 오류: ${response.code()}")
-                }
-            } catch (e: Exception) {
-                Log.e("HomeFragment", "예외 발생: ${e.localizedMessage}")
-                showToast("네트워크 오류 발생")
-            }
-        }
-    }
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-    }
 }

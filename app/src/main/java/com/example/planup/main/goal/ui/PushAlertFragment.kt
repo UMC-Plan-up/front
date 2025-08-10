@@ -49,15 +49,28 @@ class PushAlertFragment : Fragment() {
 
         binding.nextButton.setOnClickListener {
             val request = EditGoalRequest(
-                title = title,
-                oneDose = oneDose,
-                authType = authType,
-                time = "$hour:$minute:$second",
-                duration = hour,
-                frequency = frequency.toInt(),
-                endDate = endDate
+                goalName = title,
+                goalAmount = oneDose,
+                goalCategory = "STUDYING",
+                goalType = "FRIEND",
+                oneDose = 0,
+                frequency = 3,
+                period = hour,
+                endDate = endDate,
+                verificationType = "PHOTO",
+                limitFriendCount = 3,
+                goalTime = 0 //??
             )
             updateGoal(goalId = goalId, request = request)
+            val nextfragment = FragmentEditGoalComplete()
+            val bundle = Bundle().apply {
+                putString("goalId", goalId.toString())
+            }
+            nextfragment.arguments = bundle
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         return binding.root
