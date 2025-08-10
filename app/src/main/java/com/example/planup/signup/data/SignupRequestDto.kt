@@ -10,7 +10,8 @@ data class SignupRequestDto(
     val password: String,
     val passwordCheck: String,
     val nickname: String,
-    val inviteCode: String,
+    val inviteCode: String? = null,
     val profileImg: String,
     val agreements: List<Agreement>
 )
+
