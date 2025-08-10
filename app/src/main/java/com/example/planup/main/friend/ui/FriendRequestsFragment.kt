@@ -14,6 +14,8 @@ import com.example.planup.databinding.FragmentFriendRequestsBinding
 import com.example.planup.main.friend.data.FriendRequest
 import com.example.planup.main.friend.adapter.FriendRequestAdapter
 import com.example.planup.main.friend.data.FriendActionRequestDto
+import com.example.planup.main.friend.data.FriendRequestsResponse
+import com.example.planup.main.friend.data.FriendResponseDto
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 class FriendRequestsFragment : Fragment() {
@@ -49,11 +51,16 @@ class FriendRequestsFragment : Fragment() {
                 Log.d("FriendRequests", "status: ${response.code()}, body: ${response.body()}")
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val requestList: List<FriendRequest> = response.body()!!.result.map {
+                    val dtoList = response.body()!!.result
+                    val requestList: List<FriendRequest> = dtoList.map { dto ->
                         FriendRequest(
-                            id = it.id,
-                            nickname = it.nickname,
-                            status = "${it.goalCnt}개의 목표 진행 중"
+                            id = dto.id,
+                            nickname = dto.nickname,
+                            status = buildString {
+                                append("${dto.goalCnt}개의 목표 진행 중")
+                                dto.todayTime?.let { append(" · 오늘 $it") }
+                                if (dto.isNewPhotoVerify) append(" · 새 사진 인증")
+                            }
                         )
                     }
 
