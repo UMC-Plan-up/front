@@ -85,6 +85,7 @@ class FriendRequestsFragment : Fragment() {
         }
     }
 
+
     private fun acceptFriend(friend: FriendRequest) {
         lifecycleScope.launch {
             val token = getAccessToken() ?: return@launch
