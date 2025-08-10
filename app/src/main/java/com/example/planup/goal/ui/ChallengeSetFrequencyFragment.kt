@@ -199,6 +199,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             override fun setTime(position: Int) {
                 binding.photoDurationTv.text = durations[position]
                 duration = true
+                popupWindow.dismiss()
                 //기준 기간 저장
                 editor.putInt("timePerPeriod",durations[position].toInt())
             }

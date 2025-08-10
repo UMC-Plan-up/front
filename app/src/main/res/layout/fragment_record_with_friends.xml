@@ -139,7 +139,6 @@
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="@color/black_400"/>
-                </LinearLayout>
 
                 <!-- RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -534,6 +533,8 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+        </LinearLayout>
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

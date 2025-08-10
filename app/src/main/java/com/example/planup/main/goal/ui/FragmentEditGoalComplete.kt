@@ -1,6 +1,9 @@
 package com.example.planup.main.goal.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,10 +21,13 @@ class FragmentEditGoalComplete : Fragment() {
         // 레이아웃 연결
         val view = inflater.inflate(R.layout.fragment_edit_goal_complete, container, false)
 
+        val goalId = arguments?.getString("goalId")
+        Log.d("FragmentEditGoalComplete", "goalId: $goalId")
         // 완료 버튼 클릭 시 Activity 종료
         val completeButton = view.findViewById<Button>(R.id.edit_complete_start_btn)
         completeButton.setOnClickListener {
-            requireActivity().finish()
+            // activity를 EditFriendGoalActivity로 캐스팅
+            (activity as? EditFriendGoalActivity)?.onGoalEditComplete(true)
         }
 
         return view
