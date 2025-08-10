@@ -19,3 +19,10 @@ data class FriendInfo(
     val todayTime: String?,
     val isNewPhotoVerify: Boolean
 )
+
+data class FriendReportRequestDto(
+    val userId: Int,
+    val friendId: Int,
+    val reason: String,
+    val block: Boolean
+)
