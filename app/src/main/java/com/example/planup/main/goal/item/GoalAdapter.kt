@@ -19,6 +19,7 @@ import com.github.mikephil.charting.data.PieEntry
 class GoalAdapter(
     private val items: List<GoalItem>,
     private val onItemClick: (GoalItem) -> Unit,
+    private val onEditClick: (Int) -> Unit,
     private val onDeactivateConfirmed: () -> Unit,
     private val onActivateConfirmed: () -> Unit,
     private val onDeleteConfirmed: () -> Unit) :
@@ -85,6 +86,7 @@ class GoalAdapter(
         }
 
         holder.editIcon.setOnClickListener {
+            val goalId = item.goalId
             val context = holder.itemView.context
             val intent = Intent(context, EditFriendGoalActivity::class.java)
             intent.putExtra("goalId", item.goalId)  // 필요한 정보 전달
