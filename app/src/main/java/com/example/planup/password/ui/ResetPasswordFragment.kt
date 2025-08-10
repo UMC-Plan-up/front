@@ -20,7 +20,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.login.ui.LoginActivity
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
@@ -50,22 +49,6 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
-
         // 초기화
         passwordEditText = view.findViewById(R.id.passwordEditText)
         confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText)
@@ -86,6 +69,21 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         disableNextButton()
         hideAllConditions()
 
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
+
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN &&
                 (passwordEditText.isFocused || confirmPasswordEditText.isFocused)) {
@@ -96,8 +94,6 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
             view.performClick()
             false
         }
-
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         val backIcon = view.findViewById<ImageView>(R.id.backIcon)
@@ -113,7 +109,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
                 .commit()
         }
 
-        /* 클릭 시 비밀번호 보이기/숨기기 (ic_eye_off ↔ ic_eye_on) */
+        /* 클릭 시 비밀번호 보이기/숨기기 */
         eyeIcon.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
             togglePasswordVisibility(passwordEditText, eyeIcon, isPasswordVisible)
@@ -140,12 +136,8 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         }
 
         // 입력 변화 감지
-        passwordEditText.addTextChangedListener {
-            validateConditions()
-        }
-        confirmPasswordEditText.addTextChangedListener {
-            validateConditions()
-        }
+        passwordEditText.addTextChangedListener { validateConditions() }
+        confirmPasswordEditText.addTextChangedListener { validateConditions() }
 
         /* 완료 버튼 클릭 → popup_reset 띄우기 */
         nextButton.setOnClickListener {
@@ -262,7 +254,8 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
         val safeEmail = userEmail ?: "이메일"
         val popupMessage = dialogView.findViewById<TextView>(R.id.resetCompleteDesc)
-        popupMessage.text = "입력하신 {$safeEmail} 계정의\n비밀번호가 변경되었어요."
+        // 문자열 템플릿 보정: {$safeEmail} → $safeEmail
+        popupMessage.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(dialogView)
@@ -288,7 +281,6 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
     }
-
 
     /* LoginActivity로 이동 */
     private fun goToLoginActivity() {

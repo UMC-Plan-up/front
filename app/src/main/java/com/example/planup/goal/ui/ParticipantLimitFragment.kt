@@ -31,25 +31,8 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
     private var goalOwnerName: String? = null
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         // GoalDetailFragment에서 닉네임 받기
         goalOwnerName = arguments?.getString("goalOwnerName")
@@ -72,7 +55,23 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         participantTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
         participantLimitErrorText.visibility = View.GONE
 
+        /* 처음엔 다음 버튼 비활성화 */
         disableNextButton()
+
+        val baseMargin = 33.dp()
+        val gapFromKeyboard = 25.dp()
+        val nextBtn = nextButton
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+
+            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
+
+            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
+                bottomMargin = targetMargin
+            }
+            insets
+        }
 
         setupClickListeners()
         setupInputValidation()
@@ -88,8 +87,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
             false
         }
     }
-
-
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupClickListeners() {
@@ -108,7 +105,8 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
             if (isInputValid) {
                 val activity = requireActivity() as GoalActivity
 
-                activity.limitFriendCount = participantLimitEditText.text.toString().toIntOrNull() ?: 0
+                activity.limitFriendCount =
+                    participantLimitEditText.text.toString().toIntOrNull() ?: 0
 
                 val goalCompleteFragment = GoalCompleteFragment().apply {
                     arguments = Bundle().apply {
@@ -149,7 +147,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         })
     }
 
-
     /* 버튼 비활성화 */
     private fun disableNextButton() {
         nextButton.isEnabled = false
@@ -161,7 +158,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
-
 
     /* 버튼 활성화 */
     private fun enableNextButton() {

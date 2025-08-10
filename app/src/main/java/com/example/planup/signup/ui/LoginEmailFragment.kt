@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -35,6 +36,17 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // 초기화
+        emailEditText = view.findViewById(R.id.emailEditText)
+        emailErrorText1 = view.findViewById(R.id.emailErrorText1)
+        emailErrorText2 = view.findViewById(R.id.emailErrorText2)
+        nextButton = view.findViewById(R.id.nextButton)
+
+        emailErrorText1.visibility = View.GONE
+        emailErrorText2.visibility = View.GONE
+
+        disableNextButton()
+
         val baseMargin = 33.dp()
         val gapFromKeyboard = 25.dp()
         val nextBtn = nextButton
@@ -56,18 +68,6 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
         backIcon.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
-
-        emailEditText = view.findViewById(R.id.emailEditText)
-        emailErrorText1 = view.findViewById(R.id.emailErrorText1)
-        emailErrorText2 = view.findViewById(R.id.emailErrorText2)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        // 처음엔 에러 메시지 숨김
-        emailErrorText1.visibility = View.GONE
-        emailErrorText2.visibility = View.GONE
-
-        // 처음엔 버튼 비활성화 상태 유지
-        disableNextButton()
 
         /* 이메일 입력 변화 감지 → 실시간 검증 */
         emailEditText.addTextChangedListener {
@@ -94,8 +94,8 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
         }
 
         /* 다음 버튼 클릭 → LoginPasswordFragment로 이동 */
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {  // 활성화 된 경우만 이동 가능
+        nextBtn.setOnClickListener {
+            if (nextBtn.isEnabled) {  // 활성화 된 경우만 이동 가능
                 openNextStep()
             }
         }
@@ -112,7 +112,6 @@ class LoginEmailFragment : Fragment(R.layout.fragment_login_email) {
             false
         }
     }
-
 
     /* LoginPasswordFragment로 이동하는 메서드 */
     private fun openNextStep() {

@@ -21,8 +21,8 @@ import com.example.planup.network.adapter.FriendsBlockedAdapter
 import com.example.planup.network.adapter.FriendsUnblockedAdapter
 import com.example.planup.network.controller.UserController
 import com.example.planup.network.data.BlockedFriend
-import com.example.planup.network.entity.FriendReportDto
-import com.example.planup.network.entity.FriendUnblockDto
+import com.example.planup.network.dto.FriendReportDto
+import com.example.planup.network.dto.FriendUnblockDto
 
 class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendReportAdapter, FriendsUnblockedAdapter {
     lateinit var binding: FragmentMypageFriendBlockBinding

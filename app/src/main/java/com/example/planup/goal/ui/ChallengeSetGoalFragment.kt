@@ -1,10 +1,8 @@
 package com.example.planup.goal.ui
-/*1:1 챌린지 설정 플로우 챌린지 목표 설정하기
-*목표명 및 1회 분량 입력하는 페이지
-*/
-import android.content.Context
+
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,8 +14,14 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetGoalBinding
 import com.example.planup.goal.GoalActivity
 
+/*1:1 챌린지 설정 플로우 챌린지 목표 설정하기
+*목표명 및 1회 분량 입력하는 페이지
+*/
 class ChallengeSetGoalFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetGoalBinding
+    //목표명, 1회 분량을 저장하는데 사용
+    lateinit var prefs: SharedPreferences
+    lateinit var editor:Editor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,11 +29,16 @@ class ChallengeSetGoalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeSetGoalBinding.inflate(inflater, container, false)
-        clickListener()
-        textListener()
+        init() //프레그먼트 초기화
+        clickListener() //클릭 이벤트 관리
+        textListener() //입력 양식 관리
         return binding.root
     }
 
+    private fun init(){
+        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        editor = prefs.edit()
+    }
     private fun clickListener() {
         //뒤로가기: 목표 설정하기 페이지로 이동, 1:1 챌린지, 커뮤니티 선택 가능
         binding.backIv.setOnClickListener {
@@ -39,14 +48,18 @@ class ChallengeSetGoalFragment : Fragment() {
         }
         //인증방식 설정 페이지로 이동
         binding.btnNextTv.setOnClickListener{
+            editor.putString("goalName",binding.goalNameEt.text.toString())
+            editor.putString("goalAmount",binding.goalAmountEt.text.toString())
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
                 .commitAllowingStateLoss()
         }
     }
 
+    //목표명과 1회분량에 대한 입력 양식을 확인하는 메소드
     private fun textListener() {
 
+        //목표명 입력 시 1글자 이상, 20글자 이내로 작성했는지 확인
         binding.goalNameEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (binding.goalNameEt.text.toString().isEmpty()) binding.goalNameErrorTv.text =
@@ -60,6 +73,7 @@ class ChallengeSetGoalFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
         })
+        //1회 분량 입력 시 1글자 이상, 30글자 이내로 작성했는지 확인
         binding.goalAmountEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 if (binding.goalAmountEt.text.toString().isEmpty()) binding.goalAmountErrorTv.text =

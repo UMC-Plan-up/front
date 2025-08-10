@@ -1,9 +1,9 @@
 package com.example.planup.network.controller
 
 import android.util.Log
-import com.example.planup.main.my.data.PostEmail
-import com.example.planup.main.my.data.PostNickname
-import com.example.planup.main.my.data.PostPasswordChange
+import com.example.planup.network.data.user.PostEmail
+import com.example.planup.network.data.user.PostNickname
+import com.example.planup.network.data.user.PostPasswordChange
 import com.example.planup.main.my.ui.ResponseViewer
 import com.example.planup.network.adapter.FriendReportAdapter
 import com.example.planup.network.adapter.FriendsBlockedAdapter
@@ -11,8 +11,8 @@ import com.example.planup.network.adapter.FriendsUnblockedAdapter
 import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.data.PostFriendsReport
 import com.example.planup.network.data.PostFriendsUnblocked
-import com.example.planup.network.entity.FriendReportDto
-import com.example.planup.network.entity.FriendUnblockDto
+import com.example.planup.network.dto.FriendReportDto
+import com.example.planup.network.dto.FriendUnblockDto
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserControllerInterface
 import retrofit2.Call
@@ -90,7 +90,7 @@ class UserController {
             }
 
             override fun onFailure(call: Call<PostEmail>, t: Throwable) {
-                Log.d("okhttp", t.toString())
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
@@ -120,7 +120,7 @@ class UserController {
                 }
 
                 override fun onFailure(call: Call<PostPasswordChange>, t: Throwable) {
-                    Log.d("okhttp", "fail: $t")
+                    Log.d("okhttp", "fail\n$t")
                 }
 
             })
@@ -148,6 +148,7 @@ class UserController {
             }
 
             override fun onFailure(call: Call<BlockedFriends>, t: Throwable) {
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
@@ -175,7 +176,7 @@ class UserController {
             }
 
             override fun onFailure(call: Call<PostFriendsUnblocked>, t: Throwable) {
-                Log.d("okhttp",t.toString())
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
