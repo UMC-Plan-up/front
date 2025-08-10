@@ -11,8 +11,10 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageDeleteAccountBinding
 import com.example.planup.login.ui.LoginActivity
+import com.example.planup.main.my.adapter.CloseAccountAdapter
+import com.example.planup.network.controller.UserController
 
-class MypageDeleteAccountFragment: Fragment(){
+class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
     lateinit var binding: FragmentMypageDeleteAccountBinding
     lateinit var name: String
 
@@ -54,8 +56,17 @@ class MypageDeleteAccountFragment: Fragment(){
         /*회원 탈퇴 버튼*/
         binding.btnDeleteAccountTv.setOnClickListener {
             if(!binding.btnDeleteAccountTv.isActivated) return@setOnClickListener
-            val intent = Intent(context as MainActivity, LoginActivity::class.java)
-            startActivity(intent)
+            val service = UserController()
+            service.setCloseAccountAdapter(this)
+            service.closeAccountService(binding.deleteAccountReasonEt.text.toString())
         }
+    }
+
+    override fun successCloseAccount() {
+        val intent = Intent(context as MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun failCloseAccount() {
     }
 }

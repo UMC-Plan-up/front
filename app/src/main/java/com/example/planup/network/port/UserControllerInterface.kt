@@ -13,6 +13,7 @@ import com.example.planup.network.data.user.PostProfileImage
 import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.data.PostFriendsReport
 import com.example.planup.network.data.PostFriendsUnblocked
+import com.example.planup.network.data.user.PatchWithdraw
 import com.example.planup.network.dto.FriendReportDto
 import com.example.planup.network.dto.FriendUnblockDto
 import retrofit2.Call
@@ -23,18 +24,20 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserControllerInterface {
-    @GET("mypage/profile/nickname")
-    fun getNickname(@Query("userId") userId:Int):Call<GetNickname>
-    @GET("mypage/kakao-account")
-    fun getKakao(@Query("userId") userId: Int):Call<GetKakao>
+    @GET("mypage/profile/nickname") //사용자 닉네임 조회
+    fun getNickname(@Query("userId") userId:Int): Call<GetNickname>
+    @GET("mypage/kakao-account") //카카오 소셜 로그인 페이지
+    fun getKakao(): Call<GetKakao>
 
-    @PATCH("mypage/notification/agree")
-    fun patchNoticeAgree(@Query("userId") userId:Int):Call<PatchNotificationAgreement>
+    @PATCH("mypage/notification/agree") //알림설정 동의 변경
+    fun patchNoticeAgree(): Call<PatchNotificationAgreement>
+    @POST("users/withdraw") //회원 탈퇴
+    fun withdrawAccount(@Body reason: String ): Call<PatchWithdraw>
 
     @POST("users/logout")
-    fun logout():Call<Logout>
+    fun logout(): Call<Logout>
     @POST("profile/image")
-    fun setProfileImage():Call<PostProfileImage>
+    fun setProfileImage(): Call<PostProfileImage>
     @POST("mypage/profile/password")
     fun checkPassword(@Query("userId") userId: Int, @Query("password") password: String): Call<PostPassword>
     @POST("mypage/profile/password/update")
