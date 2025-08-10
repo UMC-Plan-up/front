@@ -41,7 +41,23 @@
         <activity android:name=".login.ui.LoginActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".main.MainActivity" />
-        <activity android:name=".signup.SignupActivity" />
+
+        <activity
+            android:name=".signup.SignupActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="planup"
+                    android:host="profile"
+                    android:pathPrefix="/setup" />
+            </intent-filter>
+        </activity>
+
+
+
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity" />
         <activity android:name=".main.home.ui.CalendarActivity"/>

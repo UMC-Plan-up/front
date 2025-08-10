@@ -1,5 +1,11 @@
 package com.example.planup.signup.data
 
+// 요청 Dto
+data class InviteCodeValidateRequest(
+    val inviteCode: String
+)
+
+// 응답 Dto
 data class InviteCodeValidateResponse(
     val isSuccess: Boolean,
     val code: String,

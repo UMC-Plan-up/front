@@ -40,8 +40,6 @@
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent" />
 
-
-
     <LinearLayout
         android:id="@+id/codeInputRow"
         android:layout_width="0dp"
@@ -60,6 +58,7 @@
             android:background="@drawable/bg_edittext_rounded"
             android:hint="@string/invite_code_input_hint"
             android:paddingHorizontal="12dp"
+            android:gravity="center_vertical"
             android:textColorHint="@color/black_300"
             android:textColor="@color/black_300"
             android:fontFamily="@font/pretendard_medium" />
@@ -69,13 +68,13 @@
             android:layout_width="69dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="-3dp"
             android:text="@string/btn_input"
             android:textSize="16sp"
             android:textColor="@color/white"
             android:fontFamily="@font/pretendard_medium"
             android:background="@drawable/btn_next_background"
             android:gravity="center" />
+
     </LinearLayout>
 
     <TextView

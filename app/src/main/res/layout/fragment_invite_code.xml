@@ -57,6 +57,7 @@
             android:layout_weight="1"
             android:background="@drawable/bg_edittext_rounded"
             android:paddingHorizontal="12dp"
+            android:gravity="center_vertical"
             android:textColor="@color/black_300"
             android:fontFamily="@font/pretendard_medium" />
 
@@ -65,7 +66,6 @@
             android:layout_width="69dp"
             android:layout_height="40dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="-3dp"
             android:text="@string/btn_share"
             android:textSize="16sp"
             android:textColor="@color/white"
@@ -73,7 +73,6 @@
             android:background="@drawable/btn_next_background"
             android:gravity="center" />
     </LinearLayout>
-
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/nextButton"
