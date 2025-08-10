@@ -37,4 +37,12 @@ object RetrofitInstance {
         retrofit.create(MyPageApi::class.java)
     }
 
+    val weeklyReportApi: WeeklyReportApi by lazy{
+        retrofit.create(WeeklyReportApi::class.java)
+    }
+
+    val goalReportApi: GoalReportApi by lazy{
+        retrofit.create(GoalReportApi::class.java)
+    }
+
 }
