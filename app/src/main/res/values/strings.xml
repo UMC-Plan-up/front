@@ -313,6 +313,10 @@
     <string name="six">06</string>
     <string name="seven">07</string>
 
+    <!-- GoalFragment -->
+    <string name="goal_add_new">"새 목표를 추가할 수 있어요!</string>
+    <string name="goal_add_limit">개수 제한 없이 목표를 입력하고 싶다면?</string>
+
     <!-- 스피너 드롭다운 -->
     <string-array name="spinner_morning_afternoon">
         <item name="morning">오전</item>
