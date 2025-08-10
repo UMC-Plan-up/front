@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.main.friend.data.BaseResponse
 import com.example.planup.main.friend.data.FriendActionRequestDto
 import com.example.planup.main.friend.data.FriendReportRequestDto
+import com.example.planup.main.friend.data.FriendRequestsResponse
 import com.example.planup.main.friend.data.FriendResponseDto
 import com.example.planup.main.friend.data.UnblockFriendRequestDto
 import retrofit2.Call
@@ -18,7 +19,7 @@ interface FriendApi {
     @GET("/friends/requests")
     suspend fun getFriendRequests(
         @Header("Authorization") token: String
-    ): Response<FriendResponseDto>
+    ): Response<FriendRequestsResponse>
 
     // 친구 화면 조회
     @GET("/friends/list")

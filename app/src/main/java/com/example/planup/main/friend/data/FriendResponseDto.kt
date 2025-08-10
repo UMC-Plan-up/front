@@ -26,3 +26,18 @@ data class FriendReportRequestDto(
     val reason: String,
     val block: Boolean
 )
+
+data class FriendRequestsResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<FriendRequestsResult>
+)
+
+data class FriendRequestsResult(
+    val id: Int,
+    val nickname: String,
+    val goalCnt: Int,
+    val todayTime: String?,
+    val isNewPhotoVerify: Boolean
+)

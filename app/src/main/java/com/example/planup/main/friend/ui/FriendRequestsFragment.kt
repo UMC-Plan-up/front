@@ -14,6 +14,8 @@ import com.example.planup.databinding.FragmentFriendRequestsBinding
 import com.example.planup.main.friend.data.FriendRequest
 import com.example.planup.main.friend.adapter.FriendRequestAdapter
 import com.example.planup.main.friend.data.FriendActionRequestDto
+import com.example.planup.main.friend.data.FriendRequestsResponse
+import com.example.planup.main.friend.data.FriendResponseDto
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 class FriendRequestsFragment : Fragment() {
@@ -39,44 +41,49 @@ class FriendRequestsFragment : Fragment() {
         return prefs.getString("accessToken", null)
     }
 
-//    private fun fetchFriendRequests() {
-//        lifecycleScope.launch {
-//            val token = getAccessToken() ?: return@launch
-//
-//            try {
-//                val response = RetrofitInstance.friendApi.getFriendRequests("Bearer $token")
-//
-//                Log.d("FriendRequests", "status: ${response.code()}, body: ${response.body()}")
-//
-//                if (response.isSuccessful && response.body()?.isSuccess == true) {
-//                    val requestList: List<FriendRequest> = response.body()!!.result.map {
-//                        FriendRequest(
-//                            id = it.id,
-//                            nickname = it.nickname,
-//                            status = "${it.goalCnt}개의 목표 진행 중"
-//                        )
-//                    }
-//
-//                    // RecyclerView 어댑터 연결
-//                    binding.friendRequestRecyclerView.adapter = FriendRequestAdapter(
-//                        requestList,
-//                        onAcceptClick = { friend ->
-//                            acceptFriend(friend) // Fragment에서 API 호출 + 토스트 처리
-//                        },
-//                        onDeclineClick = { friend ->
-//                            declineFriend(friend)
-//                        }
-//                    )
-//
-//                } else {
-//                    Toast.makeText(requireContext(), "친구 요청을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
-//                }
-//            } catch (e: Exception) {
-//                Log.e("FriendRequests", "Error: ${e.localizedMessage}")
-//                Toast.makeText(requireContext(), "오류 발생", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
+    private fun fetchFriendRequests() {
+        lifecycleScope.launch {
+            val token = getAccessToken() ?: return@launch
+
+            try {
+                val response = RetrofitInstance.friendApi.getFriendRequests("Bearer $token")
+
+                Log.d("FriendRequests", "status: ${response.code()}, body: ${response.body()}")
+
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    val dtoList = response.body()!!.result
+                    val requestList: List<FriendRequest> = dtoList.map { dto ->
+                        FriendRequest(
+                            id = dto.id,
+                            nickname = dto.nickname,
+                            status = buildString {
+                                append("${dto.goalCnt}개의 목표 진행 중")
+                                dto.todayTime?.let { append(" · 오늘 $it") }
+                                if (dto.isNewPhotoVerify) append(" · 새 사진 인증")
+                            }
+                        )
+                    }
+
+                    // RecyclerView 어댑터 연결
+                    binding.friendRequestRecyclerView.adapter = FriendRequestAdapter(
+                        requestList,
+                        onAcceptClick = { friend ->
+                            acceptFriend(friend) // Fragment에서 API 호출 + 토스트 처리
+                        },
+                        onDeclineClick = { friend ->
+                            declineFriend(friend)
+                        }
+                    )
+
+                } else {
+                    Toast.makeText(requireContext(), "친구 요청을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("FriendRequests", "Error: ${e.localizedMessage}")
+                Toast.makeText(requireContext(), "오류 발생", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     private fun acceptFriend(friend: FriendRequest) {
         lifecycleScope.launch {
