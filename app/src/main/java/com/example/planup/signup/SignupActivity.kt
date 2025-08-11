@@ -1,6 +1,7 @@
 package com.example.planup.signup
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -26,10 +27,12 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
+
         // 1) 커스텀 딥링크 우선 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
 
+//        tmp()
         // 2) 딥링크가 없으면 기존 초기 플로우
         if (savedInstanceState == null) {
             val code = intent.getStringExtra("code")
@@ -83,6 +86,28 @@ class SignupActivity : AppCompatActivity() {
             return false
         }
     }
+
+    private fun tmp(){
+        val deepLinkUri: Uri? = intent?.data
+        if (deepLinkUri != null) {
+            val email = deepLinkUri.getQueryParameter("email")
+            val verified = deepLinkUri.getQueryParameter("verified")
+            val token = deepLinkUri.getQueryParameter("token")
+            val from = deepLinkUri.getQueryParameter("from")
+
+            // 여기서 서버 검증 호출 가능
+            if (verified == "true") {
+                Log.d("EmailVerify","$email\n$verified\n$token\n$from")
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.signup_container,ProfileSetupFragment())
+                    .commitAllowingStateLoss()
+                // 인증 통과 → 대상 프래그먼트 이동
+            } else {
+                // 검증 실패 처리 (에러 안내 화면 등)
+            }
+        }
+    }
+
 
 
     /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
