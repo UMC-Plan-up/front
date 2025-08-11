@@ -28,7 +28,8 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
 
         // GoalInputFragment에서 전달한 닉네임 받기
         goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: throw IllegalStateException("CertificationMethodFragment must receive goalOwnerName!")
+            ?: (activity as? GoalActivity)?.goalOwnerName
+                    ?: "사용자"
 
         // 초기화
         backIcon = view.findViewById(R.id.backIcon)
