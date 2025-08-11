@@ -22,6 +22,7 @@ import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
+import com.example.planup.main.friend.data.FriendInfo
 import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
@@ -36,10 +37,10 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
-import com.example.planup.main.home.item.HomeRetrofitInstance
-import com.example.planup.main.home.item.MyGoalApiResponse
-import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.record.ui.ReceiveChallengeFragment
+import com.example.planup.network.RetrofitInstance
 
 class HomeFragment : Fragment() {
 
@@ -55,6 +56,8 @@ class HomeFragment : Fragment() {
         LocalDate.of(2025, 7, 18) to listOf("<인간관계론> 읽기")
     )
 
+    private lateinit var friendList : List<FriendInfo>
+
     private lateinit var binding: FragmentHomeBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +70,9 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        loadMyGoalList() //api 불러오기
+
 
         dailyRecyclerVIew = view.findViewById(R.id.daily_todo_rv)
         dailyRecyclerVIew.layoutManager =
@@ -195,5 +201,67 @@ class HomeFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
         dialog.show()
+    }
+
+    private fun loadMyGoalList(token: String) {
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getMyGoalList(token = token)
+                if (response.isSuccess) {
+                    val goals = response.result
+                    // goals 리스트를 RecyclerView 등에 표시
+                    for (goal in goals) {
+                        Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
+                        //
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadFriendGoalList(token: String, friendId: Int) {
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getFriendGoalList(token = token, friendId = friendId)
+                if (response.isSuccess) {
+                    val goals = response.result
+                    // goals 리스트를 RecyclerView 등에 표시
+                    for (goal in goals) {
+                        Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
+                        //
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "친구 목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun loadFriendsList(token: String) {
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitInstance.friendApi
+                val response = apiService.getFriendSummary(token = token)
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
+                    friendList = response.body()!!.result.first().friendInfoSummaryList
+                    // goals 리스트를 RecyclerView 등에 표시
+                } else {
+                    Toast.makeText(requireContext(), "친구 리스트 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }
