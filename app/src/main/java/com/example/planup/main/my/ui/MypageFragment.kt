@@ -13,8 +13,11 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.main.my.adapter.BenefitAdapter
+import com.example.planup.network.controller.UserController
+import com.example.planup.network.data.user.User
 
-class MypageFragment : Fragment() {
+class MypageFragment : Fragment(), BenefitAdapter {
     lateinit var binding: FragmentMypageBinding
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,30 +67,42 @@ class MypageFragment : Fragment() {
                 .replace(R.id.main_container, MypageKakaoFragment())
                 .commitAllowingStateLoss()
         }
-        /*기타 계정 관리*/
+        //기타 계정 관리
         binding.mypageOtherIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageOtherFragment())
                 .commitAllowingStateLoss()
         }
-        /*차단 친구 관리*/
+        //차단 친구 관리
         binding.mypageFriendBlockIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFriendBlockFragment())
                 .commitAllowingStateLoss()
         }
 
-        /*마케팅 수신 알림 토글*/
+        //서비스 알림 수신 토글 끄기
+        binding.mypageAlertServiceOnIv.setOnClickListener {
+            binding.mypageAlertServiceOnIv.visibility = View.GONE
+            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
+        }
+        //서비스 알림 수신 토글 켜기
+        binding.mypageAlertServiceOffIv.setOnClickListener {
+            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
+            binding.mypageAlertServiceOffIv.visibility = View.GONE
+        }
+        //마케팅 알림 수신 토글 끄기
         binding.mypageAlertBenefitOnIv.setOnClickListener{
-            binding.mypageAlertBenefitOnIv.visibility=View.GONE
-            binding.mypageAlertBenefitOffIv.visibility=View.VISIBLE
+            val service = UserController()
+            service.setBenefitAdapter(this)
+            service.notificationAgreementService(false)
         }
+        //마케팅 알림 수신 토글 켜기
         binding.mypageAlertBenefitOffIv.setOnClickListener{
-            binding.mypageAlertBenefitOnIv.visibility=View.VISIBLE
-            binding.mypageAlertBenefitOffIv.visibility=View.GONE
+            val service = UserController()
+            service.setBenefitAdapter(this)
+            service.notificationAgreementService(true)
         }
-
-        /*이용약관 및 정책*/
+        //이용약관 및 정책
         binding.mypagePolicyIv.setOnClickListener{
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypagePolicyFragment())
@@ -129,5 +144,15 @@ class MypageFragment : Fragment() {
         }
 
 
+    }
+
+    override fun successBenefitSetting(condition: Boolean) {
+        if (condition){ //condition==true: 토글 켜기
+            binding.mypageAlertBenefitOnIv.visibility=View.VISIBLE
+            binding.mypageAlertBenefitOffIv.visibility=View.GONE
+        }else{ //condition == false: 토글 끄기
+            binding.mypageAlertBenefitOnIv.visibility=View.GONE
+            binding.mypageAlertBenefitOffIv.visibility=View.VISIBLE
+        }
     }
 }
