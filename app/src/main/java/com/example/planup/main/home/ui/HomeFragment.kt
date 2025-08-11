@@ -12,10 +12,8 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.home.item.FriendChallengeItem
@@ -29,17 +27,13 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
-import com.example.planup.main.home.item.HomeRetrofitInstance
-import com.example.planup.main.home.item.MyGoalApiResponse
-import androidx.core.graphics.drawable.toDrawable
-import com.example.planup.main.record.ui.ReceiveChallengeFragment
+import com.example.planup.main.record.ui.ReceivedChallengeFragment
 
 class HomeFragment : Fragment() {
 
@@ -190,7 +184,7 @@ class HomeFragment : Fragment() {
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,ReceiveChallengeFragment())
+                .replace(R.id.main_container,ReceivedChallengeFragment())
                 .replace(R.id.main_container, ChallengeAlertFragment())
                 .commitAllowingStateLoss()
         }

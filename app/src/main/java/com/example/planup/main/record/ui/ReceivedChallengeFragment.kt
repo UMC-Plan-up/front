@@ -14,7 +14,7 @@ import com.example.planup.databinding.FragmentChallengeReceivedBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 
-class ReceiveChallengeFragment:Fragment() {
+class ReceivedChallengeFragment:Fragment() {
     lateinit var binding: FragmentChallengeReceivedBinding
     override fun onCreateView(
         inflater: LayoutInflater,
