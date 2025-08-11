@@ -41,7 +41,6 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
 
     private var myInviteCode: String = ""
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -51,21 +50,6 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         shareButton = view.findViewById(R.id.shareButton)
         nextButton = view.findViewById(R.id.nextButton)
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         // 입력창 클릭 불가
         nicknameEditText.isFocusable = false

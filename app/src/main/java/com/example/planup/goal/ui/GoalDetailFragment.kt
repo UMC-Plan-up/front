@@ -75,7 +75,6 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
         friendGoalTitle = view.findViewById(R.id.friendGoalTitle)
         friendGoalDescriptionText = view.findViewById(R.id.friendGoalDescriptionText)
 
-        // 기본 상태
         nextButton.isEnabled = false
         frequencyErrorText.visibility = View.GONE
     }

@@ -34,8 +34,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     private lateinit var goalOwnerName: String
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -98,7 +96,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         goalVolumeEditText.addTextChangedListener(inputWatcher)
 
         /* 다음 버튼 클릭 */
-        // nextButton 클릭 시
         nextButton.setOnClickListener {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
@@ -114,19 +111,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             activity.navigateToFragment(certificationFragment)
         }
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         // 바깥 터치 시 키보드 숨김
         view.setOnTouchListener { _, event ->

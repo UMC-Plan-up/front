@@ -37,7 +37,6 @@ class CertificationMethodFragment : Fragment(R.layout.fragment_certification_met
         pictureAuthLayout = view.findViewById(R.id.pictureAuthLayout)
 
         val goalDetailTitle: TextView = view.findViewById(R.id.goalDetailTitle)
-        val goalDetailSubtitle: TextView = view.findViewById(R.id.goalDetailSubtitle)
 
         goalDetailTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 

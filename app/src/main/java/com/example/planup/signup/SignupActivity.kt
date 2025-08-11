@@ -61,8 +61,6 @@ class SignupActivity : AppCompatActivity() {
      *  @return true = 딥링크 처리하여 다음 화면으로 이동함
      */
     private fun handleEmailDeepLink(intent: Intent): Boolean {
-        if (deepLinkHandled) return false
-
         val uri = intent.data ?: return false
         if (uri.scheme != "planup") return false
         if (uri.host != "profile") return false
@@ -77,8 +75,6 @@ class SignupActivity : AppCompatActivity() {
             "uri=$uri, email=$emailParam, verified=$verifiedParam, token=$tokenParam, from=$fromParam"
         )
 
-        deepLinkHandled = true
-
         if (verifiedParam) {
             goToProfileSetup(emailParam)
             return true
@@ -87,6 +83,7 @@ class SignupActivity : AppCompatActivity() {
             return false
         }
     }
+
 
     /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
     private fun goToProfileSetup(emailParam: String) {
