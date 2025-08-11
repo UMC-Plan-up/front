@@ -39,7 +39,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,21 +57,6 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
         nextButton = view.findViewById(R.id.nextButton)
         disableNextButton()
-
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         view.findViewById<ImageView>(R.id.backIcon).setOnClickListener {
@@ -101,8 +85,8 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         }
 
         // 다음 버튼 클릭 → LoginSentEmailFragment로 이동
-        nextBtn.setOnClickListener {
-            if (nextBtn.isEnabled) {  // 활성화된 경우만
+        nextButton.setOnClickListener {
+            if (nextButton.isEnabled) {  // 활성화된 경우만
                 openNextStep()
             }
         }

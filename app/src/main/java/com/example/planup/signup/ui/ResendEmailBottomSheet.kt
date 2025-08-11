@@ -32,7 +32,7 @@ class ResendEmailBottomSheet(private val email: String) : BottomSheetDialogFragm
             resendEmail()
         }
 
-        // "취소" 버튼 클릭 시 닫기
+        // [취소] 버튼 클릭 시 닫기
         val cancelButton = view.findViewById<TextView>(R.id.cancelButton)
         cancelButton.setOnClickListener {
             dismiss()

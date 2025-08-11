@@ -29,7 +29,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
     private lateinit var participantDescriptionText: TextView
     private var isInputValid = false
     private var goalOwnerName: String? = null
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,20 +57,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         /* 처음엔 다음 버튼 비활성화 */
         disableNextButton()
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         setupClickListeners()
         setupInputValidation()
