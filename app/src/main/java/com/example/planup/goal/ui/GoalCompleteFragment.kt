@@ -10,8 +10,12 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+import com.example.planup.main.home.ui.HomeFragment
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
 
@@ -38,22 +42,18 @@ class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
 
         /* Plan-Up 사용 시작하기 버튼 */
         startPlanUpButton.setOnClickListener {
-            // PushAlertFragment로 이동 (화면 먼저 전환)
-            (requireActivity() as GoalActivity)
-                .navigateToFragment(PushAlertFragment.newInstance(showPopup = true))
+            // 2초 후 HomeFragment로 이동
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(2000)
+                (requireActivity() as GoalActivity)
+                    .navigateToFragment(HomeFragment())
+            }
         }
-
     }
 
     /* Push 허용 여부 저장 */
     private fun savePushAlertEnabled(enabled: Boolean) {
         // TODO: Push 허용 여부 저장
-    }
-
-    /* PushAlertFragment 이동 */
-    private fun goToPushAlertFragment() {
-        (requireActivity() as GoalActivity)
-            .navigateToFragment(PushAlertFragment())
     }
 
     /* goalInfoText에서 마지막 ‘목표’ 단어만 파란색 */
