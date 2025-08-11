@@ -48,7 +48,7 @@ class LoginSentEmailFragment : Fragment(R.layout.fragment_login_sent_email) {
         }
 
         /* [테스트용] 클릭 시 (인증 성공 가정) → 프로필 설정 화면으로 이동
-           TODO: 서버에서 인증 완료 후, 완료 확인 API를 거쳐 다음 화면으로 이동 */
+           TODO: 서버에서 인증 완료 후, API를 거쳐 다음 화면(프로필 설정)으로 이동 */
         val mockVerifyText = view.findViewById<TextView>(R.id.mockVerifyText)
         mockVerifyText?.setOnClickListener {
             openProfileSetup()
