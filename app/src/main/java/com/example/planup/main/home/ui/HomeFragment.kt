@@ -30,7 +30,6 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
-import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -39,8 +38,9 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import com.example.planup.main.record.ui.ReceiveChallengeFragment
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.main.record.ui.ReceivedChallengeFragment
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        loadMyGoalList() //api 불러오기
+        //loadMyGoalList() //api 불러오기
 
 
         dailyRecyclerVIew = view.findViewById(R.id.daily_todo_rv)
@@ -196,7 +196,7 @@ class HomeFragment : Fragment() {
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,ReceiveChallengeFragment())
+                .replace(R.id.main_container,ReceivedChallengeFragment())
                 .replace(R.id.main_container, ChallengeAlertFragment())
                 .commitAllowingStateLoss()
         }

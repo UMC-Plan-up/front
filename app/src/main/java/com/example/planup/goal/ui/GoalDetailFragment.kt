@@ -34,10 +34,12 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
 
         selectedMethod = arguments?.getString("SELECTED_METHOD")
         goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: throw IllegalStateException("GoalDetailFragment must receive goalOwnerName!")
+            ?: (activity as? GoalActivity)?.goalOwnerName
+                    ?: "사용자"
 
         initViews(view)
 
+        // 닉네임 반영
         friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
         setupBackButton()
@@ -57,7 +59,6 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
         }
     }
 
-
     private fun initViews(view: View) {
         backIcon = view.findViewById(R.id.backIcon)
         nextButton = view.findViewById(R.id.nextButton)
@@ -71,11 +72,9 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
         frequencyEditText = view.findViewById(R.id.frequencyInputEditText)
         frequencyErrorText = view.findViewById(R.id.frequencyErrorText)
 
-
         friendGoalTitle = view.findViewById(R.id.friendGoalTitle)
         friendGoalDescriptionText = view.findViewById(R.id.friendGoalDescriptionText)
 
-        // 기본 상태
         nextButton.isEnabled = false
         frequencyErrorText.visibility = View.GONE
     }
@@ -90,7 +89,6 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-
                     (requireActivity() as GoalActivity)
                         .navigateToFragment(timerFragment)
                 }

@@ -29,14 +29,14 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
     private lateinit var participantDescriptionText: TextView
     private var isInputValid = false
     private var goalOwnerName: String? = null
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         // GoalDetailFragment에서 닉네임 받기
         goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: throw IllegalStateException("ParticipantLimitFragment must receive goalOwnerName!")
+            ?: (activity as? GoalActivity)?.goalOwnerName
+                    ?: "사용자"
 
         // 초기화
         backIcon = view.findViewById(R.id.backIcon)
@@ -57,21 +57,6 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
         /* 처음엔 다음 버튼 비활성화 */
         disableNextButton()
-
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         setupClickListeners()
         setupInputValidation()
@@ -100,7 +85,7 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
                 .navigateToFragment(goalDetailFragment)
         }
 
-        // 다음 버튼 → GoalCompleteFragment 이동
+        // 다음 버튼 → PushAlertFragment 이동
         nextButton.setOnClickListener {
             if (isInputValid) {
                 val activity = requireActivity() as GoalActivity
@@ -108,12 +93,12 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
                 activity.limitFriendCount =
                     participantLimitEditText.text.toString().toIntOrNull() ?: 0
 
-                val goalCompleteFragment = GoalCompleteFragment().apply {
+                val pushAlertFragment = PushAlertFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                activity.navigateToFragment(goalCompleteFragment)
+                activity.navigateToFragment(pushAlertFragment)
             }
         }
     }

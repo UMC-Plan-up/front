@@ -13,6 +13,8 @@ import com.example.planup.network.data.user.PostProfileImage
 import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.data.PostFriendsReport
 import com.example.planup.network.data.PostFriendsUnblocked
+import com.example.planup.network.data.user.PatchWithdraw
+import com.example.planup.network.data.user.PostEmailSend
 import com.example.planup.network.dto.FriendReportDto
 import com.example.planup.network.dto.FriendUnblockDto
 import retrofit2.Call
@@ -23,26 +25,38 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface UserControllerInterface {
-    @GET("mypage/profile/nickname")
-    fun getNickname(@Query("userId") userId:Int):Call<GetNickname>
-    @GET("mypage/kakao-account")
-    fun getKakao(@Query("userId") userId: Int):Call<GetKakao>
+    @GET("mypage/profile/nickname") //사용자 닉네임 조회
+    fun getNickname(@Query("userId") userId:Int): Call<GetNickname>
+    @GET("mypage/kakao-account") //카카오 소셜 로그인 페이지
+    fun getKakao(): Call<GetKakao>
 
-    @PATCH("mypage/notification/agree")
-    fun patchNoticeAgree(@Query("userId") userId:Int):Call<PatchNotificationAgreement>
+    @PATCH("mypage/notification/agree") //알림설정 동의 변경
+    fun patchNoticeAgree(): Call<PatchNotificationAgreement>
+    @POST("users/withdraw") //회원 탈퇴
+    fun withdrawAccount(@Body reason: String ): Call<PatchWithdraw>
 
+    //로그아웃
     @POST("users/logout")
-    fun logout():Call<Logout>
+    fun logout(): Call<Logout>
+    //이미지 변경
     @POST("profile/image")
-    fun setProfileImage():Call<PostProfileImage>
+    fun setProfileImage(): Call<PostProfileImage>
+    //기존 비밀번호 입력
     @POST("mypage/profile/password")
     fun checkPassword(@Query("userId") userId: Int, @Query("password") password: String): Call<PostPassword>
+    //비밀번호 변경
     @POST("mypage/profile/password/update")
     fun changePassword(@Query("userId") userId: Int, @Query("password") password: String): Call<PostPasswordChange>
+    //닉네임 변경
     @POST("mypage/profile/nickname")
     fun changeNickname(@Query("userId") userId: Int, @Body nickname: String): Call<PostNickname>
-    @POST("mypage/profile/image")
-    fun changeProfileImage(@Query("userId") userId: Int, @Body image: String): Call<PostMypageImage>
+    //이메일 발송
+    @POST("users/email/send")
+    fun sendEmail(@Body email: String): Call<PostEmailSend>
+    //이메일 재발송
+    @POST("users/email/resend")
+    fun resendEmail(@Body email: String): Call<PostEmailSend>
+    //이메일 변경
     @POST("mypage/profile/email")
     fun changeEmail(@Query("userId") userId: Int, @Query("newEmail") email: String): Call<PostEmail>
 

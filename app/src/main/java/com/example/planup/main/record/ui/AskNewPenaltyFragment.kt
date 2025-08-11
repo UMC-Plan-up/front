@@ -68,7 +68,7 @@ class AskNewPenaltyFragment:Fragment() {
         //이전 버튼: 챌린지 요청 확인 페이지
         binding.challengePenaltyBackIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,ReceiveChallengeFragment())
+                .replace(R.id.main_container,ReceivedChallengeFragment())
                 .commitAllowingStateLoss()
         }
         //페널티 : 커피

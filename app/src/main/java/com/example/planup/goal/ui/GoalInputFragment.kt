@@ -34,14 +34,13 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     private lateinit var goalOwnerName: String
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // 닉네임 전달
-        goalOwnerName = requireArguments().getString("goalOwnerName")
-            ?: throw IllegalStateException("GoalInputFragment must receive goalOwnerName!")
+        goalOwnerName = arguments?.getString("goalOwnerName")
+            ?: (activity as? GoalActivity)?.goalOwnerName
+                    ?: "사용자"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -98,7 +97,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         goalVolumeEditText.addTextChangedListener(inputWatcher)
 
         /* 다음 버튼 클릭 */
-        // nextButton 클릭 시
         nextButton.setOnClickListener {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
@@ -112,20 +110,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
                 }
             }
             activity.navigateToFragment(certificationFragment)
-        }
-
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
         }
 
         // 바깥 터치 시 키보드 숨김
@@ -147,7 +131,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         override fun afterTextChanged(s: Editable?) {
             validateInputs()
         }
-
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     }
@@ -156,8 +139,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
     private fun validateInputs() {
         val goalNameValid = isGoalNameValid()
         val goalVolumeValid = isGoalVolumeValid()
-
-        // 조건 만족 → 버튼 활성화
         setNextButtonEnabled(goalNameValid && goalVolumeValid)
     }
 

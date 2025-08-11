@@ -1,25 +1,32 @@
 package com.example.planup.main.my.ui
 
 import android.content.Context
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageEmailCheckBinding
+import com.example.planup.main.my.adapter.EmailSendAdapter
 import com.example.planup.network.controller.UserController
 
-class MypageEmailCheckFragment : Fragment(), ResponseViewer {
+class MypageEmailCheckFragment : Fragment(), EmailSendAdapter {
 
     lateinit var binding: FragmentMypageEmailCheckBinding
     lateinit var mailAddr: String
@@ -27,6 +34,7 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
     private var lastDomain: Int = 0 //가장 최근에 선택된 도메인
     private var curDomain: Int = 0 //지금 선택된 도메인
     private var curCheck: Int = 0 //지금 선택된 도메인에 체크
+    lateinit var inputMethodManager: InputMethodManager
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,11 +42,18 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageEmailCheckBinding.inflate(inflater, container, false)
-
+        manageKeyboard()
         clickListener()
         textListener()
 
         return binding.root
+    }
+
+    private fun manageKeyboard(){
+        inputMethodManager = (context as MainActivity).getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(
+            (context as MainActivity).currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
 
     // 터치 이벤트
@@ -58,7 +73,15 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         binding.emailDropdownIv.setOnClickListener {
             dropDown(binding.emailEt)
         }
-    }
+        binding.root.setOnTouchListener(object : OnTouchListener{
+            override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
+                manageKeyboard()
+                return false
+            }
+
+        })
+
+        }
 
     //이메일 입력 여부 확인: 이메일이 입력되어야 다음 버튼 활성화 됨
     private fun textListener() {
@@ -83,10 +106,10 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
 
         if (findAt == -1 || findDot == -1) //이메일 형식 확인
             showToast(context as MainActivity, R.string.toast_incorrect_email)
-        else{ //이메일 중복 여부 확인
+        else{ //이메일로 인증 링크 보내기
             val emailService = UserController()
-            emailService.setResponseViewer(this)
-            emailService.emailService(0, binding.emailEt.text.toString())
+            emailService.setEmailSendAdapter(this)
+            emailService.emailSendService(binding.emailEt.text.toString())
         }
     }
 
@@ -186,23 +209,12 @@ class MypageEmailCheckFragment : Fragment(), ResponseViewer {
         toast.show()
     }
 
-    // 입력한 이메일이 유효할 때
-    override fun onResponseSuccess() {
-        /*다음 페이지에서 이메일 전송을 다시 요청하는 경우
-         *현재 작성한 이메일을 전달해야 함*/
+    //인증링크 전송 성공
+    override fun successEmailSend(email: String) {
         val emailLinkFragment = MypageEmailLinkFragment()
-        emailLinkFragment.arguments = Bundle().apply{
-            putString("email",binding.emailEt.text.toString())
+        emailLinkFragment.arguments = Bundle().apply {
+            putString("email",email)
         }
-        //이메일 링크 수신여부 확인 페이지로 이동
-        (context as MainActivity).navigateFragment(emailLinkFragment)
-    }
-    //입력한 이메일이 유효하지 않을 때
-    override fun onResponseError(code: String, message: String ) {
-        //디버깅
-        Log.d("okhttp", "code: ${code}\nmessage: ${message}")
-        //토스트 메시지 출력
-        showToast(context as MainActivity, R.string.toast_invalid_email)
     }
 
 }

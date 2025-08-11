@@ -36,7 +36,6 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
     private lateinit var inputButton: AppCompatButton
     private lateinit var nextButton: AppCompatButton
     private var myInviteCode: String = ""
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,21 +60,6 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         hideInvalidCodeMessage()
 
-        val baseMargin = 33.dp()
-        val gapFromKeyboard = 25.dp()
-        val nextBtn = nextButton
-
-        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
-            val imeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            val imeBottom = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
-
-            val targetMargin = if (imeVisible) imeBottom + gapFromKeyboard else baseMargin
-
-            nextBtn.updateLayoutParams<ConstraintLayout.LayoutParams> {
-                bottomMargin = targetMargin
-            }
-            insets
-        }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         backIcon.setOnClickListener {
@@ -162,7 +146,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         val agreements = activity.agreements ?: emptyList()
 
-        // ✅ 초대코드 옵션 처리: 비었으면 null → JSON에서 키 자체가 빠지게 함
+        // 초대코드 옵션 처리: 비었으면 null → JSON에서 키 자체가 빠지게 함
         val inviteCodeParam: String? = inviteCode.trim().takeIf { it.isNotBlank() }
 
         val request = SignupRequestDto(

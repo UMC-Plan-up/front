@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequestDto
 import com.example.planup.login.data.LoginResponseDto
+import com.example.planup.signup.data.ApiResponse
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeResponse
@@ -61,5 +62,5 @@ interface UserApi {
     @GET("/users/email/verify-link")
     suspend fun verifyEmailLink(
         @Query("token") token: String
-    ): Response<VerifyLinkResult>
+    ): Response<ApiResponse<VerifyLinkResult>>
 }

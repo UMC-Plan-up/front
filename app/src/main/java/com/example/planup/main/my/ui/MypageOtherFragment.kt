@@ -14,8 +14,11 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageOtherBinding
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.login.ui.LoginActivity
+import com.example.planup.main.my.adapter.LogoutAdapter
+import com.example.planup.network.controller.UserController
+import kotlin.math.log
 
-class MypageOtherFragment:Fragment() {
+class MypageOtherFragment:Fragment(), LogoutAdapter {
     lateinit var binding:FragmentMypageOtherBinding
 
     override fun onCreateView(
@@ -64,9 +67,17 @@ class MypageOtherFragment:Fragment() {
 
         /*확인 버튼 클릭 시 로그인 화면으로 이동*/
         dialog.findViewById<View>(R.id.btn_logout_ok_tv).setOnClickListener{
-            val intent = Intent(context as MainActivity, LoginActivity::class.java)
-            startActivity(intent)
+            val logoutService = UserController()
+            logoutService.setLogoutAdapter(this)
+            logoutService.logoutService()
         }
         dialog.show()
     }
+
+    override fun successLogout() {
+        val intent = Intent(context as MainActivity, LoginActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun failLogout() {}
 }
