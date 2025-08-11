@@ -207,7 +207,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getMyGoalList(token = token)
+                val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
                     val goals = response.result
                     // goals 리스트를 RecyclerView 등에 표시
@@ -229,7 +229,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getFriendGoalList(token = token, friendId = friendId)
+                val response = apiService.getFriendGoalList(token = "Bearer $token", friendId = friendId)
                 if (response.isSuccess) {
                     val goals = response.result
                     // goals 리스트를 RecyclerView 등에 표시
@@ -251,7 +251,7 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val apiService = RetrofitInstance.friendApi
-                val response = apiService.getFriendSummary(token = token)
+                val response = apiService.getFriendSummary(token = "Bearer $token")
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     friendList = response.body()!!.result.first().friendInfoSummaryList
                     // goals 리스트를 RecyclerView 등에 표시
@@ -264,4 +264,23 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun loadGoalDetail(token: String, goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getGoalDetail(token = "Bearer $token", goalId = goalId)
+                if (response.isSuccess) {
+
+
+                } else {
+                    Toast.makeText(requireContext(), "친구 목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 }
