@@ -13,9 +13,10 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.databinding.FragmentMypageEmailLinkBinding
+import com.example.planup.main.my.adapter.EmailSendAdapter
 import com.example.planup.network.controller.UserController
 
-class MypageEmailLinkFragment:Fragment(),ResponseViewer {
+class MypageEmailLinkFragment:Fragment(),EmailSendAdapter {
 
     lateinit var binding: FragmentMypageEmailLinkBinding
     lateinit var email: String
@@ -57,9 +58,9 @@ class MypageEmailLinkFragment:Fragment(),ResponseViewer {
             }
             //이메일 재전송 클릭
             dialog.findViewById<View>(R.id.popup_email_send_again_tv).setOnClickListener{
-                val emailService = UserController()
-                emailService.setResponseViewer(this)
-                emailService.emailService(123,email)
+                val emailResendService = UserController()
+                emailResendService.setEmailSendAdapter(this)
+                emailResendService.emailResendService(email)
                 dialog.dismiss()
             }
             //카카오 소셜 로그인 클릭
@@ -70,10 +71,7 @@ class MypageEmailLinkFragment:Fragment(),ResponseViewer {
         }
     }
 
-    //ui상 필요한 이벤트는 없음!!
-    override fun onResponseSuccess() {}
-    override fun onResponseError(code: String, message: String ) {
-        //디버깅
-        Log.d("okhttp", "code: ${code}\nmessage: ${message}")
+    override fun successEmailSend(email: String) {
+        TODO("Not yet implemented")
     }
 }

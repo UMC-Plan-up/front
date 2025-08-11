@@ -3,6 +3,7 @@ package com.example.planup.network.controller
 import android.util.Log
 import com.example.planup.main.my.adapter.BenefitAdapter
 import com.example.planup.main.my.adapter.CloseAccountAdapter
+import com.example.planup.main.my.adapter.EmailSendAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.data.Logout
@@ -19,6 +20,7 @@ import com.example.planup.network.data.PostFriendsUnblocked
 import com.example.planup.network.data.user.GetKakao
 import com.example.planup.network.data.user.PatchNotificationAgreement
 import com.example.planup.network.data.user.PatchWithdraw
+import com.example.planup.network.data.user.PostEmailSend
 import com.example.planup.network.dto.FriendReportDto
 import com.example.planup.network.dto.FriendUnblockDto
 import com.example.planup.network.getRetrofit
@@ -76,6 +78,13 @@ class UserController {
     fun setBenefitAdapter(adapter: BenefitAdapter){
         this.benefitAdapter = adapter
     }
+
+    //이메일 인증링크 발송에 대한 레이아웃 관리
+    private lateinit var emailSendAdapter: EmailSendAdapter
+    fun setEmailSendAdapter(adapter: EmailSendAdapter){
+        this.emailSendAdapter = adapter
+    }
+
     //새로운 nickname으로 수정
     fun nicknameService(userId: Int, nickname: String) {
         val nicknameService = getRetrofit().create(UserControllerInterface::class.java)
@@ -123,6 +132,51 @@ class UserController {
 
             override fun onFailure(call: Call<PostEmail>, t: Throwable) {
                 Log.d("okhttp", "fail\n$t")
+            }
+
+        })
+    }
+
+    //이메일로 인증링크 요청
+    fun emailSendService(email:String){
+        val emailSendService = getRetrofit().create(UserControllerInterface::class.java)
+        emailSendService.sendEmail(email).enqueue(object : Callback<PostEmailSend>{
+            override fun onResponse(call: Call<PostEmailSend>, response: Response<PostEmailSend>) {
+                when(response.isSuccessful){
+                    true -> {
+                        val resp = response.body()?.result
+                        resp?.email?.let { emailSendAdapter.successEmailSend(it) }
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostEmailSend>, t: Throwable) {
+                Log.d("okhttp","fail\n$t")
+            }
+
+        })
+    }
+    //이메일 다시 받기
+    fun emailResendService(email: String){
+        val emailResendService = getRetrofit().create(UserControllerInterface::class.java)
+        emailResendService.resendEmail(email).enqueue(object : Callback<PostEmailSend>{
+            override fun onResponse(call: Call<PostEmailSend>, response: Response<PostEmailSend>) {
+                when (response.isSuccessful) {
+                    true -> {
+                        val resp = response.body()?.result
+                        resp?.email?.let { emailSendAdapter.successEmailSend(it) }
+                    }
+
+                    else -> {
+
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<PostEmailSend>, t: Throwable) {
+                Log.d("okhttp","fail\n$t")
             }
 
         })
