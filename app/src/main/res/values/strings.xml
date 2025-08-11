@@ -93,7 +93,7 @@
     <string name="community_see_more">더보기</string>
     <string name="community_create_new">새 커뮤니티 만들기</string>
 
-    <string name="goal_friend_detail">%1$s의 세부 목표</string>
+    <string name="goal_friend_detail">%1$s님의 세부 목표</string>
     <string name="goal_friend_detail_description">친구가 설정한 세부 목표를 그대로 적용할 수 있어요.</string>
     <string name="goal_toeic_study">토익 공부</string>
     <string name="goal_toeic_chapter_study">토익 교재 1챕터씩 공부하기</string>

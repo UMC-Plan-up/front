@@ -38,8 +38,9 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         super.onCreate(savedInstanceState)
 
         // 닉네임 전달
-        goalOwnerName = requireArguments().getString("goalOwnerName")
-            ?: throw IllegalStateException("GoalInputFragment must receive goalOwnerName!")
+        goalOwnerName = arguments?.getString("goalOwnerName")
+            ?: (activity as? GoalActivity)?.goalOwnerName
+                    ?: "사용자"
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -111,7 +112,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
             activity.navigateToFragment(certificationFragment)
         }
 
-
         // 바깥 터치 시 키보드 숨김
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
@@ -131,7 +131,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         override fun afterTextChanged(s: Editable?) {
             validateInputs()
         }
-
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
     }
@@ -140,8 +139,6 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
     private fun validateInputs() {
         val goalNameValid = isGoalNameValid()
         val goalVolumeValid = isGoalVolumeValid()
-
-        // 조건 만족 → 버튼 활성화
         setNextButtonEnabled(goalNameValid && goalVolumeValid)
     }
 
