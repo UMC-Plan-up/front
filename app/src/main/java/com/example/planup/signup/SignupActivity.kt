@@ -109,6 +109,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
 
+
     /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
     private fun goToProfileSetup(emailParam: String) {
         supportFragmentManager.beginTransaction()
