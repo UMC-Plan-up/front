@@ -1,4 +1,3 @@
-
 package com.example.planup.login.ui
 
 import android.content.Intent
@@ -68,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
 
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
-        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
+//        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
 
         passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
         emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
@@ -186,7 +185,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                     //로그인 직후 발급된 JWT를 레트로핏에 전달
-                    App.prefs.token = "Bearer "+result.accessToken
+                    App.prefs.token = "Bearer " + result.accessToken
 
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
@@ -211,8 +210,13 @@ class LoginActivity : AppCompatActivity() {
                         "S002" -> {
                             fadeInView(emailNotFoundErrorText)
                             fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login", "code: S002")//
                         }
-                        else -> fadeInView(passwordNotFoundErrorText)
+
+                        else -> {
+                            fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login","${response.body()}\n${response.isSuccessful}")//
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -244,6 +248,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (password.isEmpty()) {
+            Log.d("Login", "password.isEmpty")
             fadeInView(passwordNotFoundErrorText)
             hasError = true
         }

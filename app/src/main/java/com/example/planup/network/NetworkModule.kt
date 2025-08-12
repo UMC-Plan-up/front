@@ -34,7 +34,7 @@ class AuthInterceptor : Interceptor {
 }
 
 val okHttpClient = OkHttpClient.Builder()
-    .addInterceptor(AuthInterceptor())
+    //.addInterceptor(AuthInterceptor())
     .addInterceptor(logging)
     // 필요 시 타임아웃 등 다른 설정 추가
     .build()

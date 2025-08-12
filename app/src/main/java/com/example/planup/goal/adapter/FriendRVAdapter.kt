@@ -2,12 +2,10 @@ package com.example.planup.goal.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.ItemChallengeFriendBinding
-import com.example.planup.goal.data.ChallengeFriend
-import com.example.planup.network.data.challenge.ChallengeFriends
+import com.example.planup.network.data.ChallengeFriends
 
 class FriendRVAdapter(val friends:List<ChallengeFriends>): RecyclerView.Adapter<FriendRVAdapter.ViewHolder>(){
 

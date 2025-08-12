@@ -17,10 +17,9 @@ import com.example.planup.goal.adapter.ChallengeFriendsAdapter
 import com.example.planup.goal.adapter.FriendRVAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
 import com.example.planup.network.controller.ChallengeController
-import com.example.planup.network.data.challenge.ChallengeFriends
-import com.example.planup.network.data.challenge.GetChallengeFriends
-import com.example.planup.network.dto.ChallengeDto
-import com.example.planup.network.dto.Time
+import com.example.planup.network.data.ChallengeFriends
+import com.example.planup.network.dto.challenge.ChallengeDto
+import com.example.planup.network.dto.challenge.Time
 
 class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFriendsAdapter {
     lateinit var binding: FragmentChallengeFriendBinding
@@ -28,6 +27,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     private lateinit var prefs: SharedPreferences //챌린지 정보를 저장함
     private lateinit var editor: Editor //prefs에 데이터 저장
     var friend: ChallengeFriends? = null //최종으로 선택된 친구
+    private lateinit var challengeService: ChallengeController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,7 +37,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
         binding = FragmentChallengeFriendBinding.inflate(inflater,container,false)
         init()
         clickListener()
-        setFriendList()
+        //setFriendList()
         return binding.root
     }
 
@@ -45,6 +45,10 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     private fun init(){
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
+        challengeService = ChallengeController()
+        challengeService.showChallengeFriends(3)
+        challengeService.setChallengeFriendsAdapter(this)
+        challengeService.setRequestChallengeAdapter(this)
     }
 
     //클릭 이벤트 관리
@@ -71,8 +75,6 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 //        friends.add(2,ChallengeFriend(R.drawable.img_friend_profile_sample1,"친구3",1))
 //        friends.add(3,ChallengeFriend(R.drawable.profile_example,"친구4",4))
 //        friends.add(4,ChallengeFriend(R.drawable.profile_example_2,"친구5",3))
-        val service = ChallengeController()
-        service.showChallengeFriends(3)
         val adapter = FriendRVAdapter(friends)
         adapter.setMyFriendListener(object : FriendRVAdapter.FriendListener{
             override fun selectFriend(position: Int) {
@@ -87,6 +89,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     //챌린지 신청 가능한 친구 리스트 불러오기 성공
     override fun successFriends(friends: List<ChallengeFriends>) {
         this.friends = friends
+        setFriendList()
     }
     //챌린지 신청 가능한 친구 리스트 불러오기 실패
     override fun failFriends(response: String) {
@@ -108,8 +111,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             prefs.getInt("frequency",0),
             Time(prefs.getInt("targetTime",0))
         )
-        val service = ChallengeController()
-        service.requestChallenge(challengeDto)
+        challengeService.requestChallenge(challengeDto)
     }
     //챌린지 요청 성공 시 완료 화면으로 이동
     override fun successRequest() {

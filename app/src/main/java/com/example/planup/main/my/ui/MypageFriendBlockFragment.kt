@@ -15,20 +15,20 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageFriendBlockBinding
 import com.example.planup.main.my.adapter.BlockFriendRVAdapter
-import com.example.planup.main.my.data.BlockFriend
+import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.adapter.FriendReportAdapter
 import com.example.planup.network.adapter.FriendsBlockedAdapter
 import com.example.planup.network.adapter.FriendsUnblockedAdapter
-import com.example.planup.network.controller.UserController
-import com.example.planup.network.data.BlockedFriend
-import com.example.planup.network.dto.FriendReportDto
-import com.example.planup.network.dto.FriendUnblockDto
+import com.example.planup.network.controller.FriendController
+import com.example.planup.network.data.BlockedFriends
+import com.example.planup.network.dto.friend.FriendReportDto
+import com.example.planup.network.dto.friend.FriendUnblockDto
 
 class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendReportAdapter, FriendsUnblockedAdapter {
     lateinit var binding: FragmentMypageFriendBlockBinding
-    private val friends = ArrayList<BlockFriend>()
+    private val friends = ArrayList<BlockedFriend>()
     private lateinit var rvAdapter: BlockFriendRVAdapter
-    private lateinit var controller: UserController
+    private lateinit var controller: FriendController
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,7 +43,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
 
     //프레그먼트 초기화
     private fun init(){
-        controller = UserController() //API 컨트롤러 생성
+        controller = FriendController() //API 컨트롤러 생성
         controller.friendsBlockedService() //차단친구 조회 GET
         controller.setFriendsBlockedAdapter(this) //차단친구 목록 불러오는 ui
         controller.setFriendReportAdapter(this) //차단친구 신고 ui
@@ -60,7 +60,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     }
 
     //차단 해제 여부를 묻는 팝업
-    private fun dialogUnblock(position: Int, friend: BlockFriend) {
+    private fun dialogUnblock(position: Int, friend: BlockedFriend) {
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.popup_unblock)
         dialog.window?.apply {
@@ -180,10 +180,10 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     }
 
     //차단 친구 목룍 불러오기 완료
-    override fun successBlockedFriends(blockedFriendsList: List<BlockedFriend>?) {
+    override fun successBlockedFriends(blockedFriendsList: List<BlockedFriends>?) {
         blockedFriendsList?.let { list ->
             for (friend in list) {
-                friends.add(BlockFriend(friend.friendNickname, friend.friendId))
+                friends.add(BlockedFriend(friend.friendNickname, friend.friendId))
             }
         }
         showBlockFriend()

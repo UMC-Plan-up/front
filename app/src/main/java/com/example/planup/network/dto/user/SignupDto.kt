@@ -1,8 +1,8 @@
-package com.example.planup.main.my.data
+package com.example.planup.network.dto.user
 
 import com.google.gson.annotations.SerializedName
 
-data class Signup(
+data class SignupDto(
     @SerializedName(value = "email") val email: String,
     @SerializedName(value = "password") val password: String,
     @SerializedName(value = "passwordCheck") val passwordCheck: String,

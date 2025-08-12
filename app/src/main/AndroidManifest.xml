@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.ui.LoginActivity"
+        <activity android:name=".login.LoginActivityNew"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".password.ResetPasswordActivity" />
