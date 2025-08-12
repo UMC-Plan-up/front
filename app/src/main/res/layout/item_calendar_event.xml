@@ -1,8 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/eventText"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:textColor="@android:color/black"
-    android:textSize="14sp"
-    android:padding="8dp" />
+    android:orientation="horizontal"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
+
+    <!-- 파란 세로줄 -->
+    <View
+        android:layout_width="2dp"
+        android:layout_height="match_parent"
+        android:background="@color/blue_500"
+        android:layout_marginEnd="10dp" />
+
+    <!-- 텍스트 영역 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="토익 공부하기"
+            style="@style/Typography_SM_Semibold"
+            android:textColor="@color/black_400" />
+
+        <!-- 부제목 -->
+        <TextView
+            android:id="@+id/subtitleText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="[기준 기간],빈도,이상"
+            style="@style/Typography_2XS_Medium"
+            android:textColor="@color/black_300" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -12,8 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.databinding.ActivityCalendarBinding
-import com.example.planup.databinding.ItemCalendarDayBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.CalendarEventAdapter
 import com.kizitonwose.calendar.core.CalendarDay
@@ -29,7 +27,6 @@ import java.util.*
 
 
 class CalendarActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityCalendarBinding
 
     private val today = LocalDate.now()
     private var selectedDate = today
@@ -46,10 +43,10 @@ class CalendarActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_calendar)
 
-        val calendarView = binding.calendarView
-        val monthYearText = binding.monthYearText
-        val eventsRecyclerView = binding.eventsRecyclerView
-        val backBtn = binding.calendarBackHomeIv
+        val calendarView = findViewById<CalendarView>(R.id.calendarView)
+        val monthYearText = findViewById<TextView>(R.id.monthYearText)
+        val eventsRecyclerView = findViewById<RecyclerView>(R.id.eventsRecyclerView)
+        val backBtn = findViewById<ImageView>(R.id.calendar_back_home_iv)
 
         eventAdapter = CalendarEventAdapter()
         eventsRecyclerView.adapter = eventAdapter
@@ -112,12 +109,11 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     inner class DayViewContainer(view: View) : ViewContainer(view) {
-        val binding = ItemCalendarDayBinding.bind(view)
-        val textView: TextView = binding.calendarDayText
-        val barsContainer: LinearLayout = binding.eventBarsContainer
-        val bar1: View = binding.eventBar1
-        val bar2: View = binding.eventBar2
-        val bar3: View = binding.eventBar3
+        val textView: TextView = view.findViewById(R.id.calendarDayText)
+        val barsContainer: LinearLayout = view.findViewById(R.id.eventBarsContainer)
+        val bar1: View = view.findViewById(R.id.eventBar1)
+        val bar2: View = view.findViewById(R.id.eventBar2)
+        val bar3: View = view.findViewById(R.id.eventBar3)
     }
 
     fun daysOfWeekFromLocale(): List<DayOfWeek> {

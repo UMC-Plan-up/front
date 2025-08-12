@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -39,6 +40,7 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.main.home.adapter.CalendarEventAdapter
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.main.record.ui.ReceivedChallengeFragment
 import kotlinx.coroutines.launch
@@ -52,9 +54,11 @@ class HomeFragment : Fragment() {
     private lateinit var calendarCardView : CardView
     private val today = LocalDate.now()
     private var selectedDate = today
-    private val eventMap: Map<LocalDate, List<String>> = mapOf(
-        LocalDate.of(2025, 7, 17) to listOf("토익 공부하기", "헬스장 가기", "스터디 모임"),
-        LocalDate.of(2025, 7, 18) to listOf("<인간관계론> 읽기")
+    private val eventList = listOf(
+        CalendarEvent("토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
+        CalendarEvent("헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
+        CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
+        CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
 
     private lateinit var friendList : List<FriendInfo>
@@ -106,7 +110,6 @@ class HomeFragment : Fragment() {
         val calendarView = binding.homeCalendarView
         val monthYearText = binding.homeMonthYearText
 
-
         val daysOfWeek = daysOfWeekFromLocale()
         val currentMonth = YearMonth.now()
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
@@ -118,15 +121,20 @@ class HomeFragment : Fragment() {
             monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
         }
 
-        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
+        calendarView.dayBinder = object : MonthDayBinder<CalendarActivity.DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
-            override fun bind(container: DayViewContainer, data: CalendarDay) {
-                container.textView.text = data.date.dayOfMonth.toString()
+
+            override fun bind(container: CalendarActivity.DayViewContainer, data: CalendarDay) {
+                val date = data.date
+                container.textView.text = date.dayOfMonth.toString()
+
+                // 선택 표시
                 container.textView.setBackgroundResource(
-                    if (data.date == selectedDate) R.drawable.bg_calendar_select else 0
+                    if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
 
-                val events = eventMap[data.date] ?: emptyList()
+                // 기간 내 이벤트 가져오기
+                val events = getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
                 bars.forEach { it.visibility = View.GONE }
@@ -135,8 +143,9 @@ class HomeFragment : Fragment() {
                     bars[i].visibility = View.VISIBLE
                 }
 
+                // 날짜 클릭 시
                 container.view.setOnClickListener {
-                    selectedDate = data.date
+                    selectedDate = date
                     calendarView.notifyCalendarChanged()
                 }
             }
@@ -184,6 +193,12 @@ class HomeFragment : Fragment() {
         }
         binding.imageView5.setOnClickListener {
             showPopup()
+        }
+    }
+
+    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
+        return eventList.filter { event ->
+            !date.isBefore(event.startDate) && !date.isAfter(event.endDate)
         }
     }
     private fun showPopup(){
