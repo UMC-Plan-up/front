@@ -1,37 +1,37 @@
 package com.example.planup.main.friend.ui
 
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.PopupWindow
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
-import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.databinding.BottomShareDialogBinding
+import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
+import com.example.planup.main.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
-class FriendInviteFragment : Fragment(){
+class FriendInviteFragment : Fragment() {
     lateinit var binding: FragmentFriendInviteBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
-
-
         clickListener()
-
         return binding.root
     }
 
-    private fun clickListener(){
+    private fun clickListener() {
         binding.btnBack.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, FriendFragment())
                 .commitAllowingStateLoss()
         }
@@ -41,46 +41,51 @@ class FriendInviteFragment : Fragment(){
         }
     }
 
-    /*프로필 사진 재설정 드로다운 메뉴*/
-    private fun showPopupMenu(view : View) {
-
-        val inflater = LayoutInflater.from(context)
-        val popupView = inflater.inflate(R.layout.dropdown_friend_invite, null)
+    /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */
+    private fun showPopupMenu(anchor: View) {
+        val menuBinding = DropdownFriendInviteBinding.inflate(layoutInflater, null, false)
 
         val popupWindow = PopupWindow(
-            popupView,
+            menuBinding.root,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            true // 포커스 가능
-        )
-
-        // 팝업 바깥 클릭 시 닫힘 설정
-        popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(ColorDrawable())
-
-        // 팝업 표시 (예: 이미지뷰 아래에)
-        popupWindow.showAsDropDown(view)
-
-        popupView.findViewById<View>(R.id.album_cl).setOnClickListener{
-            Toast.makeText(context,"앨범 선택",LENGTH_SHORT).show()
+            true
+        ).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable())
         }
-        popupView.findViewById<View>(R.id.photo_cl).setOnClickListener{
-            Toast.makeText(context,"사진 선택",LENGTH_SHORT).show()
+
+        // 앵커 기준 표시
+        popupWindow.showAsDropDown(anchor)
+
+        // 클릭 리스너들 (ViewBinding으로 접근)
+        menuBinding.shareKakaoCl.setOnClickListener {
+            // TODO: 카카오 공유 로직
+            popupWindow.dismiss()
         }
-        popupView.findViewById<View>(R.id.file_cl).setOnClickListener{
-            Toast.makeText(context,"파일 선택",LENGTH_SHORT).show()
+
+        menuBinding.shareMessageTv.setOnClickListener {
+            // TODO: 기본 메시지 공유 로직
+            popupWindow.dismiss()
         }
-        popupView.findViewById<View>(R.id.file_cl).setOnClickListener {
+
+        menuBinding.shareEtcTv.setOnClickListener {
             popupWindow.dismiss()
             showShareBottomSheet()
         }
-
     }
 
+    /** 하단 공유 BottomSheet (ViewBinding 사용) */
     private fun showShareBottomSheet() {
-        val view = layoutInflater.inflate(R.layout.bottom_share_dialog, null)
+        val sheetBinding = BottomShareDialogBinding.inflate(layoutInflater)
         val dialog = BottomSheetDialog(requireContext())
-        dialog.setContentView(view)
+        dialog.setContentView(sheetBinding.root)
+        dialog.setOnShowListener {
+            val bottomSheet =
+                dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.setBackgroundColor(Color.TRANSPARENT) // 컨테이너 기본 흰배경 제거
+        }
+        // 필요시 sheetBinding으로 아이템 클릭 리스너 연결
         dialog.show()
     }
 }
