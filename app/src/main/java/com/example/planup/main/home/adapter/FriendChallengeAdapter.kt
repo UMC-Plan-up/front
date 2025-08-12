@@ -2,13 +2,13 @@ package com.example.planup.main.home.adapter
 
 import android.graphics.Color
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.home.item.FriendChallengeItem
 import android.widget.ImageView
 import android.widget.TextView
 import com.example.planup.R
+import com.example.planup.databinding.ItemHomeFriendChallengeBinding
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -17,19 +17,22 @@ import com.github.mikephil.charting.data.PieEntry
 class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
     RecyclerView.Adapter<FriendChallengeAdapter.FriendChallengeViewHolder>() {
 
-    inner class FriendChallengeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val img = view.findViewById<ImageView>(R.id.friend_challenge_profile)
-        val title = view.findViewById<TextView>(R.id.friend_challenge_title_tv)
-        val desc = view.findViewById<TextView>(R.id.friend_challenge_description_tv)
-        val pie1 = view.findViewById<PieChart>(R.id.friend_challenge_pc1)
-        val pie2 = view.findViewById<PieChart>(R.id.friend_challenge_pc2)
-        val pie3 = view.findViewById<PieChart>(R.id.friend_challenge_pc3)
+    inner class FriendChallengeViewHolder(binding: ItemHomeFriendChallengeBinding) : RecyclerView.ViewHolder(binding.root) {
+        val img = binding.friendChallengeProfile
+        val title = binding.friendChallengeTitleTv
+        val desc = binding.friendChallengeDescriptionTv
+        val pie1 = binding.friendChallengePc1
+        val pie2 = binding.friendChallengePc2
+        val pie3 = binding.friendChallengePc3
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendChallengeViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_home_friend_challenge, parent, false)
-        return FriendChallengeViewHolder(view)
+        val binding = ItemHomeFriendChallengeBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return FriendChallengeViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FriendChallengeViewHolder, position: Int) {

@@ -22,6 +22,7 @@ import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
+import com.example.planup.databinding.ItemCalendarDayBinding
 import com.example.planup.main.friend.data.FriendInfo
 import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
@@ -74,7 +75,7 @@ class HomeFragment : Fragment() {
         //loadMyGoalList() //api 불러오기
 
 
-        dailyRecyclerVIew = view.findViewById(R.id.daily_todo_rv)
+        dailyRecyclerVIew = binding.dailyTodoRv
         dailyRecyclerVIew.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -87,10 +88,10 @@ class HomeFragment : Fragment() {
         dailyAdapter = DailyToDoAdapter(dailyToDos)
         dailyRecyclerVIew.adapter = dailyAdapter
 
-        val progressBar = view.findViewById<ProgressBar>(R.id.daily_todo_pb)
+        val progressBar = binding.dailyTodoPb
         progressBar.progress = 75
 
-        friendRecyclerView = view.findViewById(R.id.home_friend_challenge_rv)
+        friendRecyclerView = binding.homeFriendChallengeRv
         friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val dummyData = listOf(
@@ -102,8 +103,8 @@ class HomeFragment : Fragment() {
         friendRecyclerView.adapter = friendAdapter
 
         //---------------------달력---------------------
-        val calendarView = view.findViewById<CalendarView>(R.id.home_calendarView)
-        val monthYearText = view.findViewById<TextView>(R.id.home_monthYearText)
+        val calendarView = binding.homeCalendarView
+        val monthYearText = binding.homeMonthYearText
 
 
         val daysOfWeek = daysOfWeekFromLocale()
@@ -141,7 +142,7 @@ class HomeFragment : Fragment() {
             }
         }
 
-        calendarCardView = view.findViewById(R.id.home_calendar_cardView)
+        calendarCardView = binding.homeCalendarCardView
         calendarCardView.setOnClickListener {
             val intent = Intent(requireContext(), CalendarActivity::class.java)
             startActivity(intent)
@@ -162,11 +163,12 @@ class HomeFragment : Fragment() {
         }
     }
     inner class DayViewContainer(view: View) : ViewContainer(view) {
-        val textView: TextView = view.findViewById(R.id.calendarDayText)
-        val barsContainer: LinearLayout = view.findViewById(R.id.eventBarsContainer)
-        val bar1: View = view.findViewById(R.id.eventBar1)
-        val bar2: View = view.findViewById(R.id.eventBar2)
-        val bar3: View = view.findViewById(R.id.eventBar3)
+        val binding = ItemCalendarDayBinding.bind(view)
+        val textView: TextView = binding.calendarDayText
+        val barsContainer: LinearLayout = binding.eventBarsContainer
+        val bar1: View = binding.eventBar1
+        val bar2: View = binding.eventBar2
+        val bar3: View = binding.eventBar3
     }
 
     fun daysOfWeekFromLocale(): List<DayOfWeek> {

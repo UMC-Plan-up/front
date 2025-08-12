@@ -9,10 +9,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.databinding.FragmentCheckGoalBinding
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
 
 class CheckGoalFragment : Fragment() {
+    private lateinit var binding: FragmentCheckGoalBinding
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DailyToDoAdapter
@@ -27,7 +29,7 @@ class CheckGoalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.daily_todo_rv)
+        recyclerView = binding.dailyTodoRv
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
@@ -40,7 +42,7 @@ class CheckGoalFragment : Fragment() {
         adapter = DailyToDoAdapter(dailyToDos)
         recyclerView.adapter = adapter
 
-        val progressBar = view.findViewById<ProgressBar>(R.id.daily_todo_pb)
+        val progressBar = binding.dailyTodoPb
         progressBar.progress = 75
     }
 }

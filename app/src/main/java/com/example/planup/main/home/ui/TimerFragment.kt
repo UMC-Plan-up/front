@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerBinding
+import com.example.planup.databinding.PopupGoalListCameraBinding
 import com.example.planup.main.home.adapter.FriendTimerAdapter
 import com.example.planup.main.home.data.FriendTimer
 import kotlinx.coroutines.Job
@@ -96,9 +97,10 @@ class TimerFragment : Fragment() {
         cameraImageView.setOnClickListener {
             val inflater = LayoutInflater.from(requireContext())
             val popupView = inflater.inflate(R.layout.popup_goal_list_camera, null)
+            val popupBinding = PopupGoalListCameraBinding.bind(popupView)
 
             val popupWindow = PopupWindow(
-                popupView,
+                popupBinding.root,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 true
@@ -108,8 +110,8 @@ class TimerFragment : Fragment() {
             popupWindow.isOutsideTouchable = true
             popupWindow.elevation = 10f
 
-            val takePhoto = popupView.findViewById<TextView>(R.id.take_photo_tv)
-            val chooseGallery = popupView.findViewById<TextView>(R.id.choose_gallery_tv)
+            val takePhoto = popupBinding.takePhotoTv
+            val chooseGallery = popupBinding.chooseGalleryTv
 
             takePhoto.setOnClickListener {
                 Toast.makeText(requireContext(), "사진 찍기 선택", Toast.LENGTH_SHORT).show()

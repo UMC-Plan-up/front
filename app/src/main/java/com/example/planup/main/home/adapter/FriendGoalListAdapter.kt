@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.databinding.ItemFriendGoalListBinding
 import com.example.planup.main.home.item.FriendGoalListItem
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -17,16 +18,21 @@ import com.github.mikephil.charting.data.PieEntry
 class FriendGoalListAdapter(private val items: List<FriendGoalListItem>) :
     RecyclerView.Adapter<FriendGoalListAdapter.FriendGoalViewHolder>() {
 
-    inner class FriendGoalViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val pieChart: PieChart = view.findViewById(R.id.friend_goal_list_pc)
-        val tvTitle: TextView = view.findViewById(R.id.friend_goal_list_title_tv)
-        val tvNumber: TextView = view.findViewById(R.id.friend_goal_list_number_tv)
-        val tvDescription: TextView = view.findViewById(R.id.friend_goal_list_description_tv)
+    inner class FriendGoalViewHolder(binding: ItemFriendGoalListBinding) : RecyclerView.ViewHolder(binding.root) {
+        val pieChart: PieChart = binding.friendGoalListPc
+        val tvTitle: TextView = binding.friendGoalListTitleTv
+        val tvNumber: TextView = binding.friendGoalListNumberTv
+        val tvDescription: TextView = binding.friendGoalListDescriptionTv
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendGoalViewHolder {
+        val binding = ItemFriendGoalListBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend_goal_list, parent, false)
-        return FriendGoalViewHolder(view)
+        return FriendGoalViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FriendGoalViewHolder, position: Int) {
