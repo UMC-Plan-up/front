@@ -25,16 +25,18 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
 
-@RequiresApi(Build.VERSION_CODES.O)
+
 class CalendarActivity : AppCompatActivity() {
 
     private val today = LocalDate.now()
     private var selectedDate = today
     private lateinit var eventAdapter: CalendarEventAdapter
 
-    private val eventMap: Map<LocalDate, List<String>> = mapOf(
-        LocalDate.of(2025, 7, 17) to listOf("토익 공부하기", "헬스장 가기", "스터디 모임"),
-        LocalDate.of(2025, 7, 18) to listOf("<인간관계론> 읽기")
+    private val eventList = listOf(
+        CalendarEvent("토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
+        CalendarEvent("헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
+        CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
+        CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,12 +69,16 @@ class CalendarActivity : AppCompatActivity() {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
 
             override fun bind(container: DayViewContainer, data: CalendarDay) {
-                container.textView.text = data.date.dayOfMonth.toString()
+                val date = data.date
+                container.textView.text = date.dayOfMonth.toString()
+
+                // 선택 표시
                 container.textView.setBackgroundResource(
-                    if (data.date == selectedDate) R.drawable.bg_calendar_select else 0
+                    if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
 
-                val events = eventMap[data.date] ?: emptyList()
+                // 기간 내 이벤트 가져오기
+                val events = getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
                 bars.forEach { it.visibility = View.GONE }
@@ -81,8 +87,9 @@ class CalendarActivity : AppCompatActivity() {
                     bars[i].visibility = View.VISIBLE
                 }
 
+                // 날짜 클릭 시
                 container.view.setOnClickListener {
-                    selectedDate = data.date
+                    selectedDate = date
                     calendarView.notifyCalendarChanged()
                     updateEventList(selectedDate)
                 }
@@ -97,7 +104,8 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun updateEventList(date: LocalDate) {
-        eventAdapter.submitList(eventMap[date] ?: emptyList())
+        val events = getEventsForDate(date).map { it.title }
+        eventAdapter.submitList(events)
     }
 
     inner class DayViewContainer(view: View) : ViewContainer(view) {
@@ -110,7 +118,19 @@ class CalendarActivity : AppCompatActivity() {
 
     fun daysOfWeekFromLocale(): List<DayOfWeek> {
         val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        val days = DayOfWeek.values().toList()
+        val days = DayOfWeek.entries
         return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
     }
+
+    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
+        return eventList.filter { event ->
+            !date.isBefore(event.startDate) && !date.isAfter(event.endDate)
+        }
+    }
 }
+
+data class CalendarEvent(
+    val title: String,
+    val startDate: LocalDate,
+    val endDate: LocalDate
+)
