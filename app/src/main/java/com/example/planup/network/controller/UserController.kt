@@ -46,42 +46,43 @@ class UserController {
 
     //친구 차단 해제에 대한 레이아웃 관리
     private lateinit var friendUnblockedAdapter: FriendsUnblockedAdapter
-    fun setFriendUnblockedAdapter(adapter: FriendsUnblockedAdapter){
+    fun setFriendUnblockedAdapter(adapter: FriendsUnblockedAdapter) {
         this.friendUnblockedAdapter = adapter
     }
 
     //친구 신고에 대한 레이아웃 관리
     private lateinit var friendReportAdapter: FriendReportAdapter
-    fun setFriendReportAdapter(adapter: FriendReportAdapter){
+    fun setFriendReportAdapter(adapter: FriendReportAdapter) {
         this.friendReportAdapter = adapter
     }
 
     //회원탈퇴에 대한 레이아웃 관리
     private lateinit var closeAccountAdapter: CloseAccountAdapter
-    fun setCloseAccountAdapter(adapter: CloseAccountAdapter){
+    fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
         this.closeAccountAdapter = adapter
     }
 
     //로그아웃에 대한 레이아웃 관리
     private lateinit var logoutAdapter: LogoutAdapter
-    fun setLogoutAdapter(adapter: LogoutAdapter){
+    fun setLogoutAdapter(adapter: LogoutAdapter) {
         this.logoutAdapter = adapter
     }
 
     //카카오톡 연동 상태 확인에 대한 레이아웃 관리
     private lateinit var kakaoAdapter: KakaoAdapter
-    fun setKakaoAdapter(adapter: KakaoAdapter){
+    fun setKakaoAdapter(adapter: KakaoAdapter) {
         this.kakaoAdapter = adapter
     }
+
     //혜택 및 마케팅 동의 여부에 대한 토글 관리
     private lateinit var benefitAdapter: BenefitAdapter
-    fun setBenefitAdapter(adapter: BenefitAdapter){
+    fun setBenefitAdapter(adapter: BenefitAdapter) {
         this.benefitAdapter = adapter
     }
 
     //이메일 인증링크 발송에 대한 레이아웃 관리
     private lateinit var emailSendAdapter: EmailSendAdapter
-    fun setEmailSendAdapter(adapter: EmailSendAdapter){
+    fun setEmailSendAdapter(adapter: EmailSendAdapter) {
         this.emailSendAdapter = adapter
     }
 
@@ -138,30 +139,32 @@ class UserController {
     }
 
     //이메일로 인증링크 요청
-    fun emailSendService(email:String){
+    fun emailSendService(email: String) {
         val emailSendService = getRetrofit().create(UserControllerInterface::class.java)
-        emailSendService.sendEmail(email).enqueue(object : Callback<PostEmailSend>{
+        emailSendService.sendEmail(email).enqueue(object : Callback<PostEmailSend> {
             override fun onResponse(call: Call<PostEmailSend>, response: Response<PostEmailSend>) {
-                when(response.isSuccessful){
+                when (response.isSuccessful) {
                     true -> {
                         val resp = response.body()?.result
                         resp?.email?.let { emailSendAdapter.successEmailSend(it) }
                     }
+
                     else -> {
                     }
                 }
             }
 
             override fun onFailure(call: Call<PostEmailSend>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
     }
+
     //이메일 다시 받기
-    fun emailResendService(email: String){
+    fun emailResendService(email: String) {
         val emailResendService = getRetrofit().create(UserControllerInterface::class.java)
-        emailResendService.resendEmail(email).enqueue(object : Callback<PostEmailSend>{
+        emailResendService.resendEmail(email).enqueue(object : Callback<PostEmailSend> {
             override fun onResponse(call: Call<PostEmailSend>, response: Response<PostEmailSend>) {
                 when (response.isSuccessful) {
                     true -> {
@@ -176,7 +179,7 @@ class UserController {
             }
 
             override fun onFailure(call: Call<PostEmailSend>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
@@ -213,14 +216,20 @@ class UserController {
     }
 
     //카카오 계정 연동상태 확인
-    fun kakaoService(){
+    fun kakaoService() {
         val kakaoService = getRetrofit().create(UserControllerInterface::class.java)
-        kakaoService.getKakao().enqueue(object : Callback<GetKakao>{
+        kakaoService.getKakao().enqueue(object : Callback<GetKakao> {
             override fun onResponse(call: Call<GetKakao>, response: Response<GetKakao>) {
                 when (response.isSuccessful) {
                     true -> {
                         val responseBody = response.body()
-                        responseBody?.result?.let { kakaoAdapter.successKakao(it.kakaoEmail) }
+                        responseBody?.result?.let {
+                            if (it.kakaoEmail.isEmpty()) {
+                                kakaoAdapter.successKakao("@")
+                            } else {
+                                kakaoAdapter.successKakao(it.kakaoEmail)
+                            }
+                        }
                     }
 
                     else -> {
@@ -228,38 +237,42 @@ class UserController {
                     }
                 }
             }
+
             override fun onFailure(call: Call<GetKakao>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
     }
 
     //혜택 및 마케팅 동의 변경
-    fun notificationAgreementService(condition: Boolean){
+    fun notificationAgreementService(condition: Boolean) {
         val notificationAgreementService = getRetrofit().create(UserControllerInterface::class.java)
-        notificationAgreementService.patchNoticeAgree().enqueue(object : Callback<PatchNotificationAgreement>{
-            override fun onResponse(
-                call: Call<PatchNotificationAgreement>,
-                response: Response<PatchNotificationAgreement>
-            ) {
-                when(response.isSuccessful){
-                    true -> {
-                        Log.d("okhttp",response.code().toString())
-                        benefitAdapter.successBenefitSetting(condition)
-                    }
-                    else -> {
-                        Log.d("okhttp",response.code().toString())
+        notificationAgreementService.patchNoticeAgree()
+            .enqueue(object : Callback<PatchNotificationAgreement> {
+                override fun onResponse(
+                    call: Call<PatchNotificationAgreement>,
+                    response: Response<PatchNotificationAgreement>
+                ) {
+                    when (response.isSuccessful) {
+                        true -> {
+                            Log.d("okhttp", response.code().toString())
+                            benefitAdapter.successBenefitSetting(condition)
+                        }
+
+                        else -> {
+                            Log.d("okhttp", response.code().toString())
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PatchNotificationAgreement>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
-            }
+                override fun onFailure(call: Call<PatchNotificationAgreement>, t: Throwable) {
+                    Log.d("okhttp", "fail\n$t")
+                }
 
-        })
+            })
     }
+
     //차단 친구 목록 조회
     fun friendsBlockedService() {
         val blockFriendService = getRetrofit().create(UserControllerInterface::class.java)
@@ -272,6 +285,7 @@ class UserController {
                     true -> {
                         friendsBlockedAdapter.successBlockedFriends(response.body()?.result)
                     }
+
                     else -> {
                         friendsBlockedAdapter.failBlockedFriends(
                             response.body()?.code,
@@ -289,88 +303,99 @@ class UserController {
     }
 
     //친구 차단 해제
-    fun friendsUnblockService(friendUnblockDto: FriendUnblockDto){
+    fun friendsUnblockService(friendUnblockDto: FriendUnblockDto) {
         val friendUnblockService = getRetrofit().create(UserControllerInterface::class.java)
-        friendUnblockService.unblockedFriend(friendUnblockDto).enqueue(object : Callback<PostFriendsUnblocked>{
-            override fun onResponse(
-                call: Call<PostFriendsUnblocked>,
-                response: Response<PostFriendsUnblocked>
-            ) {
-                when (response.isSuccessful) {
-                    true -> {
-                        Log.d("okhttp","success ${response.body()}")
-                        friendUnblockedAdapter.successFriendUnblock(friendUnblockDto.friendNickname)
-                    }
+        friendUnblockService.unblockedFriend(friendUnblockDto)
+            .enqueue(object : Callback<PostFriendsUnblocked> {
+                override fun onResponse(
+                    call: Call<PostFriendsUnblocked>,
+                    response: Response<PostFriendsUnblocked>
+                ) {
+                    when (response.isSuccessful) {
+                        true -> {
+                            Log.d("okhttp", "success ${response.body()}")
+                            friendUnblockedAdapter.successFriendUnblock(friendUnblockDto.friendNickname)
+                        }
 
-                    else -> {
-                        Log.d("okhttp","error ${response.body()}")
-                        friendUnblockedAdapter.failFriendUnblock(response.code().toString(),response.message().toString())
+                        else -> {
+                            Log.d("okhttp", "error ${response.body()}")
+                            friendUnblockedAdapter.failFriendUnblock(
+                                response.code().toString(),
+                                response.message().toString()
+                            )
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<PostFriendsUnblocked>, t: Throwable) {
-                Log.d("okhttp", "fail\n$t")
-            }
+                override fun onFailure(call: Call<PostFriendsUnblocked>, t: Throwable) {
+                    Log.d("okhttp", "fail\n$t")
+                }
 
-        })
+            })
     }
 
     //친구 신고
-    fun reportFriendService(friend: FriendReportDto){
+    fun reportFriendService(friend: FriendReportDto) {
         val reportFriendService = getRetrofit().create(UserControllerInterface::class.java)
-        reportFriendService.reportFriend(friend).enqueue(object : Callback<PostFriendsReport>{
+        reportFriendService.reportFriend(friend).enqueue(object : Callback<PostFriendsReport> {
             override fun onResponse(
                 call: Call<PostFriendsReport>,
                 response: Response<PostFriendsReport>
             ) {
-                when (response.isSuccessful){
+                when (response.isSuccessful) {
                     true -> {
                         friendReportAdapter.successReportFriend()
-                    }else -> {
-                        friendReportAdapter.failReportFriend(response.code().toString(),response.message().toString())
+                    }
+
+                    else -> {
+                        friendReportAdapter.failReportFriend(
+                            response.code().toString(),
+                            response.message().toString()
+                        )
                     }
                 }
             }
 
             override fun onFailure(call: Call<PostFriendsReport>, t: Throwable) {
-                Log.d("okhttp",t.toString())
+                Log.d("okhttp", t.toString())
             }
 
         })
     }
 
     //로그아웃
-    fun logoutService(){
+    fun logoutService() {
         val logoutService = getRetrofit().create(UserControllerInterface::class.java)
-        logoutService.logout().enqueue(object : Callback<Logout>{
+        logoutService.logout().enqueue(object : Callback<Logout> {
             override fun onResponse(call: Call<Logout>, response: Response<Logout>) {
-                when(response.isSuccessful){
-                    true ->{
+                when (response.isSuccessful) {
+                    true -> {
                         logoutAdapter.successLogout()
                     }
-                    else ->{
+
+                    else -> {
                         logoutAdapter.failLogout()
                     }
                 }
             }
 
             override fun onFailure(call: Call<Logout>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
+                Log.d("okhttp", "fail\n$t")
             }
 
         })
     }
 
     //회원 탈퇴
-    fun closeAccountService(reason: String){
+    fun closeAccountService(reason: String) {
         val closeAccountService = getRetrofit().create(UserControllerInterface::class.java)
-        closeAccountService.withdrawAccount(reason).enqueue(object : Callback<PatchWithdraw>{
+        closeAccountService.withdrawAccount(reason).enqueue(object : Callback<PatchWithdraw> {
             override fun onResponse(call: Call<PatchWithdraw>, response: Response<PatchWithdraw>) {
-                when(response.isSuccessful){
+                when (response.isSuccessful) {
                     true -> {
                         closeAccountAdapter.successCloseAccount()
                     }
+
                     else -> {
                         closeAccountAdapter.failCloseAccount()
                     }

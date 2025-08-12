@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengePenaltyBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.adapter.RequestChallengeAdapter
 
 class ChallengePenaltyFragment : Fragment() {
     lateinit var binding: FragmentChallengePenaltyBinding
@@ -128,7 +129,7 @@ class ChallengePenaltyFragment : Fragment() {
         binding.challengePenaltyNextBtn.setOnClickListener {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
             editor.putString("penalty",penalty)
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
+             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengeFriendFragment())
                 .commitAllowingStateLoss()
         }
