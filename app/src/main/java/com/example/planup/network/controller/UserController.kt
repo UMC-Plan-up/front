@@ -21,43 +21,48 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class UserController {
+
+    /*
+* Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
+* 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
+
     //서버 응답에 따른 마이페이지 관련레이아웃 관리를 위한 변수
     private lateinit var responseViewer: ResponseViewer
     fun setResponseViewer(viewer: ResponseViewer) {
         this.responseViewer = viewer
     }
 
-    //회원 탈퇴 대한 레이아웃 관리
+    //회원 탈퇴
     private lateinit var closeAccountAdapter: CloseAccountAdapter
     fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
         this.closeAccountAdapter = adapter
     }
 
-    //로그인에 대한 레이아웃 관리
+    //로그인에
     private lateinit var loginAdapter: LoginAdapter
     fun setLoginAdapter(adapter: LoginAdapter) {
         this.loginAdapter = adapter
     }
 
-    //로그아웃에 대한 레이아웃 관리
+    //로그아웃
     private lateinit var logoutAdapter: LogoutAdapter
     fun setLogoutAdapter(adapter: LogoutAdapter) {
         this.logoutAdapter = adapter
     }
 
-    //카카오톡 연동 상태 확인에 대한 레이아웃 관리
+    //카카오톡 연동 상태 확인
     private lateinit var kakaoAdapter: KakaoAdapter
     fun setKakaoAdapter(adapter: KakaoAdapter) {
         this.kakaoAdapter = adapter
     }
 
-    //서비스 알림 동의 여부에 대한 토글 관리
+    //서비스 알림 동의 변경
     private lateinit var serviceAdapter: ServiceAlertAdapter
     fun setServiceAdapter(adapter: ServiceAlertAdapter) {
         this.serviceAdapter = adapter
     }
 
-    //이메일 인증링크 발송에 대한 레이아웃 관리
+    //이메일 인증링크 발송
     private lateinit var emailSendAdapter: EmailSendAdapter
     fun setEmailSendAdapter(adapter: EmailSendAdapter) {
         this.emailSendAdapter = adapter
@@ -123,6 +128,7 @@ class UserController {
                     Log.d("okhttp", "error ${response.code()} ${response.message()}")
                 }
             }
+
             override fun onFailure(call: Call<UserResponse<EmailSend>>, t: Throwable) {
                 Log.d("okhttp", "fail\n$t")
             }
@@ -143,6 +149,7 @@ class UserController {
                     Log.d("okhttp", "error ${response.code()} ${response.message()}")
                 }
             }
+
             override fun onFailure(call: Call<UserResponse<EmailSend>>, t: Throwable) {
                 Log.d("okhttp", "fail\n$t")
             }
@@ -152,21 +159,26 @@ class UserController {
     //비밀번호 변경
     fun passwordService(userId: Int, password: String) {
         val passwordService = getRetrofit().create(UserPort::class.java)
-        passwordService.changePassword(userId, password).enqueue(object : Callback<UserResponse<Boolean>> {
-            override fun onResponse(
-                call: Call<UserResponse<Boolean>>,
-                response: Response<UserResponse<Boolean>>
-            ) {
-                if (response.isSuccessful && response.body()?.result == true) {
-                    responseViewer.onResponseSuccess()
-                } else {
-                    responseViewer.onResponseError(response.code().toString(), response.message())
+        passwordService.changePassword(userId, password)
+            .enqueue(object : Callback<UserResponse<Boolean>> {
+                override fun onResponse(
+                    call: Call<UserResponse<Boolean>>,
+                    response: Response<UserResponse<Boolean>>
+                ) {
+                    if (response.isSuccessful && response.body()?.result == true) {
+                        responseViewer.onResponseSuccess()
+                    } else {
+                        responseViewer.onResponseError(
+                            response.code().toString(),
+                            response.message()
+                        )
+                    }
                 }
-            }
-            override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                Log.d("okhttp", "fail\n$t")
-            }
-        })
+
+                override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
+                    Log.d("okhttp", "fail\n$t")
+                }
+            })
     }
 
     //카카오 계정 연동상태 확인
@@ -184,6 +196,7 @@ class UserController {
                     kakaoAdapter.failKakao()
                 }
             }
+
             override fun onFailure(call: Call<UserResponse<KakaoAccount>>, t: Throwable) {
                 Log.d("okhttp", "fail\n$t")
             }
@@ -193,21 +206,23 @@ class UserController {
     //서비스 알림 수신 여부 관리
     fun notificationAgreementService(condition: Boolean) {
         val notificationAgreementService = getRetrofit().create(UserPort::class.java)
-        notificationAgreementService.patchNoticeAgree().enqueue(object : Callback<UserResponse<Boolean>> {
-            override fun onResponse(
-                call: Call<UserResponse<Boolean>>,
-                response: Response<UserResponse<Boolean>>
-            ) {
-                if (response.isSuccessful && response.body()?.result != null) {
-                    serviceAdapter.successServiceSetting(condition)
-                } else {
-                    Log.d("okhttp", "error ${response.code()} ${response.message()}")
+        notificationAgreementService.patchNoticeAgree()
+            .enqueue(object : Callback<UserResponse<Boolean>> {
+                override fun onResponse(
+                    call: Call<UserResponse<Boolean>>,
+                    response: Response<UserResponse<Boolean>>
+                ) {
+                    if (response.isSuccessful && response.body()?.result != null) {
+                        serviceAdapter.successServiceSetting(condition)
+                    } else {
+                        Log.d("okhttp", "error ${response.code()} ${response.message()}")
+                    }
                 }
-            }
-            override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                Log.d("okhttp", "fail\n$t")
-            }
-        })
+
+                override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
+                    Log.d("okhttp", "fail\n$t")
+                }
+            })
     }
 
     //로그인
@@ -224,8 +239,9 @@ class UserController {
                     response.body()?.result?.let { loginAdapter.failLogin(it.message) }
                 }
             }
+
             override fun onFailure(call: Call<UserResponse<Login>>, t: Throwable) {
-                Log.d("okhttp","fail\n$t")
+                Log.d("okhttp", "fail\n$t")
             }
         })
     }
@@ -244,6 +260,7 @@ class UserController {
                     logoutAdapter.failLogout()
                 }
             }
+
             override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
                 Log.d("okhttp", "fail\n$t")
             }
@@ -253,20 +270,22 @@ class UserController {
     //회원 탈퇴
     fun closeAccountService(reason: String) {
         val closeAccountService = getRetrofit().create(UserPort::class.java)
-        closeAccountService.withdrawAccount(reason).enqueue(object : Callback<UserResponse<WithDraw>> {
-            override fun onResponse(
-                call: Call<UserResponse<WithDraw>>,
-                response: Response<UserResponse<WithDraw>>
-            ) {
-                if (response.isSuccessful && response.body()?.result != null) {
-                    closeAccountAdapter.successCloseAccount()
-                } else {
-                    closeAccountAdapter.failCloseAccount()
+        closeAccountService.withdrawAccount(reason)
+            .enqueue(object : Callback<UserResponse<WithDraw>> {
+                override fun onResponse(
+                    call: Call<UserResponse<WithDraw>>,
+                    response: Response<UserResponse<WithDraw>>
+                ) {
+                    if (response.isSuccessful && response.body()?.result != null) {
+                        closeAccountAdapter.successCloseAccount()
+                    } else {
+                        closeAccountAdapter.failCloseAccount()
+                    }
                 }
-            }
-            override fun onFailure(call: Call<UserResponse<WithDraw>>, t: Throwable) {
-                Log.d("okhttp", "fail\n$t")
-            }
-        })
+
+                override fun onFailure(call: Call<UserResponse<WithDraw>>, t: Throwable) {
+                    Log.d("okhttp", "fail\n$t")
+                }
+            })
     }
 }

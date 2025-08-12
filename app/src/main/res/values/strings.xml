@@ -239,7 +239,7 @@
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
-    <string name="end_day">"%1$d/%1$d (%1$s)</string>
+    <string name="end_day">"%1$d / %2$d (%3$s)</string>
 
     <!-- fragment_challenge_request.xml -->
     <string name="challenge_request_verify">인증 방식</string>

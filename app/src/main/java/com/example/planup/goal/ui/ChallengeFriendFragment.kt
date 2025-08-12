@@ -17,7 +17,7 @@ import com.example.planup.goal.adapter.ChallengeFriendsAdapter
 import com.example.planup.goal.adapter.FriendRVAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
 import com.example.planup.network.controller.ChallengeController
-import com.example.planup.network.data.challenge.ChallengeFriends
+import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.Time
 

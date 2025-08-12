@@ -16,6 +16,10 @@ import retrofit2.Response
 
 class FriendController {
 
+    /*
+* Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
+* 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
+
     //친구 차단에 대한 레이아웃 관리
     private lateinit var friendsBlockedAdapter: FriendsBlockedAdapter
     fun setFriendsBlockedAdapter(adapter: FriendsBlockedAdapter) {
@@ -47,15 +51,13 @@ class FriendController {
                         friendsBlockedAdapter.successBlockedFriends(response.body()!!.result)
                     } else {
                         friendsBlockedAdapter.failBlockedFriends(
-                            response.body()?.code,
-                            response.body()?.message
+                            response.body()?.code, response.body()?.message
                         )
                     }
                 }
 
                 override fun onFailure(
-                    call: Call<FriendResponse<List<BlockedFriends>>>,
-                    t: Throwable
+                    call: Call<FriendResponse<List<BlockedFriends>>>, t: Throwable
                 ) {
                     Log.d("okhttp", "fail\n$t")
                 }
@@ -69,16 +71,14 @@ class FriendController {
         friendUnblockService.unblockFriend(friendUnblockDto)
             .enqueue(object : Callback<FriendResponse<Boolean>> {
                 override fun onResponse(
-                    call: Call<FriendResponse<Boolean>>,
-                    response: Response<FriendResponse<Boolean>>
+                    call: Call<FriendResponse<Boolean>>, response: Response<FriendResponse<Boolean>>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         Log.d("okhttp", "success ${response.body()}")
                         friendUnblockedAdapter.successFriendUnblock(friendUnblockDto.friendNickname)
                     } else {
                         friendUnblockedAdapter.failFriendUnblock(
-                            response.code().toString(),
-                            response.message().toString()
+                            response.code().toString(), response.message().toString()
                         )
                     }
                 }
@@ -96,15 +96,13 @@ class FriendController {
         reportFriendService.reportFriend(friend)
             .enqueue(object : Callback<FriendResponse<Boolean>> {
                 override fun onResponse(
-                    call: Call<FriendResponse<Boolean>>,
-                    response: Response<FriendResponse<Boolean>>
+                    call: Call<FriendResponse<Boolean>>, response: Response<FriendResponse<Boolean>>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         friendReportAdapter.successReportFriend()
                     } else {
                         friendReportAdapter.failReportFriend(
-                            response.code().toString(),
-                            response.message().toString()
+                            response.code().toString(), response.message().toString()
                         )
                     }
                 }

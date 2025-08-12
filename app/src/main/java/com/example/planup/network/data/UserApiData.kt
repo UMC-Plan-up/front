@@ -2,7 +2,7 @@ package com.example.planup.network.data
 
 import com.google.gson.annotations.SerializedName
 
-//User Controller 기본 응답 양식, T는 String, Boolean 또는 아래 정의한 data class 중 하나
+//User Controller 기본 응답 양식
 data class UserResponse<T>(
     @SerializedName(value = "isSuccess") val isSuccess: Boolean,
     @SerializedName(value = "code") val code: String,
