@@ -25,18 +25,14 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
-        </activity>
-
-        <activity android:name=".main.MainActivity"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity android:name=".main.MainActivity"
+            android:exported="true">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.VIEW" />-->
 <!--                <category android:name="android.intent.category.DEFAULT" />-->
@@ -61,7 +57,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.ui.LoginActivity"
+        <activity android:name=".login.LoginActivityNew"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".password.ResetPasswordActivity" />

@@ -1,8 +1,6 @@
 package com.example.planup.main
 
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -13,7 +11,6 @@ import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.record.ui.RecordFragment
 
-@RequiresApi(Build.VERSION_CODES.O)
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

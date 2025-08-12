@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.login.ui.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -15,7 +16,7 @@ class SplashActivity : AppCompatActivity() {
 
         // 2초 후 LoginActivity로 이동
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
+            val intent = Intent(this, LoginActivityNew::class.java)
             startActivity(intent)
             finish()
         }, 2000)

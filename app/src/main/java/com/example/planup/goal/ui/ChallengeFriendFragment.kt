@@ -18,9 +18,8 @@ import com.example.planup.goal.adapter.FriendRVAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
 import com.example.planup.network.controller.ChallengeController
 import com.example.planup.network.data.challenge.ChallengeFriends
-import com.example.planup.network.data.challenge.GetChallengeFriends
-import com.example.planup.network.dto.ChallengeDto
-import com.example.planup.network.dto.Time
+import com.example.planup.network.dto.challenge.ChallengeDto
+import com.example.planup.network.dto.challenge.Time
 
 class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFriendsAdapter {
     lateinit var binding: FragmentChallengeFriendBinding

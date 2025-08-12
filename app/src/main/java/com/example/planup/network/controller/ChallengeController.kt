@@ -5,9 +5,9 @@ import com.example.planup.goal.adapter.ChallengeFriendsAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
 import com.example.planup.network.data.challenge.GetChallengeFriends
 import com.example.planup.network.data.challenge.PatchChallenge
-import com.example.planup.network.dto.ChallengeDto
+import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.getRetrofit
-import com.example.planup.network.port.ChallengeControllerInterface
+import com.example.planup.network.port.ChallengePort
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +22,7 @@ class ChallengeController{
         this.challengeFriendsAdapter = adapter
     }
     fun requestChallenge(challengeDto: ChallengeDto){
-        val service = getRetrofit().create(ChallengeControllerInterface::class.java)
+        val service = getRetrofit().create(ChallengePort::class.java)
         service.createChallenge(challengeDto).enqueue(object : retrofit2.Callback<PatchChallenge>{
             override fun onResponse(
                 call: Call<PatchChallenge>,
@@ -45,7 +45,7 @@ class ChallengeController{
         })
     }
     fun showChallengeFriends(userId: Int){
-        val service = getRetrofit().create(ChallengeControllerInterface::class.java)
+        val service = getRetrofit().create(ChallengePort::class.java)
         service.showFriends(userId).enqueue(object: Callback<GetChallengeFriends>{
             override fun onResponse(call: Call<GetChallengeFriends>, response: Response<GetChallengeFriends>) {
                 when(response.isSuccessful){

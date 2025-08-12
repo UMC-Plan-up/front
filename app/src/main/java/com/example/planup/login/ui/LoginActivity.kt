@@ -67,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
 
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
-        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
+//        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
 
         passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
         emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
