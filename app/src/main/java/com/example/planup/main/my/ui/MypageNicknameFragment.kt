@@ -1,26 +1,33 @@
 package com.example.planup.main.my.ui
 
 import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageNicknameBinding
+import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.network.controller.UserController
 
 //마이페이지의 닉네임 변경 프레그먼트
-class MypageNicknameFragment:Fragment(), ResponseViewer {
+class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
 
     lateinit var binding:FragmentMypageNicknameBinding
-    lateinit var sharedPreferences: SharedPreferences
+    lateinit var prefs: SharedPreferences
+    lateinit var editor: Editor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,8 +43,8 @@ class MypageNicknameFragment:Fragment(), ResponseViewer {
 
     //초기 세팅
     private fun init(){
-        sharedPreferences = (context as MainActivity).getSharedPreferences("Token", MODE_PRIVATE)
-        Log.d("okhttp", sharedPreferences.getString("token",null).toString())
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        editor = prefs.edit()
     }
     private fun clickListener(){
         //뒤로 가기
@@ -47,8 +54,8 @@ class MypageNicknameFragment:Fragment(), ResponseViewer {
         //완료 버튼 클릭: 마이페이지 화면으로 이동
         binding.nicknameCompleteBtn.setOnClickListener{
             val nicknameService = UserController()
-            nicknameService.setResponseViewer(this)
-            nicknameService.nicknameService(0, binding.nicknameEt.text.toString())
+            nicknameService.setNicknameChangeAdapter(this)
+            nicknameService.nicknameService(binding.nicknameEt.text.toString())
         }
     }
 
@@ -77,15 +84,25 @@ class MypageNicknameFragment:Fragment(), ResponseViewer {
         })
     }
 
-    //닉네임 변경 완료
-    override fun onResponseSuccess() {
+    //닉네임 변경 성공
+    override fun successNicknameChange() {
+        editor.putString("nickName",binding.nicknameEt.text.toString())
         (context as MainActivity).navigateFragment(MypageFragment())
     }
-    //중복 닉네임인 경우
-    override fun onResponseError(code: String, message: String) {
-        Log.d("okhttp", "code: $code\nmessage: $message")
+    //닉네임 변경 오류
+    override fun failNicknameChange(message: String) {
         val errorColor = ContextCompat.getColor(context, R.color.semanticR1)
         binding.nickNameErrorTv.setText(R.string.error_already_nickname)
         binding.nickNameLv.setBackgroundColor(errorColor)
+
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 }

@@ -7,7 +7,7 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.planup.databinding.ActivitySplashBinding
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.login.LoginActivityNew
 
 class SplashActivity : AppCompatActivity() {
 
@@ -23,7 +23,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(binding?.root)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivityNew::class.java))
             finish()
         }, 2000)
     }

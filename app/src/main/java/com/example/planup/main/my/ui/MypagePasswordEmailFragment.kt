@@ -17,9 +17,11 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypagePasswordEmailBinding
+import com.example.planup.main.my.adapter.PasswordLinkAdapter
+import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.controller.UserController
 
-class MypagePasswordEmailFragment : Fragment(),ResponseViewer {
+class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
 
     lateinit var binding: FragmentMypagePasswordEmailBinding
     lateinit var mailAddr: String
@@ -167,8 +169,8 @@ class MypagePasswordEmailFragment : Fragment(),ResponseViewer {
                 makeToast(R.string.toast_incorrect_email)
         else{
             val mailService = UserController()
-            mailService.setResponseViewer(this)
-            mailService.emailService(0,binding.emailEt.text.toString())
+            mailService.setPasswordLinkAdapter(this)
+            mailService.passwordLinkService(binding.emailEt.text.toString())
         }
     }
     private fun makeToast(text:Int){
@@ -183,19 +185,24 @@ class MypagePasswordEmailFragment : Fragment(),ResponseViewer {
         toast.show()
     }
 
-    override fun onResponseSuccess() {
-        val emailAddr = binding.emailEt.text.toString()
-        val nextFragment = MypagePasswordLinkFragment().apply {
+    override fun successPasswordLink(email: String) {
+        val passwordLinkFragment = MypagePasswordLinkFragment().apply {
             arguments = Bundle().apply {
-                putString("email",emailAddr)
+                putString("email",email)
             }
         }
-        (context as MainActivity).navigateFragment(nextFragment)
+        (context as MainActivity).navigateFragment(passwordLinkFragment)
     }
 
-    override fun onResponseError(code: String, message: String ) {
-        //디버깅
-        Log.d("okhttp", "code: ${code}\nmessage: ${message}")
-        makeToast(R.string.toast_invalid_email)
+    override fun failPasswordLink(message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 }

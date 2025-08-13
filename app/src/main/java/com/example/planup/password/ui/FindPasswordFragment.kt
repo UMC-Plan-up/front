@@ -11,13 +11,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFindPasswordBinding
 import com.example.planup.databinding.PopupEmailBinding
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.password.ResetPasswordActivity
 
 class FindPasswordFragment : Fragment() {
@@ -47,7 +46,6 @@ class FindPasswordFragment : Fragment() {
                 hideAllErrors()
                 enableNextButton()
             } else {
-                // 형식이 틀리면 이메일 형식 에러 표시
                 binding.emailFormatErrorText.visibility = View.VISIBLE
                 binding.emailNotFoundErrorText.visibility = View.GONE
                 disableNextButton()
@@ -64,14 +62,13 @@ class FindPasswordFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // 다음 화면으로 이동
             (requireActivity() as ResetPasswordActivity)
                 .navigateToFragment(FindPasswordEmailSentFragment.newInstance(email))
         }
 
         // 뒤로가기 아이콘 클릭 → 로그인 화면 이동
         binding.backIcon.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
+            val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
@@ -136,7 +133,6 @@ class FindPasswordFragment : Fragment() {
             true
         )
 
-        // 도메인 클릭 시 이메일 입력창에 추가
         val addDomain: (String) -> Unit = { domain ->
             val currentText = binding.emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {

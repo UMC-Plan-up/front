@@ -9,6 +9,7 @@ import com.example.planup.goal.adapter.RepenaltyAdapter
 import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.data.ChallengeInfo
 import com.example.planup.network.data.ChallengeResponse
+import com.example.planup.network.data.ChallengeResponseNoResult
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.RepenaltyDto
 import com.example.planup.network.getRetrofit
@@ -77,10 +78,10 @@ class ChallengeController {
     //챌린지 거절
     fun rejectChallenge(challengeId: Int, userId: Int) {
         val service = getRetrofit().create(ChallengePort::class.java)
-        service.rejectChallenge(challengeId, userId).enqueue(object : Callback<ChallengeResponse<Boolean>>{
+        service.rejectChallenge(challengeId, userId).enqueue(object : Callback<ChallengeResponseNoResult>{
             override fun onResponse(
-                call: Call<ChallengeResponse<Boolean>>,
-                response: Response<ChallengeResponse<Boolean>>
+                call: Call<ChallengeResponseNoResult>,
+                response: Response<ChallengeResponseNoResult>
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     rejectChallengeAdapter.successReject()
@@ -89,7 +90,7 @@ class ChallengeController {
                 }
             }
 
-            override fun onFailure(call: Call<ChallengeResponse<Boolean>>, t: Throwable) {
+            override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
                 rejectChallengeAdapter.failReject(t.toString())
             }
 
@@ -105,10 +106,10 @@ class ChallengeController {
     fun acceptChallenge(challengeId: Int, userId: Int) {
         val service = getRetrofit().create(ChallengePort::class.java)
         service.acceptChallenge(challengeId, userId)
-            .enqueue(object : Callback<ChallengeResponse<Boolean>> {
+            .enqueue(object : Callback<ChallengeResponseNoResult> {
                 override fun onResponse(
-                    call: Call<ChallengeResponse<Boolean>>,
-                    response: Response<ChallengeResponse<Boolean>>
+                    call: Call<ChallengeResponseNoResult>,
+                    response: Response<ChallengeResponseNoResult>
                 ) {
                     if (response.isSuccessful && response.body() != null){
                         acceptChallengeAdapter.successAccept()
@@ -117,7 +118,7 @@ class ChallengeController {
                     }
                 }
 
-                override fun onFailure(call: Call<ChallengeResponse<Boolean>>, t: Throwable) {
+                override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
                     acceptChallengeAdapter.failAccept(t.toString())
                 }
 
@@ -153,10 +154,10 @@ class ChallengeController {
     //챌린지에 대한 다른 페널티 제안
     fun sendRepenalty(repenaltyDto: RepenaltyDto) {
         val service = getRetrofit().create(ChallengePort::class.java)
-        service.changePenalty(repenaltyDto).enqueue(object : Callback<ChallengeResponse<Boolean>> {
+        service.changePenalty(repenaltyDto).enqueue(object : Callback<ChallengeResponseNoResult> {
             override fun onResponse(
-                call: Call<ChallengeResponse<Boolean>>,
-                response: Response<ChallengeResponse<Boolean>>
+                call: Call<ChallengeResponseNoResult>,
+                response: Response<ChallengeResponseNoResult>
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     repenaltyAdapter.successRepenalty()
@@ -165,7 +166,7 @@ class ChallengeController {
                 }
             }
 
-            override fun onFailure(call: Call<ChallengeResponse<Boolean>>, t: Throwable) {
+            override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
                 repenaltyAdapter.failRepenalty(t.toString())
             }
 
@@ -176,10 +177,10 @@ class ChallengeController {
     fun requestChallenge(challengeDto: ChallengeDto) {
         val service = getRetrofit().create(ChallengePort::class.java)
         service.createChallenge(challengeDto)
-            .enqueue(object : Callback<ChallengeResponse<Boolean>> {
+            .enqueue(object : Callback<ChallengeResponseNoResult> {
                 override fun onResponse(
-                    call: Call<ChallengeResponse<Boolean>>,
-                    response: Response<ChallengeResponse<Boolean>>
+                    call: Call<ChallengeResponseNoResult>,
+                    response: Response<ChallengeResponseNoResult>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
 
@@ -190,7 +191,7 @@ class ChallengeController {
                     }
                 }
 
-                override fun onFailure(call: Call<ChallengeResponse<Boolean>>, t: Throwable) {
+                override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
                     requestChallengeAdapter.failRequest(t.toString())
                 }
 

@@ -20,7 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentResetPasswordBinding
 import com.example.planup.databinding.PopupResetBinding
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
@@ -257,7 +257,7 @@ class ResetPasswordFragment : Fragment() {
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
     }
 
-    /* 팝업 띄우기 → 확인 버튼 누르면 LoginActivity로 이동 */
+    /* 팝업 띄우기 → 확인 버튼 누르면 LoginActivityNew로 이동 */
     private fun showResetCompleteDialog() {
         val popupBinding = PopupResetBinding.inflate(layoutInflater)
 
@@ -284,9 +284,9 @@ class ResetPasswordFragment : Fragment() {
         dialog.window?.setLayout(dialogWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
     }
 
-    /* LoginActivity로 이동 */
+    /* LoginActivityNew로 이동 */
     private fun goToLoginActivity() {
-        val intent = Intent(requireContext(), LoginActivity::class.java)
+        val intent = Intent(requireContext(), LoginActivityNew::class.java)
         startActivity(intent)
         requireActivity().finish()
     }

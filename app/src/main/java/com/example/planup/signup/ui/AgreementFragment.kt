@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.adapter.TermItemAdapter
@@ -48,12 +48,13 @@ class AgreementFragment : Fragment() {
 
         /* 뒤로가기 아이콘 → 로그인 화면으로 이동 */
         binding.backIcon.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
+            val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
 
-        adapter = TermItemAdapter(termsList,
+        adapter = TermItemAdapter(
+            termsList,
             onCheckedChanged = { checkRequiredAgreement() },
             onDetailClicked = { showTermsDetailPopup(it) }
         )
@@ -126,7 +127,6 @@ class AgreementFragment : Fragment() {
         activity.agreements = agreements
     }
 
-
     /* 다음 화면으로 이동 */
     private fun openNextStep() {
         requireActivity().supportFragmentManager.beginTransaction()
@@ -172,7 +172,6 @@ class AgreementFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.termsApi.getTermsDetail(termsId)
-
                 val body = response.body()
 
                 if (response.isSuccessful && body?.result?.content != null) {
@@ -184,7 +183,6 @@ class AgreementFragment : Fragment() {
                 popupBinding.termTitle.text = "네트워크 오류가 발생했습니다."
             }
         }
-
 
         popupBinding.closeIcon.setOnClickListener {
             dialog.dismiss()

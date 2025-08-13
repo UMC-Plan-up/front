@@ -1,29 +1,38 @@
 package com.example.planup.main.my.ui
 
 import android.app.Dialog
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.databinding.FragmentMypagePasswordChangeBinding
+import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.network.controller.UserController
 
-class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
+class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     lateinit var binding: FragmentMypagePasswordChangeBinding
     /*새로운 비밀번호, 재확인 모두 통과하면 완료버튼 활성화*/
     private var length:Boolean = false
     private var special:Boolean = false
     private var recheck:Boolean = false
+
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,11 +40,16 @@ class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypagePasswordChangeBinding.inflate(inflater, container, false)
+        init()
         clickListener()
         textListener()
         return binding.root
     }
 
+    private fun init(){
+        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        editor = prefs.edit()
+    }
     private fun clickListener(){
         /*뒤로 가기*/
         binding.passwordThirdBackIv.setOnClickListener{
@@ -47,8 +61,8 @@ class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
         binding.btnPasswordCompleteTv.setOnClickListener{
             if (!binding.btnPasswordCompleteTv.isActivated) return@setOnClickListener
             val service = UserController()
-            service.setResponseViewer(this)
-            service.passwordService(1234,binding.passwordThirdCheckEnterEt.text.toString())
+            service.setPasswordChangeAdapter(this)
+            service.passwordUpdateService(binding.passwordThirdCheckEnterEt.text.toString())
         }
     }
 
@@ -138,6 +152,9 @@ class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
             setGravity(Gravity.CENTER)
             setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
         }
+        //~님의 비밀번호가 변경되었어요 메시지에 사용자 이메일 바인딩 하기
+        dialog.findViewById<TextView>(R.id.popup_password_sub_tv).text = getString(R.string.popup_password_explain,prefs.getString("email","null"))
+        //학인버튼 클릭 시 팝업 종료 및 마이페이지로 이동
         dialog.findViewById<View>(R.id.popup_password_reset_tv).setOnClickListener{
             dialog.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
@@ -148,13 +165,21 @@ class MypagePasswordChangeFragment : Fragment(),ResponseViewer {
         dialog.show()
     }
 
-    //API 결과에 따른 UI 처리
-    override fun onResponseSuccess() {
+    override fun successPasswordChange() {
+        editor.putString("password",binding.passwordThirdCheckEnterEt.text.toString())
         makePopup()
     }
-    override fun onResponseError(message: String, code: String) {
-        //디버깅
-        Log.d("okHttp","message: $message\ncode: $code")
+
+    override fun failPasswordChange(message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 
 }
