@@ -11,15 +11,18 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
-import com.example.planup.login.ui.LoginActivity
 import com.example.planup.databinding.FragmentResetPasswordBinding
 import com.example.planup.databinding.PopupResetBinding
+import com.example.planup.login.ui.LoginActivity
+import com.example.planup.network.RetrofitInstance
+import kotlinx.coroutines.launch
 
 class ResetPasswordFragment : Fragment() {
 
@@ -51,7 +54,8 @@ class ResetPasswordFragment : Fragment() {
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN &&
-                (binding.passwordEditText.isFocused || binding.confirmPasswordEditText.isFocused)) {
+                (binding.passwordEditText.isFocused || binding.confirmPasswordEditText.isFocused)
+            ) {
                 binding.passwordEditText.clearFocus()
                 binding.confirmPasswordEditText.clearFocus()
                 hideKeyboard()
@@ -63,9 +67,7 @@ class ResetPasswordFragment : Fragment() {
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
             val prevFragment = FindPasswordEmailSentFragment().apply {
-                arguments = Bundle().apply {
-                    putString("email", userEmail)
-                }
+                arguments = Bundle().apply { putString("email", userEmail) }
             }
             parentFragmentManager.beginTransaction()
                 .replace(R.id.resetPasswordContainer, prevFragment)
@@ -78,17 +80,18 @@ class ResetPasswordFragment : Fragment() {
             isPasswordVisible = !isPasswordVisible
             togglePasswordVisibility(binding.passwordEditText, binding.eyeIcon, isPasswordVisible)
         }
-
         binding.eyeIconConfirm.setOnClickListener {
             isConfirmPasswordVisible = !isConfirmPasswordVisible
-            togglePasswordVisibility(binding.confirmPasswordEditText, binding.eyeIconConfirm, isConfirmPasswordVisible)
+            togglePasswordVisibility(
+                binding.confirmPasswordEditText,
+                binding.eyeIconConfirm,
+                isConfirmPasswordVisible
+            )
         }
 
         /* 비밀번호 입력창 클릭 → 길이/복잡도 조건 표시 */
         binding.passwordEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus) {
-                showLengthAndComplexAsGray()
-            }
+            if (hasFocus) showLengthAndComplexAsGray()
         }
 
         /* 비밀번호 확인 입력창 클릭 → 일치 조건 표시 */
@@ -103,19 +106,36 @@ class ResetPasswordFragment : Fragment() {
         binding.passwordEditText.addTextChangedListener { validateConditions() }
         binding.confirmPasswordEditText.addTextChangedListener { validateConditions() }
 
-        /* 완료 버튼 클릭 → popup_reset 띄우기 */
+        /* 완료 버튼 클릭 → (1) 마지막 방어 검증 (2) API 호출 → 성공 시 팝업 */
         binding.nextButton.setOnClickListener {
-            showResetCompleteDialog()
+            val pw = binding.passwordEditText.text.toString()
+            val cpw = binding.confirmPasswordEditText.text.toString()
+
+            // (1) 마지막 방어 검증: UI가 혹시라도 꼬였을 때를 대비해 서버 호출 전 한 번 더 체크
+            val lenOk = pw.length in 8..20
+            val complexOk = pw.any { it.isDigit() } && pw.any { !it.isLetterOrDigit() }
+            val matchOk = pw.isNotEmpty() && pw == cpw
+
+            if (!lenOk || !complexOk || !matchOk) {
+                // 조건 미충족 시 버튼 비활성 + 가이드 유지
+                disableNextButton()
+                return@setOnClickListener
+            }
+
+            // (2) 비밀번호 변경 API 호출
+            updatePassword(pw)
         }
     }
 
     /* 비밀번호 보이기 ↔ 숨기기 */
     private fun togglePasswordVisibility(editText: EditText, icon: ImageView, isVisible: Boolean) {
         if (isVisible) {
-            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+            editText.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
             icon.setImageResource(R.drawable.ic_eye_on)
         } else {
-            editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+            editText.inputType =
+                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
             icon.setImageResource(R.drawable.ic_eye_off)
         }
         editText.setSelection(editText.text?.length ?: 0)
@@ -160,8 +180,33 @@ class ResetPasswordFragment : Fragment() {
         }
     }
 
+    /* 비밀번호 변경 API 호출 */
+    private fun updatePassword(newPassword: String) {
+        binding.nextButton.isEnabled = false
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val res = RetrofitInstance.passwordApi.updatePassword(newPassword)
+                val body = res.body()
+
+                if (res.isSuccessful && body?.isSuccess == true && body.result) {
+                    // 성공 → 팝업 띄우기
+                    showResetCompleteDialog()
+                } else {
+                    val msg = body?.message ?: res.errorBody()?.string() ?: "비밀번호 변경 실패"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                    binding.nextButton.isEnabled = true
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), e.message ?: "네트워크 오류", Toast.LENGTH_SHORT).show()
+                binding.nextButton.isEnabled = true
+            }
+        }
+    }
+
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        val imm =
+            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
@@ -217,7 +262,6 @@ class ResetPasswordFragment : Fragment() {
         val popupBinding = PopupResetBinding.inflate(layoutInflater)
 
         val safeEmail = userEmail ?: "이메일"
-        // 문자열 템플릿 보정: {$safeEmail} → $safeEmail
         popupBinding.resetCompleteDesc.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
 
         val dialog = AlertDialog.Builder(requireContext())
@@ -231,17 +275,13 @@ class ResetPasswordFragment : Fragment() {
         }
 
         dialog.show()
-
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
         val dialogWidth = (screenWidth * 0.8).toInt()
 
-        dialog.window?.setLayout(
-            dialogWidth,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+        dialog.window?.setLayout(dialogWidth, LinearLayout.LayoutParams.WRAP_CONTENT)
     }
 
     /* LoginActivity로 이동 */

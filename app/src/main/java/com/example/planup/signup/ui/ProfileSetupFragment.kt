@@ -27,6 +27,7 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import com.bumptech.glide.Glide
 
 class ProfileSetupFragment : Fragment() {
 
@@ -42,6 +43,8 @@ class ProfileSetupFragment : Fragment() {
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
+    private var latestPhotoFile: File? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -110,7 +113,6 @@ class ProfileSetupFragment : Fragment() {
             val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
-            // 조건 불만족
             if (isEmpty || isTooLong || isTaken) {
                 return@setOnClickListener
             }
@@ -126,6 +128,7 @@ class ProfileSetupFragment : Fragment() {
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val uri = result.data?.data ?: return@registerForActivityResult
+                Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
                 uploadProfileImage(uri)
             }
         }
@@ -135,6 +138,7 @@ class ProfileSetupFragment : Fragment() {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK && cameraImageUri != null) {
+                Glide.with(this).load(cameraImageUri).circleCrop().into(binding.profileImage)
                 uploadProfileImage(cameraImageUri!!)
             }
         }
@@ -147,15 +151,15 @@ class ProfileSetupFragment : Fragment() {
                 val uri = result.data?.data ?: return@registerForActivityResult
                 val fileName = getFileNameFromUri(uri)
                 val extension = fileName?.substringAfterLast('.', "")?.lowercase()
-
                 if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+                    Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
                     uploadProfileImage(uri)
                 } else {
-                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT).show()
                 }
             }
         }
+
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
@@ -220,6 +224,7 @@ class ProfileSetupFragment : Fragment() {
 
         popupBinding.takePhoto.setOnClickListener {
             val photoFile = createImageFile()
+            latestPhotoFile = photoFile
             cameraImageUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.provider",
@@ -227,9 +232,11 @@ class ProfileSetupFragment : Fragment() {
             )
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             cameraLauncher.launch(intent)
             popupWindow.dismiss()
         }
+
 
         popupBinding.selectFile.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -248,7 +255,19 @@ class ProfileSetupFragment : Fragment() {
 
     /* 프로필 이미지 업로드 → 서버에 POST */
     private fun uploadProfileImage(uri: Uri) {
-        val file = File(getRealPathFromURI(uri))
+        val file = when {
+            // 카메라 결과: 우리가 직접 만든 파일이 있음
+            cameraImageUri != null && uri == cameraImageUri && latestPhotoFile != null -> latestPhotoFile!!
+
+            // content:// URI → 캐시로 복사
+            uri.scheme.equals("content", ignoreCase = true) -> copyUriToCache(uri)
+
+            // file:// URI → 바로 파일
+            uri.scheme.equals("file", ignoreCase = true) -> File(uri.path!!)
+
+            else -> copyUriToCache(uri)
+        }
+
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
@@ -261,6 +280,12 @@ class ProfileSetupFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         (requireActivity() as SignupActivity).profileImgUrl = imageUrl ?: ""
+                        if (!imageUrl.isNullOrBlank()) {
+                            Glide.with(this@ProfileSetupFragment)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .into(binding.profileImage)
+                        }
                     }
                 } else {
                     Log.e("프로필 업로드", "실패: ${response.errorBody()?.string()}")
@@ -270,6 +295,28 @@ class ProfileSetupFragment : Fragment() {
             }
         }
     }
+
+    private fun copyUriToCache(uri: Uri): File {
+        val resolver = requireContext().contentResolver
+
+        // 파일명 얻기 (없으면 타임스탬프 사용)
+        var name = "upload_${System.currentTimeMillis()}.jpg"
+        resolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+            if (c.moveToFirst()) {
+                val idx = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                if (idx >= 0) name = c.getString(idx)
+            }
+        }
+
+        val outFile = File(requireContext().cacheDir, name)
+        resolver.openInputStream(uri)?.use { input ->
+            outFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return outFile
+    }
+
 
     /* URI -> 실제 파일 경로로 변환 */
     private fun getRealPathFromURI(uri: Uri): String {

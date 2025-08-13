@@ -2,6 +2,9 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequestDto
 import com.example.planup.login.data.LoginResponseDto
+import com.example.planup.password.data.ChangeLinkVerifyResponseDto
+import com.example.planup.password.data.PasswordChangeEmailRequestDto
+import com.example.planup.password.data.PasswordChangeEmailResponseDto
 import com.example.planup.signup.data.ApiResponse
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.EmailSendResponseDto
@@ -63,4 +66,22 @@ interface UserApi {
     suspend fun verifyEmailLink(
         @Query("token") token: String
     ): Response<ApiResponse<VerifyLinkResult>>
+
+    // 비밀번호 변경 확인 이메일 발송
+    @POST("/users/password/change-email/send")
+    suspend fun sendPasswordChangeEmail(
+        @Body body: PasswordChangeEmailRequestDto
+    ): Response<PasswordChangeEmailResponseDto>
+
+    // 비밀번호 변경 확인 이메일 재발송
+    @POST("/users/password/change-email/resend")
+    suspend fun resendPasswordChangeEmail(
+        @Body body: PasswordChangeEmailRequestDto
+    ): Response<PasswordChangeEmailResponseDto>
+
+    // 비밀번호 변경 요청 이메일 링크 클릭 처리
+    @GET("/users/password/change-link")
+    suspend fun verifyChangeLink(
+        @Query("token") token: String
+    ): Response<ChangeLinkVerifyResponseDto>
 }

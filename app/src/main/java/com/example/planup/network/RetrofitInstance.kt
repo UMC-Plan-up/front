@@ -33,8 +33,8 @@ object RetrofitInstance {
         retrofit.create(FriendApi::class.java)
     }
 
-    val myPageApi: MyPageApi by lazy {
-        retrofit.create(MyPageApi::class.java)
+    val passwordApi: PasswordApi by lazy {
+        retrofit.create(PasswordApi::class.java)
     }
 
     val weeklyReportApi: WeeklyReportApi by lazy{

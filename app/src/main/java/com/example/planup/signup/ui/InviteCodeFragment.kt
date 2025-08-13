@@ -11,10 +11,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.kakao.sdk.share.ShareClient

@@ -12,9 +12,7 @@ import com.example.planup.databinding.FragmentLoginSentEmailBinding
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.EmailSendRequestDto
-import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.launch
-import java.io.EOFException
 
 class LoginSentEmailFragment : Fragment() {
 
@@ -35,62 +33,57 @@ class LoginSentEmailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        emailArg = arguments?.getString("email")
+            ?: (requireActivity() as? SignupActivity)?.email.orEmpty()
+
+
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
-        /* "이메일을 받지 못하셨나요?" 클릭 시 BottomSheet 표시 */
+        /* "이메일을 받지 못하셨나요?" → BottomSheet 띄우기 */
         binding.tvNotReceivedEmail?.setOnClickListener {
-            // popup_resend_email.xml을 사용하는 BottomSheet 호출
-            ResendEmailBottomSheet.newInstance(emailArg)
-                .show(parentFragmentManager, "ResendEmailBottomSheet")
+            if (emailArg.isBlank()) {
+                return@setOnClickListener
+            }
+
+            ResendEmailBottomsheet().apply {
+                arguments = androidx.core.os.bundleOf(
+                    "email" to emailArg,
+                    "mode"  to com.example.planup.signup.ui.ResendMode.SIGNUP
+                )
+            }.show(childFragmentManager, "ResendEmailBottomSheet")
         }
 
-        emailArg = arguments?.getString("email")
-            ?: (requireActivity() as? SignupActivity)?.email.orEmpty()
-
-        /* 이메일 자동 발송 */
+        // 자동 발송
         if (emailArg.isNotBlank()) {
             sendVerificationEmail(emailArg)
-        } else {
-            Log.e("EmailVerify", "이메일 정보가 없습니다.")
         }
 
-        /* [테스트용] 클릭 시 (인증 성공 가정) → 프로필 설정 화면으로 이동
-           TODO: 서버에서 인증 완료 후, API를 거쳐 다음 화면(프로필 설정)으로 이동 */
-        binding.mockVerifyText.setOnClickListener {
-            openProfileSetup()
-        }
+        // [테스트용]
+        binding.mockVerifyText.setOnClickListener { openProfileSetup() }
     }
+
 
     /* 이메일 인증 메일 발송 API */
     private fun sendVerificationEmail(email: String) {
-        if (isSending) return // 이미 전송 중이면 중복 요청 방지
+        if (isSending) return
+
         isSending = true
+        Log.d("EmailVerify", "인증 메일 발송 요청: email=$email")
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                Log.d("EmailVerify", "인증 메일 발송 요청: email=$email")
-                val res = RetrofitInstance.userApi.sendEmail(EmailSendRequestDto(email))
+                val response = RetrofitInstance.userApi.sendEmail(EmailSendRequestDto(email))
 
-                if (res.isSuccessful) {
-                    val body = res.body()
-                    if (body?.isSuccess == true) {
-                        Log.i("EmailVerify", "발송 성공 message=${body.message}")
-                    } else {
-                        Log.e("EmailVerify", "발송 실패 code=${body?.code} msg=${body?.message}")
-                    }
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
                 } else {
-                    val err = res.errorBody()?.string()
-                    Log.e("EmailVerify", "HTTP ${res.code()} body=$err")
+                    val errorBody = response.body()
+                    Log.e("EmailVerify", "발송 실패: code=${errorBody?.code} msg=${errorBody?.message}")
                 }
-            } catch (e: EOFException) {
-                Log.w("EmailVerify", "EOFException → 발송 성공으로 간주")
-            } catch (e: JsonSyntaxException) {
-                Log.w("EmailVerify", "JsonSyntaxException → 성공으로 간주")
             } catch (e: Exception) {
-                Log.e("EmailVerify", "네트워크 오류: ${e.message}", e)
+                Log.e("EmailVerify", "네트워크 오류 발생: ${e.message}", e)
             } finally {
                 isSending = false
             }
