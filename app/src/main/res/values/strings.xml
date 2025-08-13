@@ -278,6 +278,15 @@
     <!-- item_challenge_friend.xml-->
     <string name="challenge_friend_goal">%1$d개의 목표 진행 중</string>
 
+    <!-- fragment_chalenge_set_photo.xml -->
+    <string name="challenge_photo_title">친구와 공동 목표 설정하기</string>
+    <string name="challenge_photo_subtitle">사진 인증 횟수 설정</string>
+    <string name="challenge_photo_explain">사진 인증 달성률 계산을 위한 질문이에요. 하루에 해당 목표를 몇 번 인증할 예정이신가요?</string>
+    <string name="challenge_photo_number">$1%d번</string>
+    <string name="challenge_photo_once">1번</string>
+    <string name="challenge_photo_twice">2번</string>
+    <string name="challenge_photo_three">3번</string>
+
     <!-- fragment_challenge_finish_setting.xml -->
     <string name="challenge_finish_setting_title">1:1 챌린지 설정이 완료되었어요!</string>
     <string name="challenge_finish_setting_subtitle">친구들에게 내 목표가 공개됩니다!</string>

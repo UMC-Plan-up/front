@@ -193,9 +193,11 @@ class PushAlertFragment : Fragment() {
             isFirst = false
             dialog.dismiss()
             //경우에 따라 홈 또는 온보딩으로 이동
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,HomeFragment())
-                .commitAllowingStateLoss()
+            val intent = Intent(context as GoalActivity, MainActivity::class.java)
+            startActivity(intent)
+//            (context as GoalActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.goal_container,HomeFragment())
+//                .commitAllowingStateLoss()
         }
         //네 클릭
         dialogBinding.yesButton.setOnClickListener {

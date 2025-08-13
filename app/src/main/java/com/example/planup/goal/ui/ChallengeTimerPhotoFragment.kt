@@ -34,6 +34,8 @@ class ChallengeTimerPhotoFragment:Fragment() {
         //챌린지 정보를 저장할 sharedPreferences 생성
         prefs = (context as GoalActivity).getSharedPreferences("challenge", MODE_PRIVATE)
         editor = prefs.edit()
+        //요청한 챌린지임을 서버에 알리기 위함
+        editor.putString("status","REQUESTED")
     }
 
     private fun clickListener(){
@@ -49,28 +51,28 @@ class ChallengeTimerPhotoFragment:Fragment() {
         binding.timerCl.setOnClickListener {
             binding.timerCl.isSelected = true
             binding.photoCl.isSelected = false
+            editor.putString("goalType","CHALLENGE_TIME")
         }
         //사진 인증 선택
         binding.photoCl.setOnClickListener {
             binding.timerCl.isSelected = false
             binding.photoCl.isSelected = true
+            editor.putString("goalType","CHALLENGE_PHOTO")
+            editor.putInt("targetTime",0)
         }
         //타이머 설정 또는 사진 설정 페이지로 이동
         binding.btnNextTv.setOnClickListener{
             if (!binding.timerCl.isSelected && !binding.photoCl.isSelected) return@setOnClickListener
+            editor.apply()
             if (binding.timerCl.isSelected) { //타이머 인증을 선택한 경우
-                editor.putString("goalType","CHALLENGE_TIME")
                 (context as GoalActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.goal_container,ChallengeSetTimerFragment())
+                    .addToBackStack(null)
                     .commitAllowingStateLoss()
             } else if (binding.photoCl.isSelected){ //사진 인증을 선택한 경우
-                editor.putString("goalType","CHALLENGE_PHOTO")
-                val frequencyFragment = ChallengeSetFrequencyFragment()
-                frequencyFragment.arguments = Bundle().apply {
-                    putString("previous","photo")
-                }
                 (context as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container,frequencyFragment)
+                    .replace(R.id.goal_container,ChallengeSetPhotoFragment())
+                    .addToBackStack(null)
                     .commitAllowingStateLoss()
             }
 

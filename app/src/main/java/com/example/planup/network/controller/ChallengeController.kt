@@ -85,8 +85,10 @@ class ChallengeController {
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     rejectChallengeAdapter.successReject()
-                } else {
+                } else if (!response.isSuccessful && response.body() != null) {
                     rejectChallengeAdapter.failReject(response.body()!!.message)
+                } else {
+                    rejectChallengeAdapter.failReject("null")
                 }
             }
 
@@ -111,10 +113,12 @@ class ChallengeController {
                     call: Call<ChallengeResponseNoResult>,
                     response: Response<ChallengeResponseNoResult>
                 ) {
-                    if (response.isSuccessful && response.body() != null){
+                    if (response.isSuccessful && response.body() != null) {
                         acceptChallengeAdapter.successAccept()
-                    } else {
+                    } else if (!response.isSuccessful && response.body() != null) {
                         acceptChallengeAdapter.failAccept(response.body()!!.message)
+                    } else {
+                        acceptChallengeAdapter.failAccept("null")
                     }
                 }
 
@@ -136,8 +140,10 @@ class ChallengeController {
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         challengeFriendsAdapter.successFriends(response.body()!!.result)
-                    } else {
+                    } else if (!response.isSuccessful && response.body() != null) {
                         challengeFriendsAdapter.failFriends(response.body()!!.message)
+                    } else {
+                        challengeFriendsAdapter.failFriends("null")
                     }
                 }
 
@@ -161,8 +167,10 @@ class ChallengeController {
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     repenaltyAdapter.successRepenalty()
-                } else {
+                } else if (!response.isSuccessful && response.body() != null) {
                     repenaltyAdapter.failRepenalty(response.body()!!.message)
+                } else {
+                    repenaltyAdapter.failRepenalty("null")
                 }
             }
 
@@ -185,9 +193,12 @@ class ChallengeController {
                     if (response.isSuccessful && response.body() != null) {
 
                         requestChallengeAdapter.successRequest()
-                    } else {
+                    } else if (!response.isSuccessful && response.body() != null) {
                         requestChallengeAdapter.failRequest(response.body()!!.message)
-
+                    } else if (response.isSuccessful && response.body() == null){
+                        requestChallengeAdapter.failRequest(response.toString())
+                    } else {
+                        requestChallengeAdapter.failRequest("null")
                     }
                 }
 
