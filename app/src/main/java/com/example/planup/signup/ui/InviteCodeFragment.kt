@@ -9,17 +9,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -31,43 +23,44 @@ import com.kakao.sdk.template.model.Content
 import com.kakao.sdk.template.model.FeedTemplate
 import com.kakao.sdk.template.model.Link
 import kotlinx.coroutines.launch
+import com.example.planup.databinding.FragmentInviteCodeBinding
+import com.example.planup.databinding.PopupShareBinding
 
-class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
+class InviteCodeFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var nicknameEditText: EditText
-    private lateinit var shareButton: AppCompatButton
-    private lateinit var nextButton: TextView
+    private var _binding: FragmentInviteCodeBinding? = null
+    private val binding get() = _binding!!
 
     private var myInviteCode: String = ""
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentInviteCodeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        backIcon = view.findViewById(R.id.backIcon)
-        nicknameEditText = view.findViewById(R.id.nicknameEditText)
-        shareButton = view.findViewById(R.id.shareButton)
-        nextButton = view.findViewById(R.id.nextButton)
-
-
         // 입력창 클릭 불가
-        nicknameEditText.isFocusable = false
-        nicknameEditText.isClickable = false
-        nicknameEditText.isLongClickable = false
+        binding.nicknameEditText.isFocusable = false
+        binding.nicknameEditText.isClickable = false
+        binding.nicknameEditText.isLongClickable = false
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(ProfileSetupFragment())
         }
 
         /* 공유 버튼 → popup_share.xml 띄우기 */
-        shareButton.setOnClickListener {
+        binding.shareButton.setOnClickListener {
             showSharePopup(it)
         }
 
         /* “다음에 공유할게요” → InviteCodeInputFragment 이동 */
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
         }
 
@@ -93,7 +86,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                     val inviteCode = response.body()?.result?.inviteCode ?: ""
 
                     myInviteCode = inviteCode
-                    nicknameEditText.setText(inviteCode)
+                    binding.nicknameEditText.setText(inviteCode)
                 } else {
                     Log.e("InviteCode", "API 실패: ${response.code()} / ${response.errorBody()?.string()}")
                 }
@@ -112,11 +105,10 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
 
     /* 공유 팝업 보여주기 */
     private fun showSharePopup(anchorView: View) {
-        val popupView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.popup_share, null)
+        val popupBinding = PopupShareBinding.inflate(LayoutInflater.from(requireContext()))
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
@@ -126,14 +118,10 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
 
-        val kakaoShare = popupView.findViewById<TextView>(R.id.kakaoShareText)
-        val smsShare = popupView.findViewById<TextView>(R.id.smsShareText)
-        val copyText = popupView.findViewById<TextView>(R.id.copyText)
-        val etcShare = popupView.findViewById<TextView>(R.id.etcShareText)
 
         /* TODO : 아직 수정 중 */
         // 카카오톡 공유
-        kakaoShare.setOnClickListener {
+        popupBinding.kakaoShareText.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode
 
@@ -143,7 +131,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
                     description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: ${inviteCode}",
                     imageUrl = "https://i.postimg.cc/fRpYNvqR/planup-kakao.png",
                     link = Link(
-                        mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup" // ✅ 콤마 추가
+                        mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup"
                     )
                 ),
                 buttons = listOf(
@@ -174,7 +162,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
 
         // 문자 공유
-        smsShare.setOnClickListener {
+        popupBinding.smsShareText.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode
 
@@ -200,7 +188,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
 
         // 복사
-        copyText.setOnClickListener {
+        popupBinding.copyText.setOnClickListener {
             val inviteCode = myInviteCode
 
             val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
@@ -213,7 +201,7 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
         }
 
         // 기타
-        etcShare.setOnClickListener {
+        popupBinding.etcShareText.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
             val inviteCode = myInviteCode
 
@@ -233,9 +221,12 @@ class InviteCodeFragment : Fragment(R.layout.fragment_invite_code) {
 
             popupWindow.dismiss()
         }
+
+        popupWindow.showAsDropDown(anchorView)
     }
 
-    private fun dpToPx(dp: Float): Int {
-        return (dp * resources.displayMetrics.density).toInt()
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

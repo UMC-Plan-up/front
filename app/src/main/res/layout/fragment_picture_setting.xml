@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="24dp">
+
+
+    <ImageView
+        android:id="@+id/back_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="38dp" />
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_set_shared_with_friend"
+        style="@style/Typography_2XL_Semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_iv"
+        android:layout_marginTop="28dp" />
+
+    <TextView
+        android:id="@+id/expected_time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_photo_auth_setting"
+        style="@style/Typography_L_Semibold"
+        android:fontFamily="@font/pretendard_semibold"
+        android:textColor="@color/black_400"
+        app:layout_constraintTop_toBottomOf="@id/title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/goal_photo_auth_rate_question"
+        style="@style/Typography_S_Medium"
+        android:textColor="@color/black_300"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="20dp" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/dropdown_container"
+        android:layout_width="70dp"
+        android:layout_height="33dp"
+        android:background="@drawable/bg_timer_setting"
+        app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="58dp">
+
+        <TextView
+            android:id="@+id/challenge_timer_hour_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/goal_photo_auth_option_1"
+            style="@style/Typography_SM_Medium"
+            android:textColor="@color/black_400"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <ImageView
+            android:id="@+id/dropdown_arrow_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_down_timer"
+            android:layout_marginEnd="3dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/challenge_timer_next_btn"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:text="@string/btn_next"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/pretendard_medium"
+        android:background="@drawable/btn_next_background_gray"
+        android:gravity="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="33dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,72 +7,65 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.login.ui.LoginActivity
 import com.example.planup.password.ResetPasswordActivity
+import com.example.planup.databinding.FragmentFindPasswordBinding
+import com.example.planup.databinding.PopupEmailBinding
 
-class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
+class FindPasswordFragment : Fragment() {
 
-    private lateinit var emailEditText: EditText
-    private lateinit var emailFormatErrorText: TextView
-    private lateinit var emailNotFoundErrorText: TextView
-    private lateinit var nextButton: AppCompatButton
-    private lateinit var emailDropdownIcon: ImageView
+    private var _binding: FragmentFindPasswordBinding? = null
+    private val binding get() = _binding!!
 
     private val registeredEmails = listOf("user@gmail.com")
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentFindPasswordBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        emailEditText = view.findViewById(R.id.emailEditText)
-        emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
-        emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
-        nextButton = view.findViewById(R.id.nextButton)
-        emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-
         disableNextButton()
         hideAllErrors()
 
-
-        emailEditText.addTextChangedListener {
+        binding.emailEditText.addTextChangedListener {
             val email = it.toString().trim()
             validateEmail(email)
         }
 
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {
+        binding.nextButton.setOnClickListener {
+            if (binding.nextButton.isEnabled) {
                 (requireActivity() as ResetPasswordActivity)
                     .navigateToFragment(FindPasswordEmailSentFragment())
             }
         }
 
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             val intent = Intent(requireContext(), LoginActivity::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
 
-        emailDropdownIcon.setOnClickListener {
+        binding.emailDropdownIcon.setOnClickListener {
             showEmailDomainPopup()
         }
 
         // EditText 외부 터치 시 키보드 숨기기
         view.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN && emailEditText.isFocused) {
-                emailEditText.clearFocus()
+            if (event.action == MotionEvent.ACTION_DOWN && binding.emailEditText.isFocused) {
+                binding.emailEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -100,87 +93,81 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
     }
 
     private fun showEmailFormatError() {
-        emailFormatErrorText.visibility = View.VISIBLE
-        emailNotFoundErrorText.visibility = View.GONE
+        binding.emailFormatErrorText.visibility = View.VISIBLE
+        binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
     private fun showEmailNotFoundError() {
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.VISIBLE
+        binding.emailFormatErrorText.visibility = View.GONE
+        binding.emailNotFoundErrorText.visibility = View.VISIBLE
     }
 
     private fun hideAllErrors() {
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.GONE
+        binding.emailFormatErrorText.visibility = View.GONE
+        binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
     private fun enableNextButton() {
-        nextButton.isEnabled = true
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = true
+        binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.blue_200)
     }
 
     private fun disableNextButton() {
-        nextButton.isEnabled = false
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = false
+        binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.black_200)
-    }
-
-    private fun openNextStep() {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.resetPasswordContainer, FindPasswordEmailSentFragment())
-            .addToBackStack(null)
-            .commit()
     }
 
     private fun showEmailDomainPopup() {
         val inflater = LayoutInflater.from(requireContext())
-        val popupView = inflater.inflate(R.layout.popup_email, null)
+        val popupBinding = PopupEmailBinding.inflate(inflater)
 
-        popupView.measure(
+        popupBinding.root.measure(
             View.MeasureSpec.UNSPECIFIED,
             View.MeasureSpec.UNSPECIFIED
         )
-        val popupWidth = popupView.measuredWidth
+        val popupWidth = popupBinding.root.measuredWidth
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
         )
 
-        val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
-        val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
-        val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
-
         val addDomain: (String) -> Unit = { domain ->
-            val currentText = emailEditText.text.toString()
+            val currentText = binding.emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {
                 currentText.substringBefore("@") + "@$domain"
             } else {
                 "$currentText@$domain"
             }
-            emailEditText.setText(updatedText)
-            emailEditText.setSelection(updatedText.length)
+            binding.emailEditText.setText(updatedText)
+            binding.emailEditText.setSelection(updatedText.length)
             popupWindow.dismiss()
         }
 
-        domainGmail.setOnClickListener { addDomain("gmail.com") }
-        domainNaver.setOnClickListener { addDomain("naver.com") }
-        domainKakao.setOnClickListener { addDomain("kakao.com") }
+        popupBinding.domainGmail.setOnClickListener { addDomain("gmail.com") }
+        popupBinding.domainNaver.setOnClickListener { addDomain("naver.com") }
+        popupBinding.domainKakao.setOnClickListener { addDomain("kakao.com") }
 
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
 
-        val offsetX = emailEditText.width - popupWidth
-        popupWindow.showAsDropDown(emailEditText, offsetX, 0)
+        val offsetX = binding.emailEditText.width - popupWidth
+        popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
 
     private fun hideKeyboard() {
         val imm =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -3,7 +3,9 @@ package com.example.planup.signup.ui
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -13,13 +15,13 @@ import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
+import com.example.planup.databinding.FragmentCommunityIntroBinding
+import com.example.planup.databinding.ItemGoalAltBinding
 
-class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
+class CommunityIntroFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var titleText: TextView
-    private lateinit var nextButton: AppCompatButton
-    private lateinit var goalListContainer: LinearLayout
+    private var _binding: FragmentCommunityIntroBinding? = null
+    private val binding get() = _binding!!
 
     // 카테고리별 목표 데이터
     private val goalData = mapOf(
@@ -75,15 +77,15 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
 
     // 목표 리스트를 갱신하는 함수
     private fun updateGoalList(category: String) {
-        goalListContainer.removeAllViews() // 기존 리스트 삭제
+        binding.goalListContainer.removeAllViews() // 기존 리스트 삭제
 
         val goals = goalData[category] ?: emptyList()
 
         goals.forEach { goal ->
-            val itemView = layoutInflater.inflate(R.layout.item_goal_alt, goalListContainer, false)
-            itemView.findViewById<ImageView>(R.id.goalIcon).setImageResource(goal.iconRes)
-            itemView.findViewById<TextView>(R.id.goalText).text = goal.text
-            goalListContainer.addView(itemView)
+            val itemBinding = ItemGoalAltBinding.inflate(layoutInflater, binding.goalListContainer, false)
+            itemBinding.goalIcon.setImageResource(goal.iconRes)
+            itemBinding.goalText.text = goal.text
+            binding.goalListContainer.addView(itemBinding.root)
         }
     }
 
@@ -100,9 +102,9 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
     )
 
     // 카테고리 클릭 리스너 등록
-    private fun setupCategoryClickListeners(view: View) {
+    private fun setupCategoryClickListeners() {
         categoryMap.forEach { (viewId, categoryName) ->
-            view.findViewById<TextView>(viewId).setOnClickListener {
+            binding.root.findViewById<TextView>(viewId).setOnClickListener {
                 updateGoalList(categoryName)
             }
         }
@@ -123,33 +125,30 @@ class CommunityIntroFragment : Fragment(R.layout.fragment_community_intro) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        titleText = view.findViewById(R.id.titleText)
-        nextButton = view.findViewById(R.id.nextButton)
-        goalListContainer = view.findViewById(R.id.goalListContainer)
-
         // 전달받은 닉네임 적용
         val nickname = arguments?.getString(ARG_NICKNAME) ?: "사용자"
-        titleText.text = getString(R.string.community_greeting, nickname)
+        binding.titleText.text = getString(R.string.community_greeting, nickname)
 
-
-        setupCategoryClickListeners(view)
+        setupCategoryClickListeners()
         updateGoalList("공부하기")
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
         }
 
         /* 목표 설정 시작하기 버튼 → GoalCategoryFragment로 이동 */
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             val realNickname = (requireActivity() as SignupActivity).nickname ?: "사용자"
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", realNickname)
             }
             startActivity(intent)
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

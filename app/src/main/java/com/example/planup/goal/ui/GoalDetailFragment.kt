@@ -4,84 +4,79 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.TextView
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentGoalDetailBinding // 뷰 바인딩 클래스 import
 import com.example.planup.goal.GoalActivity
 
-class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
+class GoalDetailFragment : Fragment() {
 
-    private lateinit var backIcon: View
-    private lateinit var nextButton: AppCompatButton
-    private lateinit var dailyButton: AppCompatButton
-    private lateinit var weeklyButton: AppCompatButton
-    private lateinit var monthlyButton: AppCompatButton
+    private var _binding: FragmentGoalDetailBinding? = null
+    private val binding get() = _binding!!
+
     private var selectedPeriodButton: AppCompatButton? = null
-    private lateinit var frequencyEditText: EditText
-    private lateinit var frequencyErrorText: TextView
     private var isFrequencyValid = false
     private var selectedMethod: String? = null
     private var goalOwnerName: String? = null
-    private lateinit var friendGoalTitle: TextView
-    private lateinit var friendGoalDescriptionText: TextView
+
+    // Fragment(R.layout.fragment_goal_detail) 생성자 제거 후 onCreateView 오버라이드
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGoalDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // arguments에서 데이터 추출
         selectedMethod = arguments?.getString("SELECTED_METHOD")
         goalOwnerName = arguments?.getString("goalOwnerName")
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        initViews(view)
-
         // 닉네임 반영
-        friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
+        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
+
+        // 다른 화면에서 전달받은 값에 따라 goalContainer 숨김 처리
+        val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
+        if (shouldHideGoalContainer) {
+            binding.goalContainer.visibility = View.GONE
+        }
+
+        // 초기화
+        binding.nextButton.isEnabled = false
+        binding.frequencyErrorText.visibility = View.GONE
 
         setupBackButton()
         setupPeriodButtons()
         setupFrequencyInput()
         setupNextButton()
 
-        view.setOnTouchListener { _, event ->
+        binding.root.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                frequencyEditText.isFocused
+                binding.frequencyInputEditText.isFocused
             ) {
-                frequencyEditText.clearFocus()
+                binding.frequencyInputEditText.clearFocus()
                 hideKeyboard()
             }
-            view.performClick()
+            binding.root.performClick()
             false
         }
     }
 
-    private fun initViews(view: View) {
-        backIcon = view.findViewById(R.id.backIcon)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        // 기준 기간 버튼
-        dailyButton = view.findViewById(R.id.dayOptionDailyButton)
-        weeklyButton = view.findViewById(R.id.dayOptionWeeklyButton)
-        monthlyButton = view.findViewById(R.id.dayOptionMonthlyButton)
-
-        // 빈도 입력
-        frequencyEditText = view.findViewById(R.id.frequencyInputEditText)
-        frequencyErrorText = view.findViewById(R.id.frequencyErrorText)
-
-        friendGoalTitle = view.findViewById(R.id.friendGoalTitle)
-        friendGoalDescriptionText = view.findViewById(R.id.friendGoalDescriptionText)
-
-        nextButton.isEnabled = false
-        frequencyErrorText.visibility = View.GONE
-    }
-
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupBackButton() {
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             when (selectedMethod) {
                 "TIMER" -> {
                     val timerFragment = TimerSettingFragment().apply {
@@ -108,17 +103,13 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
 
     /* 기준 기간 버튼 선택 */
     private fun setupPeriodButtons() {
-        val buttons = listOf(dailyButton, weeklyButton, monthlyButton)
+        val buttons = listOf(binding.dayOptionDailyButton, binding.dayOptionWeeklyButton, binding.dayOptionMonthlyButton)
 
         buttons.forEach { button ->
             button.setOnClickListener {
-                // 이전 선택 버튼 스타일 초기화
                 selectedPeriodButton?.let { resetButtonStyle(it) }
-
-                // 현재 클릭한 버튼 스타일 선택
                 selectButtonStyle(button)
                 selectedPeriodButton = button
-
                 updateNextButtonState()
             }
         }
@@ -138,21 +129,18 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
 
     /* 빈도 입력 */
     private fun setupFrequencyInput() {
-        // 숫자만 입력 가능
-        frequencyEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+        binding.frequencyInputEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
             if (source.matches(Regex("[0-9]*"))) source else ""
         })
 
-        frequencyEditText.addTextChangedListener(object : TextWatcher {
+        binding.frequencyInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val value = s.toString().toIntOrNull() ?: 0
                 if (value < 1) {
-                    // 1 미만 → 오류 메시지 표시
-                    frequencyErrorText.visibility = View.VISIBLE
+                    binding.frequencyErrorText.visibility = View.VISIBLE
                     isFrequencyValid = false
                 } else {
-                    // 정상 입력 → 오류 숨김
-                    frequencyErrorText.visibility = View.GONE
+                    binding.frequencyErrorText.visibility = View.GONE
                     isFrequencyValid = true
                 }
                 updateNextButtonState()
@@ -165,31 +153,31 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
     /* 다음 버튼 활성화 조건 */
     private fun updateNextButtonState() {
         val isPeriodSelected = selectedPeriodButton != null
-        nextButton.isEnabled = isPeriodSelected && isFrequencyValid
+        binding.nextButton.isEnabled = isPeriodSelected && isFrequencyValid
 
-        if (nextButton.isEnabled) {
-            nextButton.background =
+        if (binding.nextButton.isEnabled) {
+            binding.nextButton.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
         } else {
-            nextButton.background =
+            binding.nextButton.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
         }
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     /* 다음 버튼 → ParticipantLimitFragment 이동 */
     private fun setupNextButton() {
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {
+        binding.nextButton.setOnClickListener {
+            if (binding.nextButton.isEnabled) {
                 val activity = requireActivity() as GoalActivity
 
                 activity.verificationType = selectedMethod ?: ""
                 activity.period = selectedPeriodButton?.text?.toString() ?: ""
-                activity.frequency = frequencyEditText.text.toString().toIntOrNull() ?: 0
+                activity.frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
 
                 val participantFragment = ParticipantLimitFragment().apply {
                     arguments = Bundle().apply {
@@ -199,5 +187,10 @@ class GoalDetailFragment : Fragment(R.layout.fragment_goal_detail) {
                 activity.navigateToFragment(participantFragment)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -3,9 +3,9 @@ package com.example.planup.goal.ui
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
+import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
@@ -14,91 +14,77 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+import com.example.planup.databinding.FragmentGoalCategoryBinding
 
-class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
+class GoalCategoryFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentGoalCategoryBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var communityGoalLayout: LinearLayout
-    private lateinit var challengeGoalLayout: LinearLayout
     private var selectedGoalLayout: LinearLayout? = null
-
-    private lateinit var categorySettingTitle: TextView
     private lateinit var allCategoryLayouts: List<LinearLayout>
-
-    private lateinit var categoryErrorText: TextView
-    private lateinit var customCategoryErrorText: TextView
-    private lateinit var customCategoryEditText: EditText
 
     private var selectedCategory: LinearLayout? = null
     private var isCustomMode = false
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGoalCategoryBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        nextButton = view.findViewById(R.id.nextButton)
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             requireActivity().finish()
         }
 
-
-        communityGoalLayout = view.findViewById(R.id.communityGoalLayout)
-        challengeGoalLayout = view.findViewById(R.id.challengeGoalLayout)
-        categorySettingTitle = view.findViewById(R.id.categorySettingTitle)
-
-        val categoryStudy = view.findViewById<LinearLayout>(R.id.categoryStudyLayout)
-        val categoryReading = view.findViewById<LinearLayout>(R.id.categoryReadingLayout)
-        val categoryDigitalDetox = view.findViewById<LinearLayout>(R.id.categoryDigitalDetoxLayout)
-        val categoryMeditation = view.findViewById<LinearLayout>(R.id.categoryMeditationLayout)
-        val categorySleep = view.findViewById<LinearLayout>(R.id.categorySleepLayout)
-        val categoryInstrument = view.findViewById<LinearLayout>(R.id.categoryInstrumentLayout)
-        val categoryExercise = view.findViewById<LinearLayout>(R.id.categoryExerciseLayout)
-        val categoryDiary = view.findViewById<LinearLayout>(R.id.categoryDiaryLayout)
-        val categoryCustom = view.findViewById<LinearLayout>(R.id.categoryCustomLayout)
-
         allCategoryLayouts = listOf(
-            categoryStudy, categoryReading, categoryDigitalDetox, categoryMeditation,
-            categorySleep, categoryInstrument, categoryExercise, categoryDiary, categoryCustom
+            binding.categoryStudyLayout,
+            binding.categoryReadingLayout,
+            binding.categoryDigitalDetoxLayout,
+            binding.categoryMeditationLayout,
+            binding.categorySleepLayout,
+            binding.categoryInstrumentLayout,
+            binding.categoryExerciseLayout,
+            binding.categoryDiaryLayout,
+            binding.categoryCustomLayout
         )
 
-        categorySettingTitle.visibility = View.GONE
+        binding.categorySettingTitle.visibility = View.GONE
         allCategoryLayouts.forEach { it.visibility = View.GONE }
-        customCategoryEditText = view.findViewById(R.id.customCategoryEditText)
-        customCategoryEditText.visibility = View.GONE
+        binding.customCategoryEditText.visibility = View.GONE
 
-        categoryErrorText = view.findViewById(R.id.categoryGuideText1)
-        customCategoryErrorText = view.findViewById(R.id.categoryGuideText2)
-
-        communityGoalLayout.setOnClickListener { handleGoalSelection(communityGoalLayout) }
-        challengeGoalLayout.setOnClickListener { handleGoalSelection(challengeGoalLayout) }
+        binding.communityGoalLayout.setOnClickListener { handleGoalSelection(binding.communityGoalLayout) }
+        binding.challengeGoalLayout.setOnClickListener { handleGoalSelection(binding.challengeGoalLayout) }
 
         allCategoryLayouts.forEach { layout ->
             layout.setOnClickListener { handleCategorySelection(layout) }
         }
 
-        customCategoryEditText.addTextChangedListener { checkNextButtonEnabled() }
+        binding.customCategoryEditText.addTextChangedListener { checkNextButtonEnabled() }
 
-        nextButton.isEnabled = false
+        binding.nextButton.isEnabled = false
 
         /* 다음 버튼 클릭 시 */
-        nextButton.setOnClickListener {
-            if (isCustomMode && customCategoryEditText.text.isNullOrBlank()) {
-                customCategoryErrorText.visibility = View.VISIBLE
+        binding.nextButton.setOnClickListener {
+            if (isCustomMode && binding.customCategoryEditText.text.isNullOrBlank()) {
+                binding.categoryGuideText2.visibility = View.VISIBLE
                 return@setOnClickListener
             } else if (!isCustomMode && selectedCategory == null) {
-                categoryErrorText.visibility = View.VISIBLE
+                binding.categoryGuideText1.visibility = View.VISIBLE
                 return@setOnClickListener
             }
 
             val goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
 
             val selectedCategoryText = if (isCustomMode) {
-                customCategoryEditText.text.toString()
+                binding.customCategoryEditText.text.toString()
             } else {
                 selectedCategory?.findViewById<TextView>(
                     getCategoryTextId(selectedCategory!!.id)
@@ -127,9 +113,9 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                customCategoryEditText.isFocused
+                binding.customCategoryEditText.isFocused
             ) {
-                customCategoryEditText.clearFocus()
+                binding.customCategoryEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -155,7 +141,7 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
         selectedGoalLayout = layout
 
-        categorySettingTitle.visibility = View.VISIBLE
+        binding.categorySettingTitle.visibility = View.VISIBLE
         allCategoryLayouts.forEach { it.visibility = View.VISIBLE }
     }
 
@@ -177,10 +163,10 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
         selectedCategory = layout
         isCustomMode = (layout.id == R.id.categoryCustomLayout)
-        customCategoryEditText.visibility = if (isCustomMode) View.VISIBLE else View.GONE
+        binding.customCategoryEditText.visibility = if (isCustomMode) View.VISIBLE else View.GONE
 
-        categoryErrorText.visibility = View.GONE
-        customCategoryErrorText.visibility = View.GONE
+        binding.categoryGuideText1.visibility = View.GONE
+        binding.categoryGuideText2.visibility = View.GONE
 
         checkNextButtonEnabled()
     }
@@ -214,8 +200,13 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
 
     // 다음 버튼 활성화 조건 검사
     private fun checkNextButtonEnabled() {
-        nextButton.isEnabled =
+        binding.nextButton.isEnabled =
             (selectedCategory != null && !isCustomMode) ||
-                    (isCustomMode && !customCategoryEditText.text.isNullOrBlank())
+                    (isCustomMode && !binding.customCategoryEditText.text.isNullOrBlank())
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

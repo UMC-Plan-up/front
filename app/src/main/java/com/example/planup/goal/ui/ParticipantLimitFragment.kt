@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -17,18 +19,23 @@ import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+import com.example.planup.databinding.FragmentParticipantLimitBinding
 
-class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
+class ParticipantLimitFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var nextButton: AppCompatButton
-    private lateinit var participantLimitEditText: EditText
-    private lateinit var participantLimitErrorText: TextView
-    private lateinit var passwordNotFoundErrorText: TextView
-    private lateinit var participantTitleText: TextView
-    private lateinit var participantDescriptionText: TextView
+    private var _binding: FragmentParticipantLimitBinding? = null
+    private val binding get() = _binding!!
+
     private var isInputValid = false
     private var goalOwnerName: String? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentParticipantLimitBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -38,22 +45,9 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        nextButton = view.findViewById(R.id.nextButton)
-        participantLimitEditText = view.findViewById(R.id.participantLimitEditText)
-
-        // 항상 보이는 설명 텍스트
-        participantLimitErrorText = view.findViewById(R.id.participantLimitErrorText)
-        // 1 미만일 때만 보이는 오류 텍스트
-        passwordNotFoundErrorText = view.findViewById(R.id.passwordNotFoundErrorText)
-
-        participantTitleText = view.findViewById(R.id.friendGoalTitleText)
-        participantDescriptionText = view.findViewById(R.id.friendGoalDescriptionText)
-
         // 닉네임 반영
-        participantTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
-        participantLimitErrorText.visibility = View.GONE
+        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
+        binding.participantLimitErrorText.visibility = View.GONE
 
         /* 처음엔 다음 버튼 비활성화 */
         disableNextButton()
@@ -63,9 +57,9 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                participantLimitEditText.isFocused
+                binding.participantLimitEditText.isFocused
             ) {
-                participantLimitEditText.clearFocus()
+                binding.participantLimitEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -75,7 +69,7 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupClickListeners() {
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
@@ -86,12 +80,12 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
         }
 
         // 다음 버튼 → PushAlertFragment 이동
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             if (isInputValid) {
                 val activity = requireActivity() as GoalActivity
 
                 activity.limitFriendCount =
-                    participantLimitEditText.text.toString().toIntOrNull() ?: 0
+                    binding.participantLimitEditText.text.toString().toIntOrNull() ?: 0
 
                 val pushAlertFragment = PushAlertFragment().apply {
                     arguments = Bundle().apply {
@@ -106,22 +100,22 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
     /* 참여자 제한 인원 입력 조건 검증 */
     private fun setupInputValidation() {
         // 숫자만 입력 가능
-        participantLimitEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+        binding.participantLimitEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
             if (source.matches(Regex("[0-9]*"))) source else ""
         })
 
-        participantLimitEditText.addTextChangedListener(object : TextWatcher {
+        binding.participantLimitEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 val value = s.toString().toIntOrNull() ?: 0
 
                 if (value < 1) {
                     // 1 미만 → 오류 메시지 표시
-                    participantLimitErrorText.visibility = View.VISIBLE
+                    binding.participantLimitErrorText.visibility = View.VISIBLE
                     disableNextButton()
                     isInputValid = false
                 } else {
                     // 1 이상 → 오류 메시지 숨김
-                    participantLimitErrorText.visibility = View.GONE
+                    binding.participantLimitErrorText.visibility = View.GONE
                     enableNextButton()
                     isInputValid = true
                 }
@@ -134,8 +128,8 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
     /* 버튼 비활성화 */
     private fun disableNextButton() {
-        nextButton.isEnabled = false
-        nextButton.background =
+        binding.nextButton.isEnabled = false
+        binding.nextButton.background =
             ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
     }
 
@@ -146,8 +140,13 @@ class ParticipantLimitFragment : Fragment(R.layout.fragment_participant_limit) {
 
     /* 버튼 활성화 */
     private fun enableNextButton() {
-        nextButton.isEnabled = true
-        nextButton.background =
+        binding.nextButton.isEnabled = true
+        binding.nextButton.background =
             ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

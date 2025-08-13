@@ -16,6 +16,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
 
 class TimerSettingFragment : Fragment() {
     lateinit var binding: FragmentTimerSettingBinding
@@ -64,15 +65,12 @@ class TimerSettingFragment : Fragment() {
 
         //타이머 시간 설정
         binding.challengeTimerHourTv.setOnClickListener { //시간
-            //          binding.challengeTimerHourRv.visibility = View.VISIBLE
             showDropdown(hours, binding.challengeTimerHourTv, 0)
         }
         binding.challengeTimerMinuteTv.setOnClickListener { //분
-//            binding.challengeTimerMinuteRv.visibility = View.VISIBLE
             showDropdown(minutes, binding.challengeTimerMinuteTv, 1)
         }
         binding.challengeTimerSecondTv.setOnClickListener { //초
-            //        binding.challengeTimerSecondRv.visibility = View.VISIBLE
             showDropdown(seconds, binding.challengeTimerSecondTv, 2)
         }
 
@@ -151,9 +149,9 @@ class TimerSettingFragment : Fragment() {
         selected: Int
     ) { //리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
-        val popupView = inflater.inflate(R.layout.item_recycler_dropdown_time, null)
+        val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
@@ -166,7 +164,7 @@ class TimerSettingFragment : Fragment() {
         )//투명 배경 설정
 
         //드롭다운 터치 이벤트 관리하는 어댑터
-        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = dropdownAdapter
+        popupBinding.dropdownRecyclerRv.adapter = dropdownAdapter
         dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
                 view.text = items[position]

@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -16,19 +16,23 @@ import com.example.planup.goal.GoalActivity
 import com.example.planup.main.home.ui.HomeFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.planup.databinding.FragmentGoalCompleteBinding
 
-class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
+class GoalCompleteFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var startPlanUpButton: AppCompatButton
-    private lateinit var goalInfoText: TextView
+    private var _binding: FragmentGoalCompleteBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGoalCompleteBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        backIcon = view.findViewById(R.id.backIcon)
-        startPlanUpButton = view.findViewById(R.id.startPlanUpButton)
-        goalInfoText = view.findViewById(R.id.goalInfoText)
 
         setupClickListeners()
         applySpannableText()
@@ -36,12 +40,12 @@ class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
 
     /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupClickListeners() {
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         /* Plan-Up 사용 시작하기 버튼 */
-        startPlanUpButton.setOnClickListener {
+        binding.startPlanUpButton.setOnClickListener {
             // 2초 후 HomeFragment로 이동
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(2000)
@@ -79,9 +83,14 @@ class GoalCompleteFragment : Fragment(R.layout.fragment_goal_complete) {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
-            goalInfoText.text = spannable
+            binding.goalInfoText.text = spannable
         } else {
-            goalInfoText.text = fullText
+            binding.goalInfoText.text = fullText
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -3,77 +3,57 @@ package com.example.planup.password.ui
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.login.ui.LoginActivity
+import com.example.planup.databinding.FragmentResetPasswordBinding
+import com.example.planup.databinding.PopupResetBinding
 
-class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
+class ResetPasswordFragment : Fragment() {
 
-    private lateinit var passwordEditText: EditText
-    private lateinit var confirmPasswordEditText: EditText
-    private lateinit var eyeIcon: ImageView
-    private lateinit var eyeIconConfirm: ImageView
-    private lateinit var checkLengthIcon: ImageView
-    private lateinit var lengthCondition: TextView
-    private lateinit var checkComplexIcon: ImageView
-    private lateinit var complexCondition: TextView
-    private lateinit var checkMatchIcon: ImageView
-    private lateinit var matchCondition: TextView
-    private lateinit var passwordMatchHint: TextView
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentResetPasswordBinding? = null
+    private val binding get() = _binding!!
+
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
     private var userEmail: String? = null
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         userEmail = arguments?.getString("email")
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentResetPasswordBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // 초기화
-        passwordEditText = view.findViewById(R.id.passwordEditText)
-        confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText)
-
-        eyeIcon = view.findViewById(R.id.eyeIcon)
-        eyeIconConfirm = view.findViewById(R.id.eyeIconConfirm)
-
-        checkLengthIcon = view.findViewById(R.id.checkLengthIcon)
-        lengthCondition = view.findViewById(R.id.lengthCondition)
-        checkComplexIcon = view.findViewById(R.id.checkComplexIcon)
-        complexCondition = view.findViewById(R.id.complexCondition)
-        checkMatchIcon = view.findViewById(R.id.checkMatchIcon)
-        matchCondition = view.findViewById(R.id.matchCondition)
-
-        passwordMatchHint = view.findViewById(R.id.passwordMatchHint)
-        nextButton = view.findViewById(R.id.nextButton)
 
         disableNextButton()
         hideAllConditions()
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN &&
-                (passwordEditText.isFocused || confirmPasswordEditText.isFocused)) {
-                passwordEditText.clearFocus()
-                confirmPasswordEditText.clearFocus()
+                (binding.passwordEditText.isFocused || binding.confirmPasswordEditText.isFocused)) {
+                binding.passwordEditText.clearFocus()
+                binding.confirmPasswordEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -81,8 +61,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             val prevFragment = FindPasswordEmailSentFragment().apply {
                 arguments = Bundle().apply {
                     putString("email", userEmail)
@@ -95,37 +74,37 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         }
 
         /* 클릭 시 비밀번호 보이기/숨기기 */
-        eyeIcon.setOnClickListener {
+        binding.eyeIcon.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
-            togglePasswordVisibility(passwordEditText, eyeIcon, isPasswordVisible)
+            togglePasswordVisibility(binding.passwordEditText, binding.eyeIcon, isPasswordVisible)
         }
 
-        eyeIconConfirm.setOnClickListener {
+        binding.eyeIconConfirm.setOnClickListener {
             isConfirmPasswordVisible = !isConfirmPasswordVisible
-            togglePasswordVisibility(confirmPasswordEditText, eyeIconConfirm, isConfirmPasswordVisible)
+            togglePasswordVisibility(binding.confirmPasswordEditText, binding.eyeIconConfirm, isConfirmPasswordVisible)
         }
 
         /* 비밀번호 입력창 클릭 → 길이/복잡도 조건 표시 */
-        passwordEditText.setOnFocusChangeListener { _, hasFocus ->
+        binding.passwordEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 showLengthAndComplexAsGray()
             }
         }
 
         /* 비밀번호 확인 입력창 클릭 → 일치 조건 표시 */
-        confirmPasswordEditText.setOnFocusChangeListener { _, hasFocus ->
+        binding.confirmPasswordEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                passwordMatchHint.visibility = View.GONE
+                binding.passwordMatchHint.visibility = View.GONE
                 showMatchConditionAsGray()
             }
         }
 
         // 입력 변화 감지
-        passwordEditText.addTextChangedListener { validateConditions() }
-        confirmPasswordEditText.addTextChangedListener { validateConditions() }
+        binding.passwordEditText.addTextChangedListener { validateConditions() }
+        binding.confirmPasswordEditText.addTextChangedListener { validateConditions() }
 
         /* 완료 버튼 클릭 → popup_reset 띄우기 */
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             showResetCompleteDialog()
         }
     }
@@ -144,22 +123,22 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
     /* 비밀번호 조건 검사 */
     private fun validateConditions() {
-        val password = passwordEditText.text.toString()
-        val confirmPassword = confirmPasswordEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
+        val confirmPassword = binding.confirmPasswordEditText.text.toString()
 
         // (1) 길이 조건: 8~20자
         val isLengthValid = password.length in 8..20
-        updateConditionColor(checkLengthIcon, lengthCondition, isLengthValid)
+        updateConditionColor(binding.checkLengthIcon, binding.lengthCondition, isLengthValid)
 
         // (2) 숫자 & 특수문자 포함 조건
         val hasNumber = password.any { it.isDigit() }
         val hasSpecial = password.any { !it.isLetterOrDigit() }
         val isComplexValid = hasNumber && hasSpecial
-        updateConditionColor(checkComplexIcon, complexCondition, isComplexValid)
+        updateConditionColor(binding.checkComplexIcon, binding.complexCondition, isComplexValid)
 
         // (3) 비밀번호 일치 조건
         val isMatch = password.isNotEmpty() && password == confirmPassword
-        updateConditionColor(checkMatchIcon, matchCondition, isMatch)
+        updateConditionColor(binding.checkMatchIcon, binding.matchCondition, isMatch)
 
         // 세 조건 모두 만족하면 버튼 활성화
         if (isLengthValid && isComplexValid && isMatch) {
@@ -188,67 +167,65 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
     /* 처음엔 조건 숨기기 */
     private fun hideAllConditions() {
-        checkLengthIcon.visibility = View.GONE
-        lengthCondition.visibility = View.GONE
-        checkComplexIcon.visibility = View.GONE
-        complexCondition.visibility = View.GONE
-        checkMatchIcon.visibility = View.GONE
-        matchCondition.visibility = View.GONE
+        binding.checkLengthIcon.visibility = View.GONE
+        binding.lengthCondition.visibility = View.GONE
+        binding.checkComplexIcon.visibility = View.GONE
+        binding.complexCondition.visibility = View.GONE
+        binding.checkMatchIcon.visibility = View.GONE
+        binding.matchCondition.visibility = View.GONE
     }
 
     /* 비밀번호 입력창 클릭 시 → 길이/복잡도 조건 표시 */
     private fun showLengthAndComplexAsGray() {
         val gray = ContextCompat.getColor(requireContext(), R.color.black_300)
-        checkLengthIcon.setColorFilter(gray)
-        lengthCondition.setTextColor(gray)
-        checkComplexIcon.setColorFilter(gray)
-        complexCondition.setTextColor(gray)
+        binding.checkLengthIcon.setColorFilter(gray)
+        binding.lengthCondition.setTextColor(gray)
+        binding.checkComplexIcon.setColorFilter(gray)
+        binding.complexCondition.setTextColor(gray)
 
-        checkLengthIcon.visibility = View.VISIBLE
-        lengthCondition.visibility = View.VISIBLE
-        checkComplexIcon.visibility = View.VISIBLE
-        complexCondition.visibility = View.VISIBLE
+        binding.checkLengthIcon.visibility = View.VISIBLE
+        binding.lengthCondition.visibility = View.VISIBLE
+        binding.checkComplexIcon.visibility = View.VISIBLE
+        binding.complexCondition.visibility = View.VISIBLE
     }
 
     /* 비밀번호 확인 입력창 클릭 시 → 일치 조건 표시 */
     private fun showMatchConditionAsGray() {
         val gray = ContextCompat.getColor(requireContext(), R.color.black_300)
-        checkMatchIcon.setColorFilter(gray)
-        matchCondition.setTextColor(gray)
+        binding.checkMatchIcon.setColorFilter(gray)
+        binding.matchCondition.setTextColor(gray)
 
-        checkMatchIcon.visibility = View.VISIBLE
-        matchCondition.visibility = View.VISIBLE
+        binding.checkMatchIcon.visibility = View.VISIBLE
+        binding.matchCondition.visibility = View.VISIBLE
     }
 
     /* 완료 버튼 활성 ↔ 비활성 */
     private fun enableNextButton() {
-        nextButton.isEnabled = true
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = true
+        binding.nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.blue_200)
     }
 
     private fun disableNextButton() {
-        nextButton.isEnabled = false
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = false
+        binding.nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
     }
 
     /* 팝업 띄우기 → 확인 버튼 누르면 LoginActivity로 이동 */
     private fun showResetCompleteDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.popup_reset, null)
+        val popupBinding = PopupResetBinding.inflate(layoutInflater)
 
         val safeEmail = userEmail ?: "이메일"
-        val popupMessage = dialogView.findViewById<TextView>(R.id.resetCompleteDesc)
         // 문자열 템플릿 보정: {$safeEmail} → $safeEmail
-        popupMessage.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
+        popupBinding.resetCompleteDesc.text = "입력하신 $safeEmail 계정의\n비밀번호가 변경되었어요."
 
         val dialog = AlertDialog.Builder(requireContext())
-            .setView(dialogView)
+            .setView(popupBinding.root)
             .setCancelable(false)
             .create()
 
-        val popupConfirmButton = dialogView.findViewById<AppCompatButton>(R.id.confirmButton)
-        popupConfirmButton.setOnClickListener {
+        popupBinding.confirmButton.setOnClickListener {
             dialog.dismiss()
             goToLoginActivity()
         }
@@ -272,5 +249,10 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
         val intent = Intent(requireContext(), LoginActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
