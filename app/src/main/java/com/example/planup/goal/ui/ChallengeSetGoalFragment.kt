@@ -50,6 +50,7 @@ class ChallengeSetGoalFragment : Fragment() {
         binding.btnNextTv.setOnClickListener{
             editor.putString("goalName",binding.goalNameEt.text.toString())
             editor.putString("goalAmount",binding.goalAmountEt.text.toString())
+            editor.apply()
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
                 .commitAllowingStateLoss()

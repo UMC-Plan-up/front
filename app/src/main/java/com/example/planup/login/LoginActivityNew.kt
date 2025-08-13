@@ -174,7 +174,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         val toast = Toast(this)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,400)
+        toast.setGravity(Gravity.BOTTOM,0,700)
         toast.show()
     }
     //화면 터치 시 키보드 사라지게

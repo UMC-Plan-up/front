@@ -129,6 +129,7 @@ class ChallengePenaltyFragment : Fragment() {
         binding.challengePenaltyNextBtn.setOnClickListener {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
             editor.putString("penalty",penalty)
+            editor.apply()
              (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengeFriendFragment())
                 .commitAllowingStateLoss()

@@ -50,7 +50,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         return binding.root
     }
     private fun init(){
-        prevFragment = arguments?.getString("previous","null").toString()
+        //prevFragment = arguments?.getString("previous","null").toString()
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
     }
@@ -59,18 +59,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
 
         //뒤로가기: 타이머 설정 또는 인증방식 선택 페이지로 이동
         binding.photoBackIv.setOnClickListener {
-            when(prevFragment){
-                "timer" -> {
-                    (context as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container, ChallengeTimerPhotoFragment())
-                        .commitAllowingStateLoss()
-                }
-                "photo" -> {
-                    (context as GoalActivity).supportFragmentManager.beginTransaction()
-                        .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
-                        .commitAllowingStateLoss()
-                }
-            }
+            (context as GoalActivity).supportFragmentManager.popBackStack()
         }
         /* 요일 선택 효과 */
         // 월요일
@@ -123,6 +112,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         //다음 버튼 클릭: 페널티 설정 화면으로 이동
         binding.btnNextTv.setOnClickListener {
             if (!binding.btnNextTv.isActivated) return@setOnClickListener
+            editor.apply()
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, ChallengePenaltyFragment())
                 .commitAllowingStateLoss()
