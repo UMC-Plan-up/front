@@ -5,15 +5,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING"/>
+
     <application
         android:name=".network.App"
         android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_splash_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/ic_splash_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanUP"
         android:usesCleartextTraffic="true">
@@ -24,20 +25,23 @@
 
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.PlanUP.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".main.MainActivity"
+        <activity
+            android:name=".main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="planup"
+                <data
+                    android:scheme="planup"
                     android:host="password"
                     android:pathPrefix="/change" />
             </intent-filter>
@@ -51,19 +55,21 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="planup"
+                <data
+                    android:scheme="planup"
                     android:host="profile"
                     android:pathPrefix="/setup" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".login.LoginActivityNew"
+        <activity
+            android:name=".login.ui.LoginActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity" />
-        <activity android:name=".main.home.ui.CalendarActivity"/>
-        <activity android:name=".main.goal.ui.EditFriendGoalActivity"/>
+        <activity android:name=".main.home.ui.CalendarActivity" />
+        <activity android:name=".main.goal.ui.EditFriendGoalActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

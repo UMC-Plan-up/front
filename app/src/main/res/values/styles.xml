@@ -157,6 +157,10 @@
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
+    <style name="Theme.PlanUP.Splash" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/bg_splash_white_logo</item>
+    </style>
+
 
 
 

@@ -14,31 +14,25 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
+import com.example.planup.databinding.FragmentProfileSetupBinding
+import com.example.planup.databinding.PopupProfileBinding
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import com.bumptech.glide.Glide
 
-class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
+class ProfileSetupFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var editIcon: ImageView
-    private lateinit var nicknameEditText: EditText
-    private lateinit var nicknameGuide1: TextView
-    private lateinit var nicknameGuide2: TextView
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentProfileSetupBinding? = null
+    private val binding get() = _binding!!
 
     // [테스트용] 임시 중복 닉네임 리스트
     // TODO : API 연동하기
@@ -49,32 +43,30 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
+    private var latestPhotoFile: File? = null
 
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentProfileSetupBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        editIcon = view.findViewById(R.id.editIcon)
-        nicknameEditText = view.findViewById(R.id.nicknameEditText)
-        nicknameGuide1 = view.findViewById(R.id.nicknameGuide1)
-        nicknameGuide2 = view.findViewById(R.id.nicknameGuide2)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        nicknameGuide1.visibility = View.GONE
-        nicknameGuide2.visibility = View.GONE
-        setNextButtonEnabled(false)
-
-
+        binding.nicknameGuide1.visibility = View.GONE
+        binding.nicknameGuide2.visibility = View.GONE
         setNextButtonEnabled(false)
 
         /* 닉네임 입력 변화 감지 → 유효성 검사 */
-        nicknameEditText.addTextChangedListener {
+        binding.nicknameEditText.addTextChangedListener {
             val nickname = it.toString().trim()
 
-            nicknameGuide1.visibility = View.GONE
-            nicknameGuide2.visibility = View.GONE
+            binding.nicknameGuide1.visibility = View.GONE
+            binding.nicknameGuide2.visibility = View.GONE
 
             val isTooLong = nickname.length > 20
             val isTaken = takenNicknames.contains(nickname)
@@ -83,13 +75,13 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             when {
                 isTooLong -> {
                     // 20자 초과 → 안내문 표시
-                    nicknameGuide1.visibility = View.VISIBLE
+                    binding.nicknameGuide1.visibility = View.VISIBLE
                     setNextButtonEnabled(false)
                 }
 
                 isTaken -> {
                     // 중복 닉네임 → 안내문 표시
-                    nicknameGuide2.visibility = View.VISIBLE
+                    binding.nicknameGuide2.visibility = View.VISIBLE
                     setNextButtonEnabled(false)
                 }
 
@@ -105,23 +97,22 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         }
 
         // 뒤로가기 아이콘 → 이전 화면으로 이동
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(LoginSentEmailFragment())
         }
 
         /* editIcon 클릭 → 프로필 수정 popup 띄우기 */
-        editIcon.setOnClickListener {
+        binding.editIcon.setOnClickListener {
             showProfilePopup(it)
         }
 
         /* 다음 버튼 클릭 → InviteCodeFragment로 이동 */
-        nextButton.setOnClickListener {
-            val nickname = nicknameEditText.text.toString().trim()
+        binding.nextButton.setOnClickListener {
+            val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
             val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
-            // 조건 불만족
             if (isEmpty || isTooLong || isTaken) {
                 return@setOnClickListener
             }
@@ -137,6 +128,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val uri = result.data?.data ?: return@registerForActivityResult
+                Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
                 uploadProfileImage(uri)
             }
         }
@@ -146,6 +138,7 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK && cameraImageUri != null) {
+                Glide.with(this).load(cameraImageUri).circleCrop().into(binding.profileImage)
                 uploadProfileImage(cameraImageUri!!)
             }
         }
@@ -158,20 +151,20 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
                 val uri = result.data?.data ?: return@registerForActivityResult
                 val fileName = getFileNameFromUri(uri)
                 val extension = fileName?.substringAfterLast('.', "")?.lowercase()
-
                 if (extension == "jpg" || extension == "jpeg" || extension == "png") {
+                    Glide.with(this).load(uri).circleCrop().into(binding.profileImage)
                     uploadProfileImage(uri)
                 } else {
-                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(requireContext(), "jpg 또는 png만 업로드할 수 있어요", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
+
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (nicknameEditText.isFocused) {
-                    nicknameEditText.clearFocus()
+                if (binding.nicknameEditText.isFocused) {
+                    binding.nicknameEditText.clearFocus()
                     hideKeyboard()
                 }
                 view.performClick()
@@ -182,9 +175,9 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
     /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
     private fun setNextButtonEnabled(enabled: Boolean) {
-        nextButton.isEnabled = enabled
+        binding.nextButton.isEnabled = enabled
         // 버튼 상태에 따라 selector 적용됨
-        nextButton.setBackgroundResource(R.drawable.btn_next_background)
+        binding.nextButton.setBackgroundResource(R.drawable.btn_next_background)
     }
 
     /* InviteCodeFragment로 이동하는 메서드 */
@@ -209,11 +202,10 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
     /* editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
     private fun showProfilePopup(anchorView: View) {
-        val popupView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.popup_profile, null)
+        val popupBinding = PopupProfileBinding.inflate(LayoutInflater.from(requireContext()))
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
@@ -223,19 +215,16 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         popupWindow.isFocusable = true
         popupWindow.elevation = 10f
 
-        val galleryOption = popupView.findViewById<LinearLayout>(R.id.selectFromGallery)
-        val cameraOption = popupView.findViewById<LinearLayout>(R.id.takePhoto)
-        val fileOption = popupView.findViewById<LinearLayout>(R.id.selectFile)
-
-        galleryOption.setOnClickListener {
+        popupBinding.selectFromGallery.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             galleryLauncher.launch(intent)
             popupWindow.dismiss()
         }
 
-        cameraOption.setOnClickListener {
+        popupBinding.takePhoto.setOnClickListener {
             val photoFile = createImageFile()
+            latestPhotoFile = photoFile
             cameraImageUri = FileProvider.getUriForFile(
                 requireContext(),
                 "${requireContext().packageName}.provider",
@@ -243,11 +232,13 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             )
             val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             intent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION)
             cameraLauncher.launch(intent)
             popupWindow.dismiss()
         }
 
-        fileOption.setOnClickListener {
+
+        popupBinding.selectFile.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "*/*"
             fileLauncher.launch(Intent.createChooser(intent, "파일 선택"))
@@ -264,7 +255,19 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
     /* 프로필 이미지 업로드 → 서버에 POST */
     private fun uploadProfileImage(uri: Uri) {
-        val file = File(getRealPathFromURI(uri))
+        val file = when {
+            // 카메라 결과: 우리가 직접 만든 파일이 있음
+            cameraImageUri != null && uri == cameraImageUri && latestPhotoFile != null -> latestPhotoFile!!
+
+            // content:// URI → 캐시로 복사
+            uri.scheme.equals("content", ignoreCase = true) -> copyUriToCache(uri)
+
+            // file:// URI → 바로 파일
+            uri.scheme.equals("file", ignoreCase = true) -> File(uri.path!!)
+
+            else -> copyUriToCache(uri)
+        }
+
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
@@ -277,6 +280,12 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
 
                     withContext(Dispatchers.Main) {
                         (requireActivity() as SignupActivity).profileImgUrl = imageUrl ?: ""
+                        if (!imageUrl.isNullOrBlank()) {
+                            Glide.with(this@ProfileSetupFragment)
+                                .load(imageUrl)
+                                .circleCrop()
+                                .into(binding.profileImage)
+                        }
                     }
                 } else {
                     Log.e("프로필 업로드", "실패: ${response.errorBody()?.string()}")
@@ -286,6 +295,28 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
             }
         }
     }
+
+    private fun copyUriToCache(uri: Uri): File {
+        val resolver = requireContext().contentResolver
+
+        // 파일명 얻기 (없으면 타임스탬프 사용)
+        var name = "upload_${System.currentTimeMillis()}.jpg"
+        resolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+            if (c.moveToFirst()) {
+                val idx = c.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                if (idx >= 0) name = c.getString(idx)
+            }
+        }
+
+        val outFile = File(requireContext().cacheDir, name)
+        resolver.openInputStream(uri)?.use { input ->
+            outFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        return outFile
+    }
+
 
     /* URI -> 실제 파일 경로로 변환 */
     private fun getRealPathFromURI(uri: Uri): String {
@@ -314,5 +345,10 @@ class ProfileSetupFragment : Fragment(R.layout.fragment_profile_setup) {
         val imm =
             requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

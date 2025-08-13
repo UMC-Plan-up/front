@@ -88,4 +88,9 @@
 <!--        <item name="android:background">@drawable/bg_timer_spinner</item>-->
 <!--        <item name="android:maxHeight">110dp</item>-->
 <!--    </style>-->
+
+    <style name="Theme.PlanUP." parent="Base.Theme.PlanUP" >
+        <item name="android:windowIsTranslucent">true</item>
+    </style>
+
 </resources>

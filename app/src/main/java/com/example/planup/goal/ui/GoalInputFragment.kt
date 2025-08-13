@@ -3,36 +3,24 @@ package com.example.planup.goal.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
+import com.example.planup.databinding.FragmentGoalInputBinding
 
-class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
+class GoalInputFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentGoalInputBinding? = null
+    private val binding get() = _binding!!
 
-    private lateinit var friendGoalTitleText: TextView
-    private lateinit var friendGoalDescriptionText: TextView
-
-    private lateinit var goalNameEditText: EditText
-    private lateinit var goalNameMinLengthHint: TextView
-    private lateinit var goalNameMaxLengthHint: TextView
-
-    private lateinit var goalVolumeEditText: EditText
-    private lateinit var goalVolumeMinLengthHint: TextView
-    private lateinit var goalVolumeMaxLengthHint: TextView
-
-    private lateinit var goalOwnerName: String
+    private var goalOwnerName: String = "사용자"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,66 +31,58 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
                     ?: "사용자"
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentGoalInputBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        nextButton = view.findViewById(R.id.nextButton)
-
-        friendGoalTitleText = view.findViewById(R.id.friendGoalTitleText)
-        friendGoalDescriptionText = view.findViewById(R.id.friendGoalDescriptionText)
-
         // 닉네임 반영
-        friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
+        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
-        goalNameEditText = view.findViewById(R.id.nicknameEditText)
-        goalNameMinLengthHint = view.findViewById(R.id.goalNameMinLengthHint)
-        goalNameMaxLengthHint = view.findViewById(R.id.goalNameMaxLengthHint)
-
-        goalVolumeEditText = view.findViewById(R.id.goalVolumeEditText)
-        goalVolumeMinLengthHint = view.findViewById(R.id.goalVolumeMinLengthHint)
-        goalVolumeMaxLengthHint = view.findViewById(R.id.goalVolumeMaxLengthHint)
-
-        // 처음엔 GONE 상태
-        goalNameMinLengthHint.visibility = View.GONE
-        goalNameMaxLengthHint.visibility = View.GONE
-        goalVolumeMinLengthHint.visibility = View.GONE
-        goalVolumeMaxLengthHint.visibility = View.GONE
+        binding.goalNameMinLengthHint.visibility = View.GONE
+        binding.goalNameMaxLengthHint.visibility = View.GONE
+        binding.goalVolumeMinLengthHint.visibility = View.GONE
+        binding.goalVolumeMaxLengthHint.visibility = View.GONE
 
         /* 처음엔 다음 버튼 비활성화 */
         setNextButtonEnabled(false)
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
         /* 목표명 EditText 클릭 시 */
-        goalNameEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && goalNameEditText.text.isNullOrEmpty()) {
-                goalNameMinLengthHint.visibility = View.VISIBLE
+        binding.nicknameEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.nicknameEditText.text.isNullOrEmpty()) {
+                binding.goalNameMinLengthHint.visibility = View.VISIBLE
             }
         }
 
         /* 1회 분량 EditText 클릭 시 */
-        goalVolumeEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && goalVolumeEditText.text.isNullOrEmpty()) {
-                goalVolumeMinLengthHint.visibility = View.VISIBLE
+        binding.goalVolumeEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.goalVolumeEditText.text.isNullOrEmpty()) {
+                binding.goalVolumeMinLengthHint.visibility = View.VISIBLE
             }
         }
 
         /* 입력 감지 → 유효성 검증 */
-        goalNameEditText.addTextChangedListener(inputWatcher)
-        goalVolumeEditText.addTextChangedListener(inputWatcher)
+        binding.nicknameEditText.addTextChangedListener(inputWatcher)
+        binding.goalVolumeEditText.addTextChangedListener(inputWatcher)
 
         /* 다음 버튼 클릭 */
-        nextButton.setOnClickListener {
+        binding.nextButton.setOnClickListener {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
             val activity = requireActivity() as GoalActivity
-            activity.goalName = goalNameEditText.text.toString()
-            activity.goalAmount = goalVolumeEditText.text.toString()
+            activity.goalName = binding.nicknameEditText.text.toString()
+            activity.goalAmount = binding.goalVolumeEditText.text.toString()
 
             val certificationFragment = CertificationMethodFragment().apply {
                 arguments = Bundle().apply {
@@ -115,10 +95,10 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
         // 바깥 터치 시 키보드 숨김
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                (goalNameEditText.isFocused || goalVolumeEditText.isFocused)
+                (binding.nicknameEditText.isFocused || binding.goalVolumeEditText.isFocused)
             ) {
-                goalNameEditText.clearFocus()
-                goalVolumeEditText.clearFocus()
+                binding.nicknameEditText.clearFocus()
+                binding.goalVolumeEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -144,27 +124,27 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     /* 목표명 조건 검증 */
     private fun isGoalNameValid(): Boolean {
-        val text = goalNameEditText.text?.toString() ?: ""
+        val text = binding.nicknameEditText.text?.toString() ?: ""
         val length = text.length
 
         var valid = true
 
         // (1) 1글자 미만 → 클릭 후에만 에러 표시
         if (length < 1) {
-            if (goalNameEditText.hasFocus()) { // 포커스 있을 때만 표시
-                goalNameMinLengthHint.visibility = View.VISIBLE
+            if (binding.nicknameEditText.hasFocus()) { // 포커스 있을 때만 표시
+                binding.goalNameMinLengthHint.visibility = View.VISIBLE
             }
             valid = false
         } else {
-            goalNameMinLengthHint.visibility = View.GONE
+            binding.goalNameMinLengthHint.visibility = View.GONE
         }
 
         // (2) 20자 초과 → 에러 표시
         if (length > 20) {
-            goalNameMaxLengthHint.visibility = View.VISIBLE
+            binding.goalNameMaxLengthHint.visibility = View.VISIBLE
             valid = false
         } else {
-            goalNameMaxLengthHint.visibility = View.GONE
+            binding.goalNameMaxLengthHint.visibility = View.GONE
         }
 
         return valid
@@ -172,27 +152,27 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     /* 1회 분량 조건 검증 */
     private fun isGoalVolumeValid(): Boolean {
-        val text = goalVolumeEditText.text?.toString() ?: ""
+        val text = binding.goalVolumeEditText.text?.toString() ?: ""
         val length = text.length
 
         var valid = true
 
         // (1) 1글자 미만 → 클릭 후에만 에러 표시
         if (length < 1) {
-            if (goalVolumeEditText.hasFocus()) { // 포커스 있을 때만 표시
-                goalVolumeMinLengthHint.visibility = View.VISIBLE
+            if (binding.goalVolumeEditText.hasFocus()) { // 포커스 있을 때만 표시
+                binding.goalVolumeMinLengthHint.visibility = View.VISIBLE
             }
             valid = false
         } else {
-            goalVolumeMinLengthHint.visibility = View.GONE
+            binding.goalVolumeMinLengthHint.visibility = View.GONE
         }
 
         // (2) 30자 초과 → 에러 표시
         if (length > 30) {
-            goalVolumeMaxLengthHint.visibility = View.VISIBLE
+            binding.goalVolumeMaxLengthHint.visibility = View.VISIBLE
             valid = false
         } else {
-            goalVolumeMaxLengthHint.visibility = View.GONE
+            binding.goalVolumeMaxLengthHint.visibility = View.GONE
         }
 
         return valid
@@ -205,6 +185,11 @@ class GoalInputFragment : Fragment(R.layout.fragment_goal_input) {
 
     /* 다음 버튼 활성 ↔ 비활성 */
     private fun setNextButtonEnabled(enabled: Boolean) {
-        nextButton.isEnabled = enabled
+        binding.nextButton.isEnabled = enabled
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

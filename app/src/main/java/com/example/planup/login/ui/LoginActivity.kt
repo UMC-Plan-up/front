@@ -67,15 +67,23 @@ class LoginActivity : AppCompatActivity() {
 
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
-//        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
+        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
+
 
         passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
         emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
 
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.GONE
-        passwordNotFoundErrorText.visibility = View.GONE
+
+        hideAllErrors()
     }
+
+    private fun hideAllErrors() {
+        if (::emailFormatErrorText.isInitialized) emailFormatErrorText.visibility = View.GONE
+        if (::emailNotFoundErrorText.isInitialized) emailNotFoundErrorText.visibility = View.GONE
+        if (::passwordNotFoundErrorText.isInitialized) passwordNotFoundErrorText.visibility = View.GONE
+    }
+
+
 
     private fun initClickListener() {
         // 로그인 버튼

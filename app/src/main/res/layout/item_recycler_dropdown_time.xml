@@ -5,7 +5,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dropdown_recycler_rv"
         android:layout_width="70dp"
-        android:layout_height="219dp"
+        android:layout_height="wrap_content"
         android:paddingStart="12dp"
         android:background="@drawable/bg_timer_dropdown"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

@@ -1,11 +1,11 @@
 package com.example.planup.goal.ui
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -17,82 +17,74 @@ import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.core.graphics.toColorInt
+import com.example.planup.databinding.FragmentCommonGoalBinding // FragmentCommonGoalBinding 추가
+import com.example.planup.databinding.ItemGoalCardBinding // ItemGoalCardBinding 추가
 
-class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
+class CommonGoalFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var friendTab: AppCompatButton
-    private lateinit var communityTab: AppCompatButton
-    private lateinit var moreButton: LinearLayout
-    private lateinit var createCommunityButton: LinearLayout
-    private lateinit var goalContainer: LinearLayout
+    private var _binding: FragmentCommonGoalBinding? = null
+    private val binding get() = _binding!!
 
     private var isFriendTab = true
     private var showAll = false
 
-    // GoalCategoryFragment에서 전달받은 닉네임
     private var goalOwnerName: String = "사용자"
-
-    // GoalCategoryFragment에서 전달받은 카테고리
     private var goalCategory: String = "STUDYING"
 
     private var currentFilteredGoals: List<GoalItemDto> = emptyList()
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCommonGoalBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // GoalCategoryFragment에서 넘긴 닉네임 & 카테고리 받기
         val activity = requireActivity() as GoalActivity
         goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
         goalCategory = activity.goalCategory ?: "STUDYING"
 
-
         Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
 
-        // 초기화
-        backIcon = view.findViewById(R.id.backIcon)
-        friendTab = view.findViewById(R.id.friendTab)
-        communityTab = view.findViewById(R.id.communityTab)
-        moreButton = view.findViewById(R.id.moreButton)
-        createCommunityButton = view.findViewById(R.id.createCommunityButton)
-        goalContainer = view.findViewById(R.id.goalCardContainer)
-
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             (requireActivity() as GoalActivity)
                 .navigateToFragment(GoalCategoryFragment())
         }
 
         /* 기본 탭: 친구와 함께 활성화 */
-        setTabActive(friendTab, true)
-        setTabActive(communityTab, false)
+        setTabActive(binding.friendTab, true)
+        setTabActive(binding.communityTab, false)
 
-        // 화면 처음 들어왔을 때 기본은 친구 탭
         fetchGoalsFromServer("FRIEND")
 
         /* 탭 전환 (친구 ↔ 커뮤니티) */
-        friendTab.setOnClickListener {
+        binding.friendTab.setOnClickListener {
             isFriendTab = true
-            setTabActive(friendTab, true)
-            setTabActive(communityTab, false)
+            setTabActive(binding.friendTab, true)
+            setTabActive(binding.communityTab, false)
             fetchGoalsFromServer("FRIEND") // [친구와 함께] 탭
         }
 
-        communityTab.setOnClickListener {
+        binding.communityTab.setOnClickListener {
             isFriendTab = false
-            setTabActive(friendTab, false)
-            setTabActive(communityTab, true)
+            setTabActive(binding.friendTab, false)
+            setTabActive(binding.communityTab, true)
             fetchGoalsFromServer("COMMUNITY") // [커뮤니티와 함께] 탭
         }
 
         /* 더보기 버튼 */
-        moreButton.setOnClickListener {
+        binding.moreButton.setOnClickListener {
             showAll = true
             displayGoalCards(currentFilteredGoals) // 전체 보여주기
         }
 
         /* 새 목표 만들기 → GoalInputFragment 이동 */
-        createCommunityButton.setOnClickListener {
+        binding.createCommunityButton.setOnClickListener {
             val goalInputFragment = GoalInputFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
@@ -103,10 +95,15 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
     }
 
     private fun setTabActive(tab: AppCompatButton, active: Boolean) {
+        val activeBg = ColorStateList.valueOf(Color.parseColor("#CCDDFE"))
+        val inactiveBg = ColorStateList.valueOf(Color.parseColor("#E4E6E8"))
+
         if (active) {
             tab.setTextColor("#5383E3".toColorInt())
+            tab.backgroundTintList = activeBg
         } else {
             tab.setTextColor("#4B5563".toColorInt())
+            tab.backgroundTintList = inactiveBg
         }
     }
 
@@ -122,10 +119,9 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
                         Log.d("GoalAPI", "[$i] type=${g.goalType}, name=${g.goalName}")
                     }
 
-                    // 일단 필터 끄고(바로 화면 뜨는지 확인)
                     currentFilteredGoals = all
                     displayGoalCards(all)
-                    moreButton.visibility = if (!showAll && all.size > 3) View.VISIBLE else View.GONE
+                    binding.moreButton.visibility = if (!showAll && all.size > 3) View.VISIBLE else View.GONE
                 } else {
                     Log.e("GoalAPI", "API 오류 ${res.code()} / ${res.errorBody()?.string()}")
                 }
@@ -138,36 +134,33 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
 
     /* 목표 카드를 goalContainer에 추가 */
     private fun displayGoalCards(goals: List<GoalItemDto>) {
-        goalContainer.removeAllViews()
+        binding.goalCardContainer.removeAllViews()
 
         val inflater = LayoutInflater.from(requireContext())
         val displayList = if (showAll) goals else goals.take(3)
 
         displayList.forEach { goal ->
-            val cardView = inflater.inflate(R.layout.item_goal_card, goalContainer, false)
-
-            val profileImage = cardView.findViewById<ImageView>(R.id.profileImage)
-            val goalOwner = cardView.findViewById<TextView>(R.id.goalOwner)
-            val memberCount = cardView.findViewById<TextView>(R.id.memberCount)
-            val goalTime = cardView.findViewById<TextView>(R.id.goalTime)
-            val goalTitle = cardView.findViewById<TextView>(R.id.goalTitle)
-            val goalFrequency = cardView.findViewById<TextView>(R.id.goalFrequency)
-            val goalDescription = cardView.findViewById<TextView>(R.id.goalDescription)
+            val cardBinding = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
 
             Glide.with(this)
                 .load(goal.creatorProfileImg)
                 .placeholder(R.drawable.ic_profile_green)
-                .into(profileImage)
+                .into(cardBinding.profileImage)
 
-            goalOwner.text = goal.creatorNickname
-            memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
-            goalTime.text = getString(R.string.goal_time, goal.goalTime)
-            goalTitle.text = goal.goalName
-            goalFrequency.text = getString(R.string.goal_frequency, goal.startTimeMinutes, goal.frequency)
-            goalDescription.text = goal.oneDesc
+            cardBinding.goalOwner.text = goal.creatorNickname
+            cardBinding.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
+            cardBinding.goalTime.text = getString(R.string.goal_time, goal.goalTime)
+            cardBinding.goalTitle.text = goal.goalName
+            cardBinding.goalFrequency.text = getString(R.string.goal_frequency, goal.startTimeMinutes, goal.frequency)
+            cardBinding.goalDescription.text = goal.oneDesc
 
-            goalContainer.addView(cardView)
+            binding.goalCardContainer.addView(cardBinding.root)
         }
-        moreButton.visibility = if (!showAll && goals.size > 3) View.VISIBLE else View.GONE
+        binding.moreButton.visibility = if (!showAll && goals.size > 3) View.VISIBLE else View.GONE
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

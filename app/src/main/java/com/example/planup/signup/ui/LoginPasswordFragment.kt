@@ -3,90 +3,73 @@ package com.example.planup.signup.ui
 import android.graphics.Color
 import android.os.Bundle
 import android.text.InputType
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentLoginPasswordBinding
 import com.example.planup.signup.SignupActivity
 
-class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
+class LoginPasswordFragment : Fragment() {
 
-    private lateinit var passwordEditText: EditText
-    private lateinit var confirmPasswordEditText: EditText
-    private lateinit var eyeIcon: ImageView
-    private lateinit var eyeIconConfirm: ImageView
-
-    private lateinit var checkLengthIcon: ImageView
-    private lateinit var lengthCondition: TextView
-    private lateinit var checkComplexIcon: ImageView
-    private lateinit var complexCondition: TextView
-    private lateinit var checkMatchIcon: ImageView
-    private lateinit var matchCondition: TextView
-
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentLoginPasswordBinding? = null
+    private val binding get() = _binding!!
 
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
 
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentLoginPasswordBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        passwordEditText = view.findViewById(R.id.passwordEditText)
-        confirmPasswordEditText = view.findViewById(R.id.confirmPasswordEditText)
-        eyeIcon = view.findViewById(R.id.eyeIcon)
-        eyeIconConfirm = view.findViewById(R.id.eyeIconConfirm)
-
-        checkLengthIcon = view.findViewById(R.id.checkLengthIcon)
-        lengthCondition = view.findViewById(R.id.lengthCondition)
-        checkComplexIcon = view.findViewById(R.id.checkComplexIcon)
-        complexCondition = view.findViewById(R.id.complexCondition)
-        checkMatchIcon = view.findViewById(R.id.checkMatchIcon)
-        matchCondition = view.findViewById(R.id.matchCondition)
-
-        nextButton = view.findViewById(R.id.nextButton)
         disableNextButton()
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        view.findViewById<ImageView>(R.id.backIcon).setOnClickListener {
+        binding.backIcon.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 
         /* 클릭 시 ic_eye_off ↔ ic_eye_on */
-        eyeIcon.setOnClickListener {
+        binding.eyeIcon.setOnClickListener {
             isPasswordVisible = !isPasswordVisible
-            togglePasswordVisibility(passwordEditText, eyeIcon, isPasswordVisible)
+            togglePasswordVisibility(binding.passwordEditText, binding.eyeIcon, isPasswordVisible)
         }
 
-        eyeIconConfirm.setOnClickListener {
+        binding.eyeIconConfirm.setOnClickListener {
             isConfirmPasswordVisible = !isConfirmPasswordVisible
-            togglePasswordVisibility(confirmPasswordEditText, eyeIconConfirm, isConfirmPasswordVisible)
+            togglePasswordVisibility(binding.confirmPasswordEditText, binding.eyeIconConfirm, isConfirmPasswordVisible)
         }
 
         // 비밀번호 입력 변화 감지
-        passwordEditText.addTextChangedListener {
+        binding.passwordEditText.addTextChangedListener {
             validateConditions()
         }
 
         // 비밀번호 확인 입력 변화 감지
-        confirmPasswordEditText.addTextChangedListener {
+        binding.confirmPasswordEditText.addTextChangedListener {
             validateConditions()
         }
 
         // 다음 버튼 클릭 → LoginSentEmailFragment로 이동
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {  // 활성화된 경우만
+        binding.nextButton.setOnClickListener {
+            if (binding.nextButton.isEnabled) {  // 활성화된 경우만
                 openNextStep()
             }
         }
@@ -94,12 +77,12 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
         /* EditText 외 영역 터치 시 키보드 숨기기 */
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (passwordEditText.isFocused) {
-                    passwordEditText.clearFocus()
+                if (binding.passwordEditText.isFocused) {
+                    binding.passwordEditText.clearFocus()
                     hideKeyboard()
                 }
-                if (confirmPasswordEditText.isFocused) {
-                    confirmPasswordEditText.clearFocus()
+                if (binding.confirmPasswordEditText.isFocused) {
+                    binding.confirmPasswordEditText.clearFocus()
                     hideKeyboard()
                 }
                 view.performClick()  // 접근성 이벤트
@@ -110,7 +93,7 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
     /* LoginSentEmailFragment로 이동하는 메서드 */
     private fun openNextStep() {
-        val password = passwordEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
 
         // (1) SignupActivity에 password 저장
         val activity = requireActivity() as SignupActivity
@@ -137,22 +120,22 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
     /* 비밀번호 조건 검사 */
     private fun validateConditions() {
-        val password = passwordEditText.text.toString()
-        val confirmPassword = confirmPasswordEditText.text.toString()
+        val password = binding.passwordEditText.text.toString()
+        val confirmPassword = binding.confirmPasswordEditText.text.toString()
 
         // (1) 길이 조건 (8~20자)
         val isLengthValid = password.length in 8..20
-        updateConditionUI(checkLengthIcon, lengthCondition, isLengthValid)
+        updateConditionUI(binding.checkLengthIcon, binding.lengthCondition, isLengthValid)
 
         // (2) 숫자 + 특수문자 포함 조건
         val hasNumber = password.any { it.isDigit() }
         val hasSpecialChar = password.any { !it.isLetterOrDigit() }
         val isComplexValid = hasNumber && hasSpecialChar
-        updateConditionUI(checkComplexIcon, complexCondition, isComplexValid)
+        updateConditionUI(binding.checkComplexIcon, binding.complexCondition, isComplexValid)
 
         // (3) 비밀번호 일치
         val isMatch = password.isNotEmpty() && password == confirmPassword
-        updateConditionUI(checkMatchIcon, matchCondition, isMatch)
+        updateConditionUI(binding.checkMatchIcon, binding.matchCondition, isMatch)
 
         // 세 조건 모두 충족하면 버튼 활성화
         if (isLengthValid && isComplexValid && isMatch) {
@@ -178,14 +161,14 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
 
     /* 다음 버튼 활성 ↔ 비활성 */
     private fun enableNextButton() {
-        nextButton.isEnabled = true
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = true
+        binding.nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.blue_200)
     }
 
     private fun disableNextButton() {
-        nextButton.isEnabled = false
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = false
+        binding.nextButton.backgroundTintList =
             ContextCompat.getColorStateList(requireContext(), R.color.black_200)
     }
 
@@ -193,5 +176,10 @@ class LoginPasswordFragment : Fragment(R.layout.fragment_login_password) {
     private fun hideKeyboard() {
         val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

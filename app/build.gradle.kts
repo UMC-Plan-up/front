@@ -85,5 +85,6 @@ dependencies {
     kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("com.android.billingclient:billing-ktx:6.1.0")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
 }

@@ -62,10 +62,12 @@
         app:layout_constraintTop_toBottomOf="@id/expected_time_tv"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="58dp"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_down_timer"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_hour_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_hour_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_hour_tv"/>
@@ -83,10 +85,12 @@
         app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_tv"
         android:layout_marginTop="58dp"
         android:layout_marginStart="4dp"/>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_down_timer"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_minute_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_minute_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_minute_tv"/>
@@ -110,6 +114,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_arrow_down_timer"
+        android:layout_marginEnd="3dp"
         app:layout_constraintEnd_toEndOf="@id/challenge_timer_second_tv"
         app:layout_constraintTop_toTopOf="@id/challenge_timer_second_tv"
         app:layout_constraintBottom_toBottomOf="@id/challenge_timer_second_tv"/>
