@@ -45,7 +45,6 @@ class GoalInputFragment : Fragment() {
         // 닉네임 반영
         binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
-        // 처음엔 GONE 상태
         binding.goalNameMinLengthHint.visibility = View.GONE
         binding.goalNameMaxLengthHint.visibility = View.GONE
         binding.goalVolumeMinLengthHint.visibility = View.GONE

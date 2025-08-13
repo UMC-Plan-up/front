@@ -55,10 +55,6 @@ class GoalCompleteFragment : Fragment() {
         }
     }
 
-    /* Push 허용 여부 저장 */
-    private fun savePushAlertEnabled(enabled: Boolean) {
-        // TODO: Push 허용 여부 저장
-    }
 
     /* goalInfoText에서 마지막 ‘목표’ 단어만 파란색 */
     private fun applySpannableText() {

@@ -157,13 +157,13 @@ class TimerSettingFragment : Fragment() {
             true
         )
         val dropdownAdapter = TimerRVAdapter(items)
-        popupWindow.showAsDropDown(view) //선택된 뷰 하단에 드롭다운 표시
-        popupWindow.isOutsideTouchable = true //바깥 터치 허용
+        popupWindow.showAsDropDown(view) // 선택된 뷰 하단에 드롭다운 표시
+        popupWindow.isOutsideTouchable = true // 바깥 터치 허용
         popupWindow.setBackgroundDrawable(
             resources.getColor(R.color.transparent).toDrawable()
-        )//투명 배경 설정
+        ) // 투명 배경 설정
 
-        //드롭다운 터치 이벤트 관리하는 어댑터
+        // 드롭다운 터치 이벤트 관리하는 어댑터
         popupBinding.dropdownRecyclerRv.adapter = dropdownAdapter
         dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
