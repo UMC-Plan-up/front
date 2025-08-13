@@ -4,11 +4,11 @@ import android.app.Application
 
 class App:Application() {
     companion object {
-        lateinit var prefs: TokenManager
+        lateinit var jwt: TokenManager
     }
 
     override fun onCreate() {
-        prefs = TokenManager(applicationContext)
+        jwt = TokenManager(applicationContext)
         super.onCreate()
     }
 

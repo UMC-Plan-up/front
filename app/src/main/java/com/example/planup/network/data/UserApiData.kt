@@ -42,7 +42,12 @@ data class Signup(
     @SerializedName("email") val email: String,
     @SerializedName("friendNickname") val nickname: String
 )
-
+//비밀번호 변경 시 링크 발송, 재발송
+data class PasswordLink(
+    @SerializedName("email") val email: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("verificationToken") val token: String
+)
 //로그인
 data class Login(
     @SerializedName("accessToken") val accessToken: String,
@@ -59,7 +64,7 @@ data class InviteCodeValidate(
 )
 
 //이메일 인증 발송, 재발송
-data class EmailSend(
+data class SignupLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
     @SerializedName("verificationToken") val token: String

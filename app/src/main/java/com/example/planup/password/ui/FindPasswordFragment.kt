@@ -10,13 +10,10 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.login.ui.LoginActivity
 import com.example.planup.password.ResetPasswordActivity
 
@@ -60,7 +57,7 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
         }
 
         backIcon.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
+            val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
