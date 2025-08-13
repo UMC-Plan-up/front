@@ -46,6 +46,7 @@ class GoalCategoryFragment : Fragment(R.layout.fragment_goal_category) {
             requireActivity().finish()
         }
 
+
         communityGoalLayout = view.findViewById(R.id.communityGoalLayout)
         challengeGoalLayout = view.findViewById(R.id.challengeGoalLayout)
         categorySettingTitle = view.findViewById(R.id.categorySettingTitle)

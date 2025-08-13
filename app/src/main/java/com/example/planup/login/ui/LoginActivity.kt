@@ -1,4 +1,3 @@
-
 package com.example.planup.login.ui
 
 import android.content.Intent
@@ -18,6 +17,8 @@ import com.example.planup.network.App
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import kotlinx.coroutines.launch
+import com.example.planup.databinding.ActivityLoginBinding
+import com.example.planup.databinding.PopupEmailBinding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -38,9 +39,12 @@ class LoginActivity : AppCompatActivity() {
     // 이메일 도메인 드롭다운 아이콘
     private lateinit var emailDropdownIcon: ImageView
 
+    private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initView()
         initClickListener()
@@ -60,18 +64,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        emailEditText = findViewById(R.id.emailEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        loginButton = findViewById(R.id.loginButton)
-        signupText = findViewById(R.id.signupButton)
-        forgotPasswordText = findViewById(R.id.forgotPasswordText)
+        emailEditText = binding.emailEditText
+        passwordEditText = binding.passwordEditText
+        loginButton = binding.loginButton
+        signupText = binding.signupButton
+        forgotPasswordText = binding.forgotPasswordText
 
-        emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
-        emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
-        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
+        emailFormatErrorText = binding.emailFormatErrorText
+        emailNotFoundErrorText = binding.emailNotFoundErrorText
+        passwordNotFoundErrorText = binding.passwordNotFoundErrorText
 
-        passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
-        emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
+        passwordToggleIcon = binding.passwordToggleIcon
+        emailDropdownIcon = binding.emailDropdownIcon
 
         emailFormatErrorText.visibility = View.GONE
         emailNotFoundErrorText.visibility = View.GONE
@@ -118,23 +122,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showEmailDomainPopup() {
-        val popupView = layoutInflater.inflate(R.layout.popup_email, null)
-        popupView.measure(
+        val popupBinding = PopupEmailBinding.inflate(layoutInflater)
+        popupBinding.root.measure(
             View.MeasureSpec.UNSPECIFIED,
             View.MeasureSpec.UNSPECIFIED
         )
-        val popupWidth = popupView.measuredWidth
+        val popupWidth = popupBinding.root.measuredWidth
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
         )
 
-        val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
-        val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
-        val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
+        val domainGmail = popupBinding.domainGmail
+        val domainNaver = popupBinding.domainNaver
+        val domainKakao = popupBinding.domainKakao
 
         val addDomain: (String) -> Unit = { domain ->
             val currentText = emailEditText.text.toString()

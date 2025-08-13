@@ -1,0 +1,8 @@
+<resources>
+    <style name="Theme.PlanUP.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo_small</item>
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="postSplashScreenTheme">@style/Theme.PlanUP</item>
+    </style>
+</resources>

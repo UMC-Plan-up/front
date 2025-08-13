@@ -28,6 +28,9 @@
     <string name="pro_plan_benefit_3">1:1 챌린지 개수 제한 해제</string>
     <string name="pro_plan_benefit_4">광고 삭제</string>
 
+    <string name="year">연도</string>
+    <string name="month">월</string>
+
     <string name="goal_member_count">%1$d명</string>
     <string name="goal_time">%1$d분 투자</string>
     <string name="goal_frequency">%1$d분 기준 • %2$d회 이상</string>

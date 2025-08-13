@@ -1,5 +1,7 @@
 package com.example.planup.goal.ui
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -103,10 +105,15 @@ class CommonGoalFragment : Fragment(R.layout.fragment_common_goal) {
     }
 
     private fun setTabActive(tab: AppCompatButton, active: Boolean) {
+        val activeBg = ColorStateList.valueOf(Color.parseColor("#CCDDFE"))
+        val inactiveBg = ColorStateList.valueOf(Color.parseColor("#E4E6E8"))
+
         if (active) {
             tab.setTextColor("#5383E3".toColorInt())
+            tab.backgroundTintList = activeBg
         } else {
             tab.setTextColor("#4B5563".toColorInt())
+            tab.backgroundTintList = inactiveBg
         }
     }
 
