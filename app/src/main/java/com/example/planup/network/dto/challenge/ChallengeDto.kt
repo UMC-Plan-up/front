@@ -1,4 +1,4 @@
-package com.example.planup.network.dto
+package com.example.planup.network.dto.challenge
 
 import com.google.gson.annotations.SerializedName
 

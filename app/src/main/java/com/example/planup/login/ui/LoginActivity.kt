@@ -17,8 +17,6 @@ import com.example.planup.network.App
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import kotlinx.coroutines.launch
-import com.example.planup.databinding.ActivityLoginBinding
-import com.example.planup.databinding.PopupEmailBinding
 
 class LoginActivity : AppCompatActivity() {
 
@@ -39,12 +37,9 @@ class LoginActivity : AppCompatActivity() {
     // 이메일 도메인 드롭다운 아이콘
     private lateinit var emailDropdownIcon: ImageView
 
-    private lateinit var binding: ActivityLoginBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityLoginBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_login)
 
         initView()
         initClickListener()
@@ -64,18 +59,18 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        emailEditText = binding.emailEditText
-        passwordEditText = binding.passwordEditText
-        loginButton = binding.loginButton
-        signupText = binding.signupButton
-        forgotPasswordText = binding.forgotPasswordText
+        emailEditText = findViewById(R.id.emailEditText)
+        passwordEditText = findViewById(R.id.passwordEditText)
+        loginButton = findViewById(R.id.loginButton)
+        signupText = findViewById(R.id.signupButton)
+        forgotPasswordText = findViewById(R.id.forgotPasswordText)
 
-        emailFormatErrorText = binding.emailFormatErrorText
-        emailNotFoundErrorText = binding.emailNotFoundErrorText
-        passwordNotFoundErrorText = binding.passwordNotFoundErrorText
+        emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
+        emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
+//        passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
 
-        passwordToggleIcon = binding.passwordToggleIcon
-        emailDropdownIcon = binding.emailDropdownIcon
+        passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
+        emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
 
         emailFormatErrorText.visibility = View.GONE
         emailNotFoundErrorText.visibility = View.GONE
@@ -122,23 +117,23 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun showEmailDomainPopup() {
-        val popupBinding = PopupEmailBinding.inflate(layoutInflater)
-        popupBinding.root.measure(
+        val popupView = layoutInflater.inflate(R.layout.popup_email, null)
+        popupView.measure(
             View.MeasureSpec.UNSPECIFIED,
             View.MeasureSpec.UNSPECIFIED
         )
-        val popupWidth = popupBinding.root.measuredWidth
+        val popupWidth = popupView.measuredWidth
 
         val popupWindow = PopupWindow(
-            popupBinding.root,
+            popupView,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
         )
 
-        val domainGmail = popupBinding.domainGmail
-        val domainNaver = popupBinding.domainNaver
-        val domainKakao = popupBinding.domainKakao
+        val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
+        val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
+        val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
 
         val addDomain: (String) -> Unit = { domain ->
             val currentText = emailEditText.text.toString()
@@ -190,7 +185,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                     //로그인 직후 발급된 JWT를 레트로핏에 전달
-                    App.prefs.token = "Bearer "+result.accessToken
+                    App.prefs.token = "Bearer " + result.accessToken
 
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
@@ -215,8 +210,13 @@ class LoginActivity : AppCompatActivity() {
                         "S002" -> {
                             fadeInView(emailNotFoundErrorText)
                             fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login", "code: S002")//
                         }
-                        else -> fadeInView(passwordNotFoundErrorText)
+
+                        else -> {
+                            fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login","${response.body()}\n${response.isSuccessful}")//
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -248,6 +248,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (password.isEmpty()) {
+            Log.d("Login", "password.isEmpty")
             fadeInView(passwordNotFoundErrorText)
             hasError = true
         }

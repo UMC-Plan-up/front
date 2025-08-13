@@ -4,9 +4,9 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.databinding.ItemMypageBlockFriendBinding
-import com.example.planup.main.my.data.BlockFriend
+import com.example.planup.main.my.data.BlockedFriend
 
-class BlockFriendRVAdapter(private val friendList: ArrayList<BlockFriend>):RecyclerView.Adapter<BlockFriendRVAdapter.ViewHolder>() {
+class BlockFriendRVAdapter(private val friendList: ArrayList<BlockedFriend>):RecyclerView.Adapter<BlockFriendRVAdapter.ViewHolder>() {
 
     interface FriendHandler{
         fun manageFriend(position: Int, action: Int)
@@ -41,7 +41,7 @@ class BlockFriendRVAdapter(private val friendList: ArrayList<BlockFriend>):Recyc
 
     inner class ViewHolder(val binding: ItemMypageBlockFriendBinding):RecyclerView.ViewHolder(binding.root){
 
-        fun bind(blockFriend: BlockFriend){
+        fun bind(blockFriend: BlockedFriend){
             binding.friendBlockNameTv.setText(blockFriend.name)
             binding.friendBlockProfileIv.setImageResource(blockFriend.profile)
         }

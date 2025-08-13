@@ -242,7 +242,7 @@
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
-    <string name="end_day">"%1$d/%1$d (%1$s)</string>
+    <string name="end_day">"%1$d / %2$d (%3$s)</string>
 
     <!-- fragment_challenge_request.xml -->
     <string name="challenge_request_verify">인증 방식</string>
@@ -457,6 +457,8 @@
     <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
     <string name="toast_goal_activate">목표가 활성화되었어요.</string>
     <string name="toast_goal_delete">목표가 삭제되었어요.</string>
+
+    <string name="toast_complete_add_friend">[닉네임] 님과 친구가 되었어요!</string>
 
 
     <!-- 에러 메시지 -->
