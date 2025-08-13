@@ -3,11 +3,13 @@ package com.example.planup.main.friend.ui
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.PopupWindow
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.BottomShareDialogBinding
@@ -39,6 +41,20 @@ class FriendInviteFragment : Fragment() {
         binding.btnUpload.setOnClickListener {
             showPopupMenu(binding.btnUpload)
         }
+
+        binding.btnSubmitInviteCode.setOnClickListener {
+            showCompleteAddFriendToast()
+        }
+    }
+
+    private fun showCompleteAddFriendToast(){
+        val inflater = layoutInflater
+        val layout = inflater.inflate(R.layout.toast_complete_add_friend, binding.root, false)
+        val toast = Toast(requireContext())
+        toast.view = layout
+        toast.duration = Toast.LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
+        toast.show()
     }
 
     /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */
