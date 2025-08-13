@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scroll_invite"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
     <LinearLayout
+        android:id="@+id/container_invite_root"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -12,6 +14,7 @@
 
         <!-- 상단 타이틀 -->
         <LinearLayout
+            android:id="@+id/section_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -24,6 +27,7 @@
                 android:src="@drawable/ic_arrow_left" />
 
             <TextView
+                android:id="@+id/tv_title_category"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -34,6 +38,7 @@
 
         <!-- 친구 초대 -->
         <TextView
+            android:id="@+id/tv_invite_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -42,6 +47,7 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/tv_invite_subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -50,6 +56,7 @@
 
         <!-- 나의 초대 코드 -->
         <TextView
+            android:id="@+id/tv_my_invite_code_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -58,12 +65,14 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/tv_my_invite_code_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="친구에게 공유해 보세요"
             android:textSize="14sp"/>
 
         <LinearLayout
+            android:id="@+id/container_my_invite_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -71,12 +80,14 @@
             android:gravity="center_vertical">
 
             <LinearLayout
+                android:id="@+id/row_my_invite_code"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
                 <EditText
+                    android:id="@+id/et_my_invite_code"
                     android:layout_width="231dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
@@ -87,6 +98,7 @@
                     android:layout_marginRight="10dp"/>
 
                 <TextView
+                    android:id="@+id/btn_copy_invite_code"
                     android:layout_width="73dp"
                     android:layout_height="40dp"
                     android:text="복사"
@@ -94,7 +106,6 @@
                     android:gravity="center"
                     android:textColor="@android:color/black"
                     android:background="@drawable/bg_edittext"/>
-
             </LinearLayout>
 
             <TextView
@@ -112,6 +123,7 @@
 
         <!-- 초대코드 입력 -->
         <TextView
+            android:id="@+id/tv_enter_code_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -120,12 +132,14 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/tv_enter_code_desc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="공유받은 초대코드를 입력하면 친구를 맺을 수 있어요!"
             android:textSize="14sp"/>
 
         <LinearLayout
+            android:id="@+id/row_enter_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -133,6 +147,7 @@
             android:gravity="center_vertical">
 
             <EditText
+                android:id="@+id/et_invite_code_input"
                 android:layout_width="231dp"
                 android:layout_height="40dp"
                 android:layout_weight="1"
@@ -143,6 +158,7 @@
                 android:textSize="14sp"/>
 
             <TextView
+                android:id="@+id/btn_submit_invite_code"
                 android:layout_width="73dp"
                 android:layout_height="48dp"
                 android:text="입력"
