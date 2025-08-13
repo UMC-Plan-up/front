@@ -3,10 +3,8 @@ package com.example.planup.main.my.ui
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.IBinder
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -17,16 +15,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageEmailCheckBinding
-import com.example.planup.main.my.adapter.EmailSendAdapter
+import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.controller.UserController
 
-class MypageEmailCheckFragment : Fragment(), EmailSendAdapter {
+class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
 
     lateinit var binding: FragmentMypageEmailCheckBinding
     lateinit var mailAddr: String
@@ -73,6 +71,7 @@ class MypageEmailCheckFragment : Fragment(), EmailSendAdapter {
         binding.emailDropdownIv.setOnClickListener {
             dropDown(binding.emailEt)
         }
+        //외부 터치 시 키보드 사라짐
         binding.root.setOnTouchListener(object : OnTouchListener{
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
                 manageKeyboard()
@@ -108,8 +107,8 @@ class MypageEmailCheckFragment : Fragment(), EmailSendAdapter {
             showToast(context as MainActivity, R.string.toast_incorrect_email)
         else{ //이메일로 인증 링크 보내기
             val emailService = UserController()
-            emailService.setEmailSendAdapter(this)
-            emailService.emailSendService(binding.emailEt.text.toString())
+            emailService.setSignupLinkAdapter(this)
+            emailService.signupLinkService(binding.emailEt.text.toString())
         }
     }
 
@@ -215,6 +214,22 @@ class MypageEmailCheckFragment : Fragment(), EmailSendAdapter {
         emailLinkFragment.arguments = Bundle().apply {
             putString("email",email)
         }
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container,emailLinkFragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+    //인증 링크 전송 오류: 토스트 메시지 출력
+    override fun failEmailSend(message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 
 }

@@ -11,14 +11,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.login.ui.LoginActivity
 
 class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
@@ -269,7 +266,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
 
     /* LoginActivity로 이동 */
     private fun goToLoginActivity() {
-        val intent = Intent(requireContext(), LoginActivity::class.java)
+        val intent = Intent(requireContext(), LoginActivityNew::class.java)
         startActivity(intent)
         requireActivity().finish()
     }

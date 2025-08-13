@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.login.ui.LoginActivity
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
@@ -47,7 +48,7 @@ class AgreementFragment : Fragment() {
 
         /* 뒤로가기 아이콘 → 로그인 화면으로 이동 */
         view.findViewById<ImageView>(R.id.backIcon).setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
+            val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
             requireActivity().finish()
         }

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.InputType
 import android.util.Log
 import android.util.Patterns
@@ -24,14 +23,17 @@ import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
 import com.example.planup.main.MainActivity
+import com.example.planup.main.home.adapter.UserInfoAdapter
+import com.example.planup.network.App
 import com.example.planup.network.controller.UserController
 import com.example.planup.network.data.Login
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import org.w3c.dom.Text
 
-class LoginActivityNew: AppCompatActivity(), LoginAdapter {
+class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var binding: ActivityLoginBinding
 
     lateinit var prefs: SharedPreferences //로그인한 유저 닉네임, 프로필 사진 저장
@@ -63,6 +65,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter {
     }
     private fun init(){
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
+        editor = prefs.edit()
         service = UserController()
         service.setLoginAdapter(this)
     }
@@ -119,6 +122,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter {
         }
     }
 
+    //이메일 입력 시 도메인 자동 입력 드롭다운
     private fun showEmailDomainPopup(){
         val popupView = layoutInflater.inflate(R.layout.popup_email, null)
         popupView.measure(
@@ -161,6 +165,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter {
         val offsetX = binding.emailEditText.width - popupWidth
         popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
+    //비밀번호 입력 결과에 따른 토스트메시지
     private fun makeToast(message: Int){
         val inflater = LayoutInflater.from(this)
         val layout = inflater.inflate(R.layout.toast_grey_template,null)
@@ -172,25 +177,64 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter {
         toast.setGravity(Gravity.BOTTOM,0,400)
         toast.show()
     }
-    //로그인 성공한 경우
-    override fun successLogin(loginResult: Login) {
-        val intent = Intent(this,MainActivity::class.java)
-        editor.putString("accessToken",loginResult.accessToken)
-        editor.putString("nickname",loginResult.nickname)
-        editor.putString("profileImg", loginResult.profileImage)
-        startActivity(intent)
-    }
-    //로그인 실패한 경우
-    override fun failLogin(message: String) {
-        when(message){
-            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email) //등록되지 않은 이메일
-            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password) //비밀번호 불일치
-            "500" -> Log.d("okhttp","500")
-        }
-    }
     //화면 터치 시 키보드 사라지게
     private fun hideKeyboard() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    }
+
+    //로그인 통신 성공
+    override fun successLogin(loginResult: Login) {
+
+        when(loginResult.message) {
+            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email) //등록되지 않은 이메일
+            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password) //비밀번호 불일치
+            else -> {
+                //토큰 등록
+                App.jwt.token = "Bearer " + loginResult.accessToken
+                //sharedPrefs에 기본 정보 저장
+                editor.putString("accessToken",loginResult.accessToken)
+                editor.putString("nickname",loginResult.nickname)
+                editor.putString("profileImg", loginResult.profileImage)
+                //유저정보 받아오기
+                service.setUserInfoAdapter(this)
+                service.userInfoService()
+            }
+        }
+    }
+    //로그인 통신 실패 -> 토스트 메시지 출력
+    override fun failLogin(message: String) {
+        val inflater = LayoutInflater.from(this)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(this)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
+    }
+
+    //유저 정보 요청 통신 성공
+    override fun successUserInfo(user: UserInfo) {
+        editor.putInt("userId",user.id)
+        editor.putString("email",user.email)
+        editor.putString("nickname",user.nickname)
+        editor.putString("profileImg",user.profileImage)
+        editor.apply()
+        val intent = Intent(this,MainActivity::class.java)
+        startActivity(intent)
+    }
+    //유저 정보 요청 통신 실패 -> 토스트 메시지 출력
+    override fun failUserInfo(message: String) {
+        val inflater = LayoutInflater.from(this)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(this)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 }

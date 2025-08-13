@@ -9,6 +9,12 @@ data class ChallengeResponse<T>(
     @SerializedName("message") val message: String,
     @SerializedName("result") val result: T
 )
+//result가 Null인 response 양식
+data class ChallengeResponseNoResult(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String
+)
 
 //챌린지 정보 조회
 data class ChallengeInfo(

@@ -13,10 +13,10 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.databinding.FragmentMypageEmailLinkBinding
-import com.example.planup.main.my.adapter.EmailSendAdapter
+import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.controller.UserController
 
-class MypageEmailLinkFragment:Fragment(),EmailSendAdapter {
+class MypageEmailLinkFragment:Fragment(),SignupLinkAdapter {
 
     lateinit var binding: FragmentMypageEmailLinkBinding
     lateinit var email: String
@@ -28,9 +28,7 @@ class MypageEmailLinkFragment:Fragment(),EmailSendAdapter {
         binding = FragmentMypageEmailLinkBinding.inflate(inflater,container,false)
 
         //이전 프레그먼트에서 전달받은 이메일
-        //email = savedInstanceState!!.getString("email","not received")
         email = arguments?.getString("email","not received").toString()
-        //email = "june5355@naver.com"
         clickListener()
         return binding.root
     }
@@ -59,8 +57,8 @@ class MypageEmailLinkFragment:Fragment(),EmailSendAdapter {
             //이메일 재전송 클릭
             dialog.findViewById<View>(R.id.popup_email_send_again_tv).setOnClickListener{
                 val emailResendService = UserController()
-                emailResendService.setEmailSendAdapter(this)
-                emailResendService.emailResendService(email)
+                emailResendService.setSignupLinkAdapter(this)
+                emailResendService.signupRelinkService(email)
                 dialog.dismiss()
             }
             //카카오 소셜 로그인 클릭
@@ -72,6 +70,10 @@ class MypageEmailLinkFragment:Fragment(),EmailSendAdapter {
     }
 
     override fun successEmailSend(email: String) {
-        TODO("Not yet implemented")
+        Log.d("okhttp",email)
+    }
+
+    override fun failEmailSend(message: String) {
+        Log.d("okhttp",message)
     }
 }
