@@ -7,72 +7,78 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.*
-import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.databinding.FragmentFindPasswordBinding
+import com.example.planup.databinding.PopupEmailBinding
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.password.ResetPasswordActivity
 
-class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
+class FindPasswordFragment : Fragment() {
 
-    private lateinit var emailEditText: EditText
-    private lateinit var emailFormatErrorText: TextView
-    private lateinit var emailNotFoundErrorText: TextView
-    private lateinit var nextButton: AppCompatButton
-    private lateinit var emailDropdownIcon: ImageView
+    private var _binding: FragmentFindPasswordBinding? = null
+    private val binding get() = _binding!!
 
-    private val registeredEmails = listOf("user@gmail.com")
-
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentFindPasswordBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 초기화
-        emailEditText = view.findViewById(R.id.emailEditText)
-        emailFormatErrorText = view.findViewById(R.id.emailFormatErrorText)
-        emailNotFoundErrorText = view.findViewById(R.id.emailNotFoundErrorText)
-        nextButton = view.findViewById(R.id.nextButton)
-        emailDropdownIcon = view.findViewById(R.id.emailDropdownIcon)
-        val backIcon = view.findViewById<ImageView>(R.id.backIcon)
-
         disableNextButton()
         hideAllErrors()
 
-
-        emailEditText.addTextChangedListener {
+        // 이메일 입력 시 형식 체크
+        binding.emailEditText.addTextChangedListener {
             val email = it.toString().trim()
-            validateEmail(email)
-        }
-
-        nextButton.setOnClickListener {
-            if (nextButton.isEnabled) {
-                (requireActivity() as ResetPasswordActivity)
-                    .navigateToFragment(FindPasswordEmailSentFragment())
+            val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            if (isFormatValid) {
+                hideAllErrors()
+                enableNextButton()
+            } else {
+                binding.emailFormatErrorText.visibility = View.VISIBLE
+                binding.emailNotFoundErrorText.visibility = View.GONE
+                disableNextButton()
             }
         }
 
-        backIcon.setOnClickListener {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
+        // 다음 버튼 클릭 → 이메일 형식만 확인하고 "바로" 다음 화면으로 이동 (자동 발송은 다음 화면에서 처리)
+        binding.nextButton.setOnClickListener {
+            if (!binding.nextButton.isEnabled) return@setOnClickListener
+            val email = binding.emailEditText.text.toString().trim()
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                showEmailFormatError()
+                disableNextButton()
+                return@setOnClickListener
+            }
+
+            (requireActivity() as ResetPasswordActivity)
+                .navigateToFragment(FindPasswordEmailSentFragment.newInstance(email))
+        }
+
+        // 뒤로가기 아이콘 클릭 → 로그인 화면 이동
+        binding.backIcon.setOnClickListener {
+            val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
             requireActivity().finish()
         }
 
-        emailDropdownIcon.setOnClickListener {
-            showEmailDomainPopup()
-        }
+        binding.emailDropdownIcon.setOnClickListener { showEmailDomainPopup() }
 
-        // EditText 외부 터치 시 키보드 숨기기
+        // EditText 외부 터치 시 키보드 숨김
         view.setOnTouchListener { _, event ->
-            if (event.action == MotionEvent.ACTION_DOWN && emailEditText.isFocused) {
-                emailEditText.clearFocus()
+            if (event.action == MotionEvent.ACTION_DOWN && binding.emailEditText.isFocused) {
+                binding.emailEditText.clearFocus()
                 hideKeyboard()
             }
             view.performClick()
@@ -80,107 +86,86 @@ class FindPasswordFragment : Fragment(R.layout.fragment_find_password) {
         }
     }
 
-    private fun validateEmail(email: String) {
-        val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
-        if (!isFormatValid) {
-            showEmailFormatError()
-            disableNextButton()
-            return
-        }
-
-        if (!registeredEmails.contains(email)) {
-            showEmailNotFoundError()
-            disableNextButton()
-            return
-        }
-
-        hideAllErrors()
-        enableNextButton()
-    }
-
+    // 이메일 형식 에러 표시
     private fun showEmailFormatError() {
-        emailFormatErrorText.visibility = View.VISIBLE
-        emailNotFoundErrorText.visibility = View.GONE
+        binding.emailFormatErrorText.visibility = View.VISIBLE
+        binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
+    // 가입되지 않은 이메일 에러 표시
     private fun showEmailNotFoundError() {
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.VISIBLE
+        binding.emailFormatErrorText.visibility = View.GONE
+        binding.emailNotFoundErrorText.visibility = View.VISIBLE
     }
 
+    // 모든 에러 문구 숨김
     private fun hideAllErrors() {
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.GONE
+        binding.emailFormatErrorText.visibility = View.GONE
+        binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
+    // 다음 버튼 활성화
     private fun enableNextButton() {
-        nextButton.isEnabled = true
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = true
+        binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.blue_200)
     }
 
+    // 다음 버튼 비활성화
     private fun disableNextButton() {
-        nextButton.isEnabled = false
-        nextButton.backgroundTintList =
+        binding.nextButton.isEnabled = false
+        binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.black_200)
     }
 
-    private fun openNextStep() {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.resetPasswordContainer, FindPasswordEmailSentFragment())
-            .addToBackStack(null)
-            .commit()
-    }
-
+    // 이메일 도메인 선택 팝업
     private fun showEmailDomainPopup() {
         val inflater = LayoutInflater.from(requireContext())
-        val popupView = inflater.inflate(R.layout.popup_email, null)
+        val popupBinding = PopupEmailBinding.inflate(inflater)
 
-        popupView.measure(
-            View.MeasureSpec.UNSPECIFIED,
-            View.MeasureSpec.UNSPECIFIED
-        )
-        val popupWidth = popupView.measuredWidth
+        popupBinding.root.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED)
+        val popupWidth = popupBinding.root.measuredWidth
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             LinearLayout.LayoutParams.WRAP_CONTENT,
             true
         )
 
-        val domainGmail = popupView.findViewById<TextView>(R.id.domainGmail)
-        val domainNaver = popupView.findViewById<TextView>(R.id.domainNaver)
-        val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
-
         val addDomain: (String) -> Unit = { domain ->
-            val currentText = emailEditText.text.toString()
+            val currentText = binding.emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {
                 currentText.substringBefore("@") + "@$domain"
             } else {
                 "$currentText@$domain"
             }
-            emailEditText.setText(updatedText)
-            emailEditText.setSelection(updatedText.length)
+            binding.emailEditText.setText(updatedText)
+            binding.emailEditText.setSelection(updatedText.length)
             popupWindow.dismiss()
         }
 
-        domainGmail.setOnClickListener { addDomain("gmail.com") }
-        domainNaver.setOnClickListener { addDomain("naver.com") }
-        domainKakao.setOnClickListener { addDomain("kakao.com") }
+        popupBinding.domainGmail.setOnClickListener { addDomain("gmail.com") }
+        popupBinding.domainNaver.setOnClickListener { addDomain("naver.com") }
+        popupBinding.domainKakao.setOnClickListener { addDomain("kakao.com") }
 
         popupWindow.isOutsideTouchable = true
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
 
-        val offsetX = emailEditText.width - popupWidth
-        popupWindow.showAsDropDown(emailEditText, offsetX, 0)
+        val offsetX = binding.emailEditText.width - popupWidth
+        popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
 
+    // 키보드 숨김
     private fun hideKeyboard() {
         val imm =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

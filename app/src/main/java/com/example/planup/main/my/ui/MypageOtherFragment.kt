@@ -4,19 +4,22 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageOtherBinding
 import androidx.core.graphics.drawable.toDrawable
-import com.example.planup.login.ui.LoginActivity
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.network.controller.UserController
-import kotlin.math.log
 
 class MypageOtherFragment:Fragment(), LogoutAdapter {
     lateinit var binding:FragmentMypageOtherBinding
@@ -75,9 +78,19 @@ class MypageOtherFragment:Fragment(), LogoutAdapter {
     }
 
     override fun successLogout() {
-        val intent = Intent(context as MainActivity, LoginActivity::class.java)
+        val intent = Intent(context as MainActivity, LoginActivityNew::class.java)
         startActivity(intent)
     }
 
-    override fun failLogout() {}
+    override fun failLogout(message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
+    }
 }

@@ -1,4 +1,3 @@
-
 package com.example.planup.login.ui
 
 import android.content.Intent
@@ -70,13 +69,21 @@ class LoginActivity : AppCompatActivity() {
         emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
         passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
 
+
         passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
         emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
 
-        emailFormatErrorText.visibility = View.GONE
-        emailNotFoundErrorText.visibility = View.GONE
-        passwordNotFoundErrorText.visibility = View.GONE
+
+        hideAllErrors()
     }
+
+    private fun hideAllErrors() {
+        if (::emailFormatErrorText.isInitialized) emailFormatErrorText.visibility = View.GONE
+        if (::emailNotFoundErrorText.isInitialized) emailNotFoundErrorText.visibility = View.GONE
+        if (::passwordNotFoundErrorText.isInitialized) passwordNotFoundErrorText.visibility = View.GONE
+    }
+
+
 
     private fun initClickListener() {
         // 로그인 버튼
@@ -186,7 +193,7 @@ class LoginActivity : AppCompatActivity() {
 
 
                     //로그인 직후 발급된 JWT를 레트로핏에 전달
-                    App.prefs.token = "Bearer "+result.accessToken
+                    App.jwt.token = "Bearer " + result.accessToken
 
                     val prefs = applicationContext.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                     prefs.edit()
@@ -211,8 +218,13 @@ class LoginActivity : AppCompatActivity() {
                         "S002" -> {
                             fadeInView(emailNotFoundErrorText)
                             fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login", "code: S002")//
                         }
-                        else -> fadeInView(passwordNotFoundErrorText)
+
+                        else -> {
+                            fadeInView(passwordNotFoundErrorText)
+                            Log.d("Login","${response.body()}\n${response.isSuccessful}")//
+                        }
                     }
                 }
             } catch (e: Exception) {
@@ -244,6 +256,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if (password.isEmpty()) {
+            Log.d("Login", "password.isEmpty")
             fadeInView(passwordNotFoundErrorText)
             hasError = true
         }

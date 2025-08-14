@@ -28,7 +28,7 @@ val logging = HttpLoggingInterceptor().apply{
 class AuthInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var req =
-            chain.request().newBuilder().addHeader("Authorization", App.prefs.token ?: "").build()
+            chain.request().newBuilder().addHeader("Authorization", App.jwt.token ?: "").build()
         return chain.proceed(req)
     }
 }

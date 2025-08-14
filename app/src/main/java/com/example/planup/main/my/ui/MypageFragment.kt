@@ -1,35 +1,54 @@
 package com.example.planup.main.my.ui
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.login.LoginActivityNew
 import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.adapter.BenefitAdapter
+import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.network.controller.UserController
-import com.example.planup.network.data.user.User
 
-class MypageFragment : Fragment(), BenefitAdapter {
+class MypageFragment : Fragment(), ServiceAlertAdapter {
     lateinit var binding: FragmentMypageBinding
+
+    //API 연동
+    private lateinit var service: UserController
+    //sharedPreferences
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageBinding.inflate(inflater, container, false)
-
+        init()
         clickListener()
         return binding.root
     }
 
+    private fun init(){
+        service = UserController()
+        service.setServiceAdapter(this)
+        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        editor = prefs.edit()
+        binding.mypageMainEmailTv.text = prefs.getString("email","null").toString()
+    }
     private fun clickListener(){
 
         binding.mypageBackIv.setOnClickListener {
@@ -82,24 +101,20 @@ class MypageFragment : Fragment(), BenefitAdapter {
 
         //서비스 알림 수신 토글 끄기
         binding.mypageAlertServiceOnIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.GONE
-            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
+            binding.mypageAlertServiceOnIv.visibility=View.GONE
+            binding.mypageAlertServiceOffIv.visibility=View.VISIBLE
         }
         //서비스 알림 수신 토글 켜기
         binding.mypageAlertServiceOffIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
-            binding.mypageAlertServiceOffIv.visibility = View.GONE
+            binding.mypageAlertServiceOnIv.visibility=View.VISIBLE
+            binding.mypageAlertServiceOffIv.visibility=View.GONE
         }
         //마케팅 알림 수신 토글 끄기
         binding.mypageAlertBenefitOnIv.setOnClickListener{
-            val service = UserController()
-            service.setBenefitAdapter(this)
             service.notificationAgreementService(false)
         }
         //마케팅 알림 수신 토글 켜기
         binding.mypageAlertBenefitOffIv.setOnClickListener{
-            val service = UserController()
-            service.setBenefitAdapter(this)
             service.notificationAgreementService(true)
         }
         //이용약관 및 정책
@@ -146,13 +161,25 @@ class MypageFragment : Fragment(), BenefitAdapter {
 
     }
 
-    override fun successBenefitSetting(condition: Boolean) {
+    override fun successServiceSetting(condition: Boolean) {
         if (condition){ //condition==true: 토글 켜기
-            binding.mypageAlertBenefitOnIv.visibility=View.VISIBLE
-            binding.mypageAlertBenefitOffIv.visibility=View.GONE
+            binding.mypageAlertBenefitOnIv.visibility = View.VISIBLE
+            binding.mypageAlertBenefitOffIv.visibility = View.GONE
         }else{ //condition == false: 토글 끄기
-            binding.mypageAlertBenefitOnIv.visibility=View.GONE
-            binding.mypageAlertBenefitOffIv.visibility=View.VISIBLE
+            binding.mypageAlertBenefitOnIv.visibility = View.GONE
+            binding.mypageAlertBenefitOffIv.visibility = View.VISIBLE
         }
+    }
+
+    override fun failServiceSetting(message: String) {
+        val inflater = LayoutInflater.from(context)
+        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(context)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.show()
     }
 }

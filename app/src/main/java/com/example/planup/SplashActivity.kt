@@ -5,19 +5,31 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
-import com.example.planup.login.ui.LoginActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.example.planup.databinding.ActivitySplashBinding
+import com.example.planup.login.LoginActivityNew
 
-class SplashActivity : AppCompatActivity() {
+class  SplashActivity : AppCompatActivity() {
+
+    private var binding: ActivitySplashBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
 
-        // 2초 후 LoginActivity로 이동
+        setTheme(R.style.Theme_PlanUP)
+
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
+
         Handler(Looper.getMainLooper()).postDelayed({
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, LoginActivityNew::class.java))
             finish()
         }, 2000)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = null
     }
 }

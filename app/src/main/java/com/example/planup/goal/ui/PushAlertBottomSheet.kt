@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import com.example.planup.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import android.widget.Button
+import com.example.planup.databinding.PopupPushAlertSettingBinding
 
 class PushAlertPopupDialog(
     context: Context
 ) : BottomSheetDialog(context, R.style.BottomSheetDialogTheme) {
+
+    private lateinit var binding: PopupPushAlertSettingBinding
 
     private var confirmClickListener: (() -> Unit)? = null
     private var cancelClickListener: (() -> Unit)? = null
@@ -27,9 +30,8 @@ class PushAlertPopupDialog(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val view = LayoutInflater.from(context)
-            .inflate(R.layout.popup_push_alert_setting, null)
-        setContentView(view)
+        binding = PopupPushAlertSettingBinding.inflate(LayoutInflater.from(context))
+        setContentView(binding.root)
 
         window?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             ?.setBackgroundResource(android.R.color.transparent)
@@ -41,15 +43,12 @@ class PushAlertPopupDialog(
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
 
-        val btnNo = view.findViewById<Button>(R.id.noButton)
-        val btnYes = view.findViewById<Button>(R.id.yesButton)
-
-        btnNo?.setOnClickListener {
+        binding.noButton.setOnClickListener {
             cancelClickListener?.invoke()
             dismiss()
         }
 
-        btnYes?.setOnClickListener {
+        binding.yesButton.setOnClickListener {
             confirmClickListener?.invoke()
             dismiss()
         }

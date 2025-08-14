@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,11 +14,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -28,62 +25,64 @@ import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.io.EOFException
 import com.google.gson.JsonSyntaxException
+import com.example.planup.databinding.FragmentInviteCodeInputBinding
+import com.example.planup.databinding.PopupCodeBinding
 
-class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
+class InviteCodeInputFragment : Fragment() {
 
-    private lateinit var backIcon: ImageView
-    private lateinit var inviteCodeEditText: EditText
-    private lateinit var inputButton: AppCompatButton
-    private lateinit var nextButton: AppCompatButton
+    private var _binding: FragmentInviteCodeInputBinding? = null
+    private val binding get() = _binding!!
+
     private var myInviteCode: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val code = arguments?.getString("inviteCode") // 전달받은 code를 꺼냄
+        val code = arguments?.getString("inviteCode")
         if (!code.isNullOrBlank()) {
             myInviteCode = code
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentInviteCodeInputBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        backIcon = view.findViewById(R.id.backIcon)
-        inviteCodeEditText = view.findViewById(R.id.nicknameEditText)
-        inputButton = view.findViewById(R.id.inputButton)
-        nextButton = view.findViewById(R.id.nextButton)
-
         if (myInviteCode.isNotBlank()) {
-            inviteCodeEditText.setText(myInviteCode)
+            binding.nicknameEditText.setText(myInviteCode)
         }
 
         hideInvalidCodeMessage()
 
-
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
-        backIcon.setOnClickListener {
+        binding.backIcon.setOnClickListener {
             (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
         }
 
         /* 초대코드 입력란 클릭 */
-        inviteCodeEditText.setOnFocusChangeListener { _, hasFocus ->
+        binding.nicknameEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                inviteCodeEditText.background = ContextCompat.getDrawable(
+                binding.nicknameEditText.background = ContextCompat.getDrawable(
                     requireContext(), R.drawable.bg_edittext_focused_blue
                 )
-                inviteCodeEditText.hint = ""
+                binding.nicknameEditText.hint = ""
             } else {
-                inviteCodeEditText.background = ContextCompat.getDrawable(
+                binding.nicknameEditText.background = ContextCompat.getDrawable(
                     requireContext(), R.drawable.bg_edittext_rounded
                 )
-                inviteCodeEditText.hint = "초대코드 입력란"
+                binding.nicknameEditText.hint = "초대코드 입력란"
             }
         }
 
         /* 입력 버튼 클릭 → 초대코드 실시간 검증 API 요청 */
-        inputButton.setOnClickListener {
-            val enteredCode = inviteCodeEditText.text.toString().trim()
+        binding.inputButton.setOnClickListener {
+            val enteredCode = binding.nicknameEditText.text.toString().trim()
 
             Log.d("InviteCode", "입력한 코드: $enteredCode")
 
@@ -123,15 +122,15 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         }
 
         /* 다음 버튼 클릭 → 입력된 초대코드로 회원가입 진행 */
-        nextButton.setOnClickListener {
-            val code = inviteCodeEditText.text.toString().trim()
+        binding.nextButton.setOnClickListener {
+            val code = binding.nicknameEditText.text.toString().trim()
             proceedSignup(code)
         }
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
-                if (inviteCodeEditText.isFocused) {
-                    inviteCodeEditText.clearFocus()
+                if (binding.nicknameEditText.isFocused) {
+                    binding.nicknameEditText.clearFocus()
                     hideKeyboard()
                 }
                 view.performClick()
@@ -167,8 +166,8 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
         lifecycleScope.launch {
             try {
-                Log.d("SignupFlow", "📦 요청 JSON=\n${Gson().toJson(request)}")
-                Log.d("SignupFlow", "📡 회원가입 API 요청 시작: inviteCode=$inviteCodeParam")
+                Log.d("SignupFlow", "요청 JSON=\n${Gson().toJson(request)}")
+                Log.d("SignupFlow", "회원가입 API 요청 시작: inviteCode=$inviteCodeParam")
 
                 val repository = SignupRepository(RetrofitInstance.userApi)
                 val response = repository.signup(request)
@@ -177,37 +176,37 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
                     val body = response.body()
 
                     if (body == null) {
-                        Log.w("SignupFlow", "⚠️ 서버 응답 바디 없음 → 성공 처리")
+                        Log.w("SignupFlow", "서버 응답 바디 없음 → 성공 처리")
                         goNext()
                         return@launch
                     }
 
                     if (body.isSuccess) {
-                        Log.i("SignupFlow", "✅ 서버 응답 성공 코드 수신")
+                        Log.i("SignupFlow", "서버 응답 성공 코드 수신")
                         goNext()
                     } else {
-                        Log.e("SignupFlow", "❌ 서버 응답 실패 code=${body.code} msg=${body.message}")
+                        Log.e("SignupFlow", "서버 응답 실패 code=${body.code} msg=${body.message}")
                         handleErrorCode(body.code ?: "")
                     }
                 } else {
                     val err = response.errorBody()?.string()
                     Log.e(
                         "SignupFlow",
-                        "❌ HTTP 실패 code=${response.code()} message=${response.message()} body=$err"
+                        "HTTP 실패 code=${response.code()} message=${response.message()} body=$err"
                     )
                     setErrorMessage("가입 실패: ${response.code()}")
                 }
 
             } catch (e: EOFException) {
-                Log.w("SignupFlow", "⚠️ EOFException(빈 응답) → 성공 처리")
+                Log.w("SignupFlow", "EOFException(빈 응답) → 성공 처리")
                 goNext()
 
             } catch (e: JsonSyntaxException) {
-                Log.w("SignupFlow", "⚠️ JsonSyntaxException(예상치 못한 형식) → 성공 처리")
+                Log.w("SignupFlow", "JsonSyntaxException(예상치 못한 형식) → 성공 처리")
                 goNext()
 
             } catch (e: Exception) {
-                Log.e("SignupFlow", "❌ 네트워크/알 수 없는 오류: ${e.message}")
+                Log.e("SignupFlow", "네트워크/알 수 없는 오류: ${e.message}")
                 e.printStackTrace()
                 setErrorMessage("네트워크 오류가 발생했습니다.")
             }
@@ -221,16 +220,14 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
     /* 잘못된 코드 text 숨김 함수 */
     private fun hideInvalidCodeMessage() {
-        val invalidText = view?.findViewById<TextView>(R.id.emailFormatErrorText2)
-        invalidText?.visibility = View.GONE
+        binding.emailFormatErrorText2.visibility = View.GONE
     }
 
     /* 에러 메시지 표시 함수 */
     private fun setErrorMessage(message: String) {
-        val errorText = view?.findViewById<TextView>(R.id.emailFormatErrorText2)
-        errorText?.text = message
-        errorText?.visibility = View.VISIBLE
-        errorText?.postDelayed({
+        binding.emailFormatErrorText2.text = message
+        binding.emailFormatErrorText2.visibility = View.VISIBLE
+        binding.emailFormatErrorText2.postDelayed({
             hideInvalidCodeMessage()
         }, 3000)
     }
@@ -246,13 +243,9 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
 
     /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 회원가입 API 호출 */
     private fun showPopupCenter(anchorView: View, nickname: String, inviteCode: String) {
-        val popupView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.popup_code, null)
+        val popupBinding = PopupCodeBinding.inflate(LayoutInflater.from(requireContext()))
 
-        val friendDescription = popupView.findViewById<TextView>(R.id.friendDescription)
-        friendDescription.text = getString(R.string.friend_description, nickname)
-
-        val confirmButton = popupView.findViewById<AppCompatButton>(R.id.confirmButton)
+        popupBinding.friendDescription.text = getString(R.string.friend_description, nickname)
 
         val displayMetrics = resources.displayMetrics
         val screenWidth = displayMetrics.widthPixels
@@ -260,7 +253,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         val popupHeight = LinearLayout.LayoutParams.WRAP_CONTENT
 
         val popupWindow = PopupWindow(
-            popupView,
+            popupBinding.root,
             popupWidth,
             popupHeight,
             true
@@ -270,7 +263,7 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         popupWindow.isFocusable = true
 
         /* popup 확인 버튼 → 회원가입 API 호출 */
-        confirmButton.setOnClickListener {
+        popupBinding.confirmButton.setOnClickListener {
             popupWindow.dismiss()
             proceedSignup(inviteCode)
         }
@@ -291,5 +284,10 @@ class InviteCodeInputFragment : Fragment(R.layout.fragment_invite_code_input) {
         val imm =
             requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

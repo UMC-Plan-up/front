@@ -270,7 +270,7 @@
             app:layout_constraintTop_toTopOf="@id/challenge_request_duration_enter_tv" />
 
         <TextView
-            android:id="@+id/challenge_request_often_title_tv"
+            android:id="@+id/challenge_request_frequency_title_tv"
             style="@style/Typography_L_Semibold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -281,7 +281,7 @@
             app:layout_constraintTop_toBottomOf="@id/challenge_request_duration_enter_tv" />
 
         <TextView
-            android:id="@+id/challenge_request_often_enter_tv"
+            android:id="@+id/challenge_request_frequency_enter_tv"
             style="@style/Typography_SM_Medium"
             android:layout_width="51dp"
             android:layout_height="32dp"
@@ -290,7 +290,7 @@
             android:background="@drawable/bg_challenge_request_often"
             android:text=""
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/challenge_request_often_title_tv" />
+            app:layout_constraintTop_toBottomOf="@id/challenge_request_frequency_title_tv" />
 
         <TextView
             android:id="@+id/challenge_request_often_tv"
@@ -299,9 +299,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="7dp"
             android:text="@string/minimum_number"
-            app:layout_constraintBottom_toBottomOf="@id/challenge_request_often_enter_tv"
-            app:layout_constraintStart_toEndOf="@id/challenge_request_often_enter_tv"
-            app:layout_constraintTop_toTopOf="@id/challenge_request_often_enter_tv" />
+            app:layout_constraintBottom_toBottomOf="@id/challenge_request_frequency_enter_tv"
+            app:layout_constraintStart_toEndOf="@id/challenge_request_frequency_enter_tv"
+            app:layout_constraintTop_toTopOf="@id/challenge_request_frequency_enter_tv" />
 
         <TextView
             android:id="@+id/challenge_request_penalty_tv"

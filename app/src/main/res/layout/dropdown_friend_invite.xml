@@ -23,7 +23,7 @@
             android:layout_height="wrap_content">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/album_cl"
+                android:id="@+id/share_kakao_cl"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
@@ -50,12 +50,12 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/album_cl"
+                app:layout_constraintTop_toBottomOf="@id/share_kakao_cl"
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginTop="8dp">
                 <TextView
-                    android:id="@+id/photo_tv"
+                    android:id="@+id/share_message_tv"
                     style="@style/TextAppearance.Pretendard.Medium.SM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp">
                 <TextView
-                    android:id="@+id/file_tv"
+                    android:id="@+id/share_etc_tv"
                     style="@style/TextAppearance.Pretendard.Medium.SM"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
