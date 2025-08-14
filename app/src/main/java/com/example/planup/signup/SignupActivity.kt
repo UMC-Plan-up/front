@@ -7,10 +7,13 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
+import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.ui.AgreementFragment
 import com.example.planup.signup.ui.InviteCodeInputFragment
 import com.example.planup.signup.ui.ProfileSetupFragment
+import kotlinx.coroutines.launch
 
 class SignupActivity : AppCompatActivity() {
 
@@ -27,13 +30,9 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-
-        // 1) 커스텀 딥링크 우선 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
 
-//        tmp()
-        // 2) 딥링크가 없으면 기존 초기 플로우
         if (savedInstanceState == null) {
             val code = intent.getStringExtra("code")
             if (!code.isNullOrBlank()) {
@@ -51,64 +50,68 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // singleTop에서 앱이 떠있는 상태로 딥링크 수신 시 호출
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         handleEmailDeepLink(intent)
     }
 
-    /*
-     * 최종 URL: planup://profile/setup?email=...&verified=true&token=...&from=email_verification
-     *
-     *  @return true = 딥링크 처리하여 다음 화면으로 이동함
-     */
+
     private fun handleEmailDeepLink(intent: Intent): Boolean {
         val uri = intent.data ?: return false
         if (uri.scheme != "planup") return false
         if (uri.host != "profile") return false
         if (!uri.path.orEmpty().startsWith("/setup")) return false
+        if (deepLinkHandled) return true
 
         val emailParam = uri.getQueryParameter("email").orEmpty()
         val verifiedParam = uri.getQueryParameter("verified")?.equals("true", true) == true
         val tokenParam = uri.getQueryParameter("token").orEmpty()
         val fromParam = uri.getQueryParameter("from").orEmpty()
 
-        Log.d("EmailDeepLink",
+        Log.d(
+            "EmailDeepLink",
             "uri=$uri, email=$emailParam, verified=$verifiedParam, token=$tokenParam, from=$fromParam"
         )
+
+        deepLinkHandled = true
+
+        if (tokenParam.isNotBlank()) {
+            lifecycleScope.launch {
+                try {
+                    val res = RetrofitInstance.userApi.verifyEmailLink(tokenParam)
+                    val body = res.body()
+                    val ok = res.isSuccessful &&
+                            body?.isSuccess == true &&
+                            body?.result?.verified == true
+
+                    if (ok) {
+                        goToProfileSetup(emailParam)
+                    } else {
+                        Toast.makeText(
+                            this@SignupActivity,
+                            body?.message ?: "이메일 인증 실패",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        deepLinkHandled = false
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this@SignupActivity, "네트워크 오류", Toast.LENGTH_SHORT).show()
+                    deepLinkHandled = false
+                }
+            }
+            return true
+        }
 
         if (verifiedParam) {
             goToProfileSetup(emailParam)
             return true
         } else {
             Toast.makeText(this, "이메일 인증이 완료되지 않았어요.", Toast.LENGTH_SHORT).show()
+            deepLinkHandled = false
             return false
         }
     }
-
-    private fun tmp(){
-        val deepLinkUri: Uri? = intent?.data
-        if (deepLinkUri != null) {
-            val email = deepLinkUri.getQueryParameter("email")
-            val verified = deepLinkUri.getQueryParameter("verified")
-            val token = deepLinkUri.getQueryParameter("token")
-            val from = deepLinkUri.getQueryParameter("from")
-
-            // 여기서 서버 검증 호출 가능
-            if (verified == "true") {
-                Log.d("EmailVerify","$email\n$verified\n$token\n$from")
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.signup_container,ProfileSetupFragment())
-                    .commitAllowingStateLoss()
-                // 인증 통과 → 대상 프래그먼트 이동
-            } else {
-                // 검증 실패 처리 (에러 안내 화면 등)
-            }
-        }
-    }
-
-
 
     /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
     private fun goToProfileSetup(emailParam: String) {

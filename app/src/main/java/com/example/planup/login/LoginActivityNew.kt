@@ -42,7 +42,22 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var service: UserController //API 연동
     var isPwVisible: Boolean = false //비밀번호 가리기 설정 버튼
 
-
+    /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) { // 현재 포커스가 EditText일 경우만
+                    val outRect = android.graphics.Rect()
+                    view.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        view.clearFocus()
+                        hideKeyboard() // 키보드 숨김
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
