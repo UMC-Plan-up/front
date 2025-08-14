@@ -2,6 +2,7 @@ package com.example.planup.main.my.ui
 
 import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.graphics.drawable.ColorDrawable
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.goal.GoalActivity
 import com.example.planup.login.LoginActivityNew
 import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
@@ -61,6 +63,11 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, HomeFragment())
                 .commitAllowingStateLoss()
+        }
+
+        binding.mypageMainImageCv.setOnClickListener{
+            val intent = Intent(context as MainActivity, GoalActivity::class.java)
+            startActivity(intent)
         }
 
         /*프로필 사진 변경*/
@@ -184,7 +191,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         //닉네임, 오늘 날짜 출력하기
         dialog.findViewById<TextView>(R.id.popup_benefit_explain_tv).text = getString(
             R.string.popup_benefit_explain,
-            prefs.getString("nickName","null"),
+            prefs.getString("nickname","null"),
             today)
         //확인버틍으로 팝업 끄기
         dialog.findViewById<TextView>(R.id.popup_benefit_ok_btn).setOnClickListener {

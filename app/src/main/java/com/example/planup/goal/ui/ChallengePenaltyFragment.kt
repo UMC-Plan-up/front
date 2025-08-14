@@ -58,8 +58,8 @@ class ChallengePenaltyFragment : Fragment() {
                     && binding.challengePenaltyEnterEt.text.toString().length <= 30){
                     //직접 입력한 페널티가 30자 이내인 경우만 입력 가능
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
-                    binding.challengePenaltyCompleteBtn.isActivated = true //완료 버튼 활성화
-                    binding.challengePenaltyNextBtn.isActivated = true //다음 버튼 활성화
+                    binding.challengePenaltyCompleteBtn.isActivated = true //완료 버튼 비활성화
+                    binding.challengePenaltyNextBtn.isActivated = false //다음 버튼 활성화
                 } else if(binding.challengePenaltyEnterEt.text.length<1){
                     //페널티 입력되지 않은 경우 버튼 비활성화
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
