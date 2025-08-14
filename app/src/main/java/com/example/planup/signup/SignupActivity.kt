@@ -21,7 +21,6 @@ class SignupActivity : AppCompatActivity() {
     var inviteCode: String? = null
     var agreements: List<Agreement>? = null
 
-    private var deepLinkHandled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

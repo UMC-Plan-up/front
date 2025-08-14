@@ -75,24 +75,54 @@ class ParticipantLimitFragment : Fragment() {
                     putString("goalOwnerName", goalOwnerName)
                 }
             }
-            (requireActivity() as GoalActivity)
-                .navigateToFragment(goalDetailFragment)
+            val ga = activity as? GoalActivity
+            if (ga != null) {
+                ga.navigateToFragment(goalDetailFragment)
+            } else {
+                val containerId = (view?.parent as? ViewGroup)?.id
+                if (containerId != null && containerId != View.NO_ID) {
+                    parentFragmentManager.beginTransaction()
+                        .replace(containerId, goalDetailFragment)
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(android.R.id.content, goalDetailFragment)
+                        .addToBackStack(null)
+                        .commitAllowingStateLoss()
+                }
+            }
         }
 
         // 다음 버튼 → PushAlertFragment 이동
         binding.nextButton.setOnClickListener {
             if (isInputValid) {
-                val activity = requireActivity() as GoalActivity
-
-                activity.limitFriendCount =
-                    binding.participantLimitEditText.text.toString().toIntOrNull() ?: 0
-
+                val limit = binding.participantLimitEditText.text.toString().toIntOrNull() ?: 0
                 val pushAlertFragment = PushAlertFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalOwnerName)
+                        putInt("limitFriendCount", limit)
                     }
                 }
-                activity.navigateToFragment(pushAlertFragment)
+
+                val ga = activity as? GoalActivity
+                if (ga != null) {
+                    ga.limitFriendCount = limit
+                    ga.navigateToFragment(pushAlertFragment)
+                } else {
+                    val containerId = (view?.parent as? ViewGroup)?.id
+                    if (containerId != null && containerId != View.NO_ID) {
+                        parentFragmentManager.beginTransaction()
+                            .replace(containerId, pushAlertFragment)
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .replace(android.R.id.content, pushAlertFragment)
+                            .addToBackStack(null)
+                            .commitAllowingStateLoss()
+                    }
+                }
             }
         }
     }

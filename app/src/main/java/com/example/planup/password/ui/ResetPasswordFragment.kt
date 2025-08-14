@@ -172,8 +172,8 @@ class ResetPasswordFragment : Fragment() {
     private fun updateConditionColor(icon: ImageView, textView: TextView, isValid: Boolean) {
         val context = requireContext()
         if (isValid) {
-            icon.setColorFilter(ContextCompat.getColor(context, R.color.green_200))
-            textView.setTextColor(ContextCompat.getColor(context, R.color.green_200))
+            icon.setColorFilter(ContextCompat.getColor(context, R.color.medium_sea_green))
+            textView.setTextColor(ContextCompat.getColor(context, R.color.medium_sea_green))
         } else {
             icon.setColorFilter(ContextCompat.getColor(context, R.color.black_300))
             textView.setTextColor(ContextCompat.getColor(context, R.color.black_300))
