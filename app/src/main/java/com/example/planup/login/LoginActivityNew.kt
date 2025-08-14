@@ -5,7 +5,6 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -19,19 +18,26 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
+import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.UserController
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
-import org.w3c.dom.Text
+import com.example.planup.signup.data.KakaoLoginRequest
+import com.kakao.sdk.auth.AuthCodeClient
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var binding: ActivityLoginBinding
@@ -42,7 +48,35 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var service: UserController //API 연동
     var isPwVisible: Boolean = false //비밀번호 가리기 설정 버튼
 
+    /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) { // 현재 포커스가 EditText일 경우만
+                    val outRect = android.graphics.Rect()
+                    view.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        view.clearFocus()
+                        hideKeyboard(view) // 키보드 숨김 (수정)
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
 
+    // 혹시 dispatchTouchEvent에서 놓치는 경우 보완
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) {
+                    view.clearFocus()
+                    hideKeyboard(view)
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +89,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                 currentFocus?.let { view ->
                     if (view is EditText) {
                         view.clearFocus()
-                        hideKeyboard()
+                        hideKeyboard(view)
                     }
                 }
                 v.performClick()
@@ -63,13 +97,15 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             true
         }
     }
-    private fun init(){
+
+    private fun init() {
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
         service = UserController()
         service.setLoginAdapter(this)
     }
-    private fun clickListener(){
+
+    private fun clickListener() {
         // 로그인 버튼
         binding.loginButton.setOnClickListener { checkLogin() }
 
@@ -106,24 +142,30 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         binding.emailDropdownIcon.setOnClickListener {
             showEmailDomainPopup()
         }
+
+        // 카카오 로그인 버튼
+        binding.kakaoLoginLayout.setOnClickListener {
+            onClickKakaoLogin()
+        }
     }
-    private fun checkLogin(){
+
+    private fun checkLogin() {
         //이메일 형식이 옳바르지 않은 경우
-        if (!Patterns.EMAIL_ADDRESS.matcher(binding.emailEditText.text.toString()).matches()){
+        if (!Patterns.EMAIL_ADDRESS.matcher(binding.emailEditText.text.toString()).matches()) {
             makeToast(R.string.toast_incorrect_email)
             return
-        }
-        else{ //이메일 형식이 옳바른 경우 서버에 로그인 요청
+        } else { //이메일 형식이 옳바른 경우 서버에 로그인 요청
             service.loginService(
                 LoginDto(
-                binding.emailEditText.text.toString(),
-                binding.passwordEditText.text.toString()
-            ))
+                    binding.emailEditText.text.toString(),
+                    binding.passwordEditText.text.toString()
+                )
+            )
         }
     }
 
     //이메일 입력 시 도메인 자동 입력 드롭다운
-    private fun showEmailDomainPopup(){
+    private fun showEmailDomainPopup() {
         val popupView = layoutInflater.inflate(R.layout.popup_email, null)
         popupView.measure(
             View.MeasureSpec.UNSPECIFIED,
@@ -165,36 +207,40 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         val offsetX = binding.emailEditText.width - popupWidth
         popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
+
     //비밀번호 입력 결과에 따른 토스트메시지
-    private fun makeToast(message: Int){
+    private fun makeToast(message: Int) {
         val inflater = LayoutInflater.from(this)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(message)
 
         val toast = Toast(this)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,700)
+        toast.setGravity(Gravity.BOTTOM, 0, 700)
         toast.show()
     }
+
     //화면 터치 시 키보드 사라지게
-    private fun hideKeyboard() {
+    private fun hideKeyboard(view: View?) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+        view?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
     }
 
     //로그인 통신 성공
     override fun successLogin(loginResult: Login) {
 
-        when(loginResult.message) {
+        when (loginResult.message) {
             "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email) //등록되지 않은 이메일
             "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password) //비밀번호 불일치
             else -> {
                 //토큰 등록
                 App.jwt.token = "Bearer " + loginResult.accessToken
                 //sharedPrefs에 기본 정보 저장
-                editor.putString("accessToken",loginResult.accessToken)
-                editor.putString("nickname",loginResult.nickname)
+                editor.putString("accessToken", loginResult.accessToken)
+                editor.putString("nickname", loginResult.nickname)
                 editor.putString("profileImg", loginResult.profileImage)
                 //유저정보 받아오기
                 service.setUserInfoAdapter(this)
@@ -202,39 +248,112 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             }
         }
     }
+
     //로그인 통신 실패 -> 토스트 메시지 출력
     override fun failLogin(message: String) {
         val inflater = LayoutInflater.from(this)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(this)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
 
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
-        editor.putInt("userId",user.id)
-        editor.putString("email",user.email)
-        editor.putString("nickname",user.nickname)
-        editor.putString("profileImg",user.profileImage)
+        editor.putInt("userId", user.id)
+        editor.putString("email", user.email)
+        editor.putString("nickname", user.nickname)
+        editor.putString("profileImg", user.profileImage)
         editor.apply()
-        val intent = Intent(this,MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
+
     //유저 정보 요청 통신 실패 -> 토스트 메시지 출력
     override fun failUserInfo(message: String) {
         val inflater = LayoutInflater.from(this)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(this)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
+    }
+
+    private fun toast(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    // 카카오 인가코드 얻기
+    private suspend fun getKakaoAuthorizationCode(): String =
+        suspendCancellableCoroutine { cont ->
+            val callback: (String?, Throwable?) -> Unit = { code, error ->
+                if (error != null) cont.resumeWithException(error)
+                else cont.resume(code ?: "")
+            }
+
+            val client = AuthCodeClient.instance
+            if (client.isKakaoTalkLoginAvailable(this@LoginActivityNew)) {
+                client.authorizeWithKakaoTalk(this@LoginActivityNew, callback = callback)
+            } else {
+                client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
+            }
+        }
+
+    // 토큰 저장
+    private fun saveToken(token: String) {
+        getSharedPreferences("auth", MODE_PRIVATE)
+            .edit().putString("accessToken", token).apply()
+    }
+
+    // 메인 이동
+    private fun goToMain() {
+        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
+        finish()
+    }
+
+    // 카카오 로그인 실행
+    private fun onClickKakaoLogin() {
+        lifecycleScope.launch {
+            try {
+                val code = getKakaoAuthorizationCode()
+
+                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
+                val body = resp.body()
+
+
+                if (resp.isSuccessful && body?.isSuccess == true) {
+                    val r = body.result
+                    if (r.newUser) {
+                        startActivity(
+                            Intent(this@LoginActivityNew, SignupActivity::class.java).apply {
+                                putExtra("provider", "KAKAO")
+                                putExtra("tempUserId", r.tempUserId ?: "")
+                                putExtra("email", r.userInfo?.email)
+                                putExtra("profileImg", r.userInfo?.profileImg)
+                            }
+                        )
+                    } else {
+                        // 기존 유저 → 토큰 저장 후 메인
+                        val token = r.accessToken ?: run {
+                            toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
+                            return@launch
+                        }
+                        saveToken(token)
+                        goToMain()
+                    }
+                } else {
+                    toast(body?.message ?: "로그인 실패(${resp.code()})")
+                }
+            } catch (e: Exception) {
+                toast("카카오 인증 실패: ${e.localizedMessage}")
+            }
+        }
     }
 }

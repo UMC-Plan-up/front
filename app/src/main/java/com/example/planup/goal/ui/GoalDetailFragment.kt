@@ -15,7 +15,7 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.databinding.FragmentGoalDetailBinding // 뷰 바인딩 클래스 import
+import com.example.planup.databinding.FragmentGoalDetailBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
 
@@ -32,6 +32,8 @@ class GoalDetailFragment : Fragment() {
     private var selectedYear: String? = null
     private var selectedMonth: String? = null
     private var selectedDay: String? = null
+
+    private var selectedEndButton: AppCompatButton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +52,6 @@ class GoalDetailFragment : Fragment() {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        // 닉네임 반영
         binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
         val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
@@ -64,22 +65,23 @@ class GoalDetailFragment : Fragment() {
         setupBackButton()
         setupPeriodButtons()
         setupFrequencyInput()
+        setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
 
-        binding.root.setOnTouchListener { _, event ->
-            if (event.action == android.view.MotionEvent.ACTION_DOWN &&
-                binding.frequencyInputEditText.isFocused
-            ) {
-                binding.frequencyInputEditText.clearFocus()
-                hideKeyboard()
+        binding.root.setOnTouchListener { v, event ->
+            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                val focused = requireActivity().currentFocus
+                if (focused != null) {
+                    focused.clearFocus()
+                    hideKeyboard()
+                }
             }
-            binding.root.performClick()
+            v.performClick()
             false
         }
     }
 
-    /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupBackButton() {
         binding.backIcon.setOnClickListener {
             when (selectedMethod) {
@@ -89,8 +91,8 @@ class GoalDetailFragment : Fragment() {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-                    (requireActivity() as GoalActivity)
-                        .navigateToFragment(timerFragment)
+                    (activity as? GoalActivity)?.navigateToFragment(timerFragment)
+                        ?: requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
                 "PICTURE" -> {
                     val certFragment = CertificationMethodFragment().apply {
@@ -98,15 +100,14 @@ class GoalDetailFragment : Fragment() {
                             putString("goalOwnerName", goalOwnerName)
                         }
                     }
-                    (requireActivity() as GoalActivity)
-                        .navigateToFragment(certFragment)
+                    (activity as? GoalActivity)?.navigateToFragment(certFragment)
+                        ?: requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
                 else -> requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
     }
 
-    /* 기준 기간 버튼 선택 */
     private fun setupPeriodButtons() {
         val buttons = listOf(
             binding.dayOptionDailyButton,
@@ -124,19 +125,16 @@ class GoalDetailFragment : Fragment() {
         }
     }
 
-    /* 선택된 버튼 */
     private fun selectButtonStyle(button: AppCompatButton) {
         button.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_200))
         button.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_selected_blue)
     }
 
-    /* 선택 해제된 버튼 */
     private fun resetButtonStyle(button: AppCompatButton) {
         button.setTextColor(ContextCompat.getColor(requireContext(), R.color.black_300))
-        button.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_no)
+        button.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_no)
     }
 
-    /* 빈도 입력 */
     private fun setupFrequencyInput() {
         binding.frequencyInputEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
             if (source.matches(Regex("[0-9]*"))) source else ""
@@ -160,14 +158,7 @@ class GoalDetailFragment : Fragment() {
         })
     }
 
-    /* 직접 설정하기 */
     private fun setupDirectSetSection() {
-        binding.directSetButton.setOnClickListener {
-            binding.dropdownContainer1.visibility = View.VISIBLE
-            binding.dropdownContainer2.visibility = View.VISIBLE
-            binding.dropdownContainer3.visibility = View.VISIBLE
-        }
-
         val years = buildYearItems()
         val months = buildMonthItems()
         val days = buildDayItems()
@@ -194,22 +185,55 @@ class GoalDetailFragment : Fragment() {
         binding.dropdownDayIv.setOnClickListener { binding.dropdownContainer3.performClick() }
     }
 
-    // 연도
+    private fun setupEndOptionButtons() {
+        val buttons = listOf(
+            binding.endOption1WeekButton,
+            binding.endOption1MonthButton,
+            binding.endOption3MonthButton,
+            binding.endOption6MonthButton,
+            binding.endOption1YearButton,
+            binding.directSetButton
+        )
+
+        buttons.forEach { button ->
+            button.setOnClickListener {
+                selectedEndButton?.let { resetButtonStyle(it) }
+                selectButtonStyle(button)
+                selectedEndButton = button
+
+                if (button == binding.directSetButton) {
+                    binding.dropdownContainer1.visibility = View.VISIBLE
+                    binding.dropdownContainer2.visibility = View.VISIBLE
+                    binding.dropdownContainer3.visibility = View.VISIBLE
+                } else {
+                    binding.dropdownContainer1.visibility = View.GONE
+                    binding.dropdownContainer2.visibility = View.GONE
+                    binding.dropdownContainer3.visibility = View.GONE
+                    selectedYear = null
+                    selectedMonth = null
+                    selectedDay = null
+                    binding.challengeYearTv.text = getString(R.string.year)
+                    binding.challengeMonthTv.text = getString(R.string.month)
+                    binding.challengeDayTv.text = getString(R.string.day)
+                }
+
+                updateNextButtonState()
+            }
+        }
+    }
+
     private fun buildYearItems(): ArrayList<String> {
         return (2025..2035).map { it.toString() }.toCollection(ArrayList())
     }
 
-    // 월
     private fun buildMonthItems(): ArrayList<String> {
         return (1..12).map { String.format("%02d", it) }.toCollection(ArrayList())
     }
 
-    // 일
     private fun buildDayItems(): ArrayList<String> {
         return (1..31).map { String.format("%02d", it) }.toCollection(ArrayList())
     }
 
-    /* 드롭다운 표시 */
     private fun showDropdown(
         items: ArrayList<String>,
         anchor: View,
@@ -229,7 +253,7 @@ class GoalDetailFragment : Fragment() {
             ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
         )
         popupWindow.elevation = 8f
-        popupWindow.width = anchor.width
+        popupWindow.width = ViewGroup.LayoutParams.WRAP_CONTENT
 
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).apply {
             val adapter = TimerRVAdapter(items)
@@ -248,15 +272,11 @@ class GoalDetailFragment : Fragment() {
         popupWindow.showAsDropDown(anchor, 0, 0)
     }
 
-    /* 다음 버튼 활성화 조건 */
     private fun updateNextButtonState() {
         val isPeriodSelected = selectedPeriodButton != null
-        val isDateOk =
-            if (binding.dropdownContainer1.visibility == View.VISIBLE) {
-                selectedYear != null && selectedMonth != null && selectedDay != null
-            } else true
+        val isReady = isPeriodSelected && isFrequencyValid
 
-        binding.nextButton.isEnabled = isPeriodSelected && isFrequencyValid && isDateOk
+        binding.nextButton.isEnabled = isReady
 
         if (binding.nextButton.isEnabled) {
             binding.nextButton.background =
@@ -273,25 +293,50 @@ class GoalDetailFragment : Fragment() {
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
-    /* 다음 버튼 → ParticipantLimitFragment 이동 */
     private fun setupNextButton() {
         binding.nextButton.setOnClickListener {
             if (binding.nextButton.isEnabled) {
-                val activity = requireActivity() as GoalActivity
-
-                activity.verificationType = selectedMethod ?: ""
-                activity.period = selectedPeriodButton?.text?.toString() ?: ""
-                activity.frequency =
-                    binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
-
-                val participantFragment = ParticipantLimitFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("goalOwnerName", goalOwnerName)
-                    }
-                }
-                activity.navigateToFragment(participantFragment)
+                goToParticipantAlways()
             }
         }
+    }
+
+    private fun goToParticipantAlways() {
+        val verificationType = selectedMethod.orEmpty()
+        val period = selectedPeriodButton?.text?.toString().orEmpty()
+        val frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
+
+        val participantFragment = ParticipantLimitFragment().apply {
+            arguments = Bundle().apply {
+                putString("goalOwnerName", goalOwnerName)
+                putString("verificationType", verificationType)
+                putString("period", period)
+                putInt("frequency", frequency)
+            }
+        }
+
+        val goalActivity = activity as? GoalActivity
+        if (goalActivity != null) {
+            goalActivity.verificationType = verificationType
+            goalActivity.period = period
+            goalActivity.frequency = frequency
+            goalActivity.navigateToFragment(participantFragment)
+            return
+        }
+
+        val containerId = (view?.parent as? ViewGroup)?.id
+        if (containerId != null && containerId != View.NO_ID) {
+            parentFragmentManager.beginTransaction()
+                .replace(containerId, participantFragment)
+                .addToBackStack(null)
+                .commit()
+            return
+        }
+
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(android.R.id.content, participantFragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
     }
 
     override fun onDestroyView() {

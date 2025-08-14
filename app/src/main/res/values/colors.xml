@@ -7,6 +7,7 @@
     <color name="accent2">#5383E3</color>
     <color name="accent3">#5C91FC</color>
     <color name="accent4">#CCDDFE</color>
+    <color name="accent5">#E9F0FF</color>
 
     <color name="semantic">#00000033</color>
     <color name="semanticB1">#000000</color>
@@ -23,6 +24,7 @@
     <color name="information1">#395A5A</color>
     <color name="information2">#D7EEEE</color>
     <color name="green_300">#395A5A</color>
+    <color name="medium_sea_green">#3CB371</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

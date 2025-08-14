@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentSubscriptionPlanBinding
 import com.example.planup.main.MainActivity
-import androidx.core.os.postDelayed
 import com.example.planup.goal.ui.GoalDetailFragment
+import com.example.planup.signup.SignupActivity // ⭐ SignupActivity에서 닉네임을 가져오기 위해 import
 
 class SubscriptionPlanFragment : Fragment() {
     private lateinit var binding: FragmentSubscriptionPlanBinding
@@ -26,7 +26,7 @@ class SubscriptionPlanFragment : Fragment() {
 
     private fun clickListener() {
         binding.backIcon.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, GoalFragment())
                 .commitAllowingStateLoss()
         }
@@ -47,20 +47,22 @@ class SubscriptionPlanFragment : Fragment() {
     }
 
     private fun navigateToGoalDetailFragment() {
-        // GoalDetailFragment로 이동하기 전에 Bundle에 데이터 추가
+        val nicknameFromSignup = (activity as? SignupActivity)?.nickname
+        val goalOwnerName = nicknameFromSignup?.takeIf { it.isNotBlank() } ?: "사용자"
+
         val goalDetailFragment = GoalDetailFragment().apply {
             arguments = Bundle().apply {
-                // 이 화면에서 넘어왔을 때 goalContainer를 숨기도록 설정
                 putBoolean("HIDE_GOAL_CONTAINER", true)
+                putString("goalOwnerName", goalOwnerName)
             }
         }
 
         binding.root.postDelayed({
-            (context as MainActivity).supportFragmentManager.beginTransaction()
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, goalDetailFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
-        }, 2000L)
+        }, 1500L)
     }
 
     private fun resetCardBackgrounds() {
