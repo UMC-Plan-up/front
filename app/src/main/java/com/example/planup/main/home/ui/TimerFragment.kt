@@ -41,11 +41,12 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val selectedDate = arguments?.getString("selectedDate")
+        val events = arguments?.getStringArrayList("events") ?: arrayListOf()
         val dateTv = binding.goalListTextDateTv
         val formattedDate = selectedDate?.replace("-", ".")
         dateTv.text = formattedDate
 
-        setupSpinner()
+        setupSpinner(events)
         setupCameraPopup()
         setupTimerButton()
 
@@ -62,19 +63,25 @@ class TimerFragment : Fragment() {
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
+
+        val backBtn = binding.goalListBackBtn
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
-    private fun setupSpinner() {
+    private fun setupSpinner(events: List<String>) {
         val spinner: Spinner = binding.goalListSpinner
 
-        ArrayAdapter.createFromResource(
+        // 전달받은 이벤트 목록으로 어댑터 생성
+        val adapter = ArrayAdapter(
             requireContext(),
-            R.array.goal_list_spinner_dropdown,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
+            android.R.layout.simple_spinner_item,
+            events
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(

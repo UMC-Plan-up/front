@@ -60,6 +60,15 @@ class HomeFragment : Fragment() {
         CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
         CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
+    private val dailyToDos = listOf(
+        DailyToDo("공부", 75, 5),
+        DailyToDo("독서", 100, 5),
+        DailyToDo("운동", 50, 3)
+    )
+    private val dummyData = listOf(
+        FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
+        FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
+    )
 
     private lateinit var friendList : List<FriendInfo>
 
@@ -83,11 +92,7 @@ class HomeFragment : Fragment() {
         dailyRecyclerVIew.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        val dailyToDos = listOf(
-            DailyToDo("공부", 75, 5),
-            DailyToDo("독서", 100, 5),
-            DailyToDo("운동", 50, 3)
-        )
+
 
         dailyAdapter = DailyToDoAdapter(dailyToDos)
         dailyRecyclerVIew.adapter = dailyAdapter
@@ -98,10 +103,7 @@ class HomeFragment : Fragment() {
         friendRecyclerView = binding.homeFriendChallengeRv
         friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val dummyData = listOf(
-            FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
-            FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
-        )
+
 
         friendAdapter = FriendChallengeAdapter(dummyData)
         friendRecyclerView.adapter = friendAdapter
@@ -121,10 +123,10 @@ class HomeFragment : Fragment() {
             monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
         }
 
-        calendarView.dayBinder = object : MonthDayBinder<CalendarActivity.DayViewContainer> {
+        calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
 
-            override fun bind(container: CalendarActivity.DayViewContainer, data: CalendarDay) {
+            override fun bind(container: DayViewContainer, data: CalendarDay) {
                 val date = data.date
                 container.textView.text = date.dayOfMonth.toString()
 
@@ -165,9 +167,25 @@ class HomeFragment : Fragment() {
         Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
         fragmentTimer.arguments = bundle
         fab.setOnClickListener {
+            val eventsForDate = getEventsForDate(selectedDate) // 선택한 날짜의 일정 리스트 가져오기
+
+            val bundle = Bundle().apply {
+                putString("selectedDate", selectedDate.toString())
+
+                // 일정 이름 리스트만 전달 (필요하다면 startDate, endDate도 함께 전달 가능)
+                putStringArrayList(
+                    "events",
+                    ArrayList(eventsForDate.map { it.title }) // CalendarEvent.name 사용
+                )
+            }
+
+            val fragmentTimer = TimerFragment().apply {
+                arguments = bundle
+            }
+
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_container, fragmentTimer)
-                .addToBackStack(null)  // 뒤로 가기 가능하게 하려면 필요
+                .addToBackStack(null)
                 .commit()
         }
     }
@@ -230,6 +248,7 @@ class HomeFragment : Fragment() {
                     // goals 리스트를 RecyclerView 등에 표시
                     for (goal in goals) {
                         Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
+                        eventList+(CalendarEvent(goal.goalName, LocalDate.now(), LocalDate.now()))
                         //
                     }
                 } else {

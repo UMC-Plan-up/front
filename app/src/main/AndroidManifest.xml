@@ -63,7 +63,7 @@
         </activity>
 
         <activity
-            android:name=".login.ui.LoginActivity"
+            android:name=".login.LoginActivityNew"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".password.ResetPasswordActivity" />
