@@ -1,5 +1,6 @@
 package com.example.planup.main.my.ui
 
+import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
@@ -7,12 +8,14 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
@@ -21,6 +24,9 @@ import com.example.planup.login.LoginActivityNew
 import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.network.controller.UserController
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MypageFragment : Fragment(), ServiceAlertAdapter {
     lateinit var binding: FragmentMypageBinding
@@ -59,7 +65,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
 
         /*프로필 사진 변경*/
         binding.mypageMainRewriteIv.setOnClickListener{
-            showPopupMenu(binding.mypageMainRewriteIv)
+            showDropdown(binding.mypageMainRewriteIv)
         }
 
         /*닉네임 변경*/
@@ -129,7 +135,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
     }
 
     /*프로필 사진 재설정 드로다운 메뉴*/
-    private fun showPopupMenu(view : View) {
+    private fun showDropdown(view : View) {
 
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.dropdown_profile, null)
@@ -161,10 +167,37 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
 
     }
 
+    //마케팅 수신 동의하는 경우 팝업 메시지
+    private fun alertAgreementPopup(view: Int){
+        val dialog = Dialog(context as MainActivity)
+        val today = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
+        dialog.setContentView(view)
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            setGravity(Gravity.CENTER)
+        }
+        //팝업 바깥 부분 터치하는 경우 팝업 끄기
+        dialog.setCanceledOnTouchOutside(true)
+        //닉네임, 오늘 날짜 출력하기
+        dialog.findViewById<TextView>(R.id.popup_benefit_explain_tv).text = getString(
+            R.string.popup_benefit_explain,
+            prefs.getString("nickName","null"),
+            today)
+        //확인버틍으로 팝업 끄기
+        dialog.findViewById<TextView>(R.id.popup_benefit_ok_btn).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
     override fun successServiceSetting(condition: Boolean) {
         if (condition){ //condition==true: 토글 켜기
             binding.mypageAlertBenefitOnIv.visibility = View.VISIBLE
             binding.mypageAlertBenefitOffIv.visibility = View.GONE
+            alertAgreementPopup(R.layout.popup_benefit_agree)
         }else{ //condition == false: 토글 끄기
             binding.mypageAlertBenefitOnIv.visibility = View.GONE
             binding.mypageAlertBenefitOffIv.visibility = View.VISIBLE

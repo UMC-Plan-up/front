@@ -3,6 +3,7 @@ package com.example.planup.main.my.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.planup.R
 import com.example.planup.databinding.ItemMypageBlockFriendBinding
 import com.example.planup.main.my.data.BlockedFriend
 
@@ -42,8 +43,8 @@ class BlockFriendRVAdapter(private val friendList: ArrayList<BlockedFriend>):Rec
     inner class ViewHolder(val binding: ItemMypageBlockFriendBinding):RecyclerView.ViewHolder(binding.root){
 
         fun bind(blockFriend: BlockedFriend){
-            binding.friendBlockNameTv.setText(blockFriend.name)
-            binding.friendBlockProfileIv.setImageResource(blockFriend.profile)
+            binding.friendBlockNameTv.text = blockFriend.name
+            binding.friendBlockProfileIv.setImageResource(R.drawable.profile_example)
         }
     }
 }

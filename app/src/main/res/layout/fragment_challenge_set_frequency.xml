@@ -38,7 +38,7 @@
         android:layout_marginTop="10dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_monday_cl"
+        android:id="@+id/photo_first_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
@@ -47,124 +47,124 @@
         android:layout_marginTop="38dp"
         android:layout_marginStart="20dp">
         <TextView
-            android:id="@+id/photo_monday_tv"
+            android:id="@+id/photo_first_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/30 (월)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_tuesday_cl"
+        android:id="@+id/photo_second_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
-        app:layout_constraintStart_toEndOf="@id/photo_monday_cl"
+        app:layout_constraintStart_toEndOf="@id/photo_first_day_cl"
         app:layout_constraintTop_toBottomOf="@id/photo_due_tv"
         android:layout_marginTop="38dp"
         android:layout_marginStart="5dp">
         <TextView
-            android:id="@+id/photo_tuesday_tv"
+            android:id="@+id/photo_second_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (화)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_wednesday_cl"
+        android:id="@+id/photo_third_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
-        app:layout_constraintStart_toEndOf="@id/photo_tuesday_cl"
+        app:layout_constraintStart_toEndOf="@id/photo_second_day_cl"
         app:layout_constraintTop_toBottomOf="@id/photo_due_tv"
         android:layout_marginTop="38dp"
         android:layout_marginStart="5dp">
         <TextView
-            android:id="@+id/photo_wednesday_tv"
+            android:id="@+id/photo_third_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (수)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_thursday_cl"
+        android:id="@+id/photo_fourth_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
-        app:layout_constraintStart_toEndOf="@id/photo_wednesday_cl"
+        app:layout_constraintStart_toEndOf="@id/photo_third_day_cl"
         app:layout_constraintTop_toBottomOf="@id/photo_due_tv"
         android:layout_marginTop="38dp"
         android:layout_marginStart="5dp">
         <TextView
-            android:id="@+id/photo_thursday_tv"
+            android:id="@+id/photo_fourth_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (목)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_friday_cl"
+        android:id="@+id/photo_fifth_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photo_monday_cl"
+        app:layout_constraintTop_toBottomOf="@id/photo_first_day_cl"
         android:layout_marginTop="10dp"
         android:layout_marginStart="20dp">
         <TextView
-            android:id="@+id/photo_friday_tv"
+            android:id="@+id/photo_fifth_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (금)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_saturday_cl"
+        android:id="@+id/photo_sixth_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
-        app:layout_constraintStart_toEndOf="@id/photo_friday_cl"
-        app:layout_constraintTop_toBottomOf="@id/photo_tuesday_cl"
+        app:layout_constraintStart_toEndOf="@id/photo_fifth_day_cl"
+        app:layout_constraintTop_toBottomOf="@id/photo_second_day_cl"
         android:layout_marginTop="10dp"
         android:layout_marginStart="5dp">
         <TextView
-            android:id="@+id/photo_saturday_tv"
+            android:id="@+id/photo_sixth_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (토)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
             android:textColor="@color/black_300"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/photo_sunday_cl"
+        android:id="@+id/photo_seventh_day_cl"
         android:layout_width="70dp"
         android:layout_height="36dp"
         android:background="@drawable/bg_photo_day_selector"
-        app:layout_constraintStart_toEndOf="@id/photo_saturday_cl"
-        app:layout_constraintTop_toBottomOf="@id/photo_wednesday_cl"
+        app:layout_constraintStart_toEndOf="@id/photo_sixth_day_cl"
+        app:layout_constraintTop_toBottomOf="@id/photo_third_day_cl"
         android:layout_marginTop="10dp"
         android:layout_marginStart="5dp">
         <TextView
-            android:id="@+id/photo_sunday_tv"
+            android:id="@+id/photo_seventh_day_tv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="7/31 (일)"
+            android:text=""
             style="@style/Typography_S_Medium"
             android:textAlignment="center"
             android:gravity="center"
@@ -179,7 +179,7 @@
         android:text="@string/duration"
         android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photo_friday_cl"
+        app:layout_constraintTop_toBottomOf="@id/photo_fifth_day_cl"
         android:layout_marginStart="20dp"
         android:layout_marginTop="48dp"/>
     <TextView
