@@ -9,7 +9,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.planup.databinding.ActivitySplashBinding
 import com.example.planup.login.LoginActivityNew
 
-class SplashActivity : AppCompatActivity() {
+class  SplashActivity : AppCompatActivity() {
 
     private var binding: ActivitySplashBinding? = null
 

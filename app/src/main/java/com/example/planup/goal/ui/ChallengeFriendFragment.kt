@@ -61,7 +61,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
         }
         //완료 버튼: 챌린지 참여 완료 페이지로 이동
         binding.challengeSendCompleteBtn.setOnClickListener {
-            if (!binding.challengeSendCompleteBtn.isActivated) return@setOnClickListener
+            //if (!binding.challengeSendCompleteBtn.isActivated) return@setOnClickListener
             requestChallenge()
         }
     }

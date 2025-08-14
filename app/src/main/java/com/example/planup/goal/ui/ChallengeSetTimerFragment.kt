@@ -59,30 +59,26 @@ class ChallengeSetTimerFragment : Fragment() {
         }
 
         //타이머 시간 설정
-        binding.challengeTimerHourTv.setOnClickListener { //시간
-            //          binding.challengeTimerHourRv.visibility = View.VISIBLE
+        //시간 드롭다운
+        binding.challengeTimerHourTv.setOnClickListener {
             showDropdown(hours, binding.challengeTimerHourTv, 0)
         }
-        binding.challengeTimerMinuteTv.setOnClickListener { //분
-//            binding.challengeTimerMinuteRv.visibility = View.VISIBLE
+        //분 드롭다운
+        binding.challengeTimerMinuteTv.setOnClickListener {
             showDropdown(minutes, binding.challengeTimerMinuteTv, 1)
         }
-        binding.challengeTimerSecondTv.setOnClickListener { //초
-            //        binding.challengeTimerSecondRv.visibility = View.VISIBLE
+        //초 드롭다운
+        binding.challengeTimerSecondTv.setOnClickListener {
             showDropdown(seconds, binding.challengeTimerSecondTv, 2)
         }
 
         //다음 버튼 -> 페널티 설정 페이지로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
             if (!binding.challengeTimerNextBtn.isActivated) return@setOnClickListener
-            val frequencyFragment = ChallengeSetFrequencyFragment()
-            //종료일, 빈도, 기준기간 설정 화면에서 뒤로가기 눌렀을 때 타이머 설정으로 돌아오기 위해
-            frequencyFragment.arguments = Bundle().apply {
-                putString("previous", "timer")
-            }
-            editor.putInt("targetTime",totalTime)
+            editor.apply()
             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, frequencyFragment)
+                .replace(R.id.goal_container, ChallengeSetFrequencyFragment())
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
     }
@@ -110,15 +106,16 @@ class ChallengeSetTimerFragment : Fragment() {
             binding.errorTv.visibility = View.VISIBLE
         } else {
             binding.errorTv.visibility = View.GONE
+            editor.putInt("targetTime",totalTime)
             binding.challengeTimerNextBtn.isActivated = true
         }
     }
 
-
+    //시간, 분, 초 드롭다운
     private fun showDropdown(
-        items: ArrayList<String>,
-        view: TextView,
-        selected: Int
+        items: ArrayList<String>, //시간
+        view: TextView, //앵커뷰
+        selected: Int //시, 분, 초 중 어느 드롭다운인지 표시
     ) {//리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.item_recycler_dropdown_time, null)
