@@ -8,6 +8,7 @@ import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,7 +97,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             setEndDay(
                 binding.photoFirstDayCl,
                 binding.photoFirstDayTv,
-                1
+                0
             )
         }
 
@@ -105,7 +106,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoSecondDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoSecondDayCl,
                 binding.photoSecondDayTv,
-                2)
+                1)
         }
 
         // 수요일
@@ -113,7 +114,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoThirdDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoThirdDayCl,
                 binding.photoThirdDayTv,
-                3)
+                2)
         }
 
         // 목요일
@@ -121,7 +122,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoFourthDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoFourthDayCl,
                 binding.photoFourthDayTv,
-                4)
+                3)
         }
 
         // 금요일
@@ -129,7 +130,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoFifthDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoFifthDayCl,
                 binding.photoFifthDayTv,
-                5)
+                4)
         }
 
         // 토요일
@@ -137,7 +138,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoSixthDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoSixthDayCl,
                 binding.photoSixthDayTv,
-                6)
+                5)
         }
 
 
@@ -146,7 +147,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
             if (binding.photoSeventhDayCl.isSelected) return@setOnClickListener
             setEndDay(binding.photoSeventhDayCl,
                 binding.photoSeventhDayTv,
-                7)
+                6)
         }
 
         //기준 기간
@@ -170,6 +171,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         //기존 종료일은 회색으로 변경
         val selected = ContextCompat.getColor(context, R.color.blue_200)
         val unselected = ContextCompat.getColor(context, R.color.black_300)
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.KOREAN)
         //이미 다른 요일을 선택한 경우
         if (!isFirst) { //이전 선택 요일 해제
             selectBackground.isSelected = !selectBackground.isSelected
@@ -188,7 +190,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         calendar.add(Calendar.DAY_OF_MONTH,endDay)
         //선택된 종료일 저장
         this.endDay = endDay
-        editor.putString("endDate",calendar.timeInMillis.toString())
+        editor.putString("endDate",sdf.format(calendar.time))
         finish = true
 
         binding.btnNextTv.isActivated = finish && duration && often //다음 버튼 활성화 여부 확인
@@ -242,7 +244,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
                 duration = true
                 popupWindow.dismiss()
                 //기준 기간 저장
-                editor.putInt("timePerPeriod",durations[position].toInt())
+                editor.putString("timePerPeriod",durations[position])
             }
         })
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = adapter

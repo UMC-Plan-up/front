@@ -211,7 +211,13 @@ class ChallengeSetAlertFragment : Fragment() {
         popupWindow.isOutsideTouchable = true //외부 터치 시 사라짐
 
         //앵커뷰 위에 드롭다운 표시
-        popupWindow.showAsDropDown(view,0,0, Gravity.TOP)
+        //팝업 뷰 높이 측정
+        popupView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val popupHeight = popupView.measuredHeight
+        popupWindow.showAsDropDown(view, 0, -(popupHeight + view.height))
 
         //드롭다운 뷰에 사용되는 어댑터 생성 및 설정
         val adapter = TimerRVAdapter(items)
