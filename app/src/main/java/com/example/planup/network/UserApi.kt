@@ -11,6 +11,10 @@ import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeResponse
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
+import com.example.planup.signup.data.KakaoCompleteRequest
+import com.example.planup.signup.data.KakaoCompleteResponse
+import com.example.planup.signup.data.KakaoLoginRequest
+import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
@@ -84,4 +88,16 @@ interface UserApi {
     suspend fun verifyChangeLink(
         @Query("token") token: String
     ): Response<ChangeLinkVerifyResponseDto>
+
+    // 카카오 소셜 인증
+    @POST("/users/auth/kakao")
+    suspend fun kakaoLogin(
+        @Body request: KakaoLoginRequest
+    ): Response<KakaoLoginResponse>
+
+    // 카카오 회원가입 완료
+    @POST("/users/auth/kakao/complete")
+    suspend fun kakaoComplete(
+        @Body body: KakaoCompleteRequest
+    ): Response<KakaoCompleteResponse>
 }

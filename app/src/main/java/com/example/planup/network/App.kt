@@ -1,6 +1,7 @@
 package com.example.planup.network
 
 import android.app.Application
+import com.example.planup.R
 
 class App:Application() {
     companion object {
@@ -10,6 +11,6 @@ class App:Application() {
     override fun onCreate() {
         jwt = TokenManager(applicationContext)
         super.onCreate()
+        com.kakao.sdk.common.KakaoSdk.init(this, getString(R.string.kakao_app_key))
     }
-
 }

@@ -42,7 +42,6 @@ class InviteCodeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 입력창 클릭 불가
         binding.nicknameEditText.isFocusable = false
         binding.nicknameEditText.isClickable = false
         binding.nicknameEditText.isLongClickable = false
@@ -117,7 +116,6 @@ class InviteCodeFragment : Fragment() {
         popupWindow.elevation = 8f
 
 
-        /* TODO : 아직 수정 중 */
         // 카카오톡 공유
         popupBinding.kakaoShareText.setOnClickListener {
             val nickname = (requireActivity() as SignupActivity).nickname
