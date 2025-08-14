@@ -8,8 +8,10 @@ import android.widget.EditText
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentEditGoalDetailBinding
 
 class EditGoalDetailFragment : Fragment(){
+    private lateinit var binding: FragmentEditGoalDetailBinding
     private var goalId: Long = -1L
     private var title: String = ""
     private var oneDose: String = ""
@@ -33,13 +35,14 @@ class EditGoalDetailFragment : Fragment(){
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentEditGoalDetailBinding.inflate(inflater, container, false)
         val view = inflater.inflate(R.layout.fragment_edit_goal_detail, container, false)
 
-        val dailyBtn = view.findViewById<AppCompatButton>(R.id.edit_detail_day_daily_btn)
-        val weeklyBtn = view.findViewById<AppCompatButton>(R.id.edit_detail_day_weekly_btn)
-        val monthlyBtn = view.findViewById<AppCompatButton>(R.id.edit_detail_day_monthly_btn)
-        val frequencyEt = view.findViewById<EditText>(R.id.edit_detail_frequency_et)
-        val nextBtn = view.findViewById<AppCompatButton>(R.id.edit_detail_next_btn)
+        val dailyBtn = binding.editDetailDayDailyBtn
+        val weeklyBtn = binding.editDetailDayWeeklyBtn
+        val monthlyBtn = binding.editDetailDayMonthlyBtn
+        val frequencyEt = binding.editDetailFrequencyEt
+        val nextBtn = binding.editDetailNextBtn
 
         val frequency = frequencyEt.text.toString()
 
@@ -91,7 +94,7 @@ class EditGoalDetailFragment : Fragment(){
                 .commit()
         }
 
-        return view
+        return binding.root
     }
 
 

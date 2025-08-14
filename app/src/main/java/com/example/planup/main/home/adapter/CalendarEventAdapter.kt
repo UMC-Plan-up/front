@@ -17,15 +17,15 @@ class CalendarEventAdapter : RecyclerView.Adapter<CalendarEventAdapter.EventView
     }
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val textView: TextView = itemView.findViewById(R.id.eventText)
+        private val titleText: TextView = itemView.findViewById(R.id.titleText)
 
         fun bind(event: String) {
-            textView.text = event
+            titleText.text = event
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_event, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_calendar_event, parent, false)
         return EventViewHolder(view)
     }
 

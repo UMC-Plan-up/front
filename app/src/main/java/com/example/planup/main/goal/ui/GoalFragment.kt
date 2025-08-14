@@ -44,11 +44,11 @@ class GoalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-        dailyPieChart = view.findViewById(R.id.daily_goal_complete_pc)
+        dailyPieChart = binding.dailyGoalCompletePc
         setupPieChart(dailyPieChart, 70)
 
 
-        recyclerView = view.findViewById(R.id.goal_list_rv)
+        recyclerView = binding.goalListRv
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         val goals = listOf(

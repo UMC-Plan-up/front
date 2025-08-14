@@ -8,20 +8,24 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.example.planup.databinding.ItemFriendTimerBinding
 
 class FriendTimerAdapter(private val friends: List<FriendTimer>) :
     RecyclerView.Adapter<FriendTimerAdapter.FriendViewHolder>() {
 
-    inner class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val profile = view.findViewById<ImageView>(R.id.friend_timer_profile_iv)
-        val nickname = view.findViewById<TextView>(R.id.friend_timer_nickname_tv)
-        val timer = view.findViewById<TextView>(R.id.friend_timer_tv)
+    inner class FriendViewHolder(binding: ItemFriendTimerBinding) : RecyclerView.ViewHolder(binding.root) {
+        val profile = binding.friendTimerProfileIv
+        val nickname = binding.friendTimerNicknameTv
+        val timer = binding.friendTimerTv
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_friend_timer, parent, false)
-        return FriendViewHolder(view)
+        val binding = ItemFriendTimerBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
+        return FriendViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {

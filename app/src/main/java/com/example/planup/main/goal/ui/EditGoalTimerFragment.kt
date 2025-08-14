@@ -9,8 +9,10 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentEditGoalTimerBinding
 
 class EditGoalTimerFragment : Fragment() {
+    private lateinit var binding: FragmentEditGoalTimerBinding
 
     private lateinit var hourSpinner: Spinner
     private lateinit var minuteSpinner: Spinner
@@ -35,11 +37,11 @@ class EditGoalTimerFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_goal_timer, container, false)
 
-        hourSpinner = view.findViewById(R.id.edit_timer_hour_spinner)
-        minuteSpinner = view.findViewById(R.id.edit_timer_minute_spinner)
-        secondSpinner = view.findViewById(R.id.edit_timer_second_spinner)
-        nextBtn = view.findViewById(R.id.edit_timer_next_btn)
-        warningTv = view.findViewById(R.id.edit_timer_warning_tv)
+        hourSpinner = binding.editTimerHourSpinner
+        minuteSpinner = binding.editTimerMinuteSpinner
+        secondSpinner = binding.editTimerSecondSpinner
+        nextBtn = binding.editTimerNextBtn
+        warningTv = binding.editTimerWarningTv
 
         // Spinner 항목 리스트 생성
         val hourList = (0..23).map { it.toString().padStart(2, '0') }

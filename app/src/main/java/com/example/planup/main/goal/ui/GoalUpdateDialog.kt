@@ -11,8 +11,10 @@ import com.example.planup.R
 import android.widget.ImageView
 import android.widget.Button
 import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.databinding.DialogGoalUpdateBinding
 
 class GoalUpdateDialog : DialogFragment() {
+    private lateinit var binding: DialogGoalUpdateBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,15 +22,16 @@ class GoalUpdateDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // 레이아웃 불러오기
+        val binding = DialogGoalUpdateBinding.inflate(inflater, container, false)
         val view = inflater.inflate(R.layout.dialog_goal_update, container, false)
 
         // 닫기 버튼 클릭 이벤트
-        view.findViewById<ImageView>(R.id.goal_update_close_btn).setOnClickListener {
+        binding.goalUpdateCloseBtn.setOnClickListener {
             dismiss()
         }
 
         // 확인 버튼 클릭 이벤트
-        view.findViewById<Button>(R.id.goal_update_check_btn).setOnClickListener {
+        binding.goalUpdateCheckBtn.setOnClickListener {
             // TODO: 세부 페이지로 이동 로직 작성
             dismiss()
         }

@@ -8,10 +8,12 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.databinding.FragmentFriendGoalListBinding
 import com.example.planup.main.home.adapter.FriendGoalListAdapter
 import com.example.planup.main.home.item.FriendGoalListItem
 
 class FriendGoalListFragment : Fragment() {
+    private lateinit var binding: FragmentFriendGoalListBinding
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var goalAdapter: FriendGoalListAdapter
@@ -26,7 +28,7 @@ class FriendGoalListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView = view.findViewById(R.id.friend_goal_list_rv)
+        recyclerView = binding.friendGoalListRv
 
         val sampleItems = listOf(
             FriendGoalListItem("헬스장 가기", "매주 3번 이상", "헬스장 가서 30분 채우고 오기", 85),

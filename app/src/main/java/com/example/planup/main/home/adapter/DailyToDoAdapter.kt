@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import android.widget.TextView
 import com.example.planup.R
+import com.example.planup.databinding.ItemDailyToDoBinding
 import com.example.planup.main.home.data.DailyToDo
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -15,12 +16,12 @@ import com.github.mikephil.charting.data.PieEntry
 
 class DailyToDoAdapter(private val items: List<DailyToDo>) :
     RecyclerView.Adapter<DailyToDoAdapter.ViewHolder>() {
-
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val tvTitle = itemView.findViewById<TextView>(R.id.daily_title_tv)
-        private val tvPercentage = itemView.findViewById<TextView>(R.id.daily_percentage_tv)
-        private val tvDailyRate = itemView.findViewById<TextView>(R.id.daily_rate_tv)
-        private val pieChart = itemView.findViewById<PieChart>(R.id.daily_pieChart_pc)
+    inner class ViewHolder(binding: ItemDailyToDoBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        private val tvTitle = binding.dailyTitleTv
+        private val tvPercentage = binding.dailyPercentageTv
+        private val tvDailyRate = binding.dailyRateTv
+        private val pieChart = binding.dailyPieChartPc
 
         fun bind(item: DailyToDo) {
             tvTitle.text = item.title
@@ -56,9 +57,14 @@ class DailyToDoAdapter(private val items: List<DailyToDo>) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val binding = ItemDailyToDoBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_daily_to_do, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(binding)
     }
 
     override fun getItemCount(): Int = items.size

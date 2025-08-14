@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerBinding
+import com.example.planup.databinding.PopupGoalListCameraBinding
 import com.example.planup.main.home.adapter.FriendTimerAdapter
 import com.example.planup.main.home.data.FriendTimer
 import kotlinx.coroutines.Job
@@ -40,11 +41,12 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val selectedDate = arguments?.getString("selectedDate")
+        val events = arguments?.getStringArrayList("events") ?: arrayListOf()
         val dateTv = binding.goalListTextDateTv
         val formattedDate = selectedDate?.replace("-", ".")
         dateTv.text = formattedDate
 
-        setupSpinner()
+        setupSpinner(events)
         setupCameraPopup()
         setupTimerButton()
 
@@ -61,19 +63,25 @@ class TimerFragment : Fragment() {
         recyclerView.layoutManager =
             LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView.adapter = adapter
+
+        val backBtn = binding.goalListBackBtn
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
     }
 
-    private fun setupSpinner() {
+    private fun setupSpinner(events: List<String>) {
         val spinner: Spinner = binding.goalListSpinner
 
-        ArrayAdapter.createFromResource(
+        // 전달받은 이벤트 목록으로 어댑터 생성
+        val adapter = ArrayAdapter(
             requireContext(),
-            R.array.goal_list_spinner_dropdown,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
+            android.R.layout.simple_spinner_item,
+            events
+        )
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        spinner.adapter = adapter
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -96,9 +104,10 @@ class TimerFragment : Fragment() {
         cameraImageView.setOnClickListener {
             val inflater = LayoutInflater.from(requireContext())
             val popupView = inflater.inflate(R.layout.popup_goal_list_camera, null)
+            val popupBinding = PopupGoalListCameraBinding.bind(popupView)
 
             val popupWindow = PopupWindow(
-                popupView,
+                popupBinding.root,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 true
@@ -108,8 +117,8 @@ class TimerFragment : Fragment() {
             popupWindow.isOutsideTouchable = true
             popupWindow.elevation = 10f
 
-            val takePhoto = popupView.findViewById<TextView>(R.id.take_photo_tv)
-            val chooseGallery = popupView.findViewById<TextView>(R.id.choose_gallery_tv)
+            val takePhoto = popupBinding.takePhotoTv
+            val chooseGallery = popupBinding.chooseGalleryTv
 
             takePhoto.setOnClickListener {
                 Toast.makeText(requireContext(), "사진 찍기 선택", Toast.LENGTH_SHORT).show()

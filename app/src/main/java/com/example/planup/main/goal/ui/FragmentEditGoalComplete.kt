@@ -10,8 +10,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentEditGoalCompleteBinding
 
 class FragmentEditGoalComplete : Fragment() {
+    private lateinit var binding: FragmentEditGoalCompleteBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -19,12 +21,13 @@ class FragmentEditGoalComplete : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // 레이아웃 연결
+        binding = FragmentEditGoalCompleteBinding.inflate(inflater, container, false)
         val view = inflater.inflate(R.layout.fragment_edit_goal_complete, container, false)
 
         val goalId = arguments?.getString("goalId")
         Log.d("FragmentEditGoalComplete", "goalId: $goalId")
         // 완료 버튼 클릭 시 Activity 종료
-        val completeButton = view.findViewById<Button>(R.id.edit_complete_start_btn)
+        val completeButton = binding.editCompleteStartBtn
         completeButton.setOnClickListener {
             // activity를 EditFriendGoalActivity로 캐스팅
             (activity as? EditFriendGoalActivity)?.onGoalEditComplete(true)

@@ -8,8 +8,11 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.databinding.FragmentEditGoalTimerBinding
+import com.example.planup.databinding.FragmentEditGoalTitleBinding
 
 class EditGoalTitleFragment : Fragment() {
+    private lateinit var binding: FragmentEditGoalTitleBinding
 
     private var goalId: Long = -1L
 
@@ -23,11 +26,12 @@ class EditGoalTitleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        binding = FragmentEditGoalTitleBinding.inflate(inflater, container, false)
         val view = inflater.inflate(R.layout.fragment_edit_goal_title, container, false)
 
-        val titleEt = view.findViewById<EditText>(R.id.edit_friend_goal_name_et)
-        val oneDoseEt = view.findViewById<EditText>(R.id.edit_friend_goal_period_et)
-        val nextBtn = view.findViewById<Button>(R.id.edit_friend_goal_next_btn)
+        val titleEt = binding.editFriendGoalNameEt
+        val oneDoseEt = binding.editFriendGoalPeriodEt
+        val nextBtn = binding.editFriendGoalNextBtn
         nextBtn.setOnClickListener {
             val title = titleEt.text.toString()
             val oneDose = oneDoseEt.text.toString()
