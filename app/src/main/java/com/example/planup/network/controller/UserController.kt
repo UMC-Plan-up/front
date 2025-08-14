@@ -11,7 +11,6 @@ import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.ui.ResponseViewer
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.KakaoAccount
 import com.example.planup.network.data.Login
@@ -265,7 +264,7 @@ class UserController {
             ) {
                 if (response.isSuccessful && response.body() != null) {
                     val email = response.body()!!.result.kakaoEmail
-                    kakaoAdapter.successKakao(if (email.isEmpty()) "@" else email)
+                    kakaoAdapter.successKakao(email)
                 } else if (!response.isSuccessful && response.body() != null) {
                     kakaoAdapter.failKakao(response.body()!!.message)
                 } else {

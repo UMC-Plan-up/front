@@ -47,9 +47,14 @@ class MypageKakaoFragment : Fragment(), KakaoAdapter {
         }
     }
 
-    override fun successKakao(kakaoAddr: String) {
-        //연동된 카카오 이메일 계정 전달
-        binding.kakaoTitleTv.text = resources.getText(R.string.kakao_sync, kakaoAddr)
+    override fun successKakao(kakaoAddr: String?) {
+        if (kakaoAddr.isNullOrEmpty()){
+            //카카오톡 연동 페이지로 이동
+
+        } else {
+            //연동된 카카오 이메일 계정 전달
+            binding.kakaoTitleTv.text = resources.getText(R.string.kakao_sync, kakaoAddr)
+        }
     }
 
     override fun failKakao(message: String) {
