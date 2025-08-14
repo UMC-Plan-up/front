@@ -1,10 +1,8 @@
 package com.example.planup.goal.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
 import com.example.planup.databinding.ItemTimerDropdownBinding
 
 //타이머 설정에서 드롭다운을 통해 시간을 설정할 수 있음
@@ -27,11 +25,10 @@ class TimerRVAdapter(private val times: ArrayList<String>):RecyclerView.Adapter<
         return ViewHolder(binding)
     }
 
-
-
     override fun getItemCount(): Int = times.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.itemTimerTv.filters = emptyArray()
         holder.bind(times[position])
         holder.binding.itemTimerTv.setOnClickListener {
             myDropdownListener.setTime(position)

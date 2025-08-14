@@ -149,8 +149,8 @@ class LoginPasswordFragment : Fragment() {
     private fun updateConditionUI(icon: ImageView, textView: TextView, isValid: Boolean) {
         if (isValid) {
             // 조건 만족
-            icon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.green_200))
-            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green_200))
+            icon.setColorFilter(ContextCompat.getColor(requireContext(), R.color.medium_sea_green))
+            textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.medium_sea_green))
         } else {
             // 조건 불만족
             val grayColor = Color.parseColor("#ADADAD")

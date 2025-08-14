@@ -64,13 +64,27 @@
 
         <activity
             android:name=".login.LoginActivityNew"
+            android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".password.ResetPasswordActivity" />
         <activity android:name=".goal.GoalActivity" />
         <activity android:name=".main.home.ui.CalendarActivity" />
         <activity android:name=".main.goal.ui.EditFriendGoalActivity" />
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
+                <data
+                    android:host="oauth"
+                    android:scheme="kakaod457e1de9a930076ef76a74e0bb30b6b" />
+
+            </intent-filter>
+        </activity>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

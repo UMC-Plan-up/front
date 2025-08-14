@@ -42,6 +42,7 @@
             android:textColor="@color/black_300"
             android:textSize="18sp" />
 
+        <!-- 혜택 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -57,25 +58,40 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_pushpin" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_title_1"
-                android:textColor="@color/green_200"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_desc_1"
-                android:textColor="@color/black_400"
-                android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_title_1"
+                        android:textColor="@color/green_200"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_desc_1"
+                        android:textColor="@color/black_400"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
+        <!-- 혜택 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -91,25 +107,40 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_hands" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_title_2"
-                android:textColor="@color/green_200"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_desc_2"
-                android:textColor="@color/black_400"
-                android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_title_2"
+                        android:textColor="@color/green_200"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_desc_2"
+                        android:textColor="@color/black_400"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
+        <!-- 혜택 3 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -125,25 +156,40 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_alarmclock" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_title_3"
-                android:textColor="@color/green_200"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_desc_3"
-                android:textColor="@color/black_400"
-                android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_title_3"
+                        android:textColor="@color/green_200"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_desc_3"
+                        android:textColor="@color/black_400"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
+        <!-- 혜택 4 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -159,23 +205,37 @@
                 android:layout_height="24dp"
                 android:src="@drawable/ic_mutedspeaker" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <HorizontalScrollView
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_title_4"
-                android:textColor="@color/green_200"
-                android:textSize="16sp" />
+                android:layout_weight="1"
+                android:fillViewport="true"
+                android:scrollbars="none">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="@font/pretendard_semibold"
-                android:text="@string/benefit_desc_4"
-                android:textColor="@color/black_400"
-                android:textSize="16sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_title_4"
+                        android:textColor="@color/green_200"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/pretendard_semibold"
+                        android:text="@string/benefit_desc_4"
+                        android:textColor="@color/black_400"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </HorizontalScrollView>
         </LinearLayout>
 
         <TextView

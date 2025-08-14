@@ -4,6 +4,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.graphics.drawable.ColorDrawable
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,20 +21,28 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetFrequencyBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class ChallengeSetFrequencyFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetFrequencyBinding
 
+    //선택된 종료일 파란색으로 표시하기 위한 변수
     private lateinit var selectBackground: View //선택된 요일의 프레임
     private lateinit var selectText: TextView //선택된 요일의 텍스트
-    private var isFirst: Boolean = true //종료일을 아직 선택하지 않은 경우
-
-    private lateinit var popupWindow: PopupWindow //기준일 설정 드롭다운
+    //종료일을 선택하지 않은 경우
+    private var isFirst: Boolean = true
+    //선택 가능한 종료일을 계산하기 위한 변수
+    private lateinit var calendar: Calendar
+    //기준일 설정 드롭다운
+    private lateinit var popupWindow: PopupWindow
+    //종료일에 따라 드롭다운에 표시되는 기준기간이 결정됨
+    private var endDay: Int = 0
+    //선택버튼 활성화를 위한 조건 설정
     private var finish: Boolean = false //종료일 설정 여부
     private var duration: Boolean = false //기준 기간 설정 여부
     private var often: Boolean = false //빈도 설정 여부
-    private lateinit var prevFragment: String
-
     //챌린지 설정 정보 저장
     private lateinit var prefs: SharedPreferences
     private lateinit var editor: Editor
@@ -53,6 +62,25 @@ class ChallengeSetFrequencyFragment : Fragment() {
         //prevFragment = arguments?.getString("previous","null").toString()
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
+        //종료일 설정을 위한 날짜 연동
+        val sdf = SimpleDateFormat("MM/dd (E)", Locale.KOREAN)
+        calendar = Calendar.getInstance()
+
+        //다음날부터 최대 7일째까지 선택 가능
+        calendar.add(Calendar.DAY_OF_MONTH, 1)
+        val dayTextViews = listOf(
+            binding.photoFirstDayTv,
+            binding.photoSecondDayTv,
+            binding.photoThirdDayTv,
+            binding.photoFourthDayTv,
+            binding.photoFifthDayTv,
+            binding.photoSixthDayTv,
+            binding.photoSeventhDayTv
+        )
+        for (tv in dayTextViews) {
+            tv.text = sdf.format(calendar.time)
+            calendar.add(Calendar.DAY_OF_MONTH, 1)
+        }
     }
 
     private fun clickListener() {
@@ -63,50 +91,67 @@ class ChallengeSetFrequencyFragment : Fragment() {
         }
         /* 요일 선택 효과 */
         // 월요일
-        binding.photoMondayCl.setOnClickListener {
-            if (binding.photoMondayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoMondayCl, binding.photoMondayTv)
+        binding.photoFirstDayCl.setOnClickListener {
+            if (binding.photoFirstDayCl.isSelected) return@setOnClickListener
+            setEndDay(
+                binding.photoFirstDayCl,
+                binding.photoFirstDayTv,
+                1
+            )
         }
 
         // 화요일
-        binding.photoTuesdayCl.setOnClickListener {
-            if (binding.photoTuesdayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoTuesdayCl, binding.photoTuesdayTv)
+        binding.photoSecondDayCl.setOnClickListener {
+            if (binding.photoSecondDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoSecondDayCl,
+                binding.photoSecondDayTv,
+                2)
         }
 
         // 수요일
-        binding.photoWednesdayCl.setOnClickListener {
-            if (binding.photoWednesdayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoWednesdayCl, binding.photoWednesdayTv)
+        binding.photoThirdDayCl.setOnClickListener {
+            if (binding.photoThirdDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoThirdDayCl,
+                binding.photoThirdDayTv,
+                3)
         }
 
         // 목요일
-        binding.photoThursdayCl.setOnClickListener {
-            if (binding.photoThursdayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoThursdayCl, binding.photoThursdayTv)
+        binding.photoFourthDayCl.setOnClickListener {
+            if (binding.photoFourthDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoFourthDayCl,
+                binding.photoFourthDayTv,
+                4)
         }
 
         // 금요일
-        binding.photoFridayCl.setOnClickListener {
-            if (binding.photoFridayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoFridayCl, binding.photoFridayTv)
+        binding.photoFifthDayCl.setOnClickListener {
+            if (binding.photoFifthDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoFifthDayCl,
+                binding.photoFifthDayTv,
+                5)
         }
 
         // 토요일
-        binding.photoSaturdayCl.setOnClickListener {
-            if (binding.photoSaturdayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoSaturdayCl, binding.photoSaturdayTv)
+        binding.photoSixthDayCl.setOnClickListener {
+            if (binding.photoSixthDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoSixthDayCl,
+                binding.photoSixthDayTv,
+                6)
         }
 
+
         // 일요일
-        binding.photoSundayCl.setOnClickListener {
-            if (binding.photoSundayCl.isSelected) return@setOnClickListener
-            setEndDay(binding.photoSundayCl, binding.photoSundayTv)
+        binding.photoSeventhDayCl.setOnClickListener {
+            if (binding.photoSeventhDayCl.isSelected) return@setOnClickListener
+            setEndDay(binding.photoSeventhDayCl,
+                binding.photoSeventhDayTv,
+                7)
         }
 
         //기준 기간
         binding.photoDurationCl.setOnClickListener {
-            setDuration(binding.photoDurationCl, 4)
+            setDuration(binding.photoDurationCl, endDay)
         }
 
         //다음 버튼 클릭: 페널티 설정 화면으로 이동
@@ -120,10 +165,11 @@ class ChallengeSetFrequencyFragment : Fragment() {
     }
 
     //종료일 설정
-    private fun setEndDay(background: View, text: TextView) {
+    private fun setEndDay(background: View, text: TextView, endDay: Int) {
+        //선택된 종료일 파란색으로 표시
+        //기존 종료일은 회색으로 변경
         val selected = ContextCompat.getColor(context, R.color.blue_200)
         val unselected = ContextCompat.getColor(context, R.color.black_300)
-
         //이미 다른 요일을 선택한 경우
         if (!isFirst) { //이전 선택 요일 해제
             selectBackground.isSelected = !selectBackground.isSelected
@@ -137,7 +183,12 @@ class ChallengeSetFrequencyFragment : Fragment() {
         //선택 요일 표시
         selectBackground.isSelected = !selectBackground.isSelected
         selectText.setTextColor(selected)
-        editor.putString("endDate",selectText.text.toString())
+        //선택된 종료일 계산
+        calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH,endDay)
+        //선택된 종료일 저장
+        this.endDay = endDay
+        editor.putString("endDate",calendar.timeInMillis.toString())
         finish = true
 
         binding.btnNextTv.isActivated = finish && duration && often //다음 버튼 활성화 여부 확인

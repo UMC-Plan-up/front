@@ -1,6 +1,8 @@
 package com.example.planup.main.my.ui
 
 import android.app.Dialog
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
@@ -24,11 +27,13 @@ import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.dto.friend.FriendReportDto
 import com.example.planup.network.dto.friend.FriendUnblockDto
 
-class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendReportAdapter, FriendsUnblockedAdapter {
+class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendReportAdapter,
+    FriendsUnblockedAdapter {
     lateinit var binding: FragmentMypageFriendBlockBinding
     private val friends = ArrayList<BlockedFriend>()
     private lateinit var rvAdapter: BlockFriendRVAdapter
     private lateinit var controller: FriendController
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,13 +47,21 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     }
 
     //프레그먼트 초기화
-    private fun init(){
-        controller = FriendController() //API 컨트롤러 생성
-        controller.friendsBlockedService() //차단친구 조회 GET
-        controller.setFriendsBlockedAdapter(this) //차단친구 목록 불러오는 ui
-        controller.setFriendReportAdapter(this) //차단친구 신고 ui
-        controller.setFriendUnblockedAdapter(this) //차단친구 차단 해제 ui
+    private fun init() {
+        //API 컨트롤러 생성
+        controller = FriendController()
+        //차단 친구 목록 요청
+        controller.friendsBlockedService()
+        //차단 친구 목록 출력
+        controller.setFriendsBlockedAdapter(this)
+        //차단 친구 신고 UI 관리
+        controller.setFriendReportAdapter(this)
+        //차단친구 차단 해제 UI 관리
+        controller.setFriendUnblockedAdapter(this)
+        //사용자 정보 호출
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
     }
+
     //클릭 이벤트 관리
     private fun clickListener() {
         //뒤로 가기
@@ -74,7 +87,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
         //클릭한 친구 서버에 차단 해제 알리고
         //차단 친구 목록에서 해당 친구 제외
         dialog.findViewById<View>(R.id.popup_unblock_yes_btn).setOnClickListener {
-            controller.friendsUnblockService(FriendUnblockDto(123, friend.name))
+            controller.friendsUnblockService(FriendUnblockDto(prefs.getInt("userId",0), friend.name))
             rvAdapter.notifyItemRemoved(position)
             dialog.dismiss()
         }
@@ -83,7 +96,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     }
 
     //신고 사유를 입력하는 팝업
-    private fun dialogReport(position: Int) {
+    private fun dialogReport(friendId: Int) {
         val dialog = Dialog(context as MainActivity)
         var selected = R.id.popup_report_swear_tv
         dialog.setContentView(R.layout.popup_report)
@@ -142,7 +155,16 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
         //신고 완료 버튼
         dialog.findViewById<View>(R.id.popup_report_complete_btn).setOnClickListener {
             //해당 친구 신고 접수
-            controller.reportFriendService(FriendReportDto(1, 2, selected.toString(), true))
+            controller.reportFriendService(
+                FriendReportDto(
+                    prefs.getInt("userId", 0),
+                    friendId,
+                    //신고 사유
+                    dialog.findViewById<TextView>(selected).text.toString(),
+                    //토글 on/off 여부로 차단 여부를 전달함
+                    dialog.findViewById<View>(R.id.popup_report_block_on_iv).isVisible
+                )
+            )
             dialog.dismiss()
         }
         dialog.setCanceledOnTouchOutside(true)
@@ -172,7 +194,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
                 if (action == 0) {
                     dialogUnblock(position, friends[position])
                 } else {
-                    dialogReport(position)
+                    dialogReport(friends[position].id)
                 }
             }
         })
@@ -183,11 +205,12 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     override fun successBlockedFriends(blockedFriendsList: List<BlockedFriends>?) {
         blockedFriendsList?.let { list ->
             for (friend in list) {
-                friends.add(BlockedFriend(friend.friendNickname, friend.friendId))
+                friends.add(BlockedFriend(friend.friendId, friend.friendNickname, 0))
             }
         }
         showBlockFriend()
     }
+
     //차단 친구 목록 불러오기 실패
     override fun failBlockedFriends(code: String?, message: String?) {}
 
@@ -195,6 +218,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     override fun successReportFriend() {
         makeToast(getString(R.string.toast_report))
     }
+
     //친구 신고 실패
     override fun failReportFriend(code: String, message: String) {
         Log.d("okhttp", "code: $code\nmessage: $message")
@@ -207,6 +231,6 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
 
     //친구 차단 실패
     override fun failFriendUnblock(code: String, message: String) {
-        Log.d("okhttp","code: $code\nmessage: $message")
+        Log.d("okhttp", "code: $code\nmessage: $message")
     }
 }
