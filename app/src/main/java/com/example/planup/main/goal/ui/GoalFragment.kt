@@ -1,8 +1,9 @@
 package com.example.planup.main.goal.ui
 
 import android.app.Activity
-import android.app.Dialog
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -13,24 +14,33 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
-import com.example.planup.main.friend.ui.FriendListsFragment
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalAdapter
+import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import kotlinx.coroutines.launch
 
 class GoalFragment : Fragment() {
+    private lateinit var prefs : SharedPreferences
     lateinit var binding: FragmentGoalBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GoalAdapter
     private lateinit var dailyPieChart: PieChart
+    private var goals = listOf(
+        GoalItem(1, "목표명", "[기준 기간]&[빈도]&\"이상\"", 82),
+        GoalItem(2, "토익 공부하기", "매주 5번 이상", 82),
+        GoalItem(3, "헬스장 가기", "매일 30분 이상", 82)
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,19 +53,16 @@ class GoalFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        val token = prefs.getString("accessToken", null)
+        Log.d("GoalFragment","token: $token")
+        loadMyGoalList(token)
 
         dailyPieChart = binding.dailyGoalCompletePc
         setupPieChart(dailyPieChart, 70)
 
-
         recyclerView = binding.goalListRv
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        val goals = listOf(
-            GoalItem(1, "목표명", "[기준 기간]&[빈도]&\"이상\"", 82),
-            GoalItem(2, "토익 공부하기", "매주 5번 이상", 82),
-            GoalItem(3, "헬스장 가기", "매일 30분 이상", 82)
-        )
 
         adapter = GoalAdapter(
             goals,
@@ -169,6 +176,31 @@ class GoalFragment : Fragment() {
             val showDialog = result.data?.getBooleanExtra("SHOW_DIALOG", false) ?: false
             if (showDialog) {
                 GoalUpdateDialog().show(parentFragmentManager, "GoalUpdateDialog")
+            }
+        }
+    }
+
+    private fun loadMyGoalList(token: String?) {
+        if(token == null) {
+            Log.d("GoalFragment", "loadMyGoalList token null")
+            return
+        }
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getMyGoalList(token = "Bearer $token")
+                if (response.isSuccess) {
+                    val goals = response.result
+                    for (goal in goals) {
+                        Log.d("GoalFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
+                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, 75)
+                    }
+                } else {
+                    Log.d("GoalFragmentApi","loadMyGoalList 실패")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("GoalFragmentApi","네트워크 오류")
             }
         }
     }

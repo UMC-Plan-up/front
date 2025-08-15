@@ -45,4 +45,8 @@ object RetrofitInstance {
         retrofit.create(GoalReportApi::class.java)
     }
 
+    val verificationApi: VerificationApi by lazy{
+        retrofit.create(VerificationApi::class.java)
+    }
+
 }

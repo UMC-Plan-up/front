@@ -1,7 +1,7 @@
 package com.example.planup.main.goal.item
 
 data class GoalItem(
-    val goalId: Long,
+    val goalId: Int,
     val title: String,
     val description: String,
     val percent: Int,

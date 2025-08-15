@@ -2,6 +2,8 @@ package com.example.planup.main.home.ui
 
 import android.content.Intent
 import android.app.Dialog
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -29,7 +29,6 @@ import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
 import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import java.time.DayOfWeek
@@ -40,12 +39,13 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import com.example.planup.main.home.adapter.CalendarEventAdapter
+import com.example.planup.main.home.data.HomeTimer
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.main.record.ui.ReceivedChallengeFragment
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
+    private lateinit var prefs: SharedPreferences
 
     private lateinit var dailyRecyclerVIew: RecyclerView
     private lateinit var dailyAdapter: DailyToDoAdapter
@@ -55,10 +55,10 @@ class HomeFragment : Fragment() {
     private val today = LocalDate.now()
     private var selectedDate = today
     private val eventList = listOf(
-        CalendarEvent("토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
-        CalendarEvent("헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
-        CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
-        CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
+        CalendarEvent(1,"토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
+        CalendarEvent(2,"헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
+        CalendarEvent(3,"스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
+        CalendarEvent(4,"<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
     private val dailyToDos = listOf(
         DailyToDo("공부", 75, 5),
@@ -85,7 +85,10 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //loadMyGoalList() //api 불러오기
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        val token = prefs.getString("accessToken", null)
+
+        loadMyGoalList(token) //api 불러오기
 
 
         dailyRecyclerVIew = binding.dailyTodoRv
@@ -160,23 +163,18 @@ class HomeFragment : Fragment() {
         }
 
         val fab = binding.homeFab
-        val fragmentTimer = TimerFragment()
-        val bundle = Bundle().apply {
-            putString("selectedDate", selectedDate.toString())
-        }
         Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
-        fragmentTimer.arguments = bundle
         fab.setOnClickListener {
             val eventsForDate = getEventsForDate(selectedDate) // 선택한 날짜의 일정 리스트 가져오기
 
             val bundle = Bundle().apply {
                 putString("selectedDate", selectedDate.toString())
 
-                // 일정 이름 리스트만 전달 (필요하다면 startDate, endDate도 함께 전달 가능)
-                putStringArrayList(
-                    "events",
-                    ArrayList(eventsForDate.map { it.title }) // CalendarEvent.name 사용
-                )
+                val events = eventsForDate.map { goal ->
+                    HomeTimer(goal.goalId, goal.goalName)
+                }
+
+                putParcelableArrayList("events", ArrayList(events))
             }
 
             val fragmentTimer = TimerFragment().apply {
@@ -238,7 +236,11 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
-    private fun loadMyGoalList(token: String) {
+    private fun loadMyGoalList(token: String?) {
+        if(token == null) {
+            Log.d("HomeFragment", "loadMyGoalList token null")
+            return
+        }
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
@@ -248,9 +250,10 @@ class HomeFragment : Fragment() {
                     // goals 리스트를 RecyclerView 등에 표시
                     for (goal in goals) {
                         Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        eventList+(CalendarEvent(goal.goalName, LocalDate.now(), LocalDate.now()))
+                        eventList+(CalendarEvent(goal.goalId, goal.goalName, LocalDate.now(), LocalDate.now()))
                         //
                     }
+                    Log.d("HomeFragmentApi","eventList: $eventList")
                 } else {
                     Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
                 }

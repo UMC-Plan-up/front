@@ -1,13 +1,11 @@
 package com.example.planup.main.home.ui
 
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,10 +31,10 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var eventAdapter: CalendarEventAdapter
 
     private val eventList = listOf(
-        CalendarEvent("토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
-        CalendarEvent("헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
-        CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
-        CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
+        CalendarEvent(1,"토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
+        CalendarEvent(2,"헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
+        CalendarEvent(3,"스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
+        CalendarEvent(4,"<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -104,7 +102,7 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun updateEventList(date: LocalDate) {
-        val events = getEventsForDate(date).map { it.title }
+        val events = getEventsForDate(date).map { it.goalName }
         eventAdapter.submitList(events)
     }
 
@@ -130,7 +128,8 @@ class CalendarActivity : AppCompatActivity() {
 }
 
 data class CalendarEvent(
-    val title: String,
+    val goalId: Int,
+    val goalName: String,
     val startDate: LocalDate,
     val endDate: LocalDate
 )
