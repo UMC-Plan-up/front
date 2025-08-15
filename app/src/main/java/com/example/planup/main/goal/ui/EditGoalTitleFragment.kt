@@ -41,6 +41,11 @@ class EditGoalTitleFragment : Fragment() {
         val titleEt = binding.editFriendGoalNameEt
         val goalAmountEt = binding.editFriendGoalPeriodEt
         val nextBtn = binding.editFriendGoalNextBtn
+        val backBtn = binding.editFriendBackArrowIv
+
+        backBtn.setOnClickListener {
+            requireActivity().finish()
+        }
 
         nextBtn.setOnClickListener {
             goalData?.let { goal ->

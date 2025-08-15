@@ -41,14 +41,27 @@ class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
         holder.title.text = item.name
         holder.desc.text = item.description
 
+        val pieColors = listOf(
+            Color.parseColor("#79B0F8"), // pie1
+            Color.parseColor("#F3C092"), // pie2
+            Color.parseColor("#71D9C4")  // pie3
+        )
+
+        val remainderColor = Color.parseColor("#F2F2F2") // 남은 부분 고정 색상
+
         listOf(holder.pie1, holder.pie2, holder.pie3).forEachIndexed { i, pie ->
-            setupPieChart(pie, item.pieValues.getOrNull(i) ?: 0f)
+            setupPieChart(
+                pie,
+                item.pieValues.getOrNull(i) ?: 0f,
+                pieColors.getOrNull(i) ?: Color.BLUE,
+                remainderColor
+            )
         }
     }
 
     override fun getItemCount() = items.size
 
-    private fun setupPieChart(pie: PieChart, value: Float) {
+    private fun setupPieChart(pie: PieChart, value: Float, mainColor: Int, remainderColor: Int) {
         pie.setExtraOffsets(-3f,-3f,-3f,-3f)
         pie.setUsePercentValues(false)
         pie.description.isEnabled = false
@@ -65,7 +78,7 @@ class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
         )
 
         val colors = listOf(
-            Color.BLUE, Color.LTGRAY
+            mainColor, remainderColor
         )
 
         val dataSet = PieDataSet(entries, "").apply {

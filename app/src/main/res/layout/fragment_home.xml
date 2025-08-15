@@ -63,7 +63,7 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/imageView5"
+                    android:id="@+id/home_main_profile_iv"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:src="@drawable/ic_launcher_background"
@@ -72,11 +72,11 @@
                     android:background="@drawable/bg_circle"/>
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/home_main_tv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="10dp"
-                    android:text="그린 님, 벌써 이만큼이나 왔어요!"
+                    android:text="@string/home_main_text"
                     style="@style/Typography_XL_Semibold"
                     android:textColor="@color/black" />
             </LinearLayout>
@@ -91,7 +91,7 @@
                     android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Daily To-Do List"
+                    android:text="@string/daily_to_do_list"
                     style="@style/Typography_L_Semibold"/>
 
                 <ImageView
@@ -144,7 +144,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="함께 도전중인 친구들은?" />
+                android:text="@string/home_with_friends" />
 
             <ImageView
                 android:id="@+id/home_arrow_friendgoallist_iv"
@@ -160,10 +160,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:padding="2dp"
+            android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+            android:layout_marginBottom="5dp"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/home_calendar_cardView"

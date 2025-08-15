@@ -12,7 +12,7 @@ import android.widget.TextView
 import android.text.TextWatcher
 import kotlin.text.toInt
 
-class EditFriendLimitFragment : Fragment() {
+class EditGoalCntFragment : Fragment() {
 
     private lateinit var binding: FragmentEditGoalCntBinding
     private var goalId: Int = 0
@@ -49,6 +49,11 @@ class EditFriendLimitFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentEditGoalCntBinding.inflate(inflater, container, false)
+
+        val backBtn = binding.editGoalCntBackIv
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         // EditText 기본값 세팅
         binding.editText.setText(limitFriendCount.toString())

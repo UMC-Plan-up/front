@@ -53,6 +53,11 @@ class EditGoalDetailFragment : Fragment(){
         val monthlyBtn = binding.editDetailDayMonthlyBtn
         val frequencyEt = binding.editDetailFrequencyEt
         val nextBtn = binding.editDetailNextBtn
+        val backBtn = binding.editDetailBackIv
+
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
 
         val frequency = frequencyEt.text.toString()
 
