@@ -81,7 +81,7 @@
         android:id="@+id/goalFrequency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="[기준 기간]&amp;[빈도]&amp;&quot;이상&quot;"
+        android:text="매주 %1$d번 이상"
         android:textSize="13sp"
         android:textColor="@color/black_300"
         android:fontFamily="@font/pretendard_medium"
