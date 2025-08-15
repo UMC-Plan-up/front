@@ -1,7 +1,6 @@
 package com.example.planup.signup
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -20,6 +19,7 @@ class SignupActivity : AppCompatActivity() {
     var profileImgUrl: String? = null
     var inviteCode: String? = null
     var agreements: List<Agreement>? = null
+    var tempUserId: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,20 +33,17 @@ class SignupActivity : AppCompatActivity() {
         // 2) 카카오 소셜 로그인 처리
         val provider = intent.getStringExtra("provider")
         if (provider == "KAKAO") {
-            val tempUserId = intent.getStringExtra("tempUserId")
-            val email = intent.getStringExtra("email")
-            val profileImg = intent.getStringExtra("profileImg")
-
-            this.email = email
-            this.profileImgUrl = profileImg
+            // LoginActivity에서 전달받은 데이터를 SignupActivity 변수에 저장
+            this.email = intent.getStringExtra("email")
+            this.profileImgUrl = intent.getStringExtra("profileImg")
+            this.tempUserId = intent.getStringExtra("tempUserId") // tempUserId를 SignupActivity 변수에 저장합니다.
             this.password = "social_login_password_placeholder"
 
-            // 카카오 회원가입
+            // AgreementFragment 호출
             val bundle = Bundle().apply {
-                putString("tempUserId", tempUserId)
+                putString("tempUserId", this@SignupActivity.tempUserId) // Bundle에 tempUserId를 담아 AgreementFragment로 전달합니다.
                 putBoolean("isKakaoSignup", true)
             }
-
 
             supportFragmentManager.beginTransaction()
                 .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
@@ -75,7 +72,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // singleTop에서 앱이 떠있는 상태로 딥링크 수신 시 호출
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -110,29 +106,6 @@ class SignupActivity : AppCompatActivity() {
             return false
         }
     }
-
-    private fun tmp(){
-        val deepLinkUri: Uri? = intent?.data
-        if (deepLinkUri != null) {
-            val email = deepLinkUri.getQueryParameter("email")
-            val verified = deepLinkUri.getQueryParameter("verified")
-            val token = deepLinkUri.getQueryParameter("token")
-            val from = deepLinkUri.getQueryParameter("from")
-
-            // 여기서 서버 검증 호출 가능
-            if (verified == "true") {
-                Log.d("EmailVerify","$email\n$verified\n$token\n$from")
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.signup_container,ProfileSetupFragment())
-                    .commitAllowingStateLoss()
-                // 인증 통과 → 대상 프래그먼트 이동
-            } else {
-                // 검증 실패 처리 (에러 안내 화면 등)
-            }
-        }
-    }
-
-
 
     /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
     private fun goToProfileSetup(emailParam: String) {
