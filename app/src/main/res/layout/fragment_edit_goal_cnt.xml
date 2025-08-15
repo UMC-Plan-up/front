@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp"
+    android:paddingTop="55dp">
+
+    <ImageView
+        android:id="@+id/imageView9"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView15"
+        style="@style/Typography_2XL_Semibold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="친구와 함께하는 세부 목표 수정"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView9" />
+
+    <TextView
+        android:id="@+id/textView16"
+        style="@style/Typography_S_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표 수정 시, 참여 중인 친구들의 목표도 변경돼요."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
+    <TextView
+        android:id="@+id/textView17"
+        style="@style/Typography_L_Semibold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="참여자 수 제한"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView16"
+        android:layout_marginTop="24dp"/>
+
+    <TextView
+        android:id="@+id/textView18"
+        style="@style/Typography_S_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="해당 목표에 참여 가능한 최대 인원 수를 입력하세요."
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView17"
+        android:layout_marginTop="4dp"/>
+
+    <EditText
+        android:id="@+id/editText"
+        style="@style/Typography_S_Medium"
+        android:layout_width="58dp"
+        android:layout_height="wrap_content"
+        android:hint="3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView18"
+        android:layout_marginTop="4dp"/>
+
+    <TextView
+        android:id="@+id/textView19"
+        style="@style/Typography_S_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:text="명"
+        app:layout_constraintBottom_toBottomOf="@+id/editText"
+        app:layout_constraintStart_toEndOf="@+id/editText"
+        app:layout_constraintTop_toTopOf="@+id/editText" />
+
+    <TextView
+        android:id="@+id/edit_goal_cnt_warning_tv"
+        style="@style/Typography_XS_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="현재 참여 인원 수보다 작은 숫자는 입력할 수 없어요."
+        android:textColor="@color/red_300"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText"
+        android:layout_marginTop="5dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/edit_count_next_btn"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="616dp"
+        android:background="@drawable/btn_next_background"
+        android:fontFamily="@font/pretendard_medium"
+        android:gravity="center"
+        android:text="@string/btn_next"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="40dp"/>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

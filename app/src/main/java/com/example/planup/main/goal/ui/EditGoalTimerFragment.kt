@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalTimerBinding
+import com.example.planup.main.goal.item.EditGoalResponse
 
 class EditGoalTimerFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTimerBinding
@@ -19,16 +20,34 @@ class EditGoalTimerFragment : Fragment() {
     private lateinit var secondSpinner: Spinner
     private lateinit var nextBtn: AppCompatButton
     private lateinit var warningTv: TextView
+    private var goalId: Int = 0
+    private var goalName: String = ""
+    private var goalAmount: String = ""
+    private var goalCategory: String = ""
+    private var goalType: String = ""
+    private var oneDose: Int = 0
+    private var frequency: Int = 0
+    private var period: String = ""
+    private var endDate: String = ""
+    private var verificationType: String = ""
+    private var limitFriendCount: Int = 0
+    private var goalTime: Int = 0
 
-    private var goalId: Long = -1L
-    private var title: String = ""
-    private var oneDose: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        goalId = arguments?.getLong("goalId") ?: -1L
-        title = arguments?.getString("title") ?: ""
-        oneDose = arguments?.getString("oneDose") ?: ""
+        goalId = arguments?.getInt("goalId") ?: 0
+        goalName = arguments?.getString("goalName") ?: ""
+        goalAmount = arguments?.getString("goalAmount") ?: ""
+        goalCategory = arguments?.getString("goalCategory") ?: ""
+        goalType = arguments?.getString("goalType") ?: ""
+        oneDose = arguments?.getInt("oneDose") ?: 0
+        frequency = arguments?.getInt("frequency") ?: 0
+        period = arguments?.getString("period") ?: ""
+        endDate = arguments?.getString("endDate") ?: ""
+        verificationType = arguments?.getString("verificationType") ?: ""
+        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
+        goalTime = arguments?.getInt("goalTime") ?: 0
     }
 
     override fun onCreateView(
@@ -67,15 +86,25 @@ class EditGoalTimerFragment : Fragment() {
         minuteSpinner.onItemSelectedListener = spinnerListener
         secondSpinner.onItemSelectedListener = spinnerListener
 
+        val hour = hourSpinner.selectedItem.toString().toIntOrNull() ?: 0
+        val minute = minuteSpinner.selectedItem.toString().toIntOrNull() ?: 0
+        val second = secondSpinner.selectedItem.toString().toIntOrNull() ?: 0
+        val totalSeconds = hour * 3600 + minute * 60 + second
+
         nextBtn.setOnClickListener {
             val bundle = Bundle().apply {
-                putString("hour", hourSpinner.selectedItem.toString())
-                putString("minute", minuteSpinner.selectedItem.toString())
-                putString("second", secondSpinner.selectedItem.toString())
-                putString("goalId", goalId.toString())
-                putString("title", title)
-                putString("oneDose", oneDose)
-                putString("authType", "camera")
+                putInt("goalId", goalId)
+                putString("goalName", goalName)
+                putString("goalAmount", goalAmount)
+                putString("goalCategory", goalCategory)
+                putString("goalType", goalType)
+                putInt("oneDose", oneDose)
+                putInt("frequency", frequency)
+                putString("period", period)
+                putString("endDate", endDate)
+                putString("verificationType", verificationType)
+                putInt("limitFriendCount", limitFriendCount)
+                putInt("goalTime", totalSeconds)
             }
 
             val nextFragment = EditGoalDetailFragment().apply {

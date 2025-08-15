@@ -289,7 +289,7 @@ class GoalFragment : Fragment() {
                     val goals = response.result
                     for (goal in goals) {
                         Log.d("GoalFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, 75)
+                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, percent = 82, criteria = "PHOTO", progress = 82)
                     }
                 } else {
                     Log.d("GoalFragmentApi","loadMyGoalList 실패")

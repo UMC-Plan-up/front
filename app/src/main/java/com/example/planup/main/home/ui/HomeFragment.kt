@@ -2,6 +2,7 @@ package com.example.planup.main.home.ui
 
 import android.content.Intent
 import android.app.Dialog
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
@@ -87,6 +88,13 @@ class HomeFragment : Fragment() {
 
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
+
+        //온보딩
+        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("tutorial_shown", false)) {
+            TutorialManager(parentFragmentManager).startTutorial()
+            prefs.edit().putBoolean("tutorial_shown", true).apply()
+        }
 
         loadMyGoalList(token) //api 불러오기
         getMyWeeklyReport(token)
