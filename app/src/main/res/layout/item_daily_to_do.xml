@@ -7,13 +7,14 @@
     android:padding="12dp"
     app:cardCornerRadius="6dp"
     app:cardElevation="6dp"
-    app:cardBackgroundColor="@android:color/white">
+    app:cardBackgroundColor="@android:color/white"
+    android:layout_margin="6dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="150dp"
         android:layout_height="104dp"
         android:orientation="vertical"
-        android:background="@android:color/transparent">
+        android:background="@drawable/bg_rad6_rectangle">
 
         <TextView
             android:id="@+id/daily_title_tv"

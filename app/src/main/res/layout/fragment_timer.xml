@@ -224,9 +224,9 @@
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:layout_constraintBottom_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/today_memo_cv"
         app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
-        app:layout_constraintTop_toTopOf="@+id/constraintLayout">
+        app:layout_constraintTop_toTopOf="@+id/today_memo_cv">
 
         <TextView
             android:id="@+id/achivement_status_tv"
@@ -257,56 +257,66 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- 친구 타이머 현황 -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/today_memo_cv"
         android:layout_width="0dp"
         android:layout_height="56dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="24dp"
-        android:background="@drawable/bg_rad6_rectangle"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="4dp"
         android:backgroundTint="@color/white"
-        android:padding="12dp"
         app:layout_constraintEnd_toEndOf="@+id/goal_list_timercard_cv"
-        app:layout_constraintHorizontal_bias="0.518"
         app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/camera_btn_mcv">
+        app:layout_constraintTop_toBottomOf="@+id/camera_btn_mcv"
+        android:layout_marginTop="22dp"
+        android:layout_marginStart="12dp">
 
-        <EditText
-            android:id="@+id/editMemo"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            android:background="@android:color/transparent"
-            android:hint="오늘의 메모"
-            android:imeOptions="actionDone"
-            android:inputType="text"
-            android:maxLength="20"
-            android:maxLines="1"
-            android:padding="0dp"
-            android:textColorHint="#1D1D1D"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_rad6_rectangle"
+            android:backgroundTint="@color/white"
+            android:padding="5dp">
 
-        <TextView
-            android:id="@+id/textCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/20자"
-            android:textColor="#A0A0A0"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <EditText
+                android:id="@+id/editMemo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:background="@android:color/transparent"
+                android:hint="오늘의 메모"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:padding="0dp"
+                android:textColorHint="@color/black_300"
+                style="@style/Typography_S_Medium"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/50자"
+                android:textColor="#A0A0A0"
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- 내부 ConstraintLayout 그대로 -->
+</com.google.android.material.card.MaterialCardView>
+
+    <!-- 친구 타이머 현황 -->
+
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+        app:layout_constraintTop_toBottomOf="@+id/today_memo_cv"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="26dp">

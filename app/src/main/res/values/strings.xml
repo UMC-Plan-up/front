@@ -525,5 +525,8 @@
 
     <string name="next_share"><u>다음에 공유할게요</u></string>
     <string name="next_input"><u>다음에 입력할게요</u></string>
+    <string name="home_main_text">그린 님, 벌써 이만큼이나 왔어요!</string>
+    <string name="daily_to_do_list">Daily To-Do List</string>
+    <string name="home_with_friends">함께 도전중인 친구들은?</string>
 
 </resources>

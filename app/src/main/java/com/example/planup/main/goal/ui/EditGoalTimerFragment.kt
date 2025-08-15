@@ -62,6 +62,11 @@ class EditGoalTimerFragment : Fragment() {
         nextBtn = binding.editTimerNextBtn
         warningTv = binding.editTimerWarningTv
 
+        val backBtn = binding.editTimerBackIv
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         // Spinner 항목 리스트 생성
         val hourList = (0..23).map { it.toString().padStart(2, '0') }
         val minuteSecondList = (0..59).map { it.toString().padStart(2, '0') }

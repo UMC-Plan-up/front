@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
@@ -88,8 +89,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
+        val nickname = prefs.getString("nickname","")
+        val profileImage = prefs.getString("profileImage","")
+        binding.homeMainTv.text = "${nickname} 님, 벌써 이만큼이나 왔어요!"
+        Glide.with(this)
+            .load(profileImage)
+            .circleCrop()
+            .error(R.drawable.ic_profile)
+            .into(binding.homeMainProfileIv)
 
         //온보딩
         val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
@@ -219,7 +229,7 @@ class HomeFragment : Fragment() {
                 .replace(R.id.main_container, HomeAlertFragment())
                 .commitAllowingStateLoss()
         }
-        binding.imageView5.setOnClickListener {
+        binding.homeMainProfileIv.setOnClickListener {
             showPopup()
         }
     }
