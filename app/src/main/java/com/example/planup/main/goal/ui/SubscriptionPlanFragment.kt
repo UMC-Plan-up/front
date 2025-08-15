@@ -8,8 +8,6 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentSubscriptionPlanBinding
 import com.example.planup.main.MainActivity
-import com.example.planup.goal.ui.GoalDetailFragment
-import com.example.planup.signup.SignupActivity // SignupActivity에서 닉네임을 가져오기 위해 import
 
 class SubscriptionPlanFragment : Fragment() {
     private lateinit var binding: FragmentSubscriptionPlanBinding
@@ -22,7 +20,6 @@ class SubscriptionPlanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSubscriptionPlanBinding.inflate(inflater, container, false)
-
         isFromGoalDetail = arguments?.getBoolean("IS_FROM_GOAL_DETAIL", false) ?: false
 
         clickListener()
@@ -44,37 +41,27 @@ class SubscriptionPlanFragment : Fragment() {
         binding.basicPlanCard.setOnClickListener {
             resetCardBackgrounds()
             binding.basicPlanCard.setBackgroundResource(R.drawable.bg_plan_basic_selected)
-            navigateToGoalDetailFragment()
+            sendResultAndPopBackStack(true)
         }
 
         // Pro plan 클릭
         binding.proPlanCard.setOnClickListener {
             resetCardBackgrounds()
             binding.proPlanCard.setBackgroundResource(R.drawable.bg_plan_card_pro_selected)
-            navigateToGoalDetailFragment()
+            sendResultAndPopBackStack(true)
         }
     }
 
-    private fun navigateToGoalDetailFragment() {
-        val nicknameFromPrefs = requireContext()
-            .getSharedPreferences("userInfo", 0)
-            .getString("nickname", null)
 
-        val goalOwnerName = nicknameFromPrefs?.takeIf { it.isNotBlank() } ?: "사용자"
-
-        val goalDetailFragment = GoalDetailFragment().apply {
-            arguments = Bundle().apply {
-                putBoolean("HIDE_GOAL_CONTAINER", true)
-                putString("goalOwnerName", goalOwnerName)
-            }
+    private fun sendResultAndPopBackStack(isPlanSelected: Boolean) {
+        // 결과 Bundle 생성
+        val result = Bundle().apply {
+            putBoolean("is_plan_selected", isPlanSelected)
         }
 
-        binding.root.postDelayed({
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, goalDetailFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
-        }, 1500L)
+        parentFragmentManager.setFragmentResult("subscription_result_key", result)
+
+        parentFragmentManager.popBackStack()
     }
 
     private fun resetCardBackgrounds() {
