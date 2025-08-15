@@ -45,6 +45,8 @@ class CalendarActivity : AppCompatActivity() {
         val monthYearText = findViewById<TextView>(R.id.monthYearText)
         val eventsRecyclerView = findViewById<RecyclerView>(R.id.eventsRecyclerView)
         val backBtn = findViewById<ImageView>(R.id.calendar_back_home_iv)
+        val arrowNext = findViewById<ImageView>(R.id.calendar_arrow_next_iv)
+        val arrowBefore = findViewById<ImageView>(R.id.calendar_arrow_before_iv)
 
         eventAdapter = CalendarEventAdapter()
         eventsRecyclerView.adapter = eventAdapter
@@ -53,14 +55,26 @@ class CalendarActivity : AppCompatActivity() {
         updateEventList(selectedDate)
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
+        var currentMonth = YearMonth.now()
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
 
         monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
 
+        arrowBefore.setOnClickListener {
+            currentMonth = currentMonth.minusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
+// 다음 달로 이동
+        arrowNext.setOnClickListener {
+            currentMonth = currentMonth.plusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
         calendarView.monthScrollListener = { month ->
-            monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+            currentMonth = month.yearMonth // 현재 월 변수 업데이트
+            monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {

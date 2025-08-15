@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.graphics.Color
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
@@ -77,6 +78,9 @@ class HomeFragment : Fragment() {
     private lateinit var friendList : List<FriendInfo>
 
     private lateinit var binding: FragmentHomeBinding
+    companion object {
+        private var tutorialshownflag = false
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -102,11 +106,16 @@ class HomeFragment : Fragment() {
             .into(binding.homeMainProfileIv)
 
         //온보딩
-        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
-        if (!prefs.getBoolean("tutorial_shown", false)) {
+//        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
+//        if (!prefs.getBoolean("haveTutorial", false)) {
+//            TutorialManager(parentFragmentManager).startTutorial()
+//            prefs.edit().putBoolean("haveTutorial", true).apply()
+//        }
+        if(!tutorialshownflag) {
             TutorialManager(parentFragmentManager).startTutorial()
-            prefs.edit().putBoolean("tutorial_shown", true).apply()
+            tutorialshownflag = true
         }
+
 
         loadMyGoalList(token) //api 불러오기
         getMyWeeklyReport(token)
@@ -136,9 +145,11 @@ class HomeFragment : Fragment() {
         //---------------------달력---------------------
         val calendarView = binding.homeCalendarView
         val monthYearText = binding.homeMonthYearText
+        val prevArrow = binding.homeCalendarArrowPrevIv
+        val nextArrow = binding.homeCalendarArrowNextIv
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
+        var currentMonth = YearMonth.now()
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
 
@@ -146,6 +157,17 @@ class HomeFragment : Fragment() {
 
         calendarView.monthScrollListener = { month ->
             monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        }
+
+        prevArrow.setOnClickListener {
+            currentMonth = currentMonth.minusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
+// 다음 달로 이동
+        nextArrow.setOnClickListener {
+            currentMonth = currentMonth.plusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -159,6 +181,10 @@ class HomeFragment : Fragment() {
                 container.textView.setBackgroundResource(
                     if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
+                container.textView.setTextColor(
+                    if (date == selectedDate) Color.WHITE else Color.BLACK
+                )
+
 
                 // 기간 내 이벤트 가져오기
                 val events = getEventsForDate(date)
