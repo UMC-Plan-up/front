@@ -33,4 +33,10 @@ interface GoalApiService {
         @Path("goalId") goalId: Int
     ): GoalDetailResponse
 
+    @GET("/goals/{goalId}/friendstimer")
+    suspend fun getFriendsTimer(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int
+    ): FriendsTimerResponse
+
 }

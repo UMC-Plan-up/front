@@ -25,7 +25,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import android.os.Build
+import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.data.HomeTimer
+import com.example.planup.main.goal.item.GoalApiService
 
 class TimerFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
@@ -68,9 +70,9 @@ class TimerFragment : Fragment() {
         val recyclerView = binding.friendTimerRv
 
         val examplefriendList = listOf(
-            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background),
-            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background),
-            FriendTimer("닉네임", "00:00:00", R.drawable.ic_launcher_background)
+            FriendTimer("닉네임", "00:00:00", null),
+            FriendTimer("닉네임", "00:00:00", null),
+            FriendTimer("닉네임", "00:00:00", null)
         )
 
         val adapter = FriendTimerAdapter(examplefriendList)
@@ -97,7 +99,9 @@ class TimerFragment : Fragment() {
                 val selectedGoal = events[position]
                 selectedSpinnerItem = selectedGoal.goalId
                 Toast.makeText(requireContext(), "선택: ${selectedGoal.goalName}", Toast.LENGTH_SHORT).show()
+
                 loadTodayTotalTime(token, selectedGoal.goalId)
+                loadFriendsTimer(token, selectedGoal.goalId)
 
                 val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
                 val savedTimerId = prefs.getInt("timer_${selectedGoal.goalId}", -1)
@@ -269,6 +273,38 @@ class TimerFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 Log.e("TimerFragmentAPI", "에러: ${e.message}")
+            }
+        }
+    }
+
+    private fun loadFriendsTimer(token: String?, goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val apiservice = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiservice.getFriendsTimer(
+                    token = "Bearer $token",
+                    goalId = goalId
+                )
+                if (response.isSuccess) {
+                    val friendList = response.result.map { friend ->
+                        FriendTimer(
+                            nickname = friend.nickname,
+                            time = friend.todayTime,
+                            profileResId = friend.profileImg
+                        )
+                    }
+
+                    val adapter = FriendTimerAdapter(friendList)
+                    binding.friendTimerRv.layoutManager =
+                        LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                    binding.friendTimerRv.adapter = adapter
+
+                    Log.d("TimerFragmentAPI", "친구 타이머 불러오기 성공: ${friendList.size}명")
+                } else {
+                    Log.e("TimerFragmentAPI", "친구 타이머 불러오기 실패: ${response.message}")
+                }
+            } catch (e: Exception) {
+                Log.e("TimerFragmentAPI", "친구 타이머 로드 에러: ${e.message}")
             }
         }
     }
