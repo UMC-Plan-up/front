@@ -70,13 +70,6 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 
     //친구 리스트 불러오기
     private fun setFriendList(){
-//        val friends = ArrayList<ChallengeFriend>()
-//        //임시로 친구 5명 생성
-//        friends.add(0,ChallengeFriend(R.drawable.ic_profile_green,"친구1",3))
-//        friends.add(1,ChallengeFriend(R.drawable.img_friend_profile_sample2,"친구2",0))
-//        friends.add(2,ChallengeFriend(R.drawable.img_friend_profile_sample1,"친구3",1))
-//        friends.add(3,ChallengeFriend(R.drawable.profile_example,"친구4",4))
-//        friends.add(4,ChallengeFriend(R.drawable.profile_example_2,"친구5",3))
         val adapter = FriendRVAdapter(friends)
         adapter.setMyFriendListener(object : FriendRVAdapter.FriendListener{
             override fun selectFriend(position: Int) {
@@ -117,10 +110,15 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     }
     //챌린지 요청 성공 시 완료 화면으로 이동
     override fun successRequest() {
+        //sharedPreferences 데이터 해제
+        editor.clear()
+        editor.apply()
+        //완료화면에 띄울 친구 이름 저장
         val finishRequestFragment = ChallengeFinishRequestFragment()
         finishRequestFragment.arguments = Bundle().apply {
             putString("friend",friend?.nickname)
         }
+        //완료 화면으로 이동
         (context as GoalActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.goal_container,finishRequestFragment)
             .commitAllowingStateLoss()

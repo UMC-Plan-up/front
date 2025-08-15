@@ -252,12 +252,15 @@
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
-    <string name="end_day">"%1$d / %2$d (%3$s)</string>
 
-    <!-- fragment_challenge_request.xml -->
+    <!-- fragment_challenge_received_timer.xml -->
+    <!-- fragment_challenge_received_photo.xml -->
     <string name="challenge_request_verify">인증 방식</string>
     <string name="challenge_request_time">목표 투자 시간</string>
-
+    <string name="challenge_timer_method">타이머 인증</string>
+    <string name="challenge_photo_method">사진 인증</string>
+    <string name="challenge_photo_certify_number">사진 인증 횟수</string>
+    <string name="challenge_certify_number">번</string>
     <!-- fragment_challenge_set_penalty.xml -->
     <!-- fragment_challenge_new_penalty.xml -->
     <string name="challenge_penalty_offer">패널티 제안</string>
@@ -324,14 +327,6 @@
     <string name="setting_alert_receive">설정 목표 알림 받기</string>
     <string name="setting_alert_regular">정기 알림 시각 설정</string>
 
-
-    <!--  GoalActivity  -->
-    <!-- fragment_goal_select.xml -->
-    <string name="goal_select_title">목표 설정하기</string>
-    <string name="goal_select_together">친구/커뮤니티와 함께 목표 설정하기</string>
-    <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
-    <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
-
     <!-- fragment_challenge_set_frequency.xml -->
     <string-array name="dropdown_duration">
         <item name="one">01</item>
@@ -342,6 +337,13 @@
         <item name="six">06</item>
         <item name="seven">07</item>
     </string-array>
+
+    <!--  GoalActivity  -->
+    <!-- fragment_goal_select.xml -->
+    <string name="goal_select_title">목표 설정하기</string>
+    <string name="goal_select_together">친구/커뮤니티와 함께 목표 설정하기</string>
+    <string name="goal_select_challenge">친구와 1:1 챌린지 도전하기</string>
+    <string name="goal_select_challenge_explain">친구와 패널티를 걸고 도전해 보세요!</string>
 
     <!-- GoalFragment -->
     <string name="goal_add_new">"새 목표를 추가할 수 있어요!</string>
