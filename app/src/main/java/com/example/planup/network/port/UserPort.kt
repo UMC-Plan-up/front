@@ -1,5 +1,6 @@
 package com.example.planup.network.port
 
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
 import com.example.planup.network.data.KakaoAccount
@@ -63,6 +64,12 @@ interface UserPort {
     //회원가입 시 이메일 인증 재발송
     @POST("users/email/resend")
     fun signupRelink(@Body email: String): Call<UserResponse<SignupLink>>
+    //이메일 변경 인증 메일 발송
+    @POST("users/email/change/send")
+    fun emailLink(@Body email: String): Call<UserResponse<EmailLink>>
+    //이메일 변경 인증 메일 재발송
+    @POST("users/email/change/resend")
+    fun emailReLink(@Body email: String): Call<UserResponse<EmailLink>>
     //이미지 변경
     @POST("profile/image")
     fun setProfileImage(@Body file: String): Call<UserResponse<ProfileImage>>
@@ -72,7 +79,4 @@ interface UserPort {
     //닉네임 수정
     @POST("mypage/profile/nickname")
     fun changeNickname(@Body nickname: String): Call<UserResponse<String>>
-    //이메일 변경
-    @POST("mypage/profile/email")
-    fun changeEmail(@Query("userId") userId: Int, @Query("newEmail") email: String): Call<UserResponse<String>>
 }
