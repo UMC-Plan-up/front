@@ -194,14 +194,15 @@ class PushAlertFragment : Fragment() {
     //첫 방문인 경우 알림설정 관련 팝업 출력
     private fun showPopup() {
         val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.popup_push_alert)
+        dialog.setContentView(R.layout.popup_push_alert_setting)
         dialog.window?.apply {
             setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.BOTTOM)
             setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
         }
 
-        dialog.findViewById<TextView>(R.id.popup_push_no_btn).setOnClickListener {
+        // '아니오' 버튼 클릭
+        dialog.findViewById<TextView>(R.id.noButton).setOnClickListener {
             isFirst = false
             dialog.dismiss()
 
@@ -210,8 +211,8 @@ class PushAlertFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
 
-        //네 클릭
-        dialog.findViewById<TextView>(R.id.popup_push_yes_btn).setOnClickListener {
+        // '네' 버튼 클릭
+        dialog.findViewById<TextView>(R.id.yesButton).setOnClickListener {
             dialog.dismiss()
         }
 
