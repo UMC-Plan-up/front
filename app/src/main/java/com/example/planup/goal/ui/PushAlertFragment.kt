@@ -18,14 +18,13 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetAlertBinding
 import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.main.MainActivity
-import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.goal.GoalActivity
 import com.example.planup.databinding.ToastGreyTemplateBinding
 import com.example.planup.databinding.PopupPushAlertSettingBinding
 import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
-import android.content.Context // Context import 추가
+import android.content.Context
 
 class PushAlertFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetAlertBinding
@@ -82,14 +81,9 @@ class PushAlertFragment : Fragment() {
         binding.alertSaveBtn.setOnClickListener {
             saveAlertSettings() // 저장 함수 호출
             makeToast()
-            if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
-                isFirst = false
-                val intent = Intent((context as GoalActivity), MainActivity::class.java)
-                startActivity(intent)
-            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
-                val intent = Intent((context as GoalActivity), MainActivity::class.java)
-                startActivity(intent)
-            }
+
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            startActivity(intent)
         }
 
         //정기 알림 시간 설정

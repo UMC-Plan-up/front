@@ -26,13 +26,35 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-
         // 1) 커스텀 딥링크 우선 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
 
-//        tmp()
-        // 2) 딥링크가 없으면 기존 초기 플로우
+        // 2) 카카오 소셜 로그인 처리
+        val provider = intent.getStringExtra("provider")
+        if (provider == "KAKAO") {
+            val tempUserId = intent.getStringExtra("tempUserId")
+            val email = intent.getStringExtra("email")
+            val profileImg = intent.getStringExtra("profileImg")
+
+            this.email = email
+            this.profileImgUrl = profileImg
+            this.password = "social_login_password_placeholder"
+
+            // 카카오 회원가입
+            val bundle = Bundle().apply {
+                putString("tempUserId", tempUserId)
+                putBoolean("isKakaoSignup", true)
+            }
+
+
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
+                .commit()
+            return
+        }
+
+        // 3) 딥링크/카카오 로그인이 없으면 기존 초기 플로우 시작
         if (savedInstanceState == null) {
             val code = intent.getStringExtra("code")
             if (!code.isNullOrBlank()) {
@@ -43,8 +65,11 @@ class SignupActivity : AppCompatActivity() {
                     .replace(R.id.signup_container, fragment)
                     .commit()
             } else {
+                val bundle = Bundle().apply {
+                    putBoolean("isKakaoSignup", false) // 일반 회원가입 플로우
+                }
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.signup_container, AgreementFragment())
+                    .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
                     .commit()
             }
         }
@@ -60,7 +85,7 @@ class SignupActivity : AppCompatActivity() {
     /*
      * 최종 URL: planup://profile/setup?email=...&verified=true&token=...&from=email_verification
      *
-     *  @return true = 딥링크 처리하여 다음 화면으로 이동함
+     * @return true = 딥링크 처리하여 다음 화면으로 이동함
      */
     private fun handleEmailDeepLink(intent: Intent): Boolean {
         val uri = intent.data ?: return false

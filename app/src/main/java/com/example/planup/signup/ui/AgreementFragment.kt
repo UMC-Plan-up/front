@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.login.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
@@ -64,7 +63,6 @@ class AgreementFragment : Fragment() {
         // 약관 목록 불러오기
         fetchTermsList()
 
-        // 전체동의 체크박스
         binding.checkAll.setOnCheckedChangeListener { _, isChecked ->
             adapter.setAllChecked(isChecked)
             checkRequiredAgreement()
@@ -127,12 +125,29 @@ class AgreementFragment : Fragment() {
         activity.agreements = agreements
     }
 
-    /* 다음 화면으로 이동 */
+    /* 다음 화면으로 이동 (카카오/일반 회원가입 분기 처리) */
     private fun openNextStep() {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, LoginEmailFragment())
-            .addToBackStack(null)
-            .commit()
+        val isKakaoSignup = arguments?.getBoolean("isKakaoSignup", false) ?: false
+
+        if (isKakaoSignup) {
+            // 카카오 회원가입 경우
+            val tempUserId = arguments?.getString("tempUserId")
+
+            val profileSetupBundle = Bundle().apply {
+                putString("tempUserId", tempUserId)
+            }
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.signup_container, ProfileSetupFragment().apply { arguments = profileSetupBundle })
+                .addToBackStack(null)
+                .commit()
+        } else {
+            // 일반 회원가입인 경우
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.signup_container, LoginEmailFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     /* 다음 버튼 활성화 */
@@ -168,7 +183,6 @@ class AgreementFragment : Fragment() {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setGravity(Gravity.CENTER)
 
-        // API로 약관 상세 불러오기
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.termsApi.getTermsDetail(termsId)

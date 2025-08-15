@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.planup.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import android.widget.Button
 import com.example.planup.databinding.PopupPushAlertSettingBinding
 
-class PushAlertPopupDialog(
+class PushAlertBottomSheet(
     context: Context
 ) : BottomSheetDialog(context, R.style.BottomSheetDialogTheme) {
 

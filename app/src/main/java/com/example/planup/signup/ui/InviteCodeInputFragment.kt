@@ -124,8 +124,12 @@ class InviteCodeInputFragment : Fragment() {
         /* 다음 버튼 클릭 → 입력된 초대코드로 회원가입 진행 */
         binding.nextButton.setOnClickListener {
             val code = binding.nicknameEditText.text.toString().trim()
-            proceedSignup(code)
+            val activity = requireActivity() as SignupActivity
+            activity.inviteCode = code
+            val fragment = CommunityIntroFragment.newInstance(activity.nickname ?: "")
+            activity.navigateToFragment(fragment)
         }
+
 
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {

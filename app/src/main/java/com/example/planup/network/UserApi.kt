@@ -5,6 +5,8 @@ import com.example.planup.login.data.LoginResponseDto
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
+import com.example.planup.signup.data.AlternativeLoginRequest
+import com.example.planup.signup.data.AlternativeLoginResponse
 import com.example.planup.signup.data.ApiResponse
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.EmailSendResponseDto
@@ -100,4 +102,10 @@ interface UserApi {
     suspend fun kakaoComplete(
         @Body body: KakaoCompleteRequest
     ): Response<KakaoCompleteResponse>
+
+    // 이메일 인증 대안 - 카카오 로그인
+    @POST("/users/auth/email/alternative")
+    suspend fun alternativeLogin(
+        @Body request: AlternativeLoginRequest
+    ): Response<AlternativeLoginResponse>
 }

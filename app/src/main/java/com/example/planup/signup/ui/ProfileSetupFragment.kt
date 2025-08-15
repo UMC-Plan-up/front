@@ -1,7 +1,6 @@
 package com.example.planup.signup.ui
 
 import android.content.Intent
-import android.database.Cursor
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -13,10 +12,10 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
@@ -28,15 +27,14 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import com.bumptech.glide.Glide
+import com.example.planup.main.MainActivity
+import com.example.planup.network.App
+import com.example.planup.signup.data.KakaoCompleteRequest
 
 class ProfileSetupFragment : Fragment() {
 
     private var _binding: FragmentProfileSetupBinding? = null
     private val binding get() = _binding!!
-
-    // [테스트용] 임시 중복 닉네임 리스트
-    // TODO : API 연동하기
-    private val takenNicknames = listOf("planup")
 
     private var cameraImageUri: Uri? = null
 
@@ -45,6 +43,7 @@ class ProfileSetupFragment : Fragment() {
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
     private var latestPhotoFile: File? = null
 
+    private var tempUserId: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +55,9 @@ class ProfileSetupFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        tempUserId = arguments?.getString("tempUserId")
+        val isKakaoSignup = !tempUserId.isNullOrBlank()
 
         binding.nicknameGuide1.visibility = View.GONE
         binding.nicknameGuide2.visibility = View.GONE
@@ -69,19 +71,12 @@ class ProfileSetupFragment : Fragment() {
             binding.nicknameGuide2.visibility = View.GONE
 
             val isTooLong = nickname.length > 20
-            val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
             when {
                 isTooLong -> {
                     // 20자 초과 → 안내문 표시
                     binding.nicknameGuide1.visibility = View.VISIBLE
-                    setNextButtonEnabled(false)
-                }
-
-                isTaken -> {
-                    // 중복 닉네임 → 안내문 표시
-                    binding.nicknameGuide2.visibility = View.VISIBLE
                     setNextButtonEnabled(false)
                 }
 
@@ -98,7 +93,11 @@ class ProfileSetupFragment : Fragment() {
 
         // 뒤로가기 아이콘 → 이전 화면으로 이동
         binding.backIcon.setOnClickListener {
-            (requireActivity() as SignupActivity).navigateToFragment(LoginSentEmailFragment())
+            if (isKakaoSignup) {
+                requireActivity().supportFragmentManager.popBackStack()
+            } else {
+                (requireActivity() as SignupActivity).navigateToFragment(LoginSentEmailFragment())
+            }
         }
 
         /* editIcon 클릭 → 프로필 수정 popup 띄우기 */
@@ -106,20 +105,24 @@ class ProfileSetupFragment : Fragment() {
             showProfilePopup(it)
         }
 
-        /* 다음 버튼 클릭 → InviteCodeFragment로 이동 */
+        /* 다음 버튼 클릭 → 회원가입 완료 로직 분기 처리 */
         binding.nextButton.setOnClickListener {
             val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
-            val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
-            if (isEmpty || isTooLong || isTaken) {
+            if (isEmpty || isTooLong) {
                 return@setOnClickListener
             }
 
-            // 조건 만족
+
             saveProfileData(nickname)
-            openNextStep()
+
+            if (isKakaoSignup) {
+                completeKakaoSignup()
+            } else {
+                openNextStep()
+            }
         }
 
         // 갤러리
@@ -160,7 +163,6 @@ class ProfileSetupFragment : Fragment() {
             }
         }
 
-
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if (binding.nicknameEditText.isFocused) {
@@ -171,12 +173,75 @@ class ProfileSetupFragment : Fragment() {
             }
             false
         }
+
+        if (isKakaoSignup) {
+            (requireActivity() as SignupActivity).profileImgUrl?.let { url ->
+                if (url.isNotBlank()) {
+                    Glide.with(this).load(url).circleCrop().into(binding.profileImage)
+                }
+            }
+        }
+
+        fetchRandomNickname()
+    }
+
+    /* 카카오 회원가입 완료 API 호출 */
+    private fun completeKakaoSignup() {
+        val activity = requireActivity() as SignupActivity
+        val tempUserId = this.tempUserId ?: return
+        val nickname = activity.nickname ?: return
+        val profileImg = activity.profileImgUrl
+        val agreements = activity.agreements ?: return
+
+        lifecycleScope.launch {
+            try {
+                val request = KakaoCompleteRequest(
+                    tempUserId = tempUserId,
+                    nickname = nickname,
+                    profileImg = profileImg,
+                    agreements = agreements.map {
+                        KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
+                    },
+                    inviteCode = activity.inviteCode
+                )
+
+                val response = RetrofitInstance.userApi.kakaoComplete(request)
+                val body = response.body()
+
+                if (response.isSuccessful && body?.isSuccess == true) {
+                    // 카카오 회원가입 완료 및 로그인 성공
+                    val result = body.result
+                    val accessToken = result.accessToken
+                    if (accessToken != null) {
+                        // 토큰 및 사용자 정보 저장
+                        val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
+                        val editor = prefs.edit()
+                        editor.putString("accessToken", accessToken)
+                        editor.putLong("userId", result.id)
+                        editor.putString("email", result.email)
+                        editor.putString("nickname", result.userInfo?.nickname)
+                        editor.putString("profileImg", result.userInfo?.profileImg)
+                        editor.apply()
+
+
+                        App.jwt.token = "Bearer $accessToken"
+
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        startActivity(intent)
+                        requireActivity().finish()
+                    }
+                } else {
+                    Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
     private fun setNextButtonEnabled(enabled: Boolean) {
         binding.nextButton.isEnabled = enabled
-        // 버튼 상태에 따라 selector 적용됨
         binding.nextButton.setBackgroundResource(R.drawable.btn_next_background)
     }
 
@@ -190,7 +255,6 @@ class ProfileSetupFragment : Fragment() {
     private fun saveProfileData(nickname: String) {
         val activity = requireActivity() as SignupActivity
         activity.nickname = nickname
-        // 이미지 업로드 성공 시 저장된 URL이 activity.profileImgUrl에 들어감
     }
 
     /* 사진 저장할 파일 만드는 함수 */
@@ -237,7 +301,6 @@ class ProfileSetupFragment : Fragment() {
             popupWindow.dismiss()
         }
 
-
         popupBinding.selectFile.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "*/*"
@@ -256,13 +319,9 @@ class ProfileSetupFragment : Fragment() {
     /* 프로필 이미지 업로드 → 서버에 POST */
     private fun uploadProfileImage(uri: Uri) {
         val file = when {
-            // 카메라 결과: 우리가 직접 만든 파일이 있음
             cameraImageUri != null && uri == cameraImageUri && latestPhotoFile != null -> latestPhotoFile!!
 
-            // content:// URI → 캐시로 복사
             uri.scheme.equals("content", ignoreCase = true) -> copyUriToCache(uri)
-
-            // file:// URI → 바로 파일
             uri.scheme.equals("file", ignoreCase = true) -> File(uri.path!!)
 
             else -> copyUriToCache(uri)
@@ -299,7 +358,6 @@ class ProfileSetupFragment : Fragment() {
     private fun copyUriToCache(uri: Uri): File {
         val resolver = requireContext().contentResolver
 
-        // 파일명 얻기 (없으면 타임스탬프 사용)
         var name = "upload_${System.currentTimeMillis()}.jpg"
         resolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { c ->
             if (c.moveToFirst()) {
@@ -317,16 +375,6 @@ class ProfileSetupFragment : Fragment() {
         return outFile
     }
 
-
-    /* URI -> 실제 파일 경로로 변환 */
-    private fun getRealPathFromURI(uri: Uri): String {
-        val cursor: Cursor? = requireContext().contentResolver.query(uri, null, null, null, null)
-        cursor?.moveToFirst()
-        val index = cursor?.getColumnIndex(MediaStore.Images.Media.DATA) ?: return ""
-        val path = cursor.getString(index)
-        cursor.close()
-        return path
-    }
 
     private fun getFileNameFromUri(uri: Uri): String? {
         val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
@@ -350,5 +398,23 @@ class ProfileSetupFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    /* 랜덤 닉네임 생성 */
+    private fun fetchRandomNickname() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val res = RetrofitInstance.profileApi.getRandomNickname()
+                if (res.isSuccessful && res.body()?.isSuccess == true) {
+                    val nn = res.body()!!.result.nickname
+                    binding.nicknameEditText.setText(nn)
+                } else {
+                    val msg = res.body()?.message ?: "닉네임 생성 실패"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

@@ -77,10 +77,8 @@ class CommunityIntroFragment : Fragment() {
 
     // 목표 리스트를 갱신하는 함수
     private fun updateGoalList(category: String) {
-        binding.goalListContainer.removeAllViews() // 기존 리스트 삭제
-
+        binding.goalListContainer.removeAllViews()
         val goals = goalData[category] ?: emptyList()
-
         goals.forEach { goal ->
             val itemBinding = ItemGoalAltBinding.inflate(layoutInflater, binding.goalListContainer, false)
             itemBinding.goalIcon.setImageResource(goal.iconRes)
@@ -104,7 +102,7 @@ class CommunityIntroFragment : Fragment() {
     // 카테고리 클릭 리스너 등록
     private fun setupCategoryClickListeners() {
         categoryMap.forEach { (viewId, categoryName) ->
-            binding.root.findViewById<TextView>(viewId).setOnClickListener {
+            binding.root.findViewById<View>(viewId)?.setOnClickListener {
                 updateGoalList(categoryName)
             }
         }
@@ -122,10 +120,18 @@ class CommunityIntroFragment : Fragment() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCommunityIntroBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 전달받은 닉네임 적용
         val nickname = arguments?.getString(ARG_NICKNAME) ?: "사용자"
         binding.titleText.text = getString(R.string.community_greeting, nickname)
 
