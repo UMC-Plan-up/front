@@ -21,10 +21,8 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.goal.GoalActivity
-import com.example.planup.databinding.ToastGreyTemplateBinding
 import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
-import android.content.Context
 
 class PushAlertFragment : Fragment() {
 
@@ -65,9 +63,15 @@ class PushAlertFragment : Fragment() {
     private fun clickListener() {
         //뒤로가기 버튼 클릭
         binding.alertBackIv.setOnClickListener {
-            // 여기에 뒤로가기 로직 추가
-            (activity as? GoalActivity)?.onBackPressed()
+            val participantLimitFragment = ParticipantLimitFragment()
+
+            (activity as? GoalActivity)?.navigateToFragment(participantLimitFragment)
+                ?: parentFragmentManager.beginTransaction()
+                    .replace(R.id.goal_container, participantLimitFragment) // R.id.fragment_container_view를 실제 컨테이너 ID로 변경해주세요.
+                    .addToBackStack(null)
+                    .commit()
         }
+
 
         //알림받기 토글 끄기
         binding.alertReceiveOnIv.setOnClickListener {

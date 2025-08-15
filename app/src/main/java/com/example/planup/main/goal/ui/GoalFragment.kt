@@ -24,7 +24,6 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService

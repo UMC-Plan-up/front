@@ -34,6 +34,7 @@ class GoalDetailFragment : Fragment() {
     private var selectedDay: String? = null
 
     private var selectedEndButton: AppCompatButton? = null
+    private var isPlanSelected = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +53,10 @@ class GoalDetailFragment : Fragment() {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
+        // 구독 플랜 선택 여부 확인
+        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
+        binding.goalContainer.visibility = if (isPlanSelected) View.GONE else View.VISIBLE
+
         binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
         val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
@@ -68,6 +73,11 @@ class GoalDetailFragment : Fragment() {
         setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
+
+        // 자물쇠 버튼 클릭 리스너
+        binding.goalContainer.setOnClickListener {
+            (activity as? GoalActivity)?.startSubscriptionActivity()
+        }
 
         binding.root.setOnTouchListener { v, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN) {
@@ -295,6 +305,7 @@ class GoalDetailFragment : Fragment() {
 
     private fun setupNextButton() {
         binding.nextButton.setOnClickListener {
+            // 다음 버튼이 활성화된 상태에서만 화면 이동
             if (binding.nextButton.isEnabled) {
                 goToParticipantAlways()
             }
@@ -317,9 +328,6 @@ class GoalDetailFragment : Fragment() {
 
         val goalActivity = activity as? GoalActivity
         if (goalActivity != null) {
-            goalActivity.verificationType = verificationType
-            goalActivity.period = period
-            goalActivity.frequency = frequency
             goalActivity.navigateToFragment(participantFragment)
             return
         }
@@ -342,5 +350,13 @@ class GoalDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    fun updateLockStatus(isUnlocked: Boolean) {
+        if (isUnlocked) {
+            binding.goalContainer.visibility = View.GONE
+        } else {
+            binding.goalContainer.visibility = View.VISIBLE
+        }
     }
 }
