@@ -197,12 +197,11 @@ class PushAlertFragment : Fragment() {
             setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
         }
 
-        //아니오 클릭
         dialog.findViewById<TextView>(R.id.popup_push_no_btn).setOnClickListener {
             isFirst = false
             dialog.dismiss()
-            //경우에 따라 홈 또는 온보딩으로 이동
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
+
+            requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, HomeFragment())
                 .commitAllowingStateLoss()
         }
