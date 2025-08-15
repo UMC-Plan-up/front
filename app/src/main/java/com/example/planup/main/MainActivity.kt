@@ -15,8 +15,10 @@ import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.MypagePasswordChangeFragment
+import com.example.planup.main.my.ui.MypagePasswordLinkFragment
 import com.example.planup.main.record.ui.RecordFragment
 import com.example.planup.network.controller.UserController
 import com.example.planup.network.data.UserInfo
@@ -44,6 +46,20 @@ class MainActivity : AppCompatActivity() {
                 && data.getQueryParameter("verified").equals("true")
             ) {
                 initBottomNavigation(MypagePasswordChangeFragment())
+            }
+        } else if (data?.scheme.equals("planup")
+            && data?.host.equals("email")
+            && data?.path?.startsWith("/change")!!
+            && data != null
+        ) {
+            if (action == Intent.ACTION_VIEW
+                && data.getQueryParameter("verified").equals("true")
+            ) {
+                val emailLinkFragment = MypageEmailLinkFragment()
+                emailLinkFragment.arguments = Bundle().apply {
+                    putBoolean("deepLink",true)
+                }
+                initBottomNavigation(emailLinkFragment)
             }
         } else {
             //딥링크의 data가 없거나 일치하는 intent-filter가 없는 경우 기존 방식대로 운영

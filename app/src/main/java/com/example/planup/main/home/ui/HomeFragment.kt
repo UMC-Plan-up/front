@@ -258,9 +258,16 @@ class HomeFragment : Fragment() {
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+            //팝업에 요청한 친구 이름 바인딩
+            dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+            //배경 투명색
+            dialog.setCanceledOnTouchOutside(true)
         }
-        dialog.setCanceledOnTouchOutside(true)
-        dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+        //닫기 버튼 클릭 시 팝업 종료
+        dialog.findViewById<View>(R.id.popup_challenge_close_iv).setOnClickListener {
+            dialog.dismiss()
+        }
+        //확인하러 가기 버튼 클릭 시 챌린지 요청 조회 화면으로 이동
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
 

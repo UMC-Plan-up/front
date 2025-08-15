@@ -5,12 +5,14 @@ import com.example.planup.login.adapter.LoginAdapter
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.CloseAccountAdapter
+import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.KakaoAccount
 import com.example.planup.network.data.Login
@@ -89,6 +91,11 @@ class UserController {
     fun setPasswordChangeAdapter(adapter: PasswordChangeAdapter){
         this.passwordChangeAdapter = adapter
     }
+    //이메일 변경 시 이메일 인증링크 발송
+    private lateinit var emailLinkAdapter: EmailLinkAdapter
+    fun setEmailLinkAdapter(adapter: EmailLinkAdapter){
+        emailLinkAdapter = adapter
+    }
 
     //유저 정보 조회
     fun userInfoService(){
@@ -124,7 +131,7 @@ class UserController {
                     response: Response<UserResponse<String>>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
-                        nicknameChangeAdapter.successNicknameChange()
+                        nicknameChangeAdapter.successNicknameChange(nickname)
                     } else if (!response.isSuccessful && response.body() != null) {
                         nicknameChangeAdapter.failNicknameChange(response.body()!!.message)
                     } else {
@@ -371,5 +378,52 @@ class UserController {
                    closeAccountAdapter.failCloseAccount(t.toString())
                 }
             })
+    }
+
+    //이메일 변경 시 인증링크 발송
+    fun emailLinkService(email: String){
+        val service = getRetrofit().create(UserPort::class.java)
+        service.emailLink(email).enqueue(object : Callback<UserResponse<EmailLink>>{
+            override fun onResponse(
+                call: Call<UserResponse<EmailLink>>,
+                response: Response<UserResponse<EmailLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null){
+                    emailLinkAdapter.successEmailLink(response.body()!!.result.email)
+                } else if (!response.isSuccessful && response.body() != null){
+                    emailLinkAdapter.failEmailLink(response.message())
+                } else {
+                    emailLinkAdapter.failEmailLink("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<EmailLink>>, t: Throwable) {
+                emailLinkAdapter.failEmailLink(t.toString())
+            }
+
+        })
+    }
+    //이메일 변경 시 인증링크 재발송
+    fun emailRelinkService(email: String){
+        val service = getRetrofit().create(UserPort::class.java)
+        service.emailReLink(email).enqueue(object : Callback<UserResponse<EmailLink>>{
+            override fun onResponse(
+                call: Call<UserResponse<EmailLink>>,
+                response: Response<UserResponse<EmailLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null){
+                    emailLinkAdapter.successEmailLink(response.body()!!.result.email)
+                } else if (!response.isSuccessful && response.body() != null){
+                    emailLinkAdapter.failEmailLink(response.message())
+                } else {
+                    emailLinkAdapter.failEmailLink("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<EmailLink>>, t: Throwable) {
+                emailLinkAdapter.failEmailLink(t.toString())
+            }
+
+        })
     }
 }
