@@ -1,109 +1,274 @@
-package com.example.planup.main.goal.ui
+package com.example.planup.goal.ui
 
-import android.content.Context.MODE_PRIVATE
-import android.content.SharedPreferences
+import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPushAlertBinding
-import com.example.planup.main.goal.item.EditGoalRequest
-import com.example.planup.main.goal.item.GoalApiService
-import com.example.planup.main.goal.item.GoalRetrofitInstance
-import kotlinx.coroutines.launch
+import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.MainActivity
+import com.example.planup.main.home.ui.HomeFragment
+import androidx.core.graphics.drawable.toDrawable
+import com.example.planup.goal.GoalActivity
+import com.example.planup.databinding.ToastGreyTemplateBinding
+import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
+import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
+import android.content.Context
 
 class PushAlertFragment : Fragment() {
-    private lateinit var binding: FragmentPushAlertBinding
-    private lateinit var prefs: SharedPreferences
-    private var goalId: Int = 0
-    private var goalName: String = ""
-    private var goalAmount: String = ""
-    private var goalCategory: String = ""
-    private var goalType: String = ""
-    private var oneDose: Int = 0
-    private var frequency: Int = 0
-    private var period: String = ""
-    private var endDate: String = ""
-    private var verificationType: String = ""
-    private var limitFriendCount: Int = 0
-    private var goalTime: Int = 0
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        goalId = arguments?.getInt("goalId") ?: 0
-        goalName = arguments?.getString("goalName") ?: ""
-        goalAmount = arguments?.getString("goalAmount") ?: ""
-        goalCategory = arguments?.getString("goalCategory") ?: ""
-        goalType = arguments?.getString("goalType") ?: ""
-        oneDose = arguments?.getInt("oneDose") ?: 0
-        frequency = arguments?.getInt("frequency") ?: 0
-        period = arguments?.getString("period") ?: ""
-        endDate = arguments?.getString("endDate") ?: ""
-        verificationType = arguments?.getString("verificationType") ?: ""
-        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
-        goalTime = arguments?.getInt("goalTime") ?: 0
-        prefs = requireActivity().getSharedPreferences("userInfo", MODE_PRIVATE)
+    private var _binding: FragmentPushAlertBinding? = null
+    private val binding get() = _binding!!
 
-    }
+    private var isFirst = true //해당 페이지 처음 들어온 경우 알림설정에 대한 팝업을 보여줘야 함
+
+    private lateinit var hours: ArrayList<String> //시간
+    private lateinit var minutes: ArrayList<String> //분
+    private lateinit var times: ArrayList<String>
+
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPushAlertBinding.inflate(inflater, container, false)
-
-        binding.nextButton.setOnClickListener {
-            val request = EditGoalRequest(
-                goalName = goalName,
-                goalAmount = goalAmount,
-                goalCategory = goalCategory,
-                goalType = goalType,
-                oneDose = oneDose,
-                frequency = frequency,
-                period = period,
-                endDate = endDate,
-                verificationType = verificationType,
-                limitFriendCount = limitFriendCount,
-                goalTime = goalTime
-            )
-            updateGoal(goalId = goalId, request = request)
-            val nextfragment = FragmentEditGoalComplete()
-            val bundle = Bundle().apply {
-                putString("goalId", goalId.toString())
-            }
-            nextfragment.arguments = bundle
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
-                .addToBackStack(null)
-                .commit()
-        }
-
+    ): View {
+        _binding = FragmentPushAlertBinding.inflate(inflater, container, false)
         return binding.root
     }
 
-    private fun updateGoal(goalId: Int, request: EditGoalRequest) {
-        lifecycleScope.launch {
-            try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val token = prefs.getString("accessToken", null)
-                val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
-                if (response.isSuccess){
-                    val nextfragment = FragmentEditGoalComplete()
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
-                        .addToBackStack(null)
-                        .commit()
-                } else {
-                    val errorMessage = response.message
-                    Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("EditGoalFragment", "네트워크 오류: ${e.localizedMessage}")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        init()
+        clickListener()
+    }
+
+    //프레그먼트 초기화
+    private fun init() {
+        hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList())
+        minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList())
+        times = resources.getStringArray(R.array.dropdown_morning_afternoon).toCollection(ArrayList())
+
+        if (isFirst) showPopup()
+    }
+
+    //클릭 이벤트
+    private fun clickListener() {
+        //뒤로가기 버튼 클릭
+        binding.alertBackIv.setOnClickListener {
+            // 여기에 뒤로가기 로직 추가
+            (activity as? GoalActivity)?.onBackPressed()
+        }
+
+        //알림받기 토글 끄기
+        binding.alertReceiveOnIv.setOnClickListener {
+            binding.alertReceiveOnIv.visibility = View.GONE
+            binding.alertReceiveOffIv.visibility = View.VISIBLE
+        }
+        //알림받기 토글 켜기
+        binding.alertReceiveOffIv.setOnClickListener {
+            binding.alertReceiveOnIv.visibility = View.VISIBLE
+            binding.alertReceiveOffIv.visibility = View.GONE
+        }
+
+        //정기알림 토글 끄기
+        binding.alertRegularOnIv.setOnClickListener {
+            binding.alertRegularOnIv.visibility = View.GONE
+            binding.alertRegularOffIv.visibility = View.VISIBLE
+        }
+        //정기알림 토글 켜기
+        binding.alertRegularOffIv.setOnClickListener {
+            binding.alertRegularOnIv.visibility = View.VISIBLE
+            binding.alertRegularOffIv.visibility = View.GONE
+        }
+
+        //저장 버튼 클릭
+        binding.nextButton.setOnClickListener {
+            makeToast()
+            if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
+                isFirst = false
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
+            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                startActivity(intent)
             }
         }
+
+        //정기 알림 시간 설정
+        //오전/오후
+        binding.alertTimeTv.setOnClickListener {
+            showDropDown(times, R.layout.item_recycler_dropdown_morining, binding.alertTimeTv)
+        }
+        //시각 설정
+        binding.alertHourTv.setOnClickListener {
+            showDropDown(hours, R.layout.item_recycler_dropdown_time, binding.alertHourTv)
+        }
+        //분 설정
+        binding.alertMinuteTv.setOnClickListener {
+            showDropDown(minutes, R.layout.item_recycler_dropdown_time, binding.alertMinuteTv)
+        }
+
+        //정기 알림 요일 설정
+        val selected = ContextCompat.getColor(requireContext(), R.color.blue_200)
+        val unselected = ContextCompat.getColor(requireContext(), R.color.black_300)
+
+        // 매일
+        binding.alertEverydayTv.setOnClickListener {
+            binding.alertEverydayTv.isSelected = !binding.alertEverydayTv.isSelected
+            binding.alertEverydayTv.setTextColor(
+                if (binding.alertEverydayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 월요일
+        binding.alertMondayTv.setOnClickListener {
+            binding.alertMondayTv.isSelected = !binding.alertMondayTv.isSelected
+            binding.alertMondayTv.setTextColor(
+                if (binding.alertMondayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 화요일
+        binding.alertTuesdayTv.setOnClickListener {
+            binding.alertTuesdayTv.isSelected = !binding.alertTuesdayTv.isSelected
+            binding.alertTuesdayTv.setTextColor(
+                if (binding.alertTuesdayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 수요일
+        binding.alertWednesdayTv.setOnClickListener {
+            binding.alertWednesdayTv.isSelected = !binding.alertWednesdayTv.isSelected
+            binding.alertWednesdayTv.setTextColor(
+                if (binding.alertWednesdayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 목요일
+        binding.alertThursdayTv.setOnClickListener {
+            binding.alertThursdayTv.isSelected = !binding.alertThursdayTv.isSelected
+            binding.alertThursdayTv.setTextColor(
+                if (binding.alertThursdayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 금요일
+        binding.alertFridayTv.setOnClickListener {
+            binding.alertFridayTv.isSelected = !binding.alertFridayTv.isSelected
+            binding.alertFridayTv.setTextColor(
+                if (binding.alertFridayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 토요일
+        binding.alertSaturdayTv.setOnClickListener {
+            binding.alertSaturdayTv.isSelected = !binding.alertSaturdayTv.isSelected
+            binding.alertSaturdayTv.setTextColor(
+                if (binding.alertSaturdayTv.isSelected) selected else unselected
+            )
+        }
+
+        // 일요일
+        binding.alertSundayTv.setOnClickListener {
+            binding.alertSundayTv.isSelected = !binding.alertSundayTv.isSelected
+            binding.alertSundayTv.setTextColor(
+                if (binding.alertSundayTv.isSelected) selected else unselected
+            )
+        }
+    }
+
+    //첫 방문인 경우 알림설정 관련 팝업 출력
+    private fun showPopup() {
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.popup_push_alert)
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
+        }
+
+        //아니오 클릭
+        dialog.findViewById<TextView>(R.id.popup_push_no_btn).setOnClickListener {
+            isFirst = false
+            dialog.dismiss()
+            //경우에 따라 홈 또는 온보딩으로 이동
+            (context as GoalActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.goal_container, HomeFragment())
+                .commitAllowingStateLoss()
+        }
+
+        //네 클릭
+        dialog.findViewById<TextView>(R.id.popup_push_yes_btn).setOnClickListener {
+            dialog.dismiss()
+        }
+
+        //외부 터치 시 팝업 종료
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.show()
+    }
+
+    //알림설정 시간 드롭다운
+    private fun showDropDown(items: ArrayList<String>, layout: Int, view: TextView) {
+        val inflater = LayoutInflater.from(requireContext())
+
+        val popupView = when (layout) {
+            R.layout.item_recycler_dropdown_morining -> ItemRecyclerDropdownMoriningBinding.inflate(inflater).root
+            R.layout.item_recycler_dropdown_time -> ItemRecyclerDropdownTimeBinding.inflate(inflater).root
+            else -> throw IllegalArgumentException("Invalid layout ID")
+        }
+
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupWindow.setBackgroundDrawable(ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable())
+        popupWindow.isOutsideTouchable = true
+
+        popupView.measure(
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+        )
+        val popupHeight = popupView.measuredHeight
+        // 뷰 아래에 팝업 표시
+        popupWindow.showAsDropDown(view)
+
+        val adapter = TimerRVAdapter(items)
+        adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
+            override fun setTime(position: Int) {
+                view.text = items[position]
+                popupWindow.dismiss()
+            }
+        })
+        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = adapter
+    }
+
+    //설정 완료 후 토스트 메시지 출력
+    private fun makeToast() {
+        val inflater = LayoutInflater.from(requireContext())
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_alert_setting)
+
+        val toast = Toast(requireContext())
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

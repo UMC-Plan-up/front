@@ -18,7 +18,6 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalDetailBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 
 class GoalDetailFragment : Fragment() {
 
@@ -35,19 +34,6 @@ class GoalDetailFragment : Fragment() {
     private var selectedDay: String? = null
 
     private var selectedEndButton: AppCompatButton? = null
-
-    // 구독 플랜 선택 여부 (초기값은 false)
-    private var isSubscribed: Boolean = false
-
-    // 상태 저장을 위한 상수 정의
-    private val KEY_IS_SUBSCRIBED = "isSubscribed"
-    private val KEY_SELECTED_PERIOD_BUTTON = "selectedPeriodButtonId"
-    private val KEY_FREQUENCY_INPUT = "frequencyInput"
-    private val KEY_SELECTED_END_BUTTON = "selectedEndButtonId"
-    private val KEY_SELECTED_YEAR = "selectedYear"
-    private val KEY_SELECTED_MONTH = "selectedMonth"
-    private val KEY_SELECTED_DAY = "selectedDay"
-    private val KEY_DROPDOWN_VISIBILITY = "dropdownVisibility"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,23 +54,10 @@ class GoalDetailFragment : Fragment() {
 
         binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
-        // Subscription에서 돌아오면 자물쇠를 풀린 상태로 표시
         val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
         if (shouldHideGoalContainer) {
             binding.goalContainer.visibility = View.GONE
-            isSubscribed = true
-        } else {
-            binding.goalContainer.visibility = View.VISIBLE
-            isSubscribed = false
         }
-
-        // Bundle에서 상태 복원
-        if (savedInstanceState != null) {
-            restoreState(savedInstanceState)
-        }
-
-        // SubscriptionFragment에서 돌아올 때 결과를 받는 리스너
-        setFragmentResultListener()
 
         binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
@@ -95,9 +68,7 @@ class GoalDetailFragment : Fragment() {
         setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
-        setupGoalContainer() // 자물쇠 클릭 리스너 추가
 
-        // 키보드 숨기기 로직
         binding.root.setOnTouchListener { v, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN) {
                 val focused = requireActivity().currentFocus
@@ -109,118 +80,6 @@ class GoalDetailFragment : Fragment() {
             v.performClick()
             false
         }
-    }
-
-    // Fragment Result API 리스너 설정
-    private fun setFragmentResultListener() {
-        parentFragmentManager.setFragmentResultListener("subscription_result_key", viewLifecycleOwner) { key, bundle ->
-            val isPlanSelected = bundle.getBoolean("is_plan_selected", false)
-            if (isPlanSelected) {
-                isSubscribed = true
-                binding.goalContainer.visibility = View.GONE
-                updateNextButtonState()
-            }
-        }
-    }
-
-    // 자물쇠 클릭 리스너 설정
-    private fun setupGoalContainer() {
-        binding.goalContainer.setOnClickListener {
-            val subscriptionFragment = SubscriptionPlanFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean("IS_FROM_GOAL_DETAIL", true)
-                    putString("goalOwnerName", goalOwnerName)
-                }
-            }
-
-            (requireActivity() as? GoalActivity)?.navigateToFragment(subscriptionFragment)
-                ?: parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, subscriptionFragment)
-                    .addToBackStack(null)
-                    .commit()
-        }
-    }
-
-    // 상태 복원 함수
-    private fun restoreState(savedInstanceState: Bundle) {
-        // isSubscribed 상태 복원
-        isSubscribed = savedInstanceState.getBoolean(KEY_IS_SUBSCRIBED, false)
-        if (isSubscribed) {
-            binding.goalContainer.visibility = View.GONE
-        } else {
-            binding.goalContainer.visibility = View.VISIBLE
-        }
-
-        // Period Button 상태 복원
-        val selectedPeriodButtonId = savedInstanceState.getInt(KEY_SELECTED_PERIOD_BUTTON, -1)
-        if (selectedPeriodButtonId != -1) {
-            val button = view?.findViewById<AppCompatButton>(selectedPeriodButtonId)
-            if (button != null) {
-                resetAllPeriodButtons()
-                selectButtonStyle(button)
-                selectedPeriodButton = button
-            }
-        }
-
-        // Frequency Input 상태 복원
-        val frequencyInput = savedInstanceState.getString(KEY_FREQUENCY_INPUT)
-        if (frequencyInput != null) {
-            binding.frequencyInputEditText.setText(frequencyInput)
-            val value = frequencyInput.toIntOrNull() ?: 0
-            isFrequencyValid = value >= 1
-            if (!isFrequencyValid) {
-                binding.frequencyErrorText.visibility = View.VISIBLE
-            }
-        }
-
-        // End Option Button 상태 복원
-        val selectedEndButtonId = savedInstanceState.getInt(KEY_SELECTED_END_BUTTON, -1)
-        if (selectedEndButtonId != -1) {
-            val button = view?.findViewById<AppCompatButton>(selectedEndButtonId)
-            if (button != null) {
-                resetAllEndButtons()
-                selectButtonStyle(button)
-                selectedEndButton = button
-            }
-        }
-
-        // 직접 설정 드롭다운 상태 복원
-        val dropdownVisibility = savedInstanceState.getInt(KEY_DROPDOWN_VISIBILITY, View.GONE)
-        binding.dropdownContainer1.visibility = dropdownVisibility
-        binding.dropdownContainer2.visibility = dropdownVisibility
-        binding.dropdownContainer3.visibility = dropdownVisibility
-
-        val year = savedInstanceState.getString(KEY_SELECTED_YEAR)
-        val month = savedInstanceState.getString(KEY_SELECTED_MONTH)
-        val day = savedInstanceState.getString(KEY_SELECTED_DAY)
-
-        if (year != null) {
-            selectedYear = year
-            binding.challengeYearTv.text = year
-        }
-        if (month != null) {
-            selectedMonth = month
-            binding.challengeMonthTv.text = month
-        }
-        if (day != null) {
-            selectedDay = day
-            binding.challengeDayTv.text = day
-        }
-
-        updateNextButtonState()
-    }
-
-    // 상태 저장 함수
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean(KEY_IS_SUBSCRIBED, isSubscribed)
-        selectedPeriodButton?.let { outState.putInt(KEY_SELECTED_PERIOD_BUTTON, it.id) }
-        outState.putString(KEY_FREQUENCY_INPUT, binding.frequencyInputEditText.text.toString())
-        selectedEndButton?.let { outState.putInt(KEY_SELECTED_END_BUTTON, it.id) }
-        selectedYear?.let { outState.putString(KEY_SELECTED_YEAR, it) }
-        selectedMonth?.let { outState.putString(KEY_SELECTED_MONTH, it) }
-        selectedDay?.let { outState.putString(KEY_SELECTED_DAY, it) }
-        outState.putInt(KEY_DROPDOWN_VISIBILITY, binding.dropdownContainer1.visibility)
     }
 
     private fun setupBackButton() {
@@ -276,27 +135,6 @@ class GoalDetailFragment : Fragment() {
         button.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_no)
     }
 
-    private fun resetAllPeriodButtons() {
-        val buttons = listOf(
-            binding.dayOptionDailyButton,
-            binding.dayOptionWeeklyButton,
-            binding.dayOptionMonthlyButton
-        )
-        buttons.forEach { resetButtonStyle(it) }
-    }
-
-    private fun resetAllEndButtons() {
-        val buttons = listOf(
-            binding.endOption1WeekButton,
-            binding.endOption1MonthButton,
-            binding.endOption3MonthButton,
-            binding.endOption6MonthButton,
-            binding.endOption1YearButton,
-            binding.directSetButton
-        )
-        buttons.forEach { resetButtonStyle(it) }
-    }
-
     private fun setupFrequencyInput() {
         binding.frequencyInputEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
             if (source.matches(Regex("[0-9]*"))) source else ""
@@ -328,7 +166,6 @@ class GoalDetailFragment : Fragment() {
         binding.dropdownContainer1.setOnClickListener {
             showDropdown(years, binding.dropdownContainer1, binding.challengeYearTv) {
                 selectedYear = it
-                updateNextButtonState() // 선택 시 바로 업데이트
             }
         }
         binding.dropdownYearIv.setOnClickListener { binding.dropdownContainer1.performClick() }
@@ -336,7 +173,6 @@ class GoalDetailFragment : Fragment() {
         binding.dropdownContainer2.setOnClickListener {
             showDropdown(months, binding.dropdownContainer2, binding.challengeMonthTv) {
                 selectedMonth = it
-                updateNextButtonState()
             }
         }
         binding.dropdownMonthIv.setOnClickListener { binding.dropdownContainer2.performClick() }
@@ -344,7 +180,6 @@ class GoalDetailFragment : Fragment() {
         binding.dropdownContainer3.setOnClickListener {
             showDropdown(days, binding.dropdownContainer3, binding.challengeDayTv) {
                 selectedDay = it
-                updateNextButtonState()
             }
         }
         binding.dropdownDayIv.setOnClickListener { binding.dropdownContainer3.performClick() }
@@ -439,17 +274,7 @@ class GoalDetailFragment : Fragment() {
 
     private fun updateNextButtonState() {
         val isPeriodSelected = selectedPeriodButton != null
-        val isFrequencyValid = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0 >= 1
-
-        val isDirectSetSelected = selectedEndButton == binding.directSetButton
-        val isDirectDateValid = if (isDirectSetSelected) {
-            selectedYear != null && selectedMonth != null && selectedDay != null
-        } else {
-            selectedEndButton != null
-        }
-
-        // 모든 조건이 충족되어야 다음 버튼 활성화
-        val isReady = isSubscribed && isPeriodSelected && isFrequencyValid && isDirectDateValid
+        val isReady = isPeriodSelected && isFrequencyValid
 
         binding.nextButton.isEnabled = isReady
 
