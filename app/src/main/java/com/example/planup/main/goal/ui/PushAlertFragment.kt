@@ -1,44 +1,52 @@
 package com.example.planup.main.goal.ui
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPushAlertBinding
-import com.example.planup.main.goal.item.EditGoalApiResponse
 import com.example.planup.main.goal.item.EditGoalRequest
-import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.launch
 
 class PushAlertFragment : Fragment() {
     private lateinit var binding: FragmentPushAlertBinding
-    private var title: String = ""
-    private var oneDose: String = ""
-    private var goalId: Long = -1L
-    private var authType: String = ""
-    private var hour: String = ""
-    private var minute: String = ""
-    private var second: String = ""
-    private var frequency: String = ""
+    private lateinit var prefs: SharedPreferences
+    private var goalId: Int = 0
+    private var goalName: String = ""
+    private var goalAmount: String = ""
+    private var goalCategory: String = ""
+    private var goalType: String = ""
+    private var oneDose: Int = 0
+    private var frequency: Int = 0
+    private var period: String = ""
     private var endDate: String = ""
+    private var verificationType: String = ""
+    private var limitFriendCount: Int = 0
+    private var goalTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        goalId = arguments?.getLong("goalId") ?: -1L
-        title = arguments?.getString("title") ?: ""
-        oneDose = arguments?.getString("oneDose") ?: ""
-        authType = arguments?.getString("authType") ?: ""
-        hour = arguments?.getString("hour") ?: ""
-        minute = arguments?.getString("minute") ?: ""
-        second = arguments?.getString("second") ?: ""
-        frequency = arguments?.getString("frequency") ?: ""
+        goalId = arguments?.getInt("goalId") ?: 0
+        goalName = arguments?.getString("goalName") ?: ""
+        goalAmount = arguments?.getString("goalAmount") ?: ""
+        goalCategory = arguments?.getString("goalCategory") ?: ""
+        goalType = arguments?.getString("goalType") ?: ""
+        oneDose = arguments?.getInt("oneDose") ?: 0
+        frequency = arguments?.getInt("frequency") ?: 0
+        period = arguments?.getString("period") ?: ""
+        endDate = arguments?.getString("endDate") ?: ""
+        verificationType = arguments?.getString("verificationType") ?: ""
+        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
+        goalTime = arguments?.getInt("goalTime") ?: 0
+        prefs = requireActivity().getSharedPreferences("userInfo", MODE_PRIVATE)
 
     }
     override fun onCreateView(
@@ -49,17 +57,17 @@ class PushAlertFragment : Fragment() {
 
         binding.nextButton.setOnClickListener {
             val request = EditGoalRequest(
-                goalName = title,
-                goalAmount = oneDose,
-                goalCategory = "STUDYING",
-                goalType = "FRIEND",
-                oneDose = 0,
-                frequency = 3,
-                period = hour,
+                goalName = goalName,
+                goalAmount = goalAmount,
+                goalCategory = goalCategory,
+                goalType = goalType,
+                oneDose = oneDose,
+                frequency = frequency,
+                period = period,
                 endDate = endDate,
-                verificationType = "PHOTO",
-                limitFriendCount = 3,
-                goalTime = 0 //??
+                verificationType = verificationType,
+                limitFriendCount = limitFriendCount,
+                goalTime = goalTime
             )
             updateGoal(goalId = goalId, request = request)
             val nextfragment = FragmentEditGoalComplete()
@@ -76,31 +84,26 @@ class PushAlertFragment : Fragment() {
         return binding.root
     }
 
-    private fun updateGoal(goalId: Long, request: EditGoalRequest) {
-        val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-
-        apiService.editGoal(goalId, request).enqueue(object : Callback<EditGoalApiResponse<EditGoalResponse>> {
-            override fun onResponse(
-                call: Call<EditGoalApiResponse<EditGoalResponse>>,
-                response: Response<EditGoalApiResponse<EditGoalResponse>>
-            ) {
-                if (response.isSuccessful && response.body()?.status == 200) {
-                    Toast.makeText(requireContext(), "목표 수정 성공", Toast.LENGTH_SHORT).show()
-                    // UI 업데이트 또는 화면 이동
+    private fun updateGoal(goalId: Int, request: EditGoalRequest) {
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val token = prefs.getString("accessToken", null)
+                val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
+                if (response.isSuccess){
                     val nextfragment = FragmentEditGoalComplete()
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
                         .addToBackStack(null)
                         .commit()
                 } else {
-                    val errorMessage = response.body()?.message ?: "오류가 발생했습니다."
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()
+                    val errorMessage = response.message
+                    Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
                 }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("EditGoalFragment", "네트워크 오류: ${e.localizedMessage}")
             }
-
-            override fun onFailure(call: Call<EditGoalApiResponse<EditGoalResponse>>, t: Throwable) {
-                Toast.makeText(requireContext(), "에러 발생: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        }
     }
 }

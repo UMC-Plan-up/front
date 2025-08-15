@@ -10,15 +10,38 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCntBinding
 import android.widget.TextView
 import android.text.TextWatcher
+import kotlin.text.toInt
 
 class EditFriendLimitFragment : Fragment() {
 
     private lateinit var binding: FragmentEditGoalCntBinding
+    private var goalId: Int = 0
+    private var goalName: String = ""
+    private var goalAmount: String = ""
+    private var goalCategory: String = ""
+    private var goalType: String = ""
+    private var oneDose: Int = 0
+    private var frequency: Int = 0
+    private var period: String = ""
+    private var endDate: String = ""
+    private var verificationType: String = ""
     private var limitFriendCount: Int = 0
+    private var goalTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        goalId = arguments?.getInt("goalId") ?: 0
+        goalName = arguments?.getString("goalName") ?: ""
+        goalAmount = arguments?.getString("goalAmount") ?: ""
+        goalCategory = arguments?.getString("goalCategory") ?: ""
+        goalType = arguments?.getString("goalType") ?: ""
+        oneDose = arguments?.getInt("oneDose") ?: 0
+        frequency = arguments?.getInt("frequency") ?: 0
+        period = arguments?.getString("period") ?: ""
+        endDate = arguments?.getString("endDate") ?: ""
+        verificationType = arguments?.getString("verificationType") ?: ""
         limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
+        goalTime = arguments?.getInt("goalTime") ?: 0
     }
 
     override fun onCreateView(
@@ -49,14 +72,25 @@ class EditFriendLimitFragment : Fragment() {
             val inputCount = binding.editText.text.toString().toIntOrNull() ?: limitFriendCount
 
             val bundle = Bundle().apply {
+                putInt("goalId", goalId)
+                putString("goalName", goalName)
+                putString("goalAmount", goalAmount)
+                putString("goalCategory", goalCategory)
+                putString("goalType", goalType)
+                putInt("oneDose", oneDose)
+                putInt("frequency", frequency.toInt())
+                putString("period", period)
+                putString("endDate", endDate)
+                putString("verificationType", verificationType)
                 putInt("limitFriendCount", inputCount)
+                putInt("goalTime", goalTime)
             }
 
-            val nextFragment = NextFragment() // 실제 다음 Fragment로 교체
+            val nextFragment = PushAlertFragment() // 실제 다음 Fragment로 교체
             nextFragment.arguments = bundle
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, nextFragment) // 실제 container id로 변경
+                .replace(R.id.edit_friend_goal_fragment_container, nextFragment) // 실제 container id로 변경
                 .addToBackStack(null)
                 .commit()
         }

@@ -11,10 +11,11 @@ import retrofit2.http.Path
 
 interface GoalApiService {
     @PUT("/goals/{goalId}")
-    fun editGoal(
-        @Path("goalId") goalId: Long,
+    suspend fun editGoal(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int,
         @Body editGoalRequest: EditGoalRequest
-    ): Call<EditGoalApiResponse>
+    ): EditGoalApiResponse
 
     @GET("/goals/{goalId}/edit")
     suspend fun getEditGoal(
