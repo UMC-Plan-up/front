@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,8 +42,9 @@ import java.util.Locale
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.data.HomeTimer
+import com.example.planup.main.home.adapter.CalendarEventAdapter
+import com.example.planup.main.home.data.ChallengeReceivedTimer
 import com.example.planup.network.RetrofitInstance
-import com.example.planup.main.record.ui.ReceivedChallengeFragment
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
@@ -228,6 +230,19 @@ class HomeFragment : Fragment() {
         }
     }
     private fun showPopup(){
+        val timerChallenge = ChallengeReceivedTimer(
+            1,
+            16,
+            listOf(13L),
+            "friend",
+            "goalName",
+            "goalAmount",
+            1200,
+            "endDate",
+            "duration",
+            "frequency",
+            "penalty"
+        )
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.popup_challenge)
         dialog.window?.apply {
@@ -238,9 +253,15 @@ class HomeFragment : Fragment() {
         dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
+
+            //API response에 따라 photo 또는 timer로 전환
+            //bundle로 데이터 넘기는 작업도 필요함
+            val challengeTimer = ChallengeReceivedTimerFragment()
+            challengeTimer.arguments = Bundle().apply {
+                putParcelable("receivedChallenge",timerChallenge)
+            }
             (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,ReceivedChallengeFragment())
-                .replace(R.id.main_container, ChallengeAlertFragment())
+                .replace(R.id.main_container,challengeTimer)
                 .commitAllowingStateLoss()
         }
         dialog.show()

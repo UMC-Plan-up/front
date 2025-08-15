@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.example.planup.main.home.ui
 
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
@@ -22,17 +22,21 @@ import com.example.planup.goal.adapter.RepenaltyAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.network.controller.ChallengeController
 import com.example.planup.network.dto.challenge.RepenaltyDto
-import okhttp3.Challenge
 
 class AskNewPenaltyFragment:Fragment(),RepenaltyAdapter {
     private lateinit var binding: FragmentAskNewPenaltyBinding
 
     private lateinit var curPenalty: View //현재 선택된 페널티
     private var isFirst: Boolean = true //비활성화할 페널티가 없는 경우
-    private lateinit var penalty: String //최종 페널티
 
-    private lateinit var prefs: SharedPreferences
-    private lateinit var editor: Editor
+    //DTO에 전달할 데이터
+    private lateinit var penalty: String //선택된 페널티
+    private var userId: Int = 0 //사용자 id
+    private var challengeId: Int = 0 //챌린지 id
+    private lateinit var friendIdList: List<Long> //친구 id
+
+    //화면에 출력할 친구 이름
+    private var friendName: String = "friend"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,15 +54,22 @@ class AskNewPenaltyFragment:Fragment(),RepenaltyAdapter {
     private fun init(){
         curPenalty = binding.challengePenaltyCoffeeCl //현재 선택된 페널티 초기화
         if (!isFirst) binding.challengePenaltyOfferCompleteBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
-        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
-        editor = prefs.edit()
-        binding.challengePenaltyTitleTv.text = getString(R.string.challenge_request_from,arguments?.getString("friendName","null"))
+        //사용자 id
+        userId = requireArguments().getInt("userId")
+        //챌린지 id
+        challengeId = requireArguments().getInt("challengeId")
+        //친구 id
+        friendIdList = requireArguments().getSerializable("friendIdList") as ArrayList<Long>
+        //친구 이름
+        friendName = requireArguments().getString("friendName","friend")
+        //친구 이름 화면에 출력
+        binding.challengePenaltyTitleTv.text = getString(R.string.challenge_request_from,friendName)
     }
     //클릭 이벤트 관리
     private fun clickListener(){
         //이전 버튼 : 종료일, 빈도, 기준기간 설정 페이지로 이동
         binding.challengePenaltyBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.popBackStack()
+            (context as MainActivity).supportFragmentManager.popBackStack()
         }
         //페널티 : 커피
         binding.challengePenaltyCoffeeCl.setOnClickListener {
@@ -107,9 +118,10 @@ class AskNewPenaltyFragment:Fragment(),RepenaltyAdapter {
         //다음 버튼 : 챌린지 신청 완료 화면으로 이동
         binding.challengePenaltyOfferCompleteBtn.setOnClickListener {
             if (!binding.challengePenaltyOfferCompleteBtn.isActivated) return@setOnClickListener
+            //서버에 재설정 정보 전달
             val service = ChallengeController()
             service.setRepenaltyAdapter(this)
-            service.sendRepenalty(RepenaltyDto(3, penalty, 5))
+            service.sendRepenalty(RepenaltyDto(userId, penalty, friendIdList))
         }
     }
     //페널티 직접입력 관리
@@ -121,18 +133,18 @@ class AskNewPenaltyFragment:Fragment(),RepenaltyAdapter {
                     //직접 입력한 페널티가 30자 초과하는 경우 입력 불가
                     binding.challengePenaltyErrorTv.visibility = View.VISIBLE //에러메시지 출력
                     binding.challengePenaltyCompleteBtn.isActivated = false //완료 버튼 비활성화
-                    binding.challengePenaltyOfferCompleteBtn.isActivated = false //다음 버튼 비활성화
+                    binding.challengePenaltyOfferCompleteBtn.isActivated = false //재요청 버튼 비활성화
                 } else if (binding.challengePenaltyEnterEt.text.isNotEmpty()
                     && binding.challengePenaltyEnterEt.text.toString().length <= 30){
                     //직접 입력한 페널티가 30자 이내인 경우만 입력 가능
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = true //완료 버튼 활성화
-                    binding.challengePenaltyOfferCompleteBtn.isActivated = true //다음 버튼 활성화
+                    binding.challengePenaltyOfferCompleteBtn.isActivated = false //재요청 버튼 비활성화
                 } else if(binding.challengePenaltyEnterEt.text.length<1){
                     //페널티 입력되지 않은 경우 버튼 비활성화
                     binding.challengePenaltyErrorTv.visibility = View.GONE //에러메시지 숨김
                     binding.challengePenaltyCompleteBtn.isActivated = false //완료 버튼 비활성화
-                    binding.challengePenaltyOfferCompleteBtn.isActivated = false //다음 버튼 비활성화
+                    binding.challengePenaltyOfferCompleteBtn.isActivated = false //재요청 버튼 비활성화
                 }
             }
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
@@ -167,8 +179,9 @@ class AskNewPenaltyFragment:Fragment(),RepenaltyAdapter {
 
     //패널티 재설정 API 성공
     override fun successRepenalty() {
-        val intent = Intent(context as GoalActivity, MainActivity::class.java)
-        startActivity(intent)
+        (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, HomeFragment())
+            .commitAllowingStateLoss()
     }
     //페널티 재설정 API 오류
     override fun failRepenalty(message: String) {
