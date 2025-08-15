@@ -8,13 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.planup.R
 
 class EditFriendGoalActivity : AppCompatActivity() {
-    private var goalId: Long = -1L
+    private var goalId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_friend_goal)
 
-        goalId = intent.getLongExtra("goalId", -1L)
+        goalId = intent.getIntExtra("goalId", 0)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.bumptech.glide.Glide
 import com.example.planup.databinding.ItemFriendTimerBinding
 
 class FriendTimerAdapter(private val friends: List<FriendTimer>) :
@@ -30,7 +31,13 @@ class FriendTimerAdapter(private val friends: List<FriendTimer>) :
 
     override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
         val item = friends[position]
-        holder.profile.setImageResource(item.profileResId)
+        val imgUrl = item.profileResId
+        Glide.with(holder.itemView.context) // context 대신 이렇게
+            .load(imgUrl)
+            .placeholder(R.drawable.ic_launcher_background) // 로딩 중
+            .error(R.drawable.ic_launcher_background) // 실패 시
+            .circleCrop()
+            .into(holder.profile)
         holder.nickname.text = item.nickname
         holder.timer.text = item.time
     }

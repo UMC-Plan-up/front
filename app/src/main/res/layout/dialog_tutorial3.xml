@@ -4,6 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"> <!-- 반투명 검정 배경 -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_circle_transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="125dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -25,12 +33,12 @@
 
             <!-- 제목 -->
             <TextView
-                android:id="@+id/tutorial2_title_tv"
+                android:id="@+id/tutorial3_title_tv"
                 style="@style/Typography_XL_Semibold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="새 목표 추가"
+                android:text="목표 달성 기록"
                 android:textColor="@color/black_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,19 +46,19 @@
 
             <!-- 내용 -->
             <TextView
-                android:id="@+id/tutorial2_desc_tv"
+                android:id="@+id/tutorial3_desc_tv"
                 style="@style/Typography_SM_Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="92dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="방금처럼 새 목표를 추가하고 싶다면 상단 더보기 → 목표 목록에서 추가할 수 있어요."
+                android:text="목표 달성을 기록하고 싶다면, 캘린더 또는 아래의 타이머 버튼을 눌러서 기록할 수 있어요."
                 android:textColor="@color/black_300"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tutorial2_title_tv" />
+                app:layout_constraintTop_toBottomOf="@id/tutorial3_title_tv" />
 
             <ImageView
                 android:id="@+id/tutorial_next_iv"
@@ -63,6 +71,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 

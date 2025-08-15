@@ -12,23 +12,33 @@ import com.example.planup.databinding.FragmentEditGoalDetailBinding
 
 class EditGoalDetailFragment : Fragment(){
     private lateinit var binding: FragmentEditGoalDetailBinding
-    private var goalId: Long = -1L
-    private var title: String = ""
-    private var oneDose: String = ""
-    private var authType: String = ""
-    private var hour: String = ""
-    private var minute: String = ""
-    private var second: String = ""
+    private var goalId: Int = 0
+    private var goalName: String = ""
+    private var goalAmount: String = ""
+    private var goalCategory: String = ""
+    private var goalType: String = ""
+    private var oneDose: Int = 0
+    private var frequency: Int = 0
+    private var period: String = ""
+    private var endDate: String = ""
+    private var verificationType: String = ""
+    private var limitFriendCount: Int = 0
+    private var goalTime: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        goalId = arguments?.getLong("goalId") ?: -1L
-        title = arguments?.getString("title") ?: ""
-        oneDose = arguments?.getString("oneDose") ?: ""
-        authType = arguments?.getString("authType") ?: ""
-        hour = arguments?.getString("hour") ?: ""
-        minute = arguments?.getString("minute") ?: ""
-        second = arguments?.getString("second") ?: ""
+        goalId = arguments?.getInt("goalId") ?: 0
+        goalName = arguments?.getString("goalName") ?: ""
+        goalAmount = arguments?.getString("goalAmount") ?: ""
+        goalCategory = arguments?.getString("goalCategory") ?: ""
+        goalType = arguments?.getString("goalType") ?: ""
+        oneDose = arguments?.getInt("oneDose") ?: 0
+        frequency = arguments?.getInt("frequency") ?: 0
+        period = arguments?.getString("period") ?: ""
+        endDate = arguments?.getString("endDate") ?: ""
+        verificationType = arguments?.getString("verificationType") ?: ""
+        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
+        goalTime = arguments?.getInt("goalTime") ?: 0
     }
 
     override fun onCreateView(
@@ -48,7 +58,7 @@ class EditGoalDetailFragment : Fragment(){
 
         // 버튼들을 리스트로 묶어 관리
         val buttonList = listOf(dailyBtn, weeklyBtn, monthlyBtn)
-        var duration: String = "DAILY"
+        var duration: String = period
         fun selectButton(selectedBtn: AppCompatButton) {
             for (button in buttonList) {
                 if (button == selectedBtn) {
@@ -77,15 +87,18 @@ class EditGoalDetailFragment : Fragment(){
         nextBtn.setOnClickListener {
             val nextfragment = PushAlertFragment()
             val bundle = Bundle().apply {
-                putString("title", title)
-                putString("oneDose", oneDose)
-                putString("goalId", goalId.toString())
-                putString("authType", authType)
-                putString("hour", hour)
-                putString("minute", minute)
-                putString("second", second)
-                putString("duration", duration)
-                putString("frequency", frequency)
+                putInt("goalId", goalId)
+                putString("goalName", goalName)
+                putString("goalAmount", goalAmount)
+                putString("goalCategory", goalCategory)
+                putString("goalType", goalType)
+                putInt("oneDose", oneDose)
+                putInt("frequency", frequency.toInt())
+                putString("period", duration)
+                putString("endDate", endDate)
+                putString("verificationType", verificationType)
+                putInt("limitFriendCount", limitFriendCount)
+                putInt("goalTime", goalTime)
             }
             nextfragment.arguments = bundle
             requireActivity().supportFragmentManager.beginTransaction()

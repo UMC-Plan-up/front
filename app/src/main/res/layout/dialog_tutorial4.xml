@@ -25,12 +25,12 @@
 
             <!-- 제목 -->
             <TextView
-                android:id="@+id/tutorial2_title_tv"
+                android:id="@+id/tutorial3_title_tv"
                 style="@style/Typography_XL_Semibold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="새 목표 추가"
+                android:text="친구 기록 확인하기"
                 android:textColor="@color/black_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,19 +38,20 @@
 
             <!-- 내용 -->
             <TextView
-                android:id="@+id/tutorial2_desc_tv"
+                android:id="@+id/tutorial3_desc_tv"
                 style="@style/Typography_SM_Medium"
+                android:lineSpacingExtra="0dp"
                 android:layout_width="wrap_content"
                 android:layout_height="92dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="방금처럼 새 목표를 추가하고 싶다면 상단 더보기 → 목표 목록에서 추가할 수 있어요."
+                android:text="함께 Plan-Up을 이용 중인 친구들의 목표달성 내역이 궁금하다면, 가운데 있는 더보기 버튼을 통해 자세히 확인할 수 있어요."
                 android:textColor="@color/black_300"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tutorial2_title_tv" />
+                app:layout_constraintTop_toBottomOf="@id/tutorial3_title_tv" />
 
             <ImageView
                 android:id="@+id/tutorial_next_iv"
@@ -63,6 +64,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 

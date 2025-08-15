@@ -15,17 +15,22 @@ data class EditGoalRequest(
 )
 
 data class EditGoalResponse(
-    val title: String,
-    val oneDose: String,
-    val authType: String,
-    val time: String?,
-    val duration: String,
+    val goalName: String,
+    val goalAmount: String,
+    val goalCategory: String,
+    val goalType: String,
+    val oneDose: Int,
     val frequency: Int,
-    val endDate: String
+    val period: String,
+    val endDate: String,
+    val verificationType: String,
+    val limitFriendCount: Int,
+    val goalTime: Int
 )
 
-data class EditGoalApiResponse<T>(
-    val status: Int,
+data class EditGoalApiResponse(
+    val isSuccess: Boolean,
+    val code: String,
     val message: String,
-    val data: T
+    val result: EditGoalResponse
 )

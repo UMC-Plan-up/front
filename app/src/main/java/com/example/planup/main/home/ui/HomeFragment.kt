@@ -2,6 +2,9 @@ package com.example.planup.main.home.ui
 
 import android.content.Intent
 import android.app.Dialog
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
@@ -9,9 +12,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
@@ -29,7 +30,6 @@ import com.example.planup.main.goal.ui.ChallengeAlertFragment
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.adapter.DailyToDoAdapter
 import com.kizitonwose.calendar.core.CalendarDay
-import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import java.time.DayOfWeek
@@ -40,12 +40,13 @@ import java.time.temporal.WeekFields
 import java.util.Locale
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import com.example.planup.main.home.adapter.CalendarEventAdapter
+import com.example.planup.main.home.data.HomeTimer
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.main.record.ui.ReceivedChallengeFragment
 import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
+    private lateinit var prefs: SharedPreferences
 
     private lateinit var dailyRecyclerVIew: RecyclerView
     private lateinit var dailyAdapter: DailyToDoAdapter
@@ -54,18 +55,18 @@ class HomeFragment : Fragment() {
     private lateinit var calendarCardView : CardView
     private val today = LocalDate.now()
     private var selectedDate = today
-    private val eventList = listOf(
-        CalendarEvent("토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
-        CalendarEvent("헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
-        CalendarEvent("스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
-        CalendarEvent("<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
+    private var eventList = listOf(
+        CalendarEvent(1,"토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
+        CalendarEvent(2,"헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
+        CalendarEvent(3,"스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
+        CalendarEvent(4,"<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
     )
-    private val dailyToDos = listOf(
+    private var dailyToDos = listOf(
         DailyToDo("공부", 75, 5),
         DailyToDo("독서", 100, 5),
         DailyToDo("운동", 50, 3)
     )
-    private val dummyData = listOf(
+    private var dummyData = listOf(
         FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
         FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
     )
@@ -85,7 +86,19 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //loadMyGoalList() //api 불러오기
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        val token = prefs.getString("accessToken", null)
+
+        //온보딩
+        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("tutorial_shown", false)) {
+            TutorialManager(parentFragmentManager).startTutorial()
+            prefs.edit().putBoolean("tutorial_shown", true).apply()
+        }
+
+        loadMyGoalList(token) //api 불러오기
+        getMyWeeklyReport(token)
+        loadFriendsList(token)
 
 
         dailyRecyclerVIew = binding.dailyTodoRv
@@ -160,23 +173,18 @@ class HomeFragment : Fragment() {
         }
 
         val fab = binding.homeFab
-        val fragmentTimer = TimerFragment()
-        val bundle = Bundle().apply {
-            putString("selectedDate", selectedDate.toString())
-        }
         Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
-        fragmentTimer.arguments = bundle
         fab.setOnClickListener {
             val eventsForDate = getEventsForDate(selectedDate) // 선택한 날짜의 일정 리스트 가져오기
 
             val bundle = Bundle().apply {
                 putString("selectedDate", selectedDate.toString())
 
-                // 일정 이름 리스트만 전달 (필요하다면 startDate, endDate도 함께 전달 가능)
-                putStringArrayList(
-                    "events",
-                    ArrayList(eventsForDate.map { it.title }) // CalendarEvent.name 사용
-                )
+                val events = eventsForDate.map { goal ->
+                    HomeTimer(goal.goalId, goal.goalName)
+                }
+
+                putParcelableArrayList("events", ArrayList(events))
             }
 
             val fragmentTimer = TimerFragment().apply {
@@ -238,7 +246,11 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
-    private fun loadMyGoalList(token: String) {
+    private fun loadMyGoalList(token: String?) {
+        if(token == null) {
+            Log.d("HomeFragment", "loadMyGoalList token null")
+            return
+        }
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
@@ -248,9 +260,10 @@ class HomeFragment : Fragment() {
                     // goals 리스트를 RecyclerView 등에 표시
                     for (goal in goals) {
                         Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        eventList+(CalendarEvent(goal.goalName, LocalDate.now(), LocalDate.now()))
+                        eventList+(CalendarEvent(goal.goalId, goal.goalName, LocalDate.now(), LocalDate.now()))
                         //
                     }
+                    Log.d("HomeFragmentApi","eventList: $eventList")
                 } else {
                     Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
                 }
@@ -283,13 +296,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun loadFriendsList(token: String) {
+    private fun loadFriendsList(token: String?) {
         lifecycleScope.launch {
             try {
                 val apiService = RetrofitInstance.friendApi
                 val response = apiService.getFriendSummary(token = "Bearer $token")
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    friendList = response.body()!!.result.first().friendInfoSummaryList
+                    friendList = response.body()!!.result.first().friendInfoSummaryList.take(3)
                     // goals 리스트를 RecyclerView 등에 표시
                 } else {
                     Toast.makeText(requireContext(), "친구 리스트 불러오기 실패", Toast.LENGTH_SHORT).show()
@@ -316,6 +329,84 @@ class HomeFragment : Fragment() {
                 e.printStackTrace()
                 Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun getMyWeeklyReport(token: String?) {
+        lifecycleScope.launch {
+            try{
+                val response = RetrofitInstance.weeklyReportApi.getWeeklyReports(
+                    token = "Bearer $token",
+                    year = today.year,
+                    month = today.monthValue,
+                    week = today.get(WeekFields.of(Locale.KOREA).weekOfYear()),
+                    userId = prefs.getInt("userId", 0)
+                )
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val goalReports = body?.result?.goalReports
+
+                    goalReports?.forEach { report ->
+                        // 제목 길이 제한
+                        val title = if (report.goalTitle.length > 10) {
+                            report.goalTitle.take(10) + "..."
+                        } else {
+                            report.goalTitle
+                        }
+
+                        val rate = report.achievementRate
+                        Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
+                    }
+
+                } else {
+                    Log.d("HomeFragmentApi","getWeeklyReport 실패")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("HomeFragmentApi","네트워크 오류")
+            }
+
+        }
+    }
+
+    private fun getFriendWeeklyReport(token: String?, friendId: Int) {
+        lifecycleScope.launch {
+            try{
+                val response = RetrofitInstance.weeklyReportApi.getWeeklyReports(
+                    token = "Bearer $token",
+                    year = today.year,
+                    month = today.monthValue,
+                    week = today.get(WeekFields.of(Locale.KOREA).weekOfYear()),
+                    userId = prefs.getInt("userId", 0)
+                )
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    val goalReports = body?.result?.goalReports
+                    var rateArray: List<Float> = listOf()
+                    goalReports?.forEach { report ->
+                        // 제목 길이 제한
+                        val title = report.goalTitle
+                        val rate = report.achievementRate.toFloat()
+                        if(rateArray.size < 3) rateArray+=rate
+                        Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
+                    }
+                    friendList.forEach { friend ->
+                        val item = FriendChallengeItem(
+                            friend.nickname,
+                            "평균 목표 달성률 : ${rateArray.average().toInt()}%",
+                            R.drawable.ic_launcher_background,
+                            rateArray
+                        )
+                        dummyData+=item
+                    }
+                } else {
+                    Log.d("HomeFragmentApi","getWeeklyReport 실패")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("HomeFragmentApi","네트워크 오류")
+            }
+
         }
     }
 

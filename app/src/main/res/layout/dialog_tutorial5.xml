@@ -4,6 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"> <!-- 반투명 검정 배경 -->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_circle_transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="125dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,8 +24,8 @@
             android:layout_gravity="center"
             android:background="@drawable/popup_goal_update_dialog"
             android:orientation="vertical"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
+            android:paddingStart="15dp"
+            android:paddingEnd="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -25,12 +33,13 @@
 
             <!-- 제목 -->
             <TextView
-                android:id="@+id/tutorial2_title_tv"
+                android:id="@+id/tutorial3_title_tv"
                 style="@style/Typography_XL_Semibold"
+                android:letterSpacing="0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="새 목표 추가"
+                android:text="Plan-Up을 찾아주셔서 감사해요!"
                 android:textColor="@color/black_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,19 +47,21 @@
 
             <!-- 내용 -->
             <TextView
-                android:id="@+id/tutorial2_desc_tv"
+                android:id="@+id/tutorial3_desc_tv"
                 style="@style/Typography_SM_Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="92dp"
                 android:layout_marginBottom="20dp"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="방금처럼 새 목표를 추가하고 싶다면 상단 더보기 → 목표 목록에서 추가할 수 있어요."
+                android:text="이제 어플을 사용할 준비가 되었어요!
+__님의 잠재력을 Plan-Up에서
+실현해 보시길 바라요!"
                 android:textColor="@color/black_300"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tutorial2_title_tv" />
+                app:layout_constraintTop_toBottomOf="@id/tutorial3_title_tv" />
 
             <ImageView
                 android:id="@+id/tutorial_next_iv"
@@ -63,6 +74,6 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 

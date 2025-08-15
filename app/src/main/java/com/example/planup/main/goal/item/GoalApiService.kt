@@ -14,7 +14,13 @@ interface GoalApiService {
     fun editGoal(
         @Path("goalId") goalId: Long,
         @Body editGoalRequest: EditGoalRequest
-    ): Call<EditGoalApiResponse<EditGoalResponse>>
+    ): Call<EditGoalApiResponse>
+
+    @GET("/goals/{goalId}/edit")
+    suspend fun getEditGoal(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int
+    ): EditGoalApiResponse
 
     @GET("/goals/mygoal/list")
     suspend fun getMyGoalList(
@@ -32,5 +38,11 @@ interface GoalApiService {
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
     ): GoalDetailResponse
+
+    @GET("/goals/{goalId}/friendstimer")
+    suspend fun getFriendsTimer(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int
+    ): FriendsTimerResponse
 
 }
