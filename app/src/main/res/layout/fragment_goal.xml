@@ -16,38 +16,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:id="@+id/scroll_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:paddingTop="50dp"
             android:layout_marginBottom="-50dp">
 
             <!-- 일별 목표 카드 -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/daily_goal_complete_cv"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="151dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginHorizontal="20dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_daily_goal_complete_cv">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_daily_goal_complete_cv"
+                    android:paddingHorizontal="20dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
+                        android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="60dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent">
+                        android:gravity="center">
 
                         <TextView
                             android:id="@+id/textView3"
@@ -58,7 +55,7 @@
                             android:text="일별 목표 달성률" />
 
                         <TextView
-                            android:id="@+id/textView7"
+                            android:id="@+id/daily_goal_complete_percent_tv"
                             style="@style/Typography_3XL_Semibold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -70,45 +67,36 @@
                         android:id="@+id/daily_goal_complete_pc"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:layout_marginEnd="50dp"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                        android:layout_marginEnd="10dp" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
             <!-- 프로필 + 관리버튼 -->
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout2"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/profile_manage_ll"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintTop_toBottomOf="@id/daily_goal_complete_cv"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginHorizontal="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
                 <ImageView
-                    android:id="@+id/imageView2"
+                    android:id="@+id/user_profile_iv"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:clipToOutline="true"
-                    android:src="@drawable/img_profile_green"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:src="@drawable/img_profile_green" />
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/user_goal_list_tv"
                     style="@style/Typography_L_Semibold"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="2dp"
-                    android:text="그린의 목표 리스트"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/imageView2" />
+                    android:layout_weight="1"
+                    android:text="그린의 목표 리스트" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/manageButton"
@@ -117,27 +105,19 @@
                     android:layout_height="26dp"
                     android:background="@drawable/bg_manage_button"
                     android:elevation="2dp"
-                    android:text="관리"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    android:text="관리" />
+            </LinearLayout>
 
             <!-- 목표 리스트 -->
             <LinearLayout
                 android:id="@+id/goal_list_rv_ll"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginHorizontal="20dp"
                 android:orientation="vertical"
                 android:background="@drawable/bg_goal_list_recyclerview"
-                android:elevation="2dp"
-                app:layout_constraintTop_toBottomOf="@id/constraintLayout2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:elevation="2dp">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/goal_list_rv"
@@ -155,15 +135,11 @@
             <!-- 잠금 해제 텍스트 -->
             <LinearLayout
                 android:id="@+id/unlock_text_ll"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:gravity="center_vertical"
-                app:layout_constraintTop_toBottomOf="@id/goal_list_rv_ll"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:layout_marginHorizontal="20dp"
+                android:gravity="center">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -194,42 +170,34 @@
 
             <!-- 하단 카드 -->
             <androidx.cardview.widget.CardView
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="87dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginHorizontal="20dp"
                 android:layout_marginBottom="50dp"
                 android:background="@drawable/bg_rad6_rectangle"
-                android:backgroundTint="@color/black_100"
-                app:layout_constraintTop_toBottomOf="@id/unlock_text_ll"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                android:backgroundTint="@color/black_100">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- 잠금 상태 -->
+                <LinearLayout
                     android:id="@+id/add_new_goal"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="gone">
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    android:paddingHorizontal="16dp">
 
                     <ImageView
                         android:id="@+id/lock_circle_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:src="@drawable/ic_lock_circle"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:src="@drawable/ic_lock_circle" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="18dp"
-                        android:orientation="vertical"
-                        app:layout_constraintStart_toEndOf="@id/lock_circle_iv"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
+                        android:orientation="vertical">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -243,44 +211,32 @@
                             android:text="달성 기준을 입력하세요"
                             style="@style/Typography_S_Medium"/>
                     </LinearLayout>
+                </LinearLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <!-- 추가 가능 상태 -->
+                <LinearLayout
                     android:id="@+id/add_new_goal_cl"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/blue_100">
+                    android:background="@color/blue_100"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="16dp">
 
                     <ImageView
                         android:id="@+id/lock_circle_iv2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:src="@drawable/img_cross_blue"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        android:src="@drawable/img_cross_blue" />
 
-                    <LinearLayout
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="18dp"
-                        android:orientation="vertical"
-                        app:layout_constraintStart_toEndOf="@id/lock_circle_iv2"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="목표 입력하기"
-                            style="@style/Typography_SM_Semibold"/>
-                    </LinearLayout>
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                        android:text="목표 입력하기"
+                        style="@style/Typography_SM_Semibold"/>
+                </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

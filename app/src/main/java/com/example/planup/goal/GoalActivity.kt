@@ -1,5 +1,7 @@
 package com.example.planup.goal
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -41,6 +43,12 @@ class GoalActivity : AppCompatActivity() {
                 .replace(R.id.goal_container, first)
                 .commit()
         }
+    }
+
+    /** 목표 생성 완료 시점(저장 버튼 클릭)에서 호출 */
+    fun completeCreationAndFinish() {
+        // 서버에 생성 요청 성공한 뒤 호출하세요.
+        finish()  // 결과 전달 없이 종료
     }
 
     fun navigateToFragment(fragment: Fragment) {

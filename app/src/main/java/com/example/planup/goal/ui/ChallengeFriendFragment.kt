@@ -45,10 +45,12 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     private fun init(){
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
+        val userPrefs = (context as GoalActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         challengeService = ChallengeController()
-        challengeService.showChallengeFriends(3)
+        challengeService.showChallengeFriends(userPrefs.getInt("userId",0))
         challengeService.setChallengeFriendsAdapter(this)
         challengeService.setRequestChallengeAdapter(this)
+        friend = ChallengeFriends(0,"no-data",0)
     }
 
     //클릭 이벤트 관리
@@ -62,7 +64,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
         //완료 버튼: 챌린지 참여 완료 페이지로 이동
         binding.challengeSendCompleteBtn.setOnClickListener {
             //if (!binding.challengeSendCompleteBtn.isActivated) return@setOnClickListener
-            requestChallenge()
+            requestChallenge(friend!!.id)
         }
     }
 
@@ -81,7 +83,6 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
                 Toast.makeText(context,friends[position].nickname,LENGTH_SHORT).show()
                 binding.challengeSendCompleteBtn.isActivated = true
                 friend = friends[position]
-                friend?.id?.let { editor.putInt("friendId", it) }
             }
         })
         binding.challengeSendFriendRv.adapter = adapter
@@ -97,19 +98,20 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     }
 
     //챌린지 요청
-    private fun requestChallenge(){
+    private fun requestChallenge(friendId: Int){
         //1:1 챌린지에 대한 DTO 생성
         val challengeDto = ChallengeDto(
-            prefs.getString("goalName","no-data")!!,
-            prefs.getString("goalAmount","no-data")!!,
-            prefs.getString("goalType","no-data")!!,
-            prefs.getString("endDay","no-data")!!,
-            prefs.getString("status","no-data")!!,
-            prefs.getString("penalty","no-data")!!,
-            prefs.getInt("friendId",0),
-            prefs.getInt("timePerPeriod",0),
-            prefs.getInt("frequency",0),
-            Time(prefs.getInt("targetTime",0))
+            prefs.getString("goalName","no-data")!!, //목표명
+            prefs.getString("goalAmount","no-data")!!, //1회 분량
+            prefs.getString("goalType","no-data")!!, //인증 방식
+            0, //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
+            prefs.getString("endDate","no-data")!!, //종료일
+            prefs.getString("status","no-data")!!, //요청 형태
+            prefs.getString("penalty","no-data")!!, //페널티
+            friendId, //친구 id
+            prefs.getString("timePerPeriod","no-data")!!, //기준기간
+            prefs.getInt("frequency",0), //빈도
+            Time(prefs.getInt("targetTime",0)) //타이머 총 시간
         )
         challengeService.requestChallenge(challengeDto)
     }

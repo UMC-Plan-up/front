@@ -7,5 +7,7 @@ data class GoalItem(
     val percent: Int,
     val authType: String = "camera",
     var isActive: Boolean = true,
-    var isEditMode: Boolean = false
+    var isEditMode: Boolean = false,
+    val criteria: String,
+    val progress: Int
 )
