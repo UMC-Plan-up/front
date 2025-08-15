@@ -13,10 +13,10 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.FileProvider
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
@@ -34,17 +34,12 @@ class ProfileSetupFragment : Fragment() {
     private var _binding: FragmentProfileSetupBinding? = null
     private val binding get() = _binding!!
 
-    // [테스트용] 임시 중복 닉네임 리스트
-    // TODO : API 연동하기
-    private val takenNicknames = listOf("planup")
-
     private var cameraImageUri: Uri? = null
 
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
     private var latestPhotoFile: File? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,19 +64,12 @@ class ProfileSetupFragment : Fragment() {
             binding.nicknameGuide2.visibility = View.GONE
 
             val isTooLong = nickname.length > 20
-            val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
             when {
                 isTooLong -> {
                     // 20자 초과 → 안내문 표시
                     binding.nicknameGuide1.visibility = View.VISIBLE
-                    setNextButtonEnabled(false)
-                }
-
-                isTaken -> {
-                    // 중복 닉네임 → 안내문 표시
-                    binding.nicknameGuide2.visibility = View.VISIBLE
                     setNextButtonEnabled(false)
                 }
 
@@ -110,10 +98,9 @@ class ProfileSetupFragment : Fragment() {
         binding.nextButton.setOnClickListener {
             val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
-            val isTaken = takenNicknames.contains(nickname)
             val isEmpty = nickname.isEmpty()
 
-            if (isEmpty || isTooLong || isTaken) {
+            if (isEmpty || isTooLong) {
                 return@setOnClickListener
             }
 
@@ -160,7 +147,6 @@ class ProfileSetupFragment : Fragment() {
             }
         }
 
-
         view.setOnTouchListener { _, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 if (binding.nicknameEditText.isFocused) {
@@ -171,6 +157,7 @@ class ProfileSetupFragment : Fragment() {
             }
             false
         }
+        fetchRandomNickname()
     }
 
     /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
@@ -236,7 +223,6 @@ class ProfileSetupFragment : Fragment() {
             cameraLauncher.launch(intent)
             popupWindow.dismiss()
         }
-
 
         popupBinding.selectFile.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -317,7 +303,6 @@ class ProfileSetupFragment : Fragment() {
         return outFile
     }
 
-
     /* URI -> 실제 파일 경로로 변환 */
     private fun getRealPathFromURI(uri: Uri): String {
         val cursor: Cursor? = requireContext().contentResolver.query(uri, null, null, null, null)
@@ -350,5 +335,23 @@ class ProfileSetupFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    /* 랜덤 닉네임 생성 */
+    private fun fetchRandomNickname() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val res = RetrofitInstance.profileApi.getRandomNickname()
+                if (res.isSuccessful && res.body()?.isSuccess == true) {
+                    val nn = res.body()!!.result.nickname
+                    binding.nicknameEditText.setText(nn)
+                } else {
+                    val msg = res.body()?.message ?: "닉네임 생성 실패"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

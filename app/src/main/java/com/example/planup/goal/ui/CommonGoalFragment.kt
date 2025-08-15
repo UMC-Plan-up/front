@@ -65,17 +65,20 @@ class CommonGoalFragment : Fragment() {
         /* 탭 전환 (친구 ↔ 커뮤니티) */
         binding.friendTab.setOnClickListener {
             isFriendTab = true
+            showAll = false
             setTabActive(binding.friendTab, true)
             setTabActive(binding.communityTab, false)
-            fetchGoalsFromServer("FRIEND") // [친구와 함께] 탭
+            fetchGoalsFromServer("FRIEND")
         }
 
         binding.communityTab.setOnClickListener {
             isFriendTab = false
+            showAll = false
             setTabActive(binding.friendTab, false)
             setTabActive(binding.communityTab, true)
-            fetchGoalsFromServer("COMMUNITY") // [커뮤니티와 함께] 탭
+            fetchGoalsFromServer("COMMUNITY")
         }
+
 
         /* 더보기 버튼 */
         binding.moreButton.setOnClickListener {

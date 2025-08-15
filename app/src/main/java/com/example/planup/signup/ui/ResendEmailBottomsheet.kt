@@ -12,6 +12,8 @@ import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.signup.data.ResendEmailRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
+import com.kakao.sdk.auth.AuthCodeClient
+import com.example.planup.signup.data.AlternativeLoginRequest
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 
@@ -42,8 +44,58 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
             if (!isSending) resendEmail()
         }
 
+        binding.kakaoLoginOption.setOnClickListener {
+            if (!isSending) startKakaoLogin()
+        }
+
         binding.cancelButton.setOnClickListener { dismiss() }
     }
+
+    private fun startKakaoLogin() {
+        isSending = true
+        binding.kakaoLoginOption.isEnabled = false
+
+        val ctx = requireActivity()
+        AuthCodeClient.instance.authorizeWithKakaoTalk(ctx) { code, err ->
+            if (code != null) {
+                callAlternativeLogin(code)
+            } else {
+                AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code2, err2 ->
+                    if (code2 != null) {
+                        callAlternativeLogin(code2)
+                    } else {
+                        Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
+                        binding.kakaoLoginOption.isEnabled = true
+                        isSending = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun callAlternativeLogin(authCode: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val res = RetrofitInstance.userApi.alternativeLogin(
+                    AlternativeLoginRequest(authCode)
+                )
+                val ok = res.isSuccessful && res.body()?.isSuccess == true
+                if (ok) {
+                    dismiss()
+                } else {
+                    val msg = res.body()?.message ?: res.errorBody()?.string() ?: "로그인 실패"
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+                    binding.kakaoLoginOption.isEnabled = true
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                binding.kakaoLoginOption.isEnabled = true
+            } finally {
+                isSending = false
+            }
+        }
+    }
+
 
     private fun resendEmail() {
         if (email.isBlank()) {
@@ -114,4 +166,3 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
         }
     }
 }
-
