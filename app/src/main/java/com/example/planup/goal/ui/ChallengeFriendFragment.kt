@@ -18,6 +18,7 @@ import com.example.planup.goal.adapter.FriendRVAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
 import com.example.planup.network.controller.ChallengeController
 import com.example.planup.network.data.ChallengeFriends
+import com.example.planup.network.dto.GoalPeriod
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.Time
 
@@ -93,16 +94,30 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     //챌린지 요청
     private fun requestChallenge(friendId: Int){
         //1:1 챌린지에 대한 DTO 생성
+//        val challengeDto = ChallengeDto(
+//            prefs.getString("goalName","no-data")!!, //목표명
+//            prefs.getString("goalAmount","no-data")!!, //1회 분량
+//            prefs.getString("goalType","no-data")!!, //인증 방식
+//            prefs.getInt("targetTime",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
+//            prefs.getString("endDate","no-data")!!, //종료일
+//            prefs.getString("status","no-data")!!, //요청 형태
+//            prefs.getString("penalty","no-data")!!, //페널티
+//            friendId, //친구 id
+//            prefs.getString("timePerPeriod","no-data")!!, //기준기간
+//            prefs.getInt("frequency",0), //빈도
+//            Time(prefs.getInt("targetTime",0)) //타이머 총 시간
+//        )
+        //임시 데이터 / 기준기간을 "DAY"로 설정
         val challengeDto = ChallengeDto(
             prefs.getString("goalName","no-data")!!, //목표명
             prefs.getString("goalAmount","no-data")!!, //1회 분량
             prefs.getString("goalType","no-data")!!, //인증 방식
-            0, //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
+            prefs.getInt("targetTime",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
             prefs.getString("endDate","no-data")!!, //종료일
             prefs.getString("status","no-data")!!, //요청 형태
             prefs.getString("penalty","no-data")!!, //페널티
             friendId, //친구 id
-            prefs.getString("timePerPeriod","no-data")!!, //기준기간
+            GoalPeriod.DAY, //기준기간
             prefs.getInt("frequency",0), //빈도
             Time(prefs.getInt("targetTime",0)) //타이머 총 시간
         )

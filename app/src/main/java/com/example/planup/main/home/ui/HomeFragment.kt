@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.MainActivity
 import com.example.planup.R
@@ -88,8 +89,17 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
+        val nickname = prefs.getString("nickname","")
+        val profileImage = prefs.getString("profileImage","")
+        binding.homeMainTv.text = "${nickname} 님, 벌써 이만큼이나 왔어요!"
+        Glide.with(this)
+            .load(profileImage)
+            .circleCrop()
+            .error(R.drawable.ic_profile)
+            .into(binding.homeMainProfileIv)
 
         //온보딩
         val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
@@ -219,7 +229,7 @@ class HomeFragment : Fragment() {
                 .replace(R.id.main_container, HomeAlertFragment())
                 .commitAllowingStateLoss()
         }
-        binding.imageView5.setOnClickListener {
+        binding.homeMainProfileIv.setOnClickListener {
             showPopup()
         }
     }
@@ -248,9 +258,16 @@ class HomeFragment : Fragment() {
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+            //팝업에 요청한 친구 이름 바인딩
+            dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+            //배경 투명색
+            dialog.setCanceledOnTouchOutside(true)
         }
-        dialog.setCanceledOnTouchOutside(true)
-        dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+        //닫기 버튼 클릭 시 팝업 종료
+        dialog.findViewById<View>(R.id.popup_challenge_close_iv).setOnClickListener {
+            dialog.dismiss()
+        }
+        //확인하러 가기 버튼 클릭 시 챌린지 요청 조회 화면으로 이동
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
 

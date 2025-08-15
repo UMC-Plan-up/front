@@ -55,6 +55,10 @@ class PushAlertFragment : Fragment() {
     ): View? {
         binding = FragmentPushAlertBinding.inflate(inflater, container, false)
 
+        binding.pushAlertBackIv.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
         binding.nextButton.setOnClickListener {
             val request = EditGoalRequest(
                 goalName = goalName,

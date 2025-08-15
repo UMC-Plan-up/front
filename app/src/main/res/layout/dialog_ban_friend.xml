@@ -18,7 +18,7 @@
             android:layout_height="194dp">
 
             <TextView
-                android:id="@+id/popup_block_title_tv"
+                android:id="@+id/popup_unblock_title_tv"
                 style="@style/TextAppearance.Pretendard.Medium.SM"
                 android:layout_width="260dp"
                 android:layout_height="24dp"
@@ -41,7 +41,7 @@
                 android:textAlignment="textStart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/popup_block_title_tv"
+                app:layout_constraintTop_toBottomOf="@id/popup_unblock_title_tv"
                 android:layout_marginTop="12dp" />
 
 

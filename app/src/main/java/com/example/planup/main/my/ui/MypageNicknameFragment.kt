@@ -85,8 +85,9 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
     }
 
     //닉네임 변경 성공
-    override fun successNicknameChange() {
-        editor.putString("nickName",binding.nicknameEt.text.toString())
+    override fun successNicknameChange(nickname: String) {
+        editor.putString("nickname",nickname)
+        editor.apply()
         (context as MainActivity).navigateFragment(MypageFragment())
     }
     //닉네임 변경 오류

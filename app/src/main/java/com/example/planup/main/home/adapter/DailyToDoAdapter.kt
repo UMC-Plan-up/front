@@ -23,22 +23,29 @@ class DailyToDoAdapter(private val items: List<DailyToDo>) :
         private val tvDailyRate = binding.dailyRateTv
         private val pieChart = binding.dailyPieChartPc
 
-        fun bind(item: DailyToDo) {
+        fun bind(item: DailyToDo, position: Int) {
             tvTitle.text = item.title
             tvPercentage.text = "${item.progress}%"
             tvDailyRate.text = "일일 달성률 ${item.dailyRate}%"
 
-            setupPieChart(item.progress)
+            setupPieChart(item.progress, position)
         }
 
-        private fun setupPieChart(progress: Int) {
+        private fun setupPieChart(progress: Int, position: Int) {
             val entries = listOf(
                 PieEntry(progress.toFloat()),
                 PieEntry((100 - progress).toFloat())
             )
 
+            // 아이템마다 다른 색 지정
+            val colors = when (position % 3) {  // 3가지 색 반복
+                0 -> listOf(Color.parseColor("#79B0F8"), Color.LTGRAY)
+                1 -> listOf(Color.parseColor("#F3C092"), Color.LTGRAY)
+                else -> listOf(Color.parseColor("#71D9C4"), Color.LTGRAY)
+            }
+
             val dataSet = PieDataSet(entries, "").apply {
-                setColors(Color.rgb(33, 150, 243), Color.LTGRAY)
+                setColors(colors)
                 setDrawValues(false)
             }
 
@@ -70,6 +77,6 @@ class DailyToDoAdapter(private val items: List<DailyToDo>) :
     override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(items[position], position)
     }
 }

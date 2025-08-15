@@ -50,6 +50,11 @@ class EditGoalCntFragment : Fragment() {
     ): View {
         binding = FragmentEditGoalCntBinding.inflate(inflater, container, false)
 
+        val backBtn = binding.editGoalCntBackIv
+        backBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+
         // EditText 기본값 세팅
         binding.editText.setText(limitFriendCount.toString())
 

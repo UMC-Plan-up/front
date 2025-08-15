@@ -18,11 +18,11 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/popup_block_title_tv"
+                android:id="@+id/popup_unblock_title_tv"
                 style="@style/TextAppearance.Pretendard.Medium.SM"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="님을 차단 해제하시겠어요?"
+                android:text="@string/popup_unblock_title"
                 android:gravity="center"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -31,16 +31,16 @@
                 android:layout_marginTop="12dp" />
 
             <TextView
-                android:id="@+id/popup_block_explain_tv"
+                android:id="@+id/popup_unblock_explain_tv"
                 style="@style/TextAppearance.Pretendard.Medium.S"
-                android:layout_width="wrap_content"
+                android:layout_width="260dp"
                 android:layout_height="wrap_content"
-                android:text="차단 해제 시, 해당 계정에 알림이 가지 않으며\n해당 이용자에게 내 계정의 활동 및 기록이 공개\n됩니다."
+                android:text="@string/popup_unblock_explain"
                 android:gravity="center"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/popup_block_title_tv"
+                app:layout_constraintTop_toBottomOf="@id/popup_unblock_title_tv"
                 android:layout_marginTop="12dp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,7 +48,7 @@
                 android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/popup_block_explain_tv"
+                app:layout_constraintTop_toBottomOf="@id/popup_unblock_explain_tv"
                 app:layout_constraintBottom_toBottomOf="parent"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="12dp">
