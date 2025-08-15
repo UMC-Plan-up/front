@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
+import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalAdapter
@@ -74,6 +75,7 @@ class GoalFragment : Fragment() {
                 Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
             }
         })
+        // 최초 진입 시 1회 로드
         goalController.fetchMyGoals()
 
         clickListener()
@@ -109,6 +111,12 @@ class GoalFragment : Fragment() {
             onDeleteConfirmed = { showDeleteToast() }
         )
         recyclerView.adapter = adapter
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 필요하다면 조건부로
+        // if (shouldRefresh) refreshGoals()
     }
 
     /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -233,10 +241,9 @@ class GoalFragment : Fragment() {
                 .replace(R.id.main_container, SubscriptionPlanFragment())
                 .commitAllowingStateLoss()
         }
+
         binding.lockCircleIv2.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, GoalCategoryFragment())
-                .commitAllowingStateLoss()
+            startActivity(Intent(requireContext(), GoalActivity::class.java))
         }
     }
 
