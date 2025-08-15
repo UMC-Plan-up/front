@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
+import com.example.planup.R // R.id.main_container 사용을 위해 import
 import com.example.planup.databinding.PopupResendEmailBinding
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
@@ -81,13 +82,22 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                 )
                 val ok = res.isSuccessful && res.body()?.isSuccess == true
                 if (ok) {
+                    // 카카오 로그인 성공 시 ProfileSetupFragment로 이동
+                    val profileSetupFragment = ProfileSetupFragment()
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_container, profileSetupFragment)
+                        .addToBackStack(null)
+                        .commit()
+
                     dismiss()
                 } else {
+                    // 서버 응답 오류
                     val msg = res.body()?.message ?: res.errorBody()?.string() ?: "로그인 실패"
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
                     binding.kakaoLoginOption.isEnabled = true
                 }
             } catch (e: Exception) {
+                // 네트워크 오류
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
                 binding.kakaoLoginOption.isEnabled = true
             } finally {

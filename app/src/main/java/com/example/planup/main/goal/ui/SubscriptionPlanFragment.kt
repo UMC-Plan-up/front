@@ -9,10 +9,12 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentSubscriptionPlanBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.goal.ui.GoalDetailFragment
-import com.example.planup.signup.SignupActivity // ⭐ SignupActivity에서 닉네임을 가져오기 위해 import
+import com.example.planup.signup.SignupActivity // SignupActivity에서 닉네임을 가져오기 위해 import
 
 class SubscriptionPlanFragment : Fragment() {
     private lateinit var binding: FragmentSubscriptionPlanBinding
+
+    private var isFromGoalDetail: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -20,15 +22,22 @@ class SubscriptionPlanFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentSubscriptionPlanBinding.inflate(inflater, container, false)
+
+        isFromGoalDetail = arguments?.getBoolean("IS_FROM_GOAL_DETAIL", false) ?: false
+
         clickListener()
         return binding.root
     }
 
     private fun clickListener() {
         binding.backIcon.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, GoalFragment())
-                .commitAllowingStateLoss()
+            if (isFromGoalDetail) {
+                parentFragmentManager.popBackStack()
+            } else {
+                (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_container, GoalFragment())
+                    .commitAllowingStateLoss()
+            }
         }
 
         // Basic plan 클릭
@@ -47,8 +56,11 @@ class SubscriptionPlanFragment : Fragment() {
     }
 
     private fun navigateToGoalDetailFragment() {
-        val nicknameFromSignup = (activity as? SignupActivity)?.nickname
-        val goalOwnerName = nicknameFromSignup?.takeIf { it.isNotBlank() } ?: "사용자"
+        val nicknameFromPrefs = requireContext()
+            .getSharedPreferences("userInfo", 0)
+            .getString("nickname", null)
+
+        val goalOwnerName = nicknameFromPrefs?.takeIf { it.isNotBlank() } ?: "사용자"
 
         val goalDetailFragment = GoalDetailFragment().apply {
             arguments = Bundle().apply {

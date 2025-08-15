@@ -231,18 +231,17 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
     //로그인 통신 성공
     override fun successLogin(loginResult: Login) {
-
         when (loginResult.message) {
-            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email) //등록되지 않은 이메일
-            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password) //비밀번호 불일치
+            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email)
+            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password)
             else -> {
-                //토큰 등록
+                // 토큰 등록
                 App.jwt.token = "Bearer " + loginResult.accessToken
-                //sharedPrefs에 기본 정보 저장
+
                 editor.putString("accessToken", loginResult.accessToken)
-                editor.putString("nickname", loginResult.nickname)
-                editor.putString("profileImg", loginResult.profileImage)
-                //유저정보 받아오기
+                editor.apply()
+
+                // 유저정보 받아오기
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
             }
@@ -269,6 +268,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         editor.putString("nickname", user.nickname)
         editor.putString("profileImg", user.profileImage)
         editor.apply()
+
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
@@ -324,12 +324,13 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             try {
                 val code = getKakaoAuthorizationCode()
 
+                // 카카오 로그인 API 호출
                 val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
                 val body = resp.body()
 
-
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
+
                     if (r.newUser) {
                         startActivity(
                             Intent(this@LoginActivityNew, SignupActivity::class.java).apply {
@@ -340,13 +341,14 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                             }
                         )
                     } else {
-                        // 기존 유저 → 토큰 저장 후 메인
-                        val token = r.accessToken ?: run {
+                        val accessToken = r.accessToken
+                        val userInfo = r.userInfo
+
+                        if (accessToken != null && userInfo != null) {
+                            saveUserInfoAndGoToMain(accessToken, userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
+                        } else {
                             toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
-                            return@launch
                         }
-                        saveToken(token)
-                        goToMain()
                     }
                 } else {
                     toast(body?.message ?: "로그인 실패(${resp.code()})")
@@ -355,5 +357,24 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                 toast("카카오 인증 실패: ${e.localizedMessage}")
             }
         }
+    }
+
+    //사용자 정보를 SharedPreferences에 저장
+    private fun saveUserInfoAndGoToMain(
+        accessToken: String,
+        userId: Int,
+        email: String?,
+        nickname: String?,
+        profileImg: String?
+    ) {
+        editor.putString("accessToken", accessToken)
+        editor.putInt("userId", userId)
+        editor.putString("email", email)
+        editor.putString("nickname", nickname)
+        editor.putString("profileImg", profileImg)
+        editor.apply()
+
+        App.jwt.token = "Bearer $accessToken"
+        goToMain()
     }
 }

@@ -17,8 +17,8 @@ import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.core.graphics.toColorInt
-import com.example.planup.databinding.FragmentCommonGoalBinding // FragmentCommonGoalBinding 추가
-import com.example.planup.databinding.ItemGoalCardBinding // ItemGoalCardBinding 추가
+import com.example.planup.databinding.FragmentCommonGoalBinding
+import com.example.planup.databinding.ItemGoalCardBinding
 
 class CommonGoalFragment : Fragment() {
 
@@ -68,7 +68,7 @@ class CommonGoalFragment : Fragment() {
             showAll = false
             setTabActive(binding.friendTab, true)
             setTabActive(binding.communityTab, false)
-            fetchGoalsFromServer("FRIEND")
+            fetchGoalsFromServer("FRIEND") // [친구와 함께] 탭
         }
 
         binding.communityTab.setOnClickListener {
@@ -76,14 +76,12 @@ class CommonGoalFragment : Fragment() {
             showAll = false
             setTabActive(binding.friendTab, false)
             setTabActive(binding.communityTab, true)
-            fetchGoalsFromServer("COMMUNITY")
+            fetchGoalsFromServer("COMMUNITY") // [커뮤니티와 함께] 탭
         }
-
 
         /* 더보기 버튼 */
         binding.moreButton.setOnClickListener {
-            showAll = true
-            displayGoalCards(currentFilteredGoals) // 전체 보여주기
+            // 실제 동작은 서버 데이터 로드 이후 renderFirstThree()에서 설정됨
         }
 
         /* 새 목표 만들기 → GoalInputFragment 이동 */
@@ -122,9 +120,9 @@ class CommonGoalFragment : Fragment() {
                         Log.d("GoalAPI", "[$i] type=${g.goalType}, name=${g.goalName}")
                     }
 
-                    currentFilteredGoals = all
-                    displayGoalCards(all)
-                    binding.moreButton.visibility = if (!showAll && all.size > 3) View.VISIBLE else View.GONE
+                    val filtered = all.filter { it.goalType.equals(goalType, ignoreCase = true) }
+                    currentFilteredGoals = filtered
+                    renderFirstThree(filtered)
                 } else {
                     Log.e("GoalAPI", "API 오류 ${res.code()} / ${res.errorBody()?.string()}")
                 }
@@ -134,19 +132,32 @@ class CommonGoalFragment : Fragment() {
         }
     }
 
-
     /* 목표 카드를 goalContainer에 추가 */
-    private fun displayGoalCards(goals: List<GoalItemDto>) {
+    private fun renderFirstThree(goals: List<GoalItemDto>) {
         binding.goalCardContainer.removeAllViews()
 
-        val inflater = LayoutInflater.from(requireContext())
-        val displayList = if (showAll) goals else goals.take(3)
+        val first = goals.take(3)
+        val rest = goals.drop(3)
 
-        displayList.forEach { goal ->
+        addCards(first)
+
+        binding.moreButton.visibility = if (rest.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.moreButton.setOnClickListener {
+            if (!showAll) {
+                showAll = true
+                addCards(rest)
+                binding.moreButton.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun addCards(list: List<GoalItemDto>) {
+        val inflater = LayoutInflater.from(requireContext())
+        list.forEach { goal ->
             val cardBinding = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
 
             Glide.with(this)
-                .load(goal.creatorProfileImg)
+                .load(goal.creatorProfileImg?.takeIf { it.isNotBlank() })
                 .placeholder(R.drawable.ic_profile_green)
                 .into(cardBinding.profileImage)
 
@@ -154,12 +165,11 @@ class CommonGoalFragment : Fragment() {
             cardBinding.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
             cardBinding.goalTime.text = getString(R.string.goal_time, goal.goalTime)
             cardBinding.goalTitle.text = goal.goalName
-            cardBinding.goalFrequency.text = getString(R.string.goal_frequency, goal.startTimeMinutes, goal.frequency)
+            cardBinding.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
             cardBinding.goalDescription.text = goal.oneDesc
 
             binding.goalCardContainer.addView(cardBinding.root)
         }
-        binding.moreButton.visibility = if (!showAll && goals.size > 3) View.VISIBLE else View.GONE
     }
 
     override fun onDestroyView() {
