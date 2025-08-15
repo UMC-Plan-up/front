@@ -14,4 +14,3 @@ data class SignupRequestDto(
     val profileImg: String,
     val agreements: List<Agreement>
 )
-

@@ -27,9 +27,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import com.bumptech.glide.Glide
-import com.example.planup.main.MainActivity
-import com.example.planup.network.App
-import com.example.planup.signup.data.KakaoCompleteRequest
 
 class ProfileSetupFragment : Fragment() {
 
@@ -42,7 +39,6 @@ class ProfileSetupFragment : Fragment() {
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
     private var latestPhotoFile: File? = null
-
     private var tempUserId: String? = null
 
     override fun onCreateView(
@@ -105,7 +101,7 @@ class ProfileSetupFragment : Fragment() {
             showProfilePopup(it)
         }
 
-        /* 다음 버튼 클릭 → 회원가입 완료 로직 분기 처리 */
+        /* 다음 버튼 클릭 → InviteCodeFragment로 이동 */
         binding.nextButton.setOnClickListener {
             val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
@@ -115,14 +111,9 @@ class ProfileSetupFragment : Fragment() {
                 return@setOnClickListener
             }
 
-
             saveProfileData(nickname)
 
-            if (isKakaoSignup) {
-                completeKakaoSignup()
-            } else {
-                openNextStep()
-            }
+            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
         }
 
         // 갤러리
@@ -185,59 +176,6 @@ class ProfileSetupFragment : Fragment() {
         fetchRandomNickname()
     }
 
-    /* 카카오 회원가입 완료 API 호출 */
-    private fun completeKakaoSignup() {
-        val activity = requireActivity() as SignupActivity
-        val tempUserId = this.tempUserId ?: return
-        val nickname = activity.nickname ?: return
-        val profileImg = activity.profileImgUrl
-        val agreements = activity.agreements ?: return
-
-        lifecycleScope.launch {
-            try {
-                val request = KakaoCompleteRequest(
-                    tempUserId = tempUserId,
-                    nickname = nickname,
-                    profileImg = profileImg,
-                    agreements = agreements.map {
-                        KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
-                    },
-                    inviteCode = activity.inviteCode
-                )
-
-                val response = RetrofitInstance.userApi.kakaoComplete(request)
-                val body = response.body()
-
-                if (response.isSuccessful && body?.isSuccess == true) {
-                    // 카카오 회원가입 완료 및 로그인 성공
-                    val result = body.result
-                    val accessToken = result.accessToken
-                    if (accessToken != null) {
-                        // 토큰 및 사용자 정보 저장
-                        val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
-                        val editor = prefs.edit()
-                        editor.putString("accessToken", accessToken)
-                        editor.putLong("userId", result.id)
-                        editor.putString("email", result.email)
-                        editor.putString("nickname", result.userInfo?.nickname)
-                        editor.putString("profileImg", result.userInfo?.profileImg)
-                        editor.apply()
-
-
-                        App.jwt.token = "Bearer $accessToken"
-
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
-                    }
-                } else {
-                    Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
 
     /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
     private fun setNextButtonEnabled(enabled: Boolean) {
@@ -245,11 +183,6 @@ class ProfileSetupFragment : Fragment() {
         binding.nextButton.setBackgroundResource(R.drawable.btn_next_background)
     }
 
-    /* InviteCodeFragment로 이동하는 메서드 */
-    private fun openNextStep() {
-        // SignupActivity의 navigateToFragment() 호출
-        (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
-    }
 
     /* 현재 닉네임과 프로필 이미지를 저장하는 함수 */
     private fun saveProfileData(nickname: String) {

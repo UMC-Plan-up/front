@@ -22,7 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
-import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
 import com.example.planup.network.RetrofitInstance
@@ -57,7 +56,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     view.getGlobalVisibleRect(outRect)
                     if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                         view.clearFocus()
-                        hideKeyboard(view) // 키보드 숨김 (수정)
+                        hideKeyboard(view) // 키보드 숨김
                     }
                 }
             }
@@ -235,13 +234,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email)
             "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password)
             else -> {
-                // 토큰 등록
-                App.jwt.token = "Bearer " + loginResult.accessToken
-
-                editor.putString("accessToken", loginResult.accessToken)
-                editor.apply()
-
-                // 유저정보 받아오기
+                // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
             }
@@ -263,14 +256,14 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
-        editor.putInt("userId", user.id)
-        editor.putString("email", user.email)
-        editor.putString("nickname", user.nickname)
-        editor.putString("profileImg", user.profileImage)
-        editor.apply()
-
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
+        saveUserInfoAndGoToMain(
+            prefs.getString("accessToken", null) ?: "",
+            user.id,
+            user.email,
+            user.nickname,
+            user.profileImage
+        )
     }
 
     //유저 정보 요청 통신 실패 -> 토스트 메시지 출력
@@ -305,12 +298,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                 client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
             }
         }
-
-    // 토큰 저장
-    private fun saveToken(token: String) {
-        getSharedPreferences("auth", MODE_PRIVATE)
-            .edit().putString("accessToken", token).apply()
-    }
 
     // 메인 이동
     private fun goToMain() {
@@ -359,7 +346,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         }
     }
 
-    //사용자 정보를 SharedPreferences에 저장
     private fun saveUserInfoAndGoToMain(
         accessToken: String,
         userId: Int,
