@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -175,7 +174,7 @@ class GoalCategoryFragment : Fragment() {
     private fun resetCategoryStyle(layout: LinearLayout) {
         val textView = layout.findViewById<TextView>(getCategoryTextId(layout.id))
         layout.backgroundTintList = null
-        textView.setTextColor(Color.parseColor("#448AF7"))
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.accent6))
     }
 
     private fun hideKeyboard() {

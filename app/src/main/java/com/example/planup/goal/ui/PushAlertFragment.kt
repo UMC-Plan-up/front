@@ -244,7 +244,6 @@ class PushAlertFragment : Fragment() {
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
-        val popupHeight = popupView.measuredHeight
         // 뷰 아래에 팝업 표시
         popupWindow.showAsDropDown(view)
 
