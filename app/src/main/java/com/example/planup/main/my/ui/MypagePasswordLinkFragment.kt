@@ -49,7 +49,7 @@ class MypagePasswordLinkFragment: Fragment(), PasswordLinkAdapter {
     private fun clickListener(){
         /*뒤로 가기*/
         binding.passwordSecondBackIv.setOnClickListener{
-            (context as MainActivity).navigateFragment(MypagePasswordEmailFragment())
+            (context as MainActivity).navigateToFragment(MypagePasswordEmailFragment())
         }
 
         /*이메일을 받지 못하셨나요?*/

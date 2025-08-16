@@ -53,19 +53,30 @@ class GoalDetailFragment : Fragment() {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        // 구독 플랜 선택 여부 확인
-        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
-        binding.goalContainer.visibility = if (isPlanSelected) View.GONE else View.VISIBLE
-
         binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
-
-        val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
-        if (shouldHideGoalContainer) {
-            binding.goalContainer.visibility = View.GONE
-        }
 
         binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
+
+        // SubscriptionPlanFragment에서 직접 넘어온 경우
+        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
+        if (isUnlockedFromSubscription) {
+            binding.goalContainer.visibility = View.GONE
+        }
+
+        // GoalActivity를 통해 구독하고 돌아온 경우
+        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
+        if (isPlanSelected) {
+            binding.goalContainer.visibility = View.GONE
+        }
+
+        val isUnlocked = isUnlockedFromSubscription || isPlanSelected
+
+        if (!isUnlocked) {
+            binding.goalContainer.setOnClickListener {
+                (activity as? GoalActivity)?.startSubscriptionActivity()
+            }
+        }
 
         setupBackButton()
         setupPeriodButtons()
@@ -73,11 +84,6 @@ class GoalDetailFragment : Fragment() {
         setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
-
-        // 자물쇠 버튼 클릭 리스너
-        binding.goalContainer.setOnClickListener {
-            (activity as? GoalActivity)?.startSubscriptionActivity()
-        }
 
         binding.root.setOnTouchListener { v, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN) {

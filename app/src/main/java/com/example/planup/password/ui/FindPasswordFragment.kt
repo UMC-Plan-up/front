@@ -92,12 +92,6 @@ class FindPasswordFragment : Fragment() {
         binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
-    // 가입되지 않은 이메일 에러 표시
-    private fun showEmailNotFoundError() {
-        binding.emailFormatErrorText.visibility = View.GONE
-        binding.emailNotFoundErrorText.visibility = View.VISIBLE
-    }
-
     // 모든 에러 문구 숨김
     private fun hideAllErrors() {
         binding.emailFormatErrorText.visibility = View.GONE

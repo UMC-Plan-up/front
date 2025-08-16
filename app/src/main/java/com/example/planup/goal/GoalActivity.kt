@@ -1,14 +1,18 @@
 package com.example.planup.goal
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
+import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
 import com.example.planup.goal.ui.GoalDetailFragment
-import com.example.planup.goal.ui.GoalSelectFragment
+import com.example.planup.main.MainActivity
 
 class GoalActivity : AppCompatActivity() {
 
@@ -27,6 +31,7 @@ class GoalActivity : AppCompatActivity() {
     var limitFriendCount: Int = 0
     var goalTime: Int = 0
 
+
     private val subscriptionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -34,10 +39,12 @@ class GoalActivity : AppCompatActivity() {
             val data = result.data
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
-                val goalDetailFragment = supportFragmentManager.findFragmentById(R.id.goal_container)
-                if (goalDetailFragment is GoalDetailFragment) {
-                    goalDetailFragment.updateLockStatus(true)
-                }
+                Handler(Looper.getMainLooper()).postDelayed({
+                    val goalDetailFragment = supportFragmentManager.findFragmentById(R.id.goal_container)
+                    if (goalDetailFragment is GoalDetailFragment) {
+                        goalDetailFragment.updateLockStatus(true)
+                    }
+                }, 2000)
             }
         }
     }
@@ -50,7 +57,8 @@ class GoalActivity : AppCompatActivity() {
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
 
         if (savedInstanceState == null) {
-            val first = GoalSelectFragment().apply {
+            // GoalSelectFragment를 GoalCategoryFragment로 가정
+            val first = GoalCategoryFragment().apply {
                 arguments = (arguments ?: Bundle()).apply {
                     putString("goalOwnerName", goalOwnerName)
                 }
@@ -65,6 +73,7 @@ class GoalActivity : AppCompatActivity() {
         fragment.arguments = (fragment.arguments ?: Bundle()).apply {
             putString("goalOwnerName", goalOwnerName)
         }
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.goal_container, fragment)
             .addToBackStack(null)
@@ -73,8 +82,10 @@ class GoalActivity : AppCompatActivity() {
 
     /* SubscriptionPlanFragment를 시작하고, 결과를 받기 위한 함수 */
     fun startSubscriptionActivity() {
-        val intent = android.content.Intent(this, com.example.planup.main.MainActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
+        // 어떤 경로로 SubscriptionFragment가 호출되었는지 판단
         intent.putExtra("ACTION_NAVIGATE", "SHOW_SUBSCRIPTION")
+        intent.putExtra("IS_FROM_GOAL_DETAIL", true)
         subscriptionResultLauncher.launch(intent)
     }
 }
