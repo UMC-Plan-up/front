@@ -1,6 +1,7 @@
 package com.example.planup.goal.ui
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -97,6 +98,35 @@ class PushAlertFragment : Fragment() {
 
         //저장 버튼 클릭
         binding.nextButton.setOnClickListener {
+            // 사용자 설정 정보 저장
+            val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+
+            // 알림받기 여부 저장
+            editor.putBoolean("receive_alerts", binding.alertReceiveOnIv.visibility == View.VISIBLE)
+
+            // 정기알림 여부 저장
+            editor.putBoolean("regular_alerts", binding.alertRegularOnIv.visibility == View.VISIBLE)
+
+            // 정기 알림 시간 정보 저장
+            editor.putString("alert_time_of_day", binding.alertTimeTv.text.toString())
+            editor.putString("alert_hour", binding.alertHourTv.text.toString())
+            editor.putString("alert_minute", binding.alertMinuteTv.text.toString())
+
+            // 정기 알림 요일 정보 저장
+            val selectedDays = mutableSetOf<String>()
+            if (binding.alertEverydayTv.isSelected) selectedDays.add("everyday")
+            if (binding.alertMondayTv.isSelected) selectedDays.add("monday")
+            if (binding.alertTuesdayTv.isSelected) selectedDays.add("tuesday")
+            if (binding.alertWednesdayTv.isSelected) selectedDays.add("wednesday")
+            if (binding.alertThursdayTv.isSelected) selectedDays.add("thursday")
+            if (binding.alertFridayTv.isSelected) selectedDays.add("friday")
+            if (binding.alertSaturdayTv.isSelected) selectedDays.add("saturday")
+            if (binding.alertSundayTv.isSelected) selectedDays.add("sunday")
+            editor.putStringSet("alert_days", selectedDays)
+
+            editor.apply()
+
             makeToast()
             if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
                 isFirst = false
@@ -266,7 +296,7 @@ class PushAlertFragment : Fragment() {
         val toast = Toast(requireContext())
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
     }
 

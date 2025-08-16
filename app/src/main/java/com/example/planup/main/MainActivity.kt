@@ -27,60 +27,48 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val actionNavigate = intent.getStringExtra("ACTION_NAVIGATE")
+        val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
 
-        if (actionNavigate == "SHOW_SUBSCRIPTION") {
-            val subscriptionFragment = SubscriptionPlanFragment()
-            subscriptionFragment.arguments = Bundle().apply {
-                putBoolean("IS_FROM_GOAL_DETAIL", true)
-            }
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, subscriptionFragment)
-                .commitAllowingStateLoss()
-            return
-        } else {
-            // 딥링크 로직
-            val action: String? = intent?.action
-            var data: Uri? = intent?.data
-
-            // 딥링크의 data가 intent-filter와 일치하는 경우
-            if (data?.scheme.equals("planup")
-                && data?.host.equals("password")
-                && data?.path?.startsWith("/change")!!
-                && data != null
-            ) {
-                if (action == Intent.ACTION_VIEW
-                    && data.getQueryParameter("verified").equals("true")
-                ) {
-                    initBottomNavigation(MypagePasswordChangeFragment())
-                }
-            } else if (data?.scheme.equals("planup")
-                && data?.host.equals("email")
-                && data?.path?.startsWith("/change")!!
-                && data != null
-            ) {
-                if (action == Intent.ACTION_VIEW
-                    && data.getQueryParameter("verified").equals("true")
-                ) {
-                    val emailLinkFragment = MypageEmailLinkFragment()
-                    emailLinkFragment.arguments = Bundle().apply {
-                        putBoolean("deepLink",true)
+        // onCreate에서 시작할 화면 결정
+        val startFragment = when {
+            isFromGoalDetail -> {
+                SubscriptionPlanFragment().apply {
+                    arguments = Bundle().apply {
+                        putBoolean("IS_FROM_GOAL_DETAIL", true)
                     }
-                    initBottomNavigation(emailLinkFragment)
                 }
-            } else {
-                initBottomNavigation(HomeFragment())
             }
+            // 딥링크 로직
+            intent?.action == Intent.ACTION_VIEW -> {
+                val data: Uri? = intent?.data
+                when {
+                    data?.host.equals("password") && data?.path?.startsWith("/change")!! && data.getQueryParameter("verified").equals("true") -> {
+                        MypagePasswordChangeFragment()
+                    }
+                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter("verified").equals("true") -> {
+                        MypageEmailLinkFragment().apply {
+                            arguments = Bundle().apply {
+                                putBoolean("deepLink", true)
+                            }
+                        }
+                    }
+                    else -> HomeFragment()
+                }
+            }
+            else -> HomeFragment()
         }
+
+        initBottomNavigation(startFragment)
     }
 
-    fun navigateFragment(fragment: Fragment) {
+    fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
+            .addToBackStack(null)
             .commitAllowingStateLoss()
     }
 
     private fun initBottomNavigation(fragment: Fragment) {
-
         binding.bottomNavigationView.selectedItemId = R.id.fragment_home
         supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, fragment)
@@ -88,35 +76,30 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
-
                 R.id.fragment_goal -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, GoalFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.fragment_record -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, RecordFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.fragment_home -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, HomeFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.fragment_friend -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, FriendFragment())
                         .commitAllowingStateLoss()
                     return@setOnItemSelectedListener true
                 }
-
                 R.id.fragment_mypage -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.main_container, MypageFragment())

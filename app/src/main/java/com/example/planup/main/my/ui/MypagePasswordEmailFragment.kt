@@ -186,7 +186,7 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
     }
 
     override fun successPasswordLink(email: String) {
-        (context as MainActivity).navigateFragment(MypagePasswordLinkFragment())
+        (context as MainActivity).navigateToFragment(MypagePasswordLinkFragment())
     }
 
     override fun failPasswordLink(message: String) {
