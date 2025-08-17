@@ -27,6 +27,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import com.bumptech.glide.Glide
+import com.example.planup.network.App
+import com.example.planup.signup.data.*
 
 class ProfileSetupFragment : Fragment() {
 
@@ -40,6 +42,8 @@ class ProfileSetupFragment : Fragment() {
     private lateinit var fileLauncher: ActivityResultLauncher<Intent>
     private var latestPhotoFile: File? = null
     private var tempUserId: String? = null
+    private var nicknameCheckJob: Job? = null
+    private var isNicknameAvailable: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,16 +77,26 @@ class ProfileSetupFragment : Fragment() {
                 isTooLong -> {
                     // 20자 초과 → 안내문 표시
                     binding.nicknameGuide1.visibility = View.VISIBLE
+                    isNicknameAvailable = false
                     setNextButtonEnabled(false)
+                    nicknameCheckJob?.cancel()
                 }
 
                 isEmpty -> {
+                    isNicknameAvailable = false
                     setNextButtonEnabled(false)
+                    nicknameCheckJob?.cancel()
                 }
 
                 else -> {
                     // 모든 조건 만족 → 버튼 활성화
-                    setNextButtonEnabled(true)
+                    isNicknameAvailable = false
+                    setNextButtonEnabled(false)
+                    nicknameCheckJob?.cancel()
+                    nicknameCheckJob = viewLifecycleOwner.lifecycleScope.launch {
+                        delay(350)
+                        checkNicknameDuplicate(nickname)
+                    }
                 }
             }
         }
@@ -101,7 +115,7 @@ class ProfileSetupFragment : Fragment() {
             showProfilePopup(it)
         }
 
-        /* 다음 버튼 클릭 → InviteCodeFragment로 이동 */
+        /* 다음 버튼 클릭 → 최종 회원가입 진행 */
         binding.nextButton.setOnClickListener {
             val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
@@ -111,9 +125,18 @@ class ProfileSetupFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            saveProfileData(nickname)
+            viewLifecycleOwner.lifecycleScope.launch {
+                if (!isNicknameAvailable) {
+                    setNextButtonEnabled(false)
+                    checkNicknameDuplicate(nickname)
+                }
+                if (!isNicknameAvailable) return@launch
 
-            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
+                saveProfileData(nickname)
+
+                // 최종 회원가입 API 호출
+                completeSignup()
+            }
         }
 
         // 갤러리
@@ -176,13 +199,104 @@ class ProfileSetupFragment : Fragment() {
         fetchRandomNickname()
     }
 
+    /* 최종 회원가입 API 호출을 담당하는 함수 */
+    private fun completeSignup() {
+        val activity = requireActivity() as SignupActivity
+        val isKakaoSignup = !activity.tempUserId.isNullOrBlank()
+
+        lifecycleScope.launch {
+            try {
+                if (isKakaoSignup) {
+                    // 카카오 회원가입 완료
+                    val tempUserId = activity.tempUserId ?: return@launch
+                    val request = KakaoCompleteRequest(
+                        tempUserId = tempUserId,
+                        nickname = activity.nickname ?: "",
+                        profileImg = activity.profileImgUrl,
+                        agreements = activity.agreements?.map {
+                            KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
+                        } ?: emptyList()
+                    )
+
+                    val response = RetrofitInstance.userApi.kakaoComplete(request)
+                    val body = response.body()
+
+                    if (response.isSuccessful && body?.isSuccess == true) {
+                        // 카카오 회원가입 완료
+                        val result = body.result
+                        val accessToken = result.accessToken
+
+                        if (accessToken != null) {
+                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
+                            val editor = prefs.edit()
+
+                            editor.putString("accessToken", accessToken)
+                            editor.putLong("userId", result.id)
+                            editor.putString("email", result.userInfo?.email)
+                            editor.putString("nickname", result.userInfo?.nickname)
+                            editor.putString("profileImg", result.userInfo?.profileImg)
+                            editor.apply()
+
+                            App.jwt.token = "Bearer $accessToken"
+
+                            // InviteCodeInputFragment로 이동
+                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // 일반 회원가입 완료
+                    val request = SignupRequestDto(
+                        email = activity.email ?: "",
+                        password = activity.password ?: "",
+                        passwordCheck = activity.password ?: "",
+                        nickname = activity.nickname ?: "",
+                        profileImg = activity.profileImgUrl ?: "",
+                        agreements = activity.agreements?.map {
+                            Agreement(it.termsId, it.isAgreed)
+                        } ?: emptyList()
+                    )
+
+                    val response = RetrofitInstance.userApi.signup(request)
+                    val body = response.body()
+
+                    if (response.isSuccessful && body?.isSuccess == true) {
+                        val result = body?.result
+                        val accessToken = result?.accessToken
+
+                        if (accessToken != null) {
+                            // accessToken 저장
+                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
+                            val editor = prefs.edit()
+
+                            editor.putString("accessToken", accessToken)
+                            editor.putLong("userId", result!!.id.toLong())
+                            editor.putString("email", result.email)
+                            editor.putString("nickname", result.userInfo.nickname)
+                            editor.putString("profileImg", result.userInfo.profileImg)
+                            editor.apply()
+
+                            App.jwt.token = "Bearer $accessToken"
+
+                            // InviteCodeInputFragment로 이동
+                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeInputFragment())
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
     private fun setNextButtonEnabled(enabled: Boolean) {
         binding.nextButton.isEnabled = enabled
         binding.nextButton.setBackgroundResource(R.drawable.btn_next_background)
     }
-
 
     /* 현재 닉네임과 프로필 이미지를 저장하는 함수 */
     private fun saveProfileData(nickname: String) {
@@ -253,10 +367,8 @@ class ProfileSetupFragment : Fragment() {
     private fun uploadProfileImage(uri: Uri) {
         val file = when {
             cameraImageUri != null && uri == cameraImageUri && latestPhotoFile != null -> latestPhotoFile!!
-
             uri.scheme.equals("content", ignoreCase = true) -> copyUriToCache(uri)
             uri.scheme.equals("file", ignoreCase = true) -> File(uri.path!!)
-
             else -> copyUriToCache(uri)
         }
 
@@ -308,7 +420,6 @@ class ProfileSetupFragment : Fragment() {
         return outFile
     }
 
-
     private fun getFileNameFromUri(uri: Uri): String? {
         val cursor = requireContext().contentResolver.query(uri, null, null, null, null)
         return if (cursor != null && cursor.moveToFirst()) {
@@ -348,6 +459,31 @@ class ProfileSetupFragment : Fragment() {
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private suspend fun checkNicknameDuplicate(nickname: String) {
+        try {
+            val res = RetrofitInstance.userApi.checkNickname(nickname)
+            if (res.isSuccessful && res.body()?.isSuccess == true) {
+                val available = res.body()!!.result?.available == true
+                isNicknameAvailable = available
+                if (available) {
+                    binding.nicknameGuide2.visibility = View.GONE
+                    setNextButtonEnabled(true)
+                } else {
+                    binding.nicknameGuide2.visibility = View.VISIBLE
+                    setNextButtonEnabled(false)
+                }
+            } else {
+                isNicknameAvailable = false
+                binding.nicknameGuide2.visibility = View.VISIBLE
+                setNextButtonEnabled(false)
+            }
+        } catch (e: Exception) {
+            isNicknameAvailable = false
+            binding.nicknameGuide2.visibility = View.VISIBLE
+            setNextButtonEnabled(false)
         }
     }
 }

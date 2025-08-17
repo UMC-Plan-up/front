@@ -1,6 +1,8 @@
 package com.example.planup.signup
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -26,7 +28,6 @@ class SignupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_signup)
 
-        // 1) 커스텀 딥링크 우선 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
 
@@ -36,12 +37,12 @@ class SignupActivity : AppCompatActivity() {
             // LoginActivity에서 전달받은 데이터를 SignupActivity 변수에 저장
             this.email = intent.getStringExtra("email")
             this.profileImgUrl = intent.getStringExtra("profileImg")
-            this.tempUserId = intent.getStringExtra("tempUserId") // tempUserId를 SignupActivity 변수에 저장합니다.
+            this.tempUserId = intent.getStringExtra("tempUserId")
             this.password = "social_login_password_placeholder"
 
             // AgreementFragment 호출
             val bundle = Bundle().apply {
-                putString("tempUserId", this@SignupActivity.tempUserId) // Bundle에 tempUserId를 담아 AgreementFragment로 전달합니다.
+                putString("tempUserId", this@SignupActivity.tempUserId)
                 putBoolean("isKakaoSignup", true)
             }
 
@@ -74,7 +75,6 @@ class SignupActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent)
         handleEmailDeepLink(intent)
     }
 
@@ -99,6 +99,20 @@ class SignupActivity : AppCompatActivity() {
         )
 
         if (verifiedParam) {
+            // 이메일 인증이 성공하면 토큰을 저장
+            // 토큰이 존재하고 비어있지 않다면
+            if (tokenParam.isNotBlank()) {
+                val prefs = applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+                val editor = prefs.edit()
+                editor.putString("accessToken", tokenParam)
+                editor.apply()
+                Log.d("SignupActivity", "딥링크로 accessToken 저장 완료: $tokenParam")
+            } else {
+                Log.e("SignupActivity", "딥링크에 accessToken이 없습니다.")
+                Toast.makeText(this, "인증에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                return false
+            }
+
             goToProfileSetup(emailParam)
             return true
         } else {

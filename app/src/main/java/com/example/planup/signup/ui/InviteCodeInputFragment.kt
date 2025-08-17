@@ -1,6 +1,5 @@
 package com.example.planup.signup.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -12,21 +11,16 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
-import com.example.planup.main.MainActivity
-import com.example.planup.network.App
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.*
 import kotlinx.coroutines.launch
 import com.example.planup.databinding.FragmentInviteCodeInputBinding
 import com.example.planup.databinding.PopupCodeBinding
-import com.example.planup.login.LoginActivityNew
-import com.example.planup.signup.data.Agreement
 
 class InviteCodeInputFragment : Fragment() {
 
@@ -103,7 +97,7 @@ class InviteCodeInputFragment : Fragment() {
 
                             if (result.valid) {
                                 hideInvalidCodeMessage()
-                                // 유효한 코드이면 팝업을 띄우고, 팝업의 확인 버튼이 최종 완료를 담당
+                                // 유효한 코드이면 팝업을 띄우고, 팝업의 확인 버튼이 다음 화면으로 이동
                                 showPopupCenter(view, result.targetUserNickname, enteredCode)
                             } else {
                                 showInvalidCodeMessage()
@@ -112,8 +106,6 @@ class InviteCodeInputFragment : Fragment() {
                         } else {
                             setErrorMessage("서버 응답이 올바르지 않습니다.")
                         }
-                    } else {
-                        setErrorMessage("서버와의 통신에 실패했습니다.")
                     }
 
                 } catch (e: Exception) {
@@ -122,13 +114,13 @@ class InviteCodeInputFragment : Fragment() {
             }
         }
 
-        /* 다음/완료 버튼 클릭 → 최종 회원가입 진행 */
+        /* 다음 버튼 클릭 → CommunityIntroFragment로 이동 */
         binding.nextButton.setOnClickListener {
             // 입력된 초대 코드 SignupActivity에 저장
             val enteredCode = binding.nicknameEditText.text.toString().trim()
             (requireActivity() as SignupActivity).inviteCode = enteredCode
 
-            completeSignup()
+            (requireActivity() as SignupActivity).navigateToFragment(CommunityIntroFragment())
         }
 
 
@@ -141,85 +133,6 @@ class InviteCodeInputFragment : Fragment() {
                 view.performClick()
             }
             false
-        }
-    }
-
-    /* 최종 회원가입 API 호출을 담당하는 함수 */
-    private fun completeSignup() {
-        val activity = requireActivity() as SignupActivity
-        val isKakaoSignup = !activity.tempUserId.isNullOrBlank()
-
-        lifecycleScope.launch {
-            try {
-                if (isKakaoSignup) {
-                    // 카카오 회원가입 완료
-                    val tempUserId = activity.tempUserId ?: return@launch
-                    val request = KakaoCompleteRequest(
-                        tempUserId = tempUserId,
-                        nickname = activity.nickname ?: "",
-                        profileImg = activity.profileImgUrl,
-                        agreements = activity.agreements?.map { // 변환 로직 추가
-                            KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
-                        } ?: emptyList(),
-                        inviteCode = activity.inviteCode
-                    )
-
-                    val response = RetrofitInstance.userApi.kakaoComplete(request)
-                    val body = response.body()
-
-                    if (response.isSuccessful && body?.isSuccess == true) {
-                        // 카카오 회원가입 완료 및 로그인 성공
-                        val result = body.result
-                        val accessToken = result.accessToken
-                        if (accessToken != null) {
-                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
-                            val editor = prefs.edit()
-                            editor.putString("accessToken", accessToken)
-                            editor.putLong("userId", result.id)
-                            editor.putString("email", result.email)
-                            editor.putString("nickname", result.userInfo?.nickname)
-                            editor.putString("profileImg", result.userInfo?.profileImg)
-                            editor.apply()
-
-                            App.jwt.token = "Bearer $accessToken"
-
-                            val intent = Intent(requireContext(), MainActivity::class.java)
-                            startActivity(intent)
-                            requireActivity().finish()
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    // 일반 회원가입 완료
-                    val request = SignupRequestDto(
-                        email = activity.email ?: "",
-                        password = activity.password ?: "",
-                        passwordCheck = activity.password ?: "",
-                        nickname = activity.nickname ?: "",
-                        inviteCode = activity.inviteCode?.takeIf { it.isNotBlank() },
-                        profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map {
-                            Agreement(it.termsId, it.isAgreed) // data 패키지의 Agreement를 사용
-                        } ?: emptyList()
-                    )
-
-                    val response = RetrofitInstance.userApi.signup(request)
-                    val body = response.body()
-
-                    if (response.isSuccessful && body?.isSuccess == true) {
-                        Toast.makeText(requireContext(), "회원가입 완료", Toast.LENGTH_SHORT).show()
-                        // 일반 회원가입 완료 후 로그인 화면으로 이동
-                        val intent = Intent(requireContext(), LoginActivityNew::class.java)
-                        startActivity(intent)
-                        requireActivity().finish()
-                    } else {
-                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
@@ -252,7 +165,7 @@ class InviteCodeInputFragment : Fragment() {
         }
     }
 
-    /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 회원가입 API 호출 */
+    /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 다음 화면으로 이동 */
     private fun showPopupCenter(anchorView: View, nickname: String, inviteCode: String) {
         val popupBinding = PopupCodeBinding.inflate(LayoutInflater.from(requireContext()))
 
@@ -273,13 +186,33 @@ class InviteCodeInputFragment : Fragment() {
         popupWindow.isOutsideTouchable = false
         popupWindow.isFocusable = true
 
-        /* popup 확인 버튼 → 회원가입 API 호출 */
+        /* popup 확인 버튼 → 초대코드 처리 API 호출 후 다음 화면으로 이동 */
         popupBinding.confirmButton.setOnClickListener {
-            popupWindow.dismiss()
+            popupBinding.confirmButton.isEnabled = false
 
-            // 팝업에서 확인 누르면 회원가입 완료
-            (requireActivity() as SignupActivity).inviteCode = inviteCode
-            completeSignup()
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val processRes = RetrofitInstance.userApi.processInviteCode(
+                        InviteCodeRequest(inviteCode)
+                    )
+                    val ok = processRes.isSuccessful && processRes.body()?.isSuccess == true &&
+                            (processRes.body()?.result?.success == true)
+
+                    if (ok) {
+                        popupWindow.dismiss()
+                        (requireActivity() as SignupActivity).inviteCode = inviteCode
+                        // 초대코드 처리 성공 후 다음 화면으로 이동
+                        (requireActivity() as SignupActivity).navigateToFragment(CommunityIntroFragment())
+                    } else {
+                        val msg = processRes.body()?.message ?: "초대코드 처리 실패"
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                        popupBinding.confirmButton.isEnabled = true
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                    popupBinding.confirmButton.isEnabled = true
+                }
+            }
         }
 
         popupWindow.showAtLocation(anchorView, Gravity.CENTER, 0, 0)

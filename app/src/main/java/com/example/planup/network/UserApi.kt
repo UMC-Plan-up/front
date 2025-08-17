@@ -12,6 +12,8 @@ import com.example.planup.signup.data.ApiResponse
 import com.example.planup.signup.data.EmailCheckResult
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.EmailSendResponseDto
+import com.example.planup.signup.data.InviteCodeProcessResponse
+import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeResponse
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
@@ -19,6 +21,7 @@ import com.example.planup.signup.data.KakaoCompleteRequest
 import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.KakaoLoginResponse
+import com.example.planup.signup.data.NicknameCheckResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
@@ -56,6 +59,12 @@ interface UserApi {
     suspend fun validateInviteCode(
         @Body request: InviteCodeValidateRequest
     ): Response<InviteCodeValidateResponse>
+
+    // 초대코드 처리
+    @POST("users/invite-code/process")
+    suspend fun processInviteCode(
+        @Body body: InviteCodeRequest
+    ): Response<InviteCodeProcessResponse>
 
     // 이메일 인증 메일 발송
     @POST("/users/email/send")
@@ -116,4 +125,10 @@ interface UserApi {
     suspend fun alternativeLogin(
         @Body request: AlternativeLoginRequest
     ): Response<AlternativeLoginResponse>
+
+    // 닉네임 중복 확인
+    @GET("users/nickname/check-duplicate")
+    suspend fun checkNickname(
+        @Query("nickname") nickname: String
+    ): Response<NicknameCheckResponse>
 }

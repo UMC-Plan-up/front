@@ -234,12 +234,22 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email)
             "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password)
             else -> {
-                // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
+                val token = loginResult.accessToken ?: ""
+                if (token.isBlank()) {
+                    failLogin("로그인 토큰이 비어 있습니다.")
+                    return
+                }
+
+                editor.putString("accessToken", token).apply()
+                App.jwt.token = "Bearer $token"
+
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
             }
         }
     }
+
+
 
     //로그인 통신 실패 -> 토스트 메시지 출력
     override fun failLogin(message: String) {

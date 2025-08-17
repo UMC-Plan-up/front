@@ -73,7 +73,7 @@
     <string name="invite_code_input_hint">초대코드 입력란</string>
 
     <string name="friend_added_message">____님과 친구가 되었어요!</string>
-    <string name="friend_description">%s 님과 친구가 되었어요!</string>
+    <string name="friend_description">%s님과 친구가 되었어요!</string>
     <string name="friend_new">새로운 친구</string>
 
     <string name="community_welcome_message">다양한 커뮤니티들이\n____님을 기다리고 있어요!</string>

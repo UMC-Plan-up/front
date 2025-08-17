@@ -213,24 +213,38 @@ class GoalDetailFragment : Fragment() {
 
         buttons.forEach { button ->
             button.setOnClickListener {
-                selectedEndButton?.let { resetButtonStyle(it) }
-                selectButtonStyle(button)
-                selectedEndButton = button
+                if (selectedEndButton == button) {
+                    // 이미 선택된 버튼을 다시 클릭한 경우 선택 해제
+                    resetButtonStyle(button)
+                    selectedEndButton = null
 
-                if (button == binding.directSetButton) {
-                    binding.dropdownContainer1.visibility = View.VISIBLE
-                    binding.dropdownContainer2.visibility = View.VISIBLE
-                    binding.dropdownContainer3.visibility = View.VISIBLE
-                } else {
                     binding.dropdownContainer1.visibility = View.GONE
                     binding.dropdownContainer2.visibility = View.GONE
                     binding.dropdownContainer3.visibility = View.GONE
-                    selectedYear = null
-                    selectedMonth = null
-                    selectedDay = null
-                    binding.challengeYearTv.text = getString(R.string.year)
-                    binding.challengeMonthTv.text = getString(R.string.month)
-                    binding.challengeDayTv.text = getString(R.string.day)
+
+                } else {
+                    selectedEndButton?.let { resetButtonStyle(it) }
+
+                    selectButtonStyle(button)
+                    selectedEndButton = button
+
+                    // '직접 설정' 버튼 선택 시 드롭다운 표시
+                    if (button == binding.directSetButton) {
+                        binding.dropdownContainer1.visibility = View.VISIBLE
+                        binding.dropdownContainer2.visibility = View.VISIBLE
+                        binding.dropdownContainer3.visibility = View.VISIBLE
+                    } else {
+                        binding.dropdownContainer1.visibility = View.GONE
+                        binding.dropdownContainer2.visibility = View.GONE
+                        binding.dropdownContainer3.visibility = View.GONE
+
+                        selectedYear = null
+                        selectedMonth = null
+                        selectedDay = null
+                        binding.challengeYearTv.text = getString(R.string.year)
+                        binding.challengeMonthTv.text = getString(R.string.month)
+                        binding.challengeDayTv.text = getString(R.string.day)
+                    }
                 }
 
                 updateNextButtonState()
