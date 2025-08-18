@@ -12,17 +12,21 @@ import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
+import com.example.planup.main.my.adapter.ProfileImageAdapter
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.KakaoAccount
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.PasswordLink
+import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserPort
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -95,6 +99,11 @@ class UserController {
     private lateinit var emailLinkAdapter: EmailLinkAdapter
     fun setEmailLinkAdapter(adapter: EmailLinkAdapter){
         emailLinkAdapter = adapter
+    }
+
+    private lateinit var profileImageAdapter: ProfileImageAdapter
+    fun setProfileImageAdapter(adapter: ProfileImageAdapter){
+        profileImageAdapter = adapter
     }
 
     //유저 정보 조회
@@ -403,6 +412,7 @@ class UserController {
 
         })
     }
+
     //이메일 변경 시 인증링크 재발송
     fun emailRelinkService(email: String){
         val service = getRetrofit().create(UserPort::class.java)
@@ -422,6 +432,33 @@ class UserController {
 
             override fun onFailure(call: Call<UserResponse<EmailLink>>, t: Throwable) {
                 emailLinkAdapter.failEmailLink(t.toString())
+            }
+
+        })
+    }
+
+    //프로필 사진 업로드
+    fun imageUploadService(file: MultipartBody.Part){
+        val service = getRetrofit().create(UserPort::class.java)
+        service.setProfileImage(file).enqueue(object : Callback<UserResponse<ProfileImage>>{
+            override fun onResponse(
+                call: Call<UserResponse<ProfileImage>>,
+                response: Response<UserResponse<ProfileImage>>
+            ) {
+                if (response.isSuccessful && response.body() != null){
+                    when(response.body()!!.code){
+                        "200" -> profileImageAdapter.successProfileImage(response.body()!!.result.file)
+                        "U001" -> profileImageAdapter.failProfileImage(response.body()!!.message)
+                    }
+                } else if (!response.isSuccessful && response.body() != null) {
+                    Log.d("okhttp","image, ${response.body()!!.message}")
+                } else {
+                    Log.d("okhttp","image, null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<ProfileImage>>, t: Throwable) {
+                profileImageAdapter.failProfileImage(t.toString())
             }
 
         })
