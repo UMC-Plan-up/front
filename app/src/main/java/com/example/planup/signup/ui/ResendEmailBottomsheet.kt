@@ -10,7 +10,6 @@ import com.example.planup.R
 import com.example.planup.databinding.PopupResendEmailBinding
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
-import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.ResendEmailRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch

@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/communityTitle"
-            android:layout_width="284dp"
+            android:layout_width="wrap_content"
             android:layout_height="30dp"
             android:text="@string/goal_select_together"
             android:textSize="20sp"
@@ -123,7 +123,7 @@
 
         <LinearLayout
             android:id="@+id/createCommunityButton"
-            android:layout_width="151dp"
+            android:layout_width="wrap_content"
             android:layout_height="34dp"
             android:background="@drawable/btn_next_background"
             android:paddingStart="12dp"
@@ -134,7 +134,7 @@
 
             <TextView
                 android:id="@+id/createCommunityText"
-                android:layout_width="110dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="@string/community_create_new"

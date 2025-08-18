@@ -16,6 +16,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentLoginEmailBinding
 import com.example.planup.signup.SignupActivity
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.signup.data.SignUpDraftStore
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -118,6 +119,8 @@ class LoginEmailFragment : Fragment() {
         // (1) SignupActivity에 email 저장
         val activity = requireActivity() as SignupActivity
         activity.email = email
+
+        SignUpDraftStore.saveEmail(requireContext(), email)
 
         // (2) LoginPasswordFragment로 이동
         requireActivity().supportFragmentManager.beginTransaction()

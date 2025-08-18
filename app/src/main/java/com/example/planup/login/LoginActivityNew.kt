@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -220,6 +221,18 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         toast.show()
     }
 
+    private fun makeToast(message: String) {
+        val inflater = LayoutInflater.from(this)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(this)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM, 0, 700)
+        toast.show()
+    }
+
     //화면 터치 시 키보드 사라지게
     private fun hideKeyboard(view: View?) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -231,25 +244,17 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     //로그인 통신 성공
     override fun successLogin(loginResult: Login) {
         when (loginResult.message) {
-            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email)
-            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password)
+            "존재하지 않는 사용자입니다" -> makeToast("등록되지 않은 이메일이에요")
+            "비밀번호가 일치하지 않습니다" -> makeToast("비밀번호를 다시 확인해 주세요.")
             else -> {
-                val token = loginResult.accessToken ?: ""
-                if (token.isBlank()) {
-                    failLogin("로그인 토큰이 비어 있습니다.")
-                    return
-                }
-
-                editor.putString("accessToken", token).apply()
-                App.jwt.token = "Bearer $token"
-
+                editor.putString("accessToken", loginResult.accessToken)
+                App.jwt.token = "Bearer " + loginResult.accessToken
+                // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
             }
         }
     }
-
-
 
     //로그인 통신 실패 -> 토스트 메시지 출력
     override fun failLogin(message: String) {
@@ -272,7 +277,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             user.id,
             user.email,
             user.nickname,
-            user.profileImage
+           user.profileImage
         )
     }
 
@@ -320,6 +325,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         lifecycleScope.launch {
             try {
                 val code = getKakaoAuthorizationCode()
+                Log.d("KakaoLogin", "Received authorization code: $code")
 
                 // 카카오 로그인 API 호출
                 val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
@@ -349,8 +355,10 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     }
                 } else {
                     toast(body?.message ?: "로그인 실패(${resp.code()})")
+                    Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
                 }
             } catch (e: Exception) {
+                Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
                 toast("카카오 인증 실패: ${e.localizedMessage}")
             }
         }
@@ -370,7 +378,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         editor.putString("profileImg", profileImg)
         editor.apply()
 
-        App.jwt.token = "Bearer $accessToken"
+        //App.jwt.token = "Bearer $accessToken"
         goToMain()
     }
 }

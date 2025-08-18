@@ -62,9 +62,6 @@ class LoginSentEmailFragment : Fragment() {
         if (emailArg.isNotBlank()) {
             sendVerificationEmail(emailArg)
         }
-
-        // [테스트용]
-        binding.mockVerifyText.setOnClickListener { openProfileSetup() }
     }
 
     /* 이메일 인증 메일 발송 API */
@@ -79,7 +76,7 @@ class LoginSentEmailFragment : Fragment() {
                 val response = RetrofitInstance.userApi.sendEmail(EmailSendRequestDto(email))
 
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-
+                    // 성공 처리
                 } else {
                     val errorBody = response.body()
                     Log.e("EmailVerify", "발송 실패: code=${errorBody?.code} msg=${errorBody?.message}")
@@ -90,14 +87,6 @@ class LoginSentEmailFragment : Fragment() {
                 isSending = false
             }
         }
-    }
-
-    /* ProfileSetupFragment로 이동하는 메서드 */
-    private fun openProfileSetup() {
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, ProfileSetupFragment())
-            .addToBackStack(null)
-            .commit()
     }
 
     override fun onDestroyView() {

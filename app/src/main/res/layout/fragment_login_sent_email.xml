@@ -68,17 +68,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- API연동 후 삭제 예정 -->
-    <TextView
-        android:id="@+id/mockVerifyText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="인증 완료(테스트용) → 프로필 설정 이동"
-        android:textColor="@color/black_400"
-        android:textSize="16sp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/tvNotReceivedEmail"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

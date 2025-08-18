@@ -102,6 +102,7 @@
         android:textColorHint="@color/black_300"
         android:inputType="text|textNoSuggestions"
         android:focusable="true"
+        android:textColor="@color/black_300"
         android:focusableInTouchMode="true"
         app:layout_constraintTop_toBottomOf="@id/nickNameLabel"
         app:layout_constraintStart_toStartOf="parent"
