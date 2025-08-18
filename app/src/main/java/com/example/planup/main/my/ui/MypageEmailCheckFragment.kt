@@ -71,7 +71,7 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
     private fun clickListener() {
         /*뒤로 가기*/
         binding.backIv.setOnClickListener {
-            (context as MainActivity).navigateFragment(MypageFragment())
+            (context as MainActivity).navigateToFragment(MypageFragment())
         }
         /*인증번호 받기 버튼 클릭*/
         binding.btnGetLinkTv.setOnClickListener {

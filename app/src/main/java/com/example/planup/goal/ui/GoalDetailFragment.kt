@@ -53,19 +53,30 @@ class GoalDetailFragment : Fragment() {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        // 구독 플랜 선택 여부 확인
-        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
-        binding.goalContainer.visibility = if (isPlanSelected) View.GONE else View.VISIBLE
-
         binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
-
-        val shouldHideGoalContainer = arguments?.getBoolean("HIDE_GOAL_CONTAINER", false) ?: false
-        if (shouldHideGoalContainer) {
-            binding.goalContainer.visibility = View.GONE
-        }
 
         binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
+
+        // SubscriptionPlanFragment에서 직접 넘어온 경우
+        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
+        if (isUnlockedFromSubscription) {
+            binding.goalContainer.visibility = View.GONE
+        }
+
+        // GoalActivity를 통해 구독하고 돌아온 경우
+        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
+        if (isPlanSelected) {
+            binding.goalContainer.visibility = View.GONE
+        }
+
+        val isUnlocked = isUnlockedFromSubscription || isPlanSelected
+
+        if (!isUnlocked) {
+            binding.goalContainer.setOnClickListener {
+                (activity as? GoalActivity)?.startSubscriptionActivity()
+            }
+        }
 
         setupBackButton()
         setupPeriodButtons()
@@ -73,11 +84,6 @@ class GoalDetailFragment : Fragment() {
         setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
-
-        // 자물쇠 버튼 클릭 리스너
-        binding.goalContainer.setOnClickListener {
-            (activity as? GoalActivity)?.startSubscriptionActivity()
-        }
 
         binding.root.setOnTouchListener { v, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN) {
@@ -207,24 +213,38 @@ class GoalDetailFragment : Fragment() {
 
         buttons.forEach { button ->
             button.setOnClickListener {
-                selectedEndButton?.let { resetButtonStyle(it) }
-                selectButtonStyle(button)
-                selectedEndButton = button
+                if (selectedEndButton == button) {
+                    // 이미 선택된 버튼을 다시 클릭한 경우 선택 해제
+                    resetButtonStyle(button)
+                    selectedEndButton = null
 
-                if (button == binding.directSetButton) {
-                    binding.dropdownContainer1.visibility = View.VISIBLE
-                    binding.dropdownContainer2.visibility = View.VISIBLE
-                    binding.dropdownContainer3.visibility = View.VISIBLE
-                } else {
                     binding.dropdownContainer1.visibility = View.GONE
                     binding.dropdownContainer2.visibility = View.GONE
                     binding.dropdownContainer3.visibility = View.GONE
-                    selectedYear = null
-                    selectedMonth = null
-                    selectedDay = null
-                    binding.challengeYearTv.text = getString(R.string.year)
-                    binding.challengeMonthTv.text = getString(R.string.month)
-                    binding.challengeDayTv.text = getString(R.string.day)
+
+                } else {
+                    selectedEndButton?.let { resetButtonStyle(it) }
+
+                    selectButtonStyle(button)
+                    selectedEndButton = button
+
+                    // '직접 설정' 버튼 선택 시 드롭다운 표시
+                    if (button == binding.directSetButton) {
+                        binding.dropdownContainer1.visibility = View.VISIBLE
+                        binding.dropdownContainer2.visibility = View.VISIBLE
+                        binding.dropdownContainer3.visibility = View.VISIBLE
+                    } else {
+                        binding.dropdownContainer1.visibility = View.GONE
+                        binding.dropdownContainer2.visibility = View.GONE
+                        binding.dropdownContainer3.visibility = View.GONE
+
+                        selectedYear = null
+                        selectedMonth = null
+                        selectedDay = null
+                        binding.challengeYearTv.text = getString(R.string.year)
+                        binding.challengeMonthTv.text = getString(R.string.month)
+                        binding.challengeDayTv.text = getString(R.string.day)
+                    }
                 }
 
                 updateNextButtonState()
@@ -305,7 +325,6 @@ class GoalDetailFragment : Fragment() {
 
     private fun setupNextButton() {
         binding.nextButton.setOnClickListener {
-            // 다음 버튼이 활성화된 상태에서만 화면 이동
             if (binding.nextButton.isEnabled) {
                 goToParticipantAlways()
             }
@@ -313,23 +332,39 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun goToParticipantAlways() {
-        val verificationType = selectedMethod.orEmpty()
         val period = selectedPeriodButton?.text?.toString().orEmpty()
         val frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
+
+        val goalActivity = activity as? GoalActivity
+        if (goalActivity != null) {
+            goalActivity.period = period
+            goalActivity.frequency = frequency
+
+            // 다음 프래그먼트로 이동
+            val participantFragment = ParticipantLimitFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", goalActivity.goalOwnerName)
+                    putString("goalType", goalActivity.goalType)
+                    putString("goalCategory", goalActivity.goalCategory)
+                    putString("goalName", goalActivity.goalName)
+                    putString("goalAmount", goalActivity.goalAmount)
+                    putString("verificationType", goalActivity.verificationType)
+                    putString("period", goalActivity.period)
+                    putInt("frequency", goalActivity.frequency)
+                }
+            }
+
+            goalActivity.navigateToFragment(participantFragment)
+            return
+        }
 
         val participantFragment = ParticipantLimitFragment().apply {
             arguments = Bundle().apply {
                 putString("goalOwnerName", goalOwnerName)
-                putString("verificationType", verificationType)
+                putString("verificationType", selectedMethod.orEmpty())
                 putString("period", period)
                 putInt("frequency", frequency)
             }
-        }
-
-        val goalActivity = activity as? GoalActivity
-        if (goalActivity != null) {
-            goalActivity.navigateToFragment(participantFragment)
-            return
         }
 
         val containerId = (view?.parent as? ViewGroup)?.id

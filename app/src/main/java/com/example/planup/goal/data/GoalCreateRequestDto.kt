@@ -5,7 +5,7 @@ data class GoalCreateRequest(
     val goalAmount: String,
     val goalCategory: String,
     val goalType: String,
-    val oneDose: String,
+    val oneDose: Int,
     val frequency: Int,
     val period: String,
     val endDate: String,  

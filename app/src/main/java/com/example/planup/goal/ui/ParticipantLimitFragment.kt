@@ -59,49 +59,41 @@ class ParticipantLimitFragment : Fragment() {
         }
     }
 
-    /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
     private fun setupClickListeners() {
+        // 뒤로가기 아이콘 클릭 시 이전 Fragment로 이동
         binding.backIcon.setOnClickListener {
-            val goalDetailFragment = GoalDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalOwnerName)
-                }
-            }
-            val ga = activity as? GoalActivity
-            if (ga != null) {
-                ga.navigateToFragment(goalDetailFragment)
-            } else {
-                val containerId = (view?.parent as? ViewGroup)?.id
-                if (containerId != null && containerId != View.NO_ID) {
-                    parentFragmentManager.beginTransaction()
-                        .replace(containerId, goalDetailFragment)
-                        .addToBackStack(null)
-                        .commit()
-                } else {
-                    requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(android.R.id.content, goalDetailFragment)
-                        .addToBackStack(null)
-                        .commitAllowingStateLoss()
-                }
-            }
+            parentFragmentManager.popBackStack()
         }
 
-        // 다음 버튼 → PushAlertFragment 이동
+        // 다음 버튼 클릭 시 다음 Fragment로 이동
         binding.nextButton.setOnClickListener {
             if (isInputValid) {
                 val limit = binding.participantLimitEditText.text.toString().toIntOrNull() ?: 0
-                val pushAlertFragment = PushAlertFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("goalOwnerName", goalOwnerName)
-                        putInt("limitFriendCount", limit)
-                    }
-                }
-
                 val ga = activity as? GoalActivity
+
                 if (ga != null) {
                     ga.limitFriendCount = limit
+                    val pushAlertFragment = PushAlertFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("goalOwnerName", ga.goalOwnerName)
+                            putString("goalType", ga.goalType)
+                            putString("goalCategory", ga.goalCategory)
+                            putString("goalName", ga.goalName)
+                            putString("goalAmount", ga.goalAmount)
+                            putString("verificationType", ga.verificationType)
+                            putString("period", ga.period)
+                            putInt("frequency", ga.frequency)
+                            putInt("limitFriendCount", ga.limitFriendCount)
+                        }
+                    }
                     ga.navigateToFragment(pushAlertFragment)
                 } else {
+                    val pushAlertFragment = PushAlertFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("goalOwnerName", goalOwnerName)
+                            putInt("limitFriendCount", limit)
+                        }
+                    }
                     val containerId = (view?.parent as? ViewGroup)?.id
                     if (containerId != null && containerId != View.NO_ID) {
                         parentFragmentManager.beginTransaction()

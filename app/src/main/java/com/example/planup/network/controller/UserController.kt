@@ -375,7 +375,7 @@ class UserController {
                 }
 
                 override fun onFailure(call: Call<UserResponse<WithDraw>>, t: Throwable) {
-                   closeAccountAdapter.failCloseAccount(t.toString())
+                    closeAccountAdapter.failCloseAccount(t.toString())
                 }
             })
     }

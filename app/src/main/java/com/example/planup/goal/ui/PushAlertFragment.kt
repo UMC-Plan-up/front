@@ -1,6 +1,7 @@
 package com.example.planup.goal.ui
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
@@ -28,8 +29,7 @@ class PushAlertFragment : Fragment() {
 
     private var _binding: FragmentPushAlertBinding? = null
     private val binding get() = _binding!!
-
-    private var isFirst = true //해당 페이지 처음 들어온 경우 알림설정에 대한 팝업을 보여줘야 함
+    private var isFirst = true
 
     private lateinit var hours: ArrayList<String> //시간
     private lateinit var minutes: ArrayList<String> //분
@@ -56,10 +56,12 @@ class PushAlertFragment : Fragment() {
         minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList())
         times = resources.getStringArray(R.array.dropdown_morning_afternoon).toCollection(ArrayList())
 
+        val prefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        isFirst = prefs.getBoolean("show_push_alert_popup", true)
+
         if (isFirst) showPopup()
     }
 
-    //클릭 이벤트
     private fun clickListener() {
         //뒤로가기 버튼 클릭
         binding.alertBackIv.setOnClickListener {
@@ -67,11 +69,10 @@ class PushAlertFragment : Fragment() {
 
             (activity as? GoalActivity)?.navigateToFragment(participantLimitFragment)
                 ?: parentFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, participantLimitFragment) // R.id.fragment_container_view를 실제 컨테이너 ID로 변경해주세요.
+                    .replace(R.id.goal_container, participantLimitFragment)
                     .addToBackStack(null)
                     .commit()
         }
-
 
         //알림받기 토글 끄기
         binding.alertReceiveOnIv.setOnClickListener {
@@ -97,15 +98,89 @@ class PushAlertFragment : Fragment() {
 
         //저장 버튼 클릭
         binding.nextButton.setOnClickListener {
-            makeToast()
-            if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
-                isFirst = false
-                val intent = Intent(requireContext(), MainActivity::class.java)
-                startActivity(intent)
-            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
-                val intent = Intent(requireContext(), MainActivity::class.java)
-                startActivity(intent)
+            val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+
+            val isAlertsEnabled = binding.alertReceiveOnIv.visibility == View.VISIBLE
+            editor.putBoolean("receive_alerts", isAlertsEnabled)
+            editor.putBoolean("regular_alerts", binding.alertRegularOnIv.visibility == View.VISIBLE)
+            editor.putString("alert_time_of_day", binding.alertTimeTv.text.toString())
+            editor.putString("alert_hour", binding.alertHourTv.text.toString())
+            editor.putString("alert_minute", binding.alertMinuteTv.text.toString())
+
+            val selectedDays = mutableSetOf<String>()
+            val dayViews = listOf(
+                binding.alertEverydayTv, binding.alertMondayTv, binding.alertTuesdayTv,
+                binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
+                binding.alertSaturdayTv, binding.alertSundayTv
+            )
+            val dayNames = listOf(
+                "everyday", "monday", "tuesday", "wednesday",
+                "thursday", "friday", "saturday", "sunday"
+            )
+            dayViews.forEachIndexed { index, view ->
+                if (view.isSelected) {
+                    selectedDays.add(dayNames[index])
+                }
             }
+            editor.putStringSet("alert_days", selectedDays)
+            editor.apply()
+
+            // 알림 설정 완료 후 팝업을 다시 보지 않도록 상태 변경
+            val appPrefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+            appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
+
+
+            val activity = requireActivity() as? GoalActivity
+            if (activity != null) {
+                // GoalActivity에 알림 설정 정보 저장
+                activity.notificationEnabled = isAlertsEnabled
+                activity.regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
+                activity.alertTimeOfDay = binding.alertTimeTv.text.toString()
+                activity.alertHour = binding.alertHourTv.text.toString()
+                activity.alertMinute = binding.alertMinuteTv.text.toString()
+                activity.alertDays = selectedDays
+
+                val goalCompleteFragment = GoalCompleteFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", activity.goalOwnerName)
+                        putString("goalType", activity.goalType)
+                        putString("goalCategory", activity.goalCategory)
+                        putString("goalName", activity.goalName)
+                        putString("goalAmount", activity.goalAmount)
+                        putString("verificationType", activity.verificationType)
+                        putString("period", activity.period)
+                        putInt("frequency", activity.frequency)
+                        putInt("limitFriendCount", activity.limitFriendCount)
+                        putInt("goalTime", activity.goalTime)
+
+                        // 알림 설정 정보도 함께 전달
+                        putBoolean("notificationEnabled", activity.notificationEnabled)
+                        putBoolean("regularAlertEnabled", activity.regularAlertEnabled)
+                        putString("alertTimeOfDay", activity.alertTimeOfDay)
+                        putString("alertHour", activity.alertHour)
+                        putString("alertMinute", activity.alertMinute)
+                        putStringArrayList("alertDays", ArrayList(selectedDays))
+                    }
+                }
+                activity.navigateToFragment(goalCompleteFragment)
+            } else {
+                val goalCompleteFragment = GoalCompleteFragment().apply {
+                    arguments = Bundle().apply {
+                        putBoolean("notificationEnabled", isAlertsEnabled)
+                        putBoolean("regularAlertEnabled", binding.alertRegularOnIv.visibility == View.VISIBLE)
+                        putString("alertTimeOfDay", binding.alertTimeTv.text.toString())
+                        putString("alertHour", binding.alertHourTv.text.toString())
+                        putString("alertMinute", binding.alertMinuteTv.text.toString())
+                        putStringArrayList("alertDays", ArrayList(selectedDays))
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.goal_container, goalCompleteFragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
+            makeToast()
         }
 
         //정기 알림 시간 설정
@@ -125,69 +200,18 @@ class PushAlertFragment : Fragment() {
         //정기 알림 요일 설정
         val selected = ContextCompat.getColor(requireContext(), R.color.blue_200)
         val unselected = ContextCompat.getColor(requireContext(), R.color.black_300)
-
-        // 매일
-        binding.alertEverydayTv.setOnClickListener {
-            binding.alertEverydayTv.isSelected = !binding.alertEverydayTv.isSelected
-            binding.alertEverydayTv.setTextColor(
-                if (binding.alertEverydayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 월요일
-        binding.alertMondayTv.setOnClickListener {
-            binding.alertMondayTv.isSelected = !binding.alertMondayTv.isSelected
-            binding.alertMondayTv.setTextColor(
-                if (binding.alertMondayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 화요일
-        binding.alertTuesdayTv.setOnClickListener {
-            binding.alertTuesdayTv.isSelected = !binding.alertTuesdayTv.isSelected
-            binding.alertTuesdayTv.setTextColor(
-                if (binding.alertTuesdayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 수요일
-        binding.alertWednesdayTv.setOnClickListener {
-            binding.alertWednesdayTv.isSelected = !binding.alertWednesdayTv.isSelected
-            binding.alertWednesdayTv.setTextColor(
-                if (binding.alertWednesdayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 목요일
-        binding.alertThursdayTv.setOnClickListener {
-            binding.alertThursdayTv.isSelected = !binding.alertThursdayTv.isSelected
-            binding.alertThursdayTv.setTextColor(
-                if (binding.alertThursdayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 금요일
-        binding.alertFridayTv.setOnClickListener {
-            binding.alertFridayTv.isSelected = !binding.alertFridayTv.isSelected
-            binding.alertFridayTv.setTextColor(
-                if (binding.alertFridayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 토요일
-        binding.alertSaturdayTv.setOnClickListener {
-            binding.alertSaturdayTv.isSelected = !binding.alertSaturdayTv.isSelected
-            binding.alertSaturdayTv.setTextColor(
-                if (binding.alertSaturdayTv.isSelected) selected else unselected
-            )
-        }
-
-        // 일요일
-        binding.alertSundayTv.setOnClickListener {
-            binding.alertSundayTv.isSelected = !binding.alertSundayTv.isSelected
-            binding.alertSundayTv.setTextColor(
-                if (binding.alertSundayTv.isSelected) selected else unselected
-            )
+        val dayViews = listOf(
+            binding.alertEverydayTv, binding.alertMondayTv, binding.alertTuesdayTv,
+            binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
+            binding.alertSaturdayTv, binding.alertSundayTv
+        )
+        dayViews.forEach { dayView ->
+            dayView.setOnClickListener {
+                dayView.isSelected = !dayView.isSelected
+                dayView.setTextColor(
+                    if (dayView.isSelected) selected else unselected
+                )
+            }
         }
     }
 
@@ -203,7 +227,10 @@ class PushAlertFragment : Fragment() {
 
         // '아니오' 버튼 클릭
         dialog.findViewById<TextView>(R.id.noButton).setOnClickListener {
-            isFirst = false
+            val prefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+            prefs.edit().putBoolean("show_push_alert_popup", false).apply()
+            prefs.edit().putBoolean("receive_alerts", false).apply()
+
             dialog.dismiss()
 
             requireActivity().supportFragmentManager.beginTransaction()
@@ -213,6 +240,13 @@ class PushAlertFragment : Fragment() {
 
         // '네' 버튼 클릭
         dialog.findViewById<TextView>(R.id.yesButton).setOnClickListener {
+            val appPrefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+            appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
+            appPrefs.edit().putBoolean("receive_alerts", true).apply()
+
+            binding.alertReceiveOnIv.visibility = View.VISIBLE
+            binding.alertReceiveOffIv.visibility = View.GONE
+
             dialog.dismiss()
         }
 
@@ -244,7 +278,6 @@ class PushAlertFragment : Fragment() {
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
-        val popupHeight = popupView.measuredHeight
         // 뷰 아래에 팝업 표시
         popupWindow.showAsDropDown(view)
 
@@ -267,7 +300,7 @@ class PushAlertFragment : Fragment() {
         val toast = Toast(requireContext())
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
     }
 

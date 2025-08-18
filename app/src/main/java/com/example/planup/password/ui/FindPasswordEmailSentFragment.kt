@@ -71,11 +71,6 @@ class FindPasswordEmailSentFragment : Fragment() {
                 Toast.makeText(requireContext(), "이메일 정보가 없습니다.", Toast.LENGTH_SHORT).show()
             }
         }
-
-        /* [테스트용] 클릭 시 (인증 성공 가정) → ResetPasswordFragment로 이동 */
-        binding.mockVerifyText.setOnClickListener {
-            openResetPasswordStep()
-        }
     }
 
     // 비밀번호 변경 확인 이메일 발송 API (자동 발송용)
@@ -88,29 +83,17 @@ class FindPasswordEmailSentFragment : Fragment() {
                 val body = res.body()
                 if (!(res.isSuccessful && body?.isSuccess == true)) {
                     val msg = body?.message ?: "요청 실패"
-                    // 등록되지 않은 이메일 케이스 안내 (필요 시 문구 조정)
+                    // 등록되지 않은 이메일
                     if (msg.contains("존재하지") || msg.contains("없")) {
                         Toast.makeText(requireContext(), "등록되지 않은 이메일입니다.", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     }
                 }
-                // 성공 시에는 별도 토스트 없이 그대로 유지 (UI는 이미 '보냈습니다' 안내)
             }.onFailure {
                 Toast.makeText(requireContext(), it.message ?: "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    /* ResetPasswordFragment로 이동 */
-    private fun openResetPasswordStep() {
-        val fragment = ResetPasswordFragment().apply {
-            arguments = Bundle().apply {
-                putString("email", userEmail) // 이메일 전달
-            }
-        }
-        (requireActivity() as ResetPasswordActivity)
-            .navigateToFragment(fragment)
     }
 
     override fun onDestroyView() {

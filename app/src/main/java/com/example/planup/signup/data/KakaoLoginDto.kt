@@ -1,6 +1,6 @@
 package com.example.planup.signup.data
 
-// 카카오 로그인
+// 이메일 인증 대안 - 카카오 로그인
 data class KakaoLoginRequest(
     val code: String
 )
@@ -27,12 +27,12 @@ data class KakaoLoginResponse(
 }
 
 // 카카오 회원가입 완료
+// 요청 Dto
 data class KakaoCompleteRequest(
     val tempUserId: String,
     val nickname: String,
     val profileImg: String?,
-    val agreements: List<Agreement>,
-    val inviteCode: String?
+    val agreements: List<Agreement>
 ) {
     data class Agreement(
         val termsId: Int,
@@ -40,6 +40,7 @@ data class KakaoCompleteRequest(
     )
 }
 
+// 응답 Dto
 data class KakaoCompleteResponse(
     val isSuccess: Boolean,
     val code: String,
@@ -49,7 +50,6 @@ data class KakaoCompleteResponse(
     data class Result(
         val id: Long,
         val email: String?,
-        val friendNickname: String?,
         val accessToken: String,
         val userInfo: UserInfo?
     )
@@ -61,3 +61,4 @@ data class KakaoCompleteResponse(
         val profileImg: String?
     )
 }
+

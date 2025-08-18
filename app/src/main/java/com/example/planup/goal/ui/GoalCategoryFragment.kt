@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -73,6 +72,7 @@ class GoalCategoryFragment : Fragment() {
 
         /* 다음 버튼 클릭 시 */
         binding.nextButton.setOnClickListener {
+            // 유효성 검사
             if (isCustomMode && binding.customCategoryEditText.text.isNullOrBlank()) {
                 binding.categoryGuideText2.visibility = View.VISIBLE
                 return@setOnClickListener
@@ -91,13 +91,13 @@ class GoalCategoryFragment : Fragment() {
                 )?.text.toString()
             }
 
+            val goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "challenge" else "community"
 
             val activity = requireActivity() as GoalActivity
-            activity.goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "challenge" else "community"
+            activity.goalType = goalType
             activity.goalCategory = selectedCategoryText
 
-
-            val nextFragment = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) {
+            val nextFragment = if (goalType == "challenge") {
                 GoalInputFragment()
             } else {
                 CommonGoalFragment()
@@ -106,6 +106,7 @@ class GoalCategoryFragment : Fragment() {
             nextFragment.arguments = Bundle().apply {
                 putString("goalOwnerName", goalOwnerName)
                 putString("selectedCategory", selectedCategoryText)
+                putString("goalType", goalType)
             }
 
             (requireActivity() as GoalActivity).navigateToFragment(nextFragment)
@@ -175,7 +176,7 @@ class GoalCategoryFragment : Fragment() {
     private fun resetCategoryStyle(layout: LinearLayout) {
         val textView = layout.findViewById<TextView>(getCategoryTextId(layout.id))
         layout.backgroundTintList = null
-        textView.setTextColor(Color.parseColor("#448AF7"))
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.accent6))
     }
 
     private fun hideKeyboard() {

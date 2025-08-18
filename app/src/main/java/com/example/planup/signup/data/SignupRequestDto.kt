@@ -5,12 +5,12 @@ data class Agreement(
     val isAgreed: Boolean
 )
 
+// 요쳥 Dto
 data class SignupRequestDto(
     val email: String,
     val password: String,
     val passwordCheck: String,
     val nickname: String,
-    val inviteCode: String? = null,
     val profileImg: String,
     val agreements: List<Agreement>
 )
