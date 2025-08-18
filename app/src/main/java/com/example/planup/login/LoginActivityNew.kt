@@ -372,13 +372,8 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         editor.putString("profileImg", profileImg)
         editor.apply()
 
-<<<<<<< Updated upstream
-        //App.jwt.token = "Bearer $accessToken"
-        goToMain()
-=======
         // 메인 이동
         startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
         finish()
->>>>>>> Stashed changes
     }
 }
