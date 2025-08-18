@@ -81,7 +81,6 @@ class CommonGoalFragment : Fragment() {
 
         /* 더보기 버튼 */
         binding.moreButton.setOnClickListener {
-            // 실제 동작은 서버 데이터 로드 이후 renderFirstThree()에서 설정됨
         }
 
         /* 새 목표 만들기 → GoalInputFragment 이동 */
@@ -115,19 +114,16 @@ class CommonGoalFragment : Fragment() {
                 val res = RetrofitInstance.goalApi.getGoalsByCategory(goalCategory)
                 if (res.isSuccessful) {
                     val all = res.body()?.result.orEmpty()
-                    Log.d("GoalAPI", "all size=${all.size}")
-                    all.take(5).forEachIndexed { i, g ->
-                        Log.d("GoalAPI", "[$i] type=${g.goalType}, name=${g.goalName}")
-                    }
-
                     val filtered = all.filter { it.goalType.equals(goalType, ignoreCase = true) }
                     currentFilteredGoals = filtered
                     renderFirstThree(filtered)
                 } else {
-                    Log.e("GoalAPI", "API 오류 ${res.code()} / ${res.errorBody()?.string()}")
+                    Log.e("GoalAPI", "code=${res.code()} msg=${res.errorBody()?.string()}")
+                    renderFirstThree(emptyList())
                 }
             } catch (e: Exception) {
-                Log.e("GoalAPI", "네트워크 예외", e)
+                Log.e("GoalAPI", "network error", e)
+                renderFirstThree(emptyList())
             }
         }
     }
@@ -154,21 +150,21 @@ class CommonGoalFragment : Fragment() {
     private fun addCards(list: List<GoalItemDto>) {
         val inflater = LayoutInflater.from(requireContext())
         list.forEach { goal ->
-            val cardBinding = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
+            val card = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
 
-            Glide.with(this)
+            com.bumptech.glide.Glide.with(this)
                 .load(goal.creatorProfileImg?.takeIf { it.isNotBlank() })
                 .placeholder(R.drawable.ic_profile_green)
-                .into(cardBinding.profileImage)
+                .into(card.profileImage)
 
-            cardBinding.goalOwner.text = goal.creatorNickname
-            cardBinding.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
-            cardBinding.goalTime.text = getString(R.string.goal_time, goal.goalTime)
-            cardBinding.goalTitle.text = goal.goalName
-            cardBinding.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
-            cardBinding.goalDescription.text = goal.oneDesc
+            card.goalOwner.text = goal.creatorNickname
+            card.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
+            card.goalTime.text = getString(R.string.goal_time2, goal.goalTime)
+            card.goalTitle.text = goal.goalName
+            card.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
+            card.goalDescription.text = getString(R.string.goal_one_dose, goal.oneDose)
 
-            binding.goalCardContainer.addView(cardBinding.root)
+            binding.goalCardContainer.addView(card.root)
         }
     }
 

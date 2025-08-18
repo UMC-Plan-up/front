@@ -64,6 +64,7 @@
         android:fontFamily="@font/pretendard_medium"
         android:layout_marginTop="155dp"
         android:textColorHint="@color/black_300"
+        android:textColor="@color/black_300"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -115,6 +116,7 @@
         android:fontFamily="@font/pretendard_medium"
         android:layout_marginTop="279dp"
         android:textColorHint="@color/black_300"
+        android:textColor="@color/black_300"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintEnd_toEndOf="parent" />
 

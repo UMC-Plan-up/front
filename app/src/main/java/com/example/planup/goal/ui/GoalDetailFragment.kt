@@ -325,7 +325,6 @@ class GoalDetailFragment : Fragment() {
 
     private fun setupNextButton() {
         binding.nextButton.setOnClickListener {
-            // 다음 버튼이 활성화된 상태에서만 화면 이동
             if (binding.nextButton.isEnabled) {
                 goToParticipantAlways()
             }
@@ -333,23 +332,39 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun goToParticipantAlways() {
-        val verificationType = selectedMethod.orEmpty()
         val period = selectedPeriodButton?.text?.toString().orEmpty()
         val frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
+
+        val goalActivity = activity as? GoalActivity
+        if (goalActivity != null) {
+            goalActivity.period = period
+            goalActivity.frequency = frequency
+
+            // 다음 프래그먼트로 이동
+            val participantFragment = ParticipantLimitFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", goalActivity.goalOwnerName)
+                    putString("goalType", goalActivity.goalType)
+                    putString("goalCategory", goalActivity.goalCategory)
+                    putString("goalName", goalActivity.goalName)
+                    putString("goalAmount", goalActivity.goalAmount)
+                    putString("verificationType", goalActivity.verificationType)
+                    putString("period", goalActivity.period)
+                    putInt("frequency", goalActivity.frequency)
+                }
+            }
+
+            goalActivity.navigateToFragment(participantFragment)
+            return
+        }
 
         val participantFragment = ParticipantLimitFragment().apply {
             arguments = Bundle().apply {
                 putString("goalOwnerName", goalOwnerName)
-                putString("verificationType", verificationType)
+                putString("verificationType", selectedMethod.orEmpty())
                 putString("period", period)
                 putInt("frequency", frequency)
             }
-        }
-
-        val goalActivity = activity as? GoalActivity
-        if (goalActivity != null) {
-            goalActivity.navigateToFragment(participantFragment)
-            return
         }
 
         val containerId = (view?.parent as? ViewGroup)?.id

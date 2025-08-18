@@ -31,6 +31,12 @@ class GoalActivity : AppCompatActivity() {
     var limitFriendCount: Int = 0
     var goalTime: Int = 0
 
+    var notificationEnabled: Boolean = false
+    var regularAlertEnabled: Boolean = false
+    var alertTimeOfDay: String = ""
+    var alertHour: String = ""
+    var alertMinute: String = ""
+    var alertDays: MutableSet<String> = mutableSetOf()
 
     private val subscriptionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()

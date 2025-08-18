@@ -14,10 +14,9 @@ data class GoalItemDto(
     val goalType: String,
     val verificationType: String,
     val goalTime: Int,
-    val startTimeMinutes: Int,
     val frequency: Int,
-    val oneDesc: String,
+    val oneDose: Int,
     val creatorNickname: String,
-    val creatorProfileImg: String,
+    val creatorProfileImg: String?,
     val participantCount: Int
 )

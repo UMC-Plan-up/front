@@ -19,7 +19,7 @@ class PictureSettingFragment : Fragment() {
 
     private var _binding: FragmentPictureSettingBinding? = null
     private val binding get() = _binding!!
-    private var selectedFrequency: Int? = null // 선택된 인증 횟수
+    private var selectedFrequency: Int? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,20 +42,31 @@ class PictureSettingFragment : Fragment() {
         }
 
         binding.dropdownContainer.setOnClickListener {
-            val items = arrayListOf("1번", "2번", "3번")
+            val items = arrayListOf("1", "2", "3")
             showDropdown(items, binding.dropdownContainer, binding.challengeTimerHourTv)
         }
 
         // 다음 버튼 -> GoalDetailFragment로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
             if (selectedFrequency != null) {
+                val activity = requireActivity() as GoalActivity
+
+                // GoalActivity에 인증 횟수와 인증 방식 저장
+                activity.frequency = selectedFrequency!!
+                activity.verificationType = "PICTURE"
+
                 val goalDetailFragment = GoalDetailFragment().apply {
                     arguments = Bundle().apply {
-                        putString("SELECTED_METHOD", "PICTURE")
-                        putInt("PHOTO_AUTH_COUNT_PER_DAY", selectedFrequency!!)
+                        putString("goalOwnerName", activity.goalOwnerName)
+                        putString("goalType", activity.goalType)
+                        putString("goalCategory", activity.goalCategory)
+                        putString("goalName", activity.goalName)
+                        putString("goalAmount", activity.goalAmount)
+                        putString("verificationType", activity.verificationType)
+                        putInt("frequency", activity.frequency)
                     }
                 }
-                (requireActivity() as GoalActivity).navigateToFragment(goalDetailFragment)
+                activity.navigateToFragment(goalDetailFragment)
             }
         }
     }
@@ -87,7 +98,7 @@ class PictureSettingFragment : Fragment() {
             adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
                 override fun setTime(position: Int) {
                     val selectedText = items[position]
-                    label.text = selectedText
+                    label.text = "${selectedText}번"
                     selectedFrequency = selectedText.toIntOrNull()
                     updateNextButtonUi(true)
                     popupWindow.dismiss()

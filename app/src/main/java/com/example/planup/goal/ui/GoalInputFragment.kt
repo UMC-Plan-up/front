@@ -18,13 +18,15 @@ class GoalInputFragment : Fragment() {
 
     private var goalOwnerName: String = "사용자"
 
+    private var goalType: String? = null
+    private var goalCategory: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 닉네임 전달
-        goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: (activity as? GoalActivity)?.goalOwnerName
-                    ?: "사용자"
+        goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
+        goalType = arguments?.getString("goalType")
+        goalCategory = arguments?.getString("selectedCategory")
     }
 
     override fun onCreateView(
@@ -77,12 +79,22 @@ class GoalInputFragment : Fragment() {
             if (!isGoalNameValid() || !isGoalVolumeValid()) return@setOnClickListener
 
             val activity = requireActivity() as GoalActivity
+
             activity.goalName = binding.nicknameEditText.text.toString()
             activity.goalAmount = binding.goalVolumeEditText.text.toString()
 
+
+            goalType?.let { activity.goalType = it }
+            goalCategory?.let { activity.goalCategory = it }
+
+            // 다음 프래그먼트로 이동
             val certificationFragment = CertificationMethodFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
+                    putString("goalName", activity.goalName)
+                    putString("goalAmount", activity.goalAmount)
+                    putString("goalType", activity.goalType)
+                    putString("goalCategory", activity.goalCategory)
                 }
             }
             activity.navigateToFragment(certificationFragment)

@@ -29,10 +29,9 @@ class CertificationMethodFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // GoalInputFragment에서 전달한 닉네임 받기
-        goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: (activity as? GoalActivity)?.goalOwnerName
-                    ?: "사용자"
+        // GoalActivity의 멤버 변수에서 데이터 가져오기
+        val activity = requireActivity() as GoalActivity
+        goalOwnerName = activity.goalOwnerName
 
         binding.goalDetailTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
@@ -56,29 +55,27 @@ class CertificationMethodFragment : Fragment() {
 
         /* 다음 버튼 클릭 시 */
         binding.nextButton.setOnClickListener {
-            val activity = requireActivity() as GoalActivity
             selectedMethod?.let { method ->
+                // GoalActivity에 선택된 인증 방식 저장
                 activity.verificationType = method
-                when (method) {
-                    "TIMER" -> {
-                        // 타이머 인증 → TimerSettingFragment로 이동
-                        val timerFragment = TimerSettingFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
-                            }
-                        }
-                        activity.navigateToFragment(timerFragment)
-                    }
-                    "PICTURE" -> {
-                        // 사진 인증 → PicturesettingFragment로 이동
-                        val detailFragment = PictureSettingFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("goalOwnerName", goalOwnerName) // 닉네임 다시 넘기기
-                            }
-                        }
-                        activity.navigateToFragment(detailFragment)
-                    }
+
+                // 다음 프래그먼트 선택
+                val nextFragment = when (method) {
+                    "TIMER" -> TimerSettingFragment()
+                    else -> PictureSettingFragment()
                 }
+
+                nextFragment.arguments = Bundle().apply {
+                    putString("goalOwnerName", goalOwnerName)
+                    putString("verificationType", method)
+                    putString("goalType", activity.goalType)
+                    putString("goalCategory", activity.goalCategory)
+                    putString("goalName", activity.goalName)
+                    putString("goalAmount", activity.goalAmount)
+                }
+
+                // 다음 프래그먼트로 이동
+                activity.navigateToFragment(nextFragment)
             }
         }
     }
