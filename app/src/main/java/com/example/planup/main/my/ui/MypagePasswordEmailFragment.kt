@@ -50,7 +50,7 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
         }
 
         binding.emailDropdownIv.setOnClickListener {
-            dropDown(binding.emailEt)
+            dropDown(binding.passwordDropdownAnchor)
         }
 
         /*이메일로 인증 링크 받기*/
@@ -66,10 +66,14 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
         val inflater = LayoutInflater.from(context)
         popupView = inflater.inflate(R.layout.dropdown_email_domain, null)
         val popupWindow = PopupWindow(
-            popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
         )
         popupWindow.showAsDropDown(view)
         popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
 
 
         /* 지메일 선택 */

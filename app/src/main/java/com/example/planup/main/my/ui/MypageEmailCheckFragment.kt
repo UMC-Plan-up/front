@@ -82,7 +82,7 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
         }
         /* 이메일 도메인 드롭다운 */
         binding.emailDropdownIv.setOnClickListener {
-            dropDown(binding.emailEt)
+            dropDown(binding.emailDropdownAnchor)
         }
         //외부 터치 시 키보드 사라짐
         binding.root.setOnTouchListener(object : OnTouchListener {
@@ -130,10 +130,14 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
         val inflater = LayoutInflater.from(context)
         popupView = inflater.inflate(R.layout.dropdown_email_domain, null)
         val popupWindow = PopupWindow(
-            popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
         )
         popupWindow.showAsDropDown(view)
         popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
 
 
         /* 지메일 선택 */

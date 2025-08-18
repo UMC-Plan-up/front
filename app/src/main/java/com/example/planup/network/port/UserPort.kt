@@ -14,11 +14,16 @@ import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.SignupDto
+import kotlinx.serialization.BinaryFormat
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserPort {
@@ -71,8 +76,9 @@ interface UserPort {
     @POST("users/email/change/resend")
     fun emailReLink(@Body email: String): Call<UserResponse<EmailLink>>
     //이미지 변경
+    @Multipart
     @POST("profile/image")
-    fun setProfileImage(@Body file: String): Call<UserResponse<ProfileImage>>
+    fun setProfileImage(@Part file: MultipartBody.Part): Call<UserResponse<ProfileImage>>
     //비밀번호 변경
     @POST("mypage/profile/password/update")
     fun changePassword(@Query("password") password: String): Call<UserResponse<Boolean>>

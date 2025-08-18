@@ -45,6 +45,7 @@ class MypagePasswordLinkFragment: Fragment(), PasswordLinkAdapter {
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         editor = prefs.edit()
         email = prefs.getString("email","email").toString()
+        binding.passwordSecondExplainTv.text = getString(R.string.link_by_email,email)
     }
     private fun clickListener(){
         /*뒤로 가기*/
