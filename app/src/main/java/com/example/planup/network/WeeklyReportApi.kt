@@ -2,6 +2,8 @@ package com.example.planup.network
 
 import com.example.planup.main.record.adapter.DetailWeeklyReportResponse
 import com.example.planup.main.record.adapter.WeeklyReportResponse
+import com.example.planup.main.record.data.ChallengeWeeklySummary
+import com.example.planup.network.data.ChallengeResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header

@@ -74,6 +74,7 @@
                     android:orientation="horizontal"
                     android:gravity="center">
 
+                    <!-- 상단 카드: 내 정보(왼쪽) -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -81,6 +82,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tv_my_result"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Win"
@@ -89,6 +91,7 @@
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <TextView
+                            android:id="@+id/tv_my_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="토끼"
@@ -96,6 +99,7 @@
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <ImageView
+                            android:id="@+id/iv_my_profile"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:src="@drawable/img_rabbiti_profile"/>
@@ -111,6 +115,7 @@
                         android:textSize="20sp"
                         android:fontFamily="@font/pretendard_medium"/>
 
+                    <!-- 상단 카드: 상대 정보(오른쪽) -->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,6 +123,7 @@
                         android:gravity="center">
 
                         <TextView
+                            android:id="@+id/tv_opponent_result"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Win"
@@ -126,6 +132,7 @@
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <TextView
+                            android:id="@+id/tv_opponent_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="토끼"
@@ -133,6 +140,7 @@
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <ImageView
+                            android:id="@+id/iv_opponent_profile"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
                             android:src="@drawable/img_rabbiti_profile"/>
@@ -241,7 +249,9 @@
                         android:orientation="vertical"
                         android:gravity="center">
 
+                        <!-- 왼쪽 퍼센트 -->
                         <TextView
+                            android:id="@+id/tv_my_percent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="87%"
@@ -258,6 +268,7 @@
                             android:background="@drawable/rounded_blue_bar"/>
 
                         <TextView
+                            android:id="@+id/tv_my_bar_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="토끼"
@@ -283,7 +294,9 @@
                         android:gravity="center"
                         android:layout_marginTop="70dp">
 
+                        <!-- 오른쪽 퍼센트 -->
                         <TextView
+                            android:id="@+id/tv_opponent_percent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="78%"
@@ -300,6 +313,7 @@
                             android:background="@drawable/rounded_red_bar"/>
 
                         <TextView
+                            android:id="@+id/tv_oppnent_bar_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="강아지"
