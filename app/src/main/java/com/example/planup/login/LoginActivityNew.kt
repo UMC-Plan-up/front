@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -22,7 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
-import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
 import com.example.planup.network.RetrofitInstance
@@ -57,7 +57,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     view.getGlobalVisibleRect(outRect)
                     if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
                         view.clearFocus()
-                        hideKeyboard(view) // 키보드 숨김 (수정)
+                        hideKeyboard(view) // 키보드 숨김
                     }
                 }
             }
@@ -221,6 +221,18 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         toast.show()
     }
 
+    private fun makeToast(message: String) {
+        val inflater = LayoutInflater.from(this)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
+
+        val toast = Toast(this)
+        toast.view = layout
+        toast.duration = LENGTH_SHORT
+        toast.setGravity(Gravity.BOTTOM, 0, 700)
+        toast.show()
+    }
+
     //화면 터치 시 키보드 사라지게
     private fun hideKeyboard(view: View?) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -232,16 +244,12 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     //로그인 통신 성공
     override fun successLogin(loginResult: Login) {
         when (loginResult.message) {
-            "존재하지 않는 사용자입니다" -> makeToast(R.string.toast_invalid_email)
-            "비밀번호가 일치하지 않습니다" -> makeToast(R.string.toast_incorrect_password)
+            "존재하지 않는 사용자입니다" -> makeToast("등록되지 않은 이메일이에요")
+            "비밀번호가 일치하지 않습니다" -> makeToast("비밀번호를 다시 확인해 주세요.")
             else -> {
-                // 토큰 등록
-                App.jwt.token = "Bearer " + loginResult.accessToken
-
                 editor.putString("accessToken", loginResult.accessToken)
-                editor.apply()
-
-                // 유저정보 받아오기
+                App.jwt.token = "Bearer " + loginResult.accessToken
+                // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
             }
@@ -263,14 +271,14 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
-        editor.putInt("userId", user.id)
-        editor.putString("email", user.email)
-        editor.putString("nickname", user.nickname)
-        editor.putString("profileImg", user.profileImage)
-        editor.apply()
-
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+        Log.d("okhttp",user.profileImage)
+        // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
+        saveUserInfoAndGoToMain(
+            user.id,
+            user.email,
+            user.nickname,
+           user.profileImage
+        )
     }
 
     //유저 정보 요청 통신 실패 -> 토스트 메시지 출력
@@ -287,7 +295,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     }
 
     private fun toast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, msg, LENGTH_SHORT).show()
     }
 
     // 카카오 인가코드 얻기
@@ -306,23 +314,12 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             }
         }
 
-    // 토큰 저장
-    private fun saveToken(token: String) {
-        getSharedPreferences("auth", MODE_PRIVATE)
-            .edit().putString("accessToken", token).apply()
-    }
-
-    // 메인 이동
-    private fun goToMain() {
-        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
-        finish()
-    }
-
     // 카카오 로그인 실행
     private fun onClickKakaoLogin() {
         lifecycleScope.launch {
             try {
                 val code = getKakaoAuthorizationCode()
+                Log.d("KakaoLogin", "Received authorization code: $code")
 
                 // 카카오 로그인 API 호출
                 val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
@@ -343,38 +340,40 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     } else {
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
+                        App.jwt.token = r.accessToken
+                        prefs.getString("kakaoCode",code)
 
                         if (accessToken != null && userInfo != null) {
-                            saveUserInfoAndGoToMain(accessToken, userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
+                            saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
                         } else {
                             toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
                         }
                     }
                 } else {
                     toast(body?.message ?: "로그인 실패(${resp.code()})")
+                    Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
                 }
             } catch (e: Exception) {
+                Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
                 toast("카카오 인증 실패: ${e.localizedMessage}")
             }
         }
     }
 
-    //사용자 정보를 SharedPreferences에 저장
     private fun saveUserInfoAndGoToMain(
-        accessToken: String,
         userId: Int,
         email: String?,
         nickname: String?,
         profileImg: String?
     ) {
-        editor.putString("accessToken", accessToken)
         editor.putInt("userId", userId)
         editor.putString("email", email)
         editor.putString("nickname", nickname)
         editor.putString("profileImg", profileImg)
         editor.apply()
 
-        App.jwt.token = "Bearer $accessToken"
-        goToMain()
+        // 메인 이동
+        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
+        finish()
     }
 }

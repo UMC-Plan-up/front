@@ -49,7 +49,7 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
     private fun clickListener(){
         //뒤로 가기
         binding.nicknameBackIv.setOnClickListener{
-            (context as MainActivity).navigateFragment(MypageFragment())
+            (context as MainActivity).navigateToFragment(MypageFragment())
         }
         //완료 버튼 클릭: 마이페이지 화면으로 이동
         binding.nicknameCompleteBtn.setOnClickListener{
@@ -85,9 +85,10 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
     }
 
     //닉네임 변경 성공
-    override fun successNicknameChange() {
-        editor.putString("nickName",binding.nicknameEt.text.toString())
-        (context as MainActivity).navigateFragment(MypageFragment())
+    override fun successNicknameChange(nickname: String) {
+        editor.putString("nickname",nickname)
+        editor.apply()
+        (context as MainActivity).navigateToFragment(MypageFragment())
     }
     //닉네임 변경 오류
     override fun failNicknameChange(message: String) {

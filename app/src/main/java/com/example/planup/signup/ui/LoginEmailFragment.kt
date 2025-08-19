@@ -7,24 +7,27 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentLoginEmailBinding
 import com.example.planup.signup.SignupActivity
+import com.example.planup.network.RetrofitInstance
+import com.example.planup.signup.data.SignUpDraftStore
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class LoginEmailFragment : Fragment() {
 
     private var _binding: FragmentLoginEmailBinding? = null
     private val binding get() = _binding!!
 
-    // [테스트용] 이미 사용중인 이메일 리스트
-    private val usedEmails = listOf("user@gmail.com")
+    private val api by lazy { RetrofitInstance.userApi }
+    private var emailCheckJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,19 +59,37 @@ class LoginEmailFragment : Fragment() {
             if (!isValidFormat) {
                 showEmailFormatError()  // 형식 에러 표시
                 disableNextButton()
+                emailCheckJob?.cancel()
                 return@addTextChangedListener
             }
 
-            // (2) 이미 사용중인 이메일인지 확인
-            if (usedEmails.contains(email)) {
-                showEmailUsedError()   // 중복 이메일 에러 표시
-                disableNextButton()
-                return@addTextChangedListener
+            // (2) 이메일 중복 여부 확인
+            emailCheckJob?.cancel()
+            emailCheckJob = viewLifecycleOwner.lifecycleScope.launch {
+                delay(400)
+                runCatching { api.checkEmailDuplicate(email) }
+                    .onSuccess { res ->
+                        if (res.result.available) {
+                            // (3) 정상 입력 → 에러 숨기고 버튼 활성화
+                            hideAllErrors()
+                            enableNextButton()
+                        } else {
+                            // 중복 이메일 에러 표시
+                            showEmailUsedError()
+                            disableNextButton()
+                        }
+                    }
+                    .onFailure {
+                        // 네트워크 오류
+                        Toast.makeText(
+                            requireContext(),
+                            "네트워크 오류가 발생했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        showEmailUsedError()
+                        disableNextButton()
+                    }
             }
-
-            // (3) 정상 입력 → 에러 숨기고 버튼 활성화
-            hideAllErrors()
-            enableNextButton()
         }
 
         /* 다음 버튼 클릭 → LoginPasswordFragment로 이동 */
@@ -98,6 +119,8 @@ class LoginEmailFragment : Fragment() {
         // (1) SignupActivity에 email 저장
         val activity = requireActivity() as SignupActivity
         activity.email = email
+
+        SignUpDraftStore.saveEmail(requireContext(), email)
 
         // (2) LoginPasswordFragment로 이동
         requireActivity().supportFragmentManager.beginTransaction()

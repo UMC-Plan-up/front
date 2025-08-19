@@ -11,13 +11,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentLoginPasswordBinding
 import com.example.planup.signup.SignupActivity
+import com.example.planup.signup.data.SignUpDraftStore
 
 class LoginPasswordFragment : Fragment() {
 
@@ -41,9 +41,12 @@ class LoginPasswordFragment : Fragment() {
 
         disableNextButton()
 
-        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
+        /* 뒤로가기 아이콘 → LoginEmailFragment로 이동 */
         binding.backIcon.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.signup_container, LoginEmailFragment())
+                .addToBackStack(null)
+                .commit()
         }
 
         /* 클릭 시 ic_eye_off ↔ ic_eye_on */
@@ -98,6 +101,8 @@ class LoginPasswordFragment : Fragment() {
         // (1) SignupActivity에 password 저장
         val activity = requireActivity() as SignupActivity
         activity.password = password
+
+        SignUpDraftStore.savePw(requireContext(), password)
 
         // (2) LoginSentEmailFragment로 이동
         requireActivity().supportFragmentManager.beginTransaction()

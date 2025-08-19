@@ -79,6 +79,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            dialog.findViewById<TextView>(R.id.popup_unblock_title_tv).text = getString(R.string.popup_unblock_title,friend.name)
         }
         //차단 유지
         dialog.findViewById<View>(R.id.popup_unblock_no_btn).setOnClickListener {

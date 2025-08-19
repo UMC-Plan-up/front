@@ -1,60 +1,54 @@
 package com.example.planup.signup
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.signup.ui.AgreementFragment
-import com.example.planup.signup.ui.InviteCodeInputFragment
-import com.example.planup.signup.ui.ProfileSetupFragment
+import com.example.planup.signup.data.SignUpDraftStore
+import com.example.planup.signup.ui.*
 
 class SignupActivity : AppCompatActivity() {
 
+    // 회원가입 과정에서 필요한 데이터들을 저장하는 변수들
     var email: String? = null
     var password: String? = null
     var nickname: String? = null
     var profileImgUrl: String? = null
     var inviteCode: String? = null
     var agreements: List<Agreement>? = null
-
+    var tempUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("SignupActivity", "onCreate: intent=$intent data=${intent?.data}")
         setContentView(R.layout.activity_signup)
 
-        // 1) 커스텀 딥링크 우선 처리
+        // 1) 딥링크를 최우선으로 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
 
-        // 2) 카카오 소셜 로그인 처리
+        // 2) 카카오 소셜 로그인 플로우 처리
         val provider = intent.getStringExtra("provider")
         if (provider == "KAKAO") {
-            val tempUserId = intent.getStringExtra("tempUserId")
-            val email = intent.getStringExtra("email")
-            val profileImg = intent.getStringExtra("profileImg")
-
-            this.email = email
-            this.profileImgUrl = profileImg
+            this.email = intent.getStringExtra("email")
+            this.profileImgUrl = intent.getStringExtra("profileImg")
+            this.tempUserId = intent.getStringExtra("tempUserId")
             this.password = "social_login_password_placeholder"
 
-            // 카카오 회원가입
             val bundle = Bundle().apply {
-                putString("tempUserId", tempUserId)
+                putString("tempUserId", this@SignupActivity.tempUserId)
                 putBoolean("isKakaoSignup", true)
             }
-
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
                 .commit()
             return
         }
 
-        // 3) 딥링크/카카오 로그인이 없으면 기존 초기 플로우 시작
+        // 3) 일반 회원가입 또는 초대코드 플로우
         if (savedInstanceState == null) {
             val code = intent.getStringExtra("code")
             if (!code.isNullOrBlank()) {
@@ -65,9 +59,7 @@ class SignupActivity : AppCompatActivity() {
                     .replace(R.id.signup_container, fragment)
                     .commit()
             } else {
-                val bundle = Bundle().apply {
-                    putBoolean("isKakaoSignup", false) // 일반 회원가입 플로우
-                }
+                val bundle = Bundle().apply { putBoolean("isKakaoSignup", false) }
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
                     .commit()
@@ -75,7 +67,6 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    // singleTop에서 앱이 떠있는 상태로 딥링크 수신 시 호출
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
@@ -83,79 +74,89 @@ class SignupActivity : AppCompatActivity() {
     }
 
     /*
-     * 최종 URL: planup://profile/setup?email=...&verified=true&token=...&from=email_verification
-     *
-     * @return true = 딥링크 처리하여 다음 화면으로 이동함
+     * URL: planup://profile/setup?email=...&verified=true&token=...&from=email_verification
+     * true = 딥링크 처리하여 화면 전환
      */
     private fun handleEmailDeepLink(intent: Intent): Boolean {
         val uri = intent.data ?: return false
-        if (uri.scheme != "planup") return false
-        if (uri.host != "profile") return false
-        if (!uri.path.orEmpty().startsWith("/setup")) return false
+        Log.d("handleEmailDeepLink", "Received URI: $uri")
 
-        val emailParam = uri.getQueryParameter("email").orEmpty()
-        val verifiedParam = uri.getQueryParameter("verified")?.equals("true", true) == true
-        val tokenParam = uri.getQueryParameter("token").orEmpty()
-        val fromParam = uri.getQueryParameter("from").orEmpty()
-
-        Log.d("EmailDeepLink",
-            "uri=$uri, email=$emailParam, verified=$verifiedParam, token=$tokenParam, from=$fromParam"
-        )
-
-        if (verifiedParam) {
-            goToProfileSetup(emailParam)
-            return true
-        } else {
-            Toast.makeText(this, "이메일 인증이 완료되지 않았어요.", Toast.LENGTH_SHORT).show()
+        val schemeOk = uri.scheme.equals("planup", true)
+        val hostOk = uri.host.equals("profile", true)
+        val rawPath = (uri.path ?: "").trimEnd('/')
+        val pathOk = rawPath.equals("/setup", true)
+        if (!schemeOk || !hostOk || !pathOk) {
+            Log.w("handleEmailDeepLink", "Deep link host/path mismatch: $schemeOk, $hostOk, $rawPath")
             return false
         }
+
+        val emailParam = uri.getQueryParameter("email").orEmpty()
+        val verifiedStr = uri.getQueryParameter("verified").orEmpty()
+        val tokenParam = uri.getQueryParameter("token").orEmpty()
+
+        val verifiedParam = verifiedStr.equals("true", true) || verifiedStr == "1" || verifiedStr.equals("yes", true)
+
+        Log.d("handleEmailDeepLink",
+            "email='$emailParam', verifiedStr='$verifiedStr' -> $verifiedParam, token='${tokenParam.take(6)}...'")
+
+        if (!verifiedParam || tokenParam.isBlank()) {
+            Toast.makeText(this, "이메일 인증이 완료되지 않았거나 토큰이 유효하지 않습니다.", Toast.LENGTH_SHORT).show()
+            Log.e("handleEmailDeepLink", "Verification failed. verifiedParam=$verifiedParam, tokenParam.isBlank=${tokenParam.isBlank()}")
+            return true
+        }
+
+        this.email = emailParam.ifBlank {
+            this.email ?: SignUpDraftStore.loadEmail(this)
+        }
+        this.password = this.password ?: SignUpDraftStore.loadPw(this)
+
+        openProfileSetup(
+            email = this.email,
+            verifyToken = tokenParam,
+            addToBackStack = true
+        )
+
+        Log.d("handleEmailDeepLink", "Successfully opened ProfileSetupFragment.")
+        return true
     }
 
-    private fun tmp(){
-        val deepLinkUri: Uri? = intent?.data
-        if (deepLinkUri != null) {
-            val email = deepLinkUri.getQueryParameter("email")
-            val verified = deepLinkUri.getQueryParameter("verified")
-            val token = deepLinkUri.getQueryParameter("token")
-            val from = deepLinkUri.getQueryParameter("from")
-
-            // 여기서 서버 검증 호출 가능
-            if (verified == "true") {
-                Log.d("EmailVerify","$email\n$verified\n$token\n$from")
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.signup_container,ProfileSetupFragment())
-                    .commitAllowingStateLoss()
-                // 인증 통과 → 대상 프래그먼트 이동
-            } else {
-                // 검증 실패 처리 (에러 안내 화면 등)
-            }
+    // LoginSentEmailFragment로 이동하는 함수
+    fun openLoginSentEmail(email: String?, pushToBackStack: Boolean = true) {
+        val f = LoginSentEmailFragment().apply {
+            arguments = Bundle().apply { putString("email", email) }
+        }
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.signup_container, f)
+            if (pushToBackStack) addToBackStack(null)
+            commit()
         }
     }
 
+    // ProfileSetupFragment로 이동하는 함수
+    fun openProfileSetup(email: String?, verifyToken: String?, addToBackStack: Boolean) {
+        val f = ProfileSetupFragment().apply {
+            arguments = Bundle().apply {
+                putString("email", email)
+                putString("verifyToken", verifyToken)
+            }
+        }
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.signup_container, f)
+            if (addToBackStack) addToBackStack(null)
+            commit()
+        }
+    }
 
-
-    /* 이메일 인증 완료 후 → 프로필 설정 화면으로 이동 */
-    private fun goToProfileSetup(emailParam: String) {
-        supportFragmentManager.beginTransaction()
-            .replace(
-                R.id.signup_container,
-                ProfileSetupFragment().apply {
-                    arguments = Bundle().apply { putString("email", emailParam) }
-                }
-            )
-            .addToBackStack(null)
-            .commit()
+    fun navigateToFragment(fragment: Fragment, addToBackStack: Boolean = true) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.signup_container, fragment)
+            if (addToBackStack) addToBackStack(null)
+            commit()
+        }
     }
 
     data class Agreement(
         val termsId: Int,
         val isAgreed: Boolean
     )
-
-    fun navigateToFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.signup_container, fragment)
-            .addToBackStack(null)
-            .commit()
-    }
 }

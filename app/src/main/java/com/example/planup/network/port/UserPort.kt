@@ -1,5 +1,6 @@
 package com.example.planup.network.port
 
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
 import com.example.planup.network.data.KakaoAccount
@@ -13,11 +14,16 @@ import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.SignupDto
+import kotlinx.serialization.BinaryFormat
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserPort {
@@ -63,16 +69,20 @@ interface UserPort {
     //회원가입 시 이메일 인증 재발송
     @POST("users/email/resend")
     fun signupRelink(@Body email: String): Call<UserResponse<SignupLink>>
+    //이메일 변경 인증 메일 발송
+    @POST("users/email/change/send")
+    fun emailLink(@Body email: String): Call<UserResponse<EmailLink>>
+    //이메일 변경 인증 메일 재발송
+    @POST("users/email/change/resend")
+    fun emailReLink(@Body email: String): Call<UserResponse<EmailLink>>
     //이미지 변경
+    @Multipart
     @POST("profile/image")
-    fun setProfileImage(@Body file: String): Call<UserResponse<ProfileImage>>
+    fun setProfileImage(@Part file: MultipartBody.Part): Call<UserResponse<ProfileImage>>
     //비밀번호 변경
     @POST("mypage/profile/password/update")
     fun changePassword(@Query("password") password: String): Call<UserResponse<Boolean>>
     //닉네임 수정
     @POST("mypage/profile/nickname")
     fun changeNickname(@Body nickname: String): Call<UserResponse<String>>
-    //이메일 변경
-    @POST("mypage/profile/email")
-    fun changeEmail(@Query("userId") userId: Int, @Query("newEmail") email: String): Call<UserResponse<String>>
 }

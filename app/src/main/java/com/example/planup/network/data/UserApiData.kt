@@ -1,6 +1,8 @@
 package com.example.planup.network.data
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.MultipartBody
+import retrofit2.http.Multipart
 
 //User Controller 기본 응답 양식
 data class UserResponse<T>(
@@ -63,8 +65,15 @@ data class InviteCodeValidate(
     @SerializedName("targetUserNickname") val targetUserNickname: String
 )
 
-//이메일 인증 발송, 재발송
+//회원가입 시 이메일 인증 발송, 재발송
 data class SignupLink(
+    @SerializedName("email") val email: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("verificationToken") val token: String
+)
+
+//이메일 변경 시 이메일 인증 발송, 재발송
+data class EmailLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
     @SerializedName("verificationToken") val token: String
@@ -72,5 +81,5 @@ data class SignupLink(
 
 //프로필 사진 업로드 및 변경
 data class ProfileImage(
-    @SerializedName("imageUrl") val imageUrl: String
+    @SerializedName("file") val file: String
 )

@@ -1,4 +1,3 @@
-
 package com.example.planup.login.data
 
 data class LoginResponseDto(
@@ -11,5 +10,6 @@ data class LoginResponseDto(
 data class LoginResult(
     val accessToken: String,
     val nickname: String,
-    val profileImgUrl: String
+    val profileImgUrl: String,
+    val message: String
 )

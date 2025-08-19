@@ -2,6 +2,9 @@ package com.example.planup.main.my.ui
 
 import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -21,10 +24,11 @@ import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageEmailCheckBinding
+import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.controller.UserController
 
-class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
+class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
 
     lateinit var binding: FragmentMypageEmailCheckBinding
     lateinit var mailAddr: String
@@ -34,12 +38,16 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
     private var curCheck: Int = 0 //지금 선택된 도메인에 체크
     lateinit var inputMethodManager: InputMethodManager
 
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageEmailCheckBinding.inflate(inflater, container, false)
+        init()
         manageKeyboard()
         clickListener()
         textListener()
@@ -47,8 +55,13 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
         return binding.root
     }
 
-    private fun manageKeyboard(){
-        inputMethodManager = (context as MainActivity).getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+    private fun init(){
+        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        editor = prefs.edit()
+    }
+    private fun manageKeyboard() {
+        inputMethodManager =
+            (context as MainActivity).getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(
             (context as MainActivity).currentFocus?.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
         )
@@ -58,7 +71,7 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
     private fun clickListener() {
         /*뒤로 가기*/
         binding.backIv.setOnClickListener {
-            (context as MainActivity).navigateFragment(MypageFragment())
+            (context as MainActivity).navigateToFragment(MypageFragment())
         }
         /*인증번호 받기 버튼 클릭*/
         binding.btnGetLinkTv.setOnClickListener {
@@ -69,10 +82,10 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
         }
         /* 이메일 도메인 드롭다운 */
         binding.emailDropdownIv.setOnClickListener {
-            dropDown(binding.emailEt)
+            dropDown(binding.emailDropdownAnchor)
         }
         //외부 터치 시 키보드 사라짐
-        binding.root.setOnTouchListener(object : OnTouchListener{
+        binding.root.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(p0: View?, p1: MotionEvent?): Boolean {
                 manageKeyboard()
                 return false
@@ -80,7 +93,7 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
 
         })
 
-        }
+    }
 
     //이메일 입력 여부 확인: 이메일이 입력되어야 다음 버튼 활성화 됨
     private fun textListener() {
@@ -100,15 +113,15 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
 
     // 이메일 유효성 확인: 형식과 중복 여부 확인
     private fun checkMail() {
-        val findAt = binding.emailEt.text.toString().indexOf('@',0)
-        val findDot = binding.emailEt.text.toString().indexOf('.',0)
+        val findAt = binding.emailEt.text.toString().indexOf('@', 0)
+        val findDot = binding.emailEt.text.toString().indexOf('.', 0)
 
         if (findAt == -1 || findDot == -1) //이메일 형식 확인
             showToast(context as MainActivity, R.string.toast_incorrect_email)
-        else{ //이메일로 인증 링크 보내기
+        else { //이메일로 인증 링크 보내기
             val emailService = UserController()
-            emailService.setSignupLinkAdapter(this)
-            emailService.signupLinkService(binding.emailEt.text.toString())
+            emailService.setEmailLinkAdapter(this)
+            emailService.emailLinkService(binding.emailEt.text.toString())
         }
     }
 
@@ -117,10 +130,14 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
         val inflater = LayoutInflater.from(context)
         popupView = inflater.inflate(R.layout.dropdown_email_domain, null)
         val popupWindow = PopupWindow(
-            popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
         )
         popupWindow.showAsDropDown(view)
         popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
 
 
         /* 지메일 선택 */
@@ -209,26 +226,29 @@ class MypageEmailCheckFragment : Fragment(), SignupLinkAdapter {
     }
 
     //인증링크 전송 성공
-    override fun successEmailSend(email: String) {
+    override fun successEmailLink(email: String) {
         val emailLinkFragment = MypageEmailLinkFragment()
+        editor.putString("newEmail", email)
+        editor.apply()
         emailLinkFragment.arguments = Bundle().apply {
-            putString("email",email)
+            putBoolean("deepLink",false)
         }
         (context as MainActivity).supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container,emailLinkFragment)
+            .replace(R.id.main_container, emailLinkFragment)
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }
+
     //인증 링크 전송 오류: 토스트 메시지 출력
-    override fun failEmailSend(message: String) {
+    override fun failEmailLink(message: String) {
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
 

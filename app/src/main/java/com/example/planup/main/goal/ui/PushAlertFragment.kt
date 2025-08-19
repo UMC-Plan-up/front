@@ -55,7 +55,7 @@ class PushAlertFragment : Fragment() {
     ): View? {
         binding = FragmentPushAlertBinding.inflate(inflater, container, false)
 
-        binding.pushAlertBackIv.setOnClickListener {
+        binding.alertBackIv.setOnClickListener {
             requireActivity().supportFragmentManager.popBackStack()
         }
 

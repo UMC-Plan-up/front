@@ -2,9 +2,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- http 통신 사용 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING"/>
+    <!-- 카메라 권한 요청 가능 -->
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- 앨범 접근 권한 요청 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
 
     <application
         android:name=".network.App"
@@ -36,7 +44,7 @@
         <activity
             android:name=".main.MainActivity"
             android:exported="true">
-            <intent-filter>
+            <!--<intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -45,6 +53,15 @@
                     android:host="password"
                     android:pathPrefix="/change" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="planup"
+                    android:host="email"
+                    android:pathPrefix="/change" />
+            </intent-filter>-->
         </activity>
 
         <activity
@@ -58,7 +75,7 @@
                 <data
                     android:scheme="planup"
                     android:host="profile"
-                    android:pathPrefix="/setup" />
+                    android:path="/setup" />
             </intent-filter>
         </activity>
 
@@ -67,7 +84,22 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".password.ResetPasswordActivity" />
+        <activity
+            android:name=".password.ResetPasswordActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="planup"
+                    android:host="password"
+                    android:pathPrefix="/change" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".goal.GoalActivity" />
         <activity android:name=".main.home.ui.CalendarActivity" />
         <activity android:name=".main.goal.ui.EditFriendGoalActivity" />

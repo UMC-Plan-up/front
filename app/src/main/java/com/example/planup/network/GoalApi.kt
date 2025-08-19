@@ -15,6 +15,7 @@ import retrofit2.http.Query
 interface GoalApi {
     @POST("/goals/create")
     suspend fun createGoal(
+        @Header("Authorization") token: String,
         @Body goalCreateRequest: GoalCreateRequest
     ): Response<GoalCreateResponse>
 

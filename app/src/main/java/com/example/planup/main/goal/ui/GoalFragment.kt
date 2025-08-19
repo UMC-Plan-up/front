@@ -24,7 +24,6 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService
@@ -253,14 +252,26 @@ class GoalFragment : Fragment() {
             val isEditMode = adapter.toggleEditMode()
             binding.manageButton.text = if (isEditMode) "완료" else "관리"
         }
-        binding.unlockTextLl.setOnClickListener{
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, SubscriptionPlanFragment())
-                .commitAllowingStateLoss()
+
+        // unlockTextLl 클릭 시 SubscriptionPlanFragment로 이동
+        binding.unlockTextLl.setOnClickListener {
+            val subscriptionFragment = SubscriptionPlanFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean("IS_FROM_GOAL_FRAGMENT", true)
+                }
+            }
+            // MainActivity의 navigateToFragment를 사용해 전환
+            (context as? MainActivity)?.navigateToFragment(subscriptionFragment)
         }
 
         binding.lockCircleIv2.setOnClickListener {
-            startActivity(Intent(requireContext(), GoalActivity::class.java))
+            // SharedPreferences에서 닉네임 가져오기
+            val nickname = prefs.getString("nickname", "사용자") ?: "사용자"
+
+            val intent = Intent(requireContext(), GoalActivity::class.java).apply {
+                putExtra("goalOwnerName", nickname)
+            }
+            startActivity(intent)
         }
     }
 

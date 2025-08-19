@@ -32,7 +32,6 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     private var recheck:Boolean = false
 
     private lateinit var prefs: SharedPreferences
-    private lateinit var editor: Editor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,7 +47,6 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
 
     private fun init(){
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
-        editor = prefs.edit()
     }
     private fun clickListener(){
         /*뒤로 가기*/
@@ -146,27 +144,28 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     /*비밀번호 재설정 완료 팝업*/
     private fun makePopup(){
         val dialog = Dialog(context as MainActivity)
-        dialog.setContentView(R.layout.popup_password_reset)
+        dialog.setContentView(R.layout.popup_password_changed)
         dialog.window?.apply {
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             setGravity(Gravity.CENTER)
+            //배경 투명색
             setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            //외부 터치 불가
+            dialog.setCanceledOnTouchOutside(false)
         }
         //~님의 비밀번호가 변경되었어요 메시지에 사용자 이메일 바인딩 하기
         dialog.findViewById<TextView>(R.id.popup_password_sub_tv).text = getString(R.string.popup_password_explain,prefs.getString("email","null"))
         //학인버튼 클릭 시 팝업 종료 및 마이페이지로 이동
-        dialog.findViewById<View>(R.id.popup_password_reset_tv).setOnClickListener{
+        dialog.findViewById<View>(R.id.popup_password_reset_btn).setOnClickListener{
             dialog.dismiss()
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFragment())
                 .commitAllowingStateLoss()
         }
-        dialog.setCanceledOnTouchOutside(false)
         dialog.show()
     }
 
     override fun successPasswordChange() {
-        editor.putString("password",binding.passwordThirdCheckEnterEt.text.toString())
         makePopup()
     }
 

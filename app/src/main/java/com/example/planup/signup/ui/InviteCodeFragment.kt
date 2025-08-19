@@ -94,7 +94,7 @@ class InviteCodeFragment : Fragment() {
     }
 
     private fun getAccessToken(): String? {
-        val prefs = requireActivity().applicationContext.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val prefs = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
         Log.d("InviteCode", "불러온 accessToken: $token")
         return token
@@ -125,7 +125,7 @@ class InviteCodeFragment : Fragment() {
                 content = Content(
                     title = "Plan-Up에서 ${nickname}님이 친구가 되고 싶어요!",
                     description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: ${inviteCode}",
-                    imageUrl = "https://i.postimg.cc/fRpYNvqR/planup-kakao.png",
+                    imageUrl = "https://i.postimg.cc/KjCgBcFB/test2.png",
                     link = Link(
                         mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup"
                     )
@@ -179,7 +179,6 @@ class InviteCodeFragment : Fragment() {
                 Toast.makeText(requireContext(), "문자 앱을 열 수 없습니다", Toast.LENGTH_SHORT).show()
                 Log.e("SMS_SHARE", "문자 공유 실패: ${e.message}")
             }
-
             popupWindow.dismiss()
         }
 
@@ -217,7 +216,6 @@ class InviteCodeFragment : Fragment() {
 
             popupWindow.dismiss()
         }
-
         popupWindow.showAsDropDown(anchorView)
     }
 

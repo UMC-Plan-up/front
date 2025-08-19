@@ -1,6 +1,8 @@
 package com.example.planup.main.my.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -20,7 +22,8 @@ import com.example.planup.network.controller.UserController
 
 class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
     lateinit var binding: FragmentMypageDeleteAccountBinding
-    lateinit var name: String
+
+    lateinit var prefs: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,12 +31,18 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageDeleteAccountBinding.inflate(inflater,container,false)
+        init()
         clickListener()
 
         /*사용자 이름 받아와야 함*/
         //binding.deleteAccountNameTv.text = name
 
         return binding.root
+    }
+
+    private fun init() {
+        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        binding.deleteAccountNameTv.text = prefs.getString("nickname","no-data")
     }
 
     private fun clickListener() {
