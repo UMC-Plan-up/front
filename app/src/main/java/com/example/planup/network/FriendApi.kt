@@ -12,6 +12,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface FriendApi {
 
@@ -51,7 +52,14 @@ interface FriendApi {
     @POST("/friends/block")
     suspend fun blockFriend(
         @Header("Authorization") token: String,
-        @Body request: FriendActionRequestDto
+        @Query("friendId") request: Int
+    ): Response<BaseResponse>
+
+    //친구 삭제
+    @POST("/friends/delete")
+    suspend fun deleteFriend(
+        @Header("Authorization") token: String,
+        @Query("friendId") request: Int
     ): Response<BaseResponse>
 
     // 친구 차단 해제
