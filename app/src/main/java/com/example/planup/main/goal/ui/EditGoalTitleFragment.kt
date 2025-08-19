@@ -20,12 +20,16 @@ class EditGoalTitleFragment : Fragment() {
 
     private var goalId: Int = 0
     private lateinit var prefs: SharedPreferences
+
+    private var isSolo: Boolean = false
     private var goalData: EditGoalResponse? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // arguments에서 goalId 받아오기
         goalId = arguments?.getInt("goalId") ?: 0
+
+        isSolo = arguments?.getBoolean("isSolo") ?: false
     }
 
     override fun onCreateView(
@@ -44,39 +48,82 @@ class EditGoalTitleFragment : Fragment() {
         val backBtn = binding.editFriendBackArrowIv
 
         backBtn.setOnClickListener {
-            requireActivity().finish()
+            if(isSolo) parentFragmentManager.popBackStack()
+            else requireActivity().finish()
         }
 
         nextBtn.setOnClickListener {
-            goalData?.let { goal ->
-                val goalName = binding.editFriendGoalNameEt.text.toString()
-                val goalAmount = binding.editFriendGoalPeriodEt.text.toString()
+            //테스트
+            val goalName = titleEt.text.toString()
+            val goalAmount = goalAmountEt.text.toString()
+            val goal = goalData ?: EditGoalResponse(
+                goalName = goalName,
+                oneDose = 0,
+                goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING",
+                goalType = "SOLO",
+                period = "DAY",
+                endDate = "",
+                verificationType = "PHOTO",
+                limitFriendCount = 0,
+                goalTime = 0,
+                frequency = 0,
+                goalAmount = goalAmount
+            )
 
-                val bundle = Bundle().apply {
-                    putInt("goalId", goalId)
-                    putString("goalName", goalName)
-                    putInt("oneDose", goal.oneDose)
-                    putString("goalCategory", goal.goalCategory)
-                    putString("goalType", goal.goalType)
-                    putString("period", goal.period)
-                    putString("endDate", goal.endDate)
-                    putString("verificationType", goal.verificationType)
-                    putInt("limitFriendCount", goal.limitFriendCount)
-                    putInt("goalTime", goal.goalTime)
-                    putInt("frequency", goal.frequency)
-                    putString("goalAmount", goalAmount)
-                }
-
-                val nextFragment = EditGoalTimerFragment()
-                nextFragment.arguments = bundle
-
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
-                    .addToBackStack(null)
-                    .commit()
+            val bundle = Bundle().apply {
+                putInt("goalId", goalId)
+                putString("goalName", goalName)
+                putInt("oneDose", goal.oneDose)
+                putString("goalCategory", goal.goalCategory)
+                putString("goalType", goal.goalType)
+                putString("period", goal.period)
+                putString("endDate", goal.endDate)
+                putString("verificationType", goal.verificationType)
+                putInt("limitFriendCount", goal.limitFriendCount)
+                putInt("goalTime", goal.goalTime)
+                putInt("frequency", goal.frequency)
+                putString("goalAmount", goalAmount)
             }
+
+            val nextFragment = EditGoalTimerFragment()
+            nextFragment.arguments = bundle
+
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
+                .addToBackStack(null)
+                .commit()
+
+//            goalData?.let { goal ->
+//                val goalName = titleEt.text.toString()
+//                val goalAmount = goalAmountEt.text.toString()
+//
+//                val bundle = Bundle().apply {
+//                    putInt("goalId", goalId)
+//                    putString("goalName", goalName)
+//                    putInt("oneDose", goal.oneDose)
+//                    if(isSolo) putString("goalCategory", arguments?.getString("selectedCategory"))
+//                    else putString("goalCategory", goal.goalCategory)
+//                    putString("goalCategory", goal.goalCategory)
+//                    putString("goalType", goal.goalType)
+//                    putString("period", goal.period)
+//                    putString("endDate", goal.endDate)
+//                    putString("verificationType", goal.verificationType)
+//                    putInt("limitFriendCount", goal.limitFriendCount)
+//                    putInt("goalTime", goal.goalTime)
+//                    putInt("frequency", goal.frequency)
+//                    putString("goalAmount", goalAmount)
+//                }
+//
+//                val nextFragment = EditGoalTimerFragment()
+//                nextFragment.arguments = bundle
+//
+//                parentFragmentManager.beginTransaction()
+//                    .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
+//                    .addToBackStack(null)
+//                    .commit()
+//            }
         }
-        return view
+        return binding.root
     }
 
     private fun getGoalEditData(token: String?, goalId: Int) {

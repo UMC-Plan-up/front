@@ -53,32 +53,31 @@ class EditGoalTimerFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val view = inflater.inflate(R.layout.fragment_edit_goal_timer, container, false)
+    ): View {
+        // 1️⃣ binding 초기화
+        binding = FragmentEditGoalTimerBinding.inflate(inflater, container, false)
 
+        // 2️⃣ binding으로 뷰 접근
         hourSpinner = binding.editTimerHourSpinner
         minuteSpinner = binding.editTimerMinuteSpinner
         secondSpinner = binding.editTimerSecondSpinner
         nextBtn = binding.editTimerNextBtn
         warningTv = binding.editTimerWarningTv
-
         val backBtn = binding.editTimerBackIv
+
         backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
 
-        // Spinner 항목 리스트 생성
+        // 3️⃣ Spinner 항목 리스트 생성
         val hourList = (0..23).map { it.toString().padStart(2, '0') }
         val minuteSecondList = (0..59).map { it.toString().padStart(2, '0') }
         val secondList = (0..59).map { it.toString().padStart(2, '0') }
 
-        // Spinner 어댑터 설정
         val hourAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, hourList)
         hourAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
-
         val minuteAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, minuteSecondList)
         minuteAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
-
         val secondAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, secondList)
         secondAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
 
@@ -86,17 +85,16 @@ class EditGoalTimerFragment : Fragment() {
         minuteSpinner.adapter = minuteAdapter
         secondSpinner.adapter = secondAdapter
 
-        // 리스너 등록
         hourSpinner.onItemSelectedListener = spinnerListener
         minuteSpinner.onItemSelectedListener = spinnerListener
         secondSpinner.onItemSelectedListener = spinnerListener
 
-        val hour = hourSpinner.selectedItem.toString().toIntOrNull() ?: 0
-        val minute = minuteSpinner.selectedItem.toString().toIntOrNull() ?: 0
-        val second = secondSpinner.selectedItem.toString().toIntOrNull() ?: 0
-        val totalSeconds = hour * 3600 + minute * 60 + second
-
         nextBtn.setOnClickListener {
+            val hour = hourSpinner.selectedItem.toString().toIntOrNull() ?: 0
+            val minute = minuteSpinner.selectedItem.toString().toIntOrNull() ?: 0
+            val second = secondSpinner.selectedItem.toString().toIntOrNull() ?: 0
+            val totalSeconds = hour * 3600 + minute * 60 + second
+
             val bundle = Bundle().apply {
                 putInt("goalId", goalId)
                 putString("goalName", goalName)
@@ -112,11 +110,8 @@ class EditGoalTimerFragment : Fragment() {
                 putInt("goalTime", totalSeconds)
             }
 
-            val nextFragment = EditGoalDetailFragment().apply {
-                arguments = bundle
-            }
-
-            requireActivity().supportFragmentManager.beginTransaction()
+            val nextFragment = EditGoalDetailFragment().apply { arguments = bundle }
+            parentFragmentManager.beginTransaction()
                 .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
                 .addToBackStack(null)
                 .commit()
@@ -124,8 +119,10 @@ class EditGoalTimerFragment : Fragment() {
 
         updateNextButtonState()
 
-        return view
+        // 4️⃣ binding.root 리턴
+        return binding.root
     }
+
 
     private val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {

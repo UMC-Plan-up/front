@@ -107,15 +107,15 @@ class HomeFragment : Fragment() {
             .into(binding.homeMainProfileIv)
 
         //온보딩
-//        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
-//        if (!prefs.getBoolean("haveTutorial", false)) {
-//            TutorialManager(parentFragmentManager).startTutorial()
-//            prefs.edit().putBoolean("haveTutorial", true).apply()
-//        }
-        if(!tutorialshownflag) {
+        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
+        if (!prefs.getBoolean("haveTutorial", false)) {
             TutorialManager(parentFragmentManager).startTutorial()
-            tutorialshownflag = true
+            prefs.edit().putBoolean("haveTutorial", true).apply()
         }
+//        if(!tutorialshownflag) {
+//            TutorialManager(parentFragmentManager).startTutorial()
+//            tutorialshownflag = true
+//        }
 
 
         loadMyGoalList(token) //api 불러오기
