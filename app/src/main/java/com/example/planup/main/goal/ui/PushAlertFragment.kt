@@ -74,7 +74,7 @@ class PushAlertFragment : Fragment() {
                 goalTime = goalTime
             )
             updateGoal(goalId = goalId, request = request)
-            val nextfragment = FragmentEditGoalComplete()
+            val nextfragment = EditGoalCompleteFragment()
             val bundle = Bundle().apply {
                 putString("goalId", goalId.toString())
             }
@@ -95,7 +95,7 @@ class PushAlertFragment : Fragment() {
                 val token = prefs.getString("accessToken", null)
                 val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
                 if (response.isSuccess){
-                    val nextfragment = FragmentEditGoalComplete()
+                    val nextfragment = EditGoalCompleteFragment()
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
                         .addToBackStack(null)

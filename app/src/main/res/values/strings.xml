@@ -528,5 +528,6 @@
     <string name="home_main_text">그린 님, 벌써 이만큼이나 왔어요!</string>
     <string name="daily_to_do_list">Daily To-Do List</string>
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
+    <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
 
 </resources>

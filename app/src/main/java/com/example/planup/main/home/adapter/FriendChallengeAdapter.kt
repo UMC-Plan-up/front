@@ -14,16 +14,47 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 
-class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
-    RecyclerView.Adapter<FriendChallengeAdapter.FriendChallengeViewHolder>() {
+class FriendChallengeAdapter(
+    private val items: List<FriendChallengeItem>,
+    private val onItemClick: (FriendChallengeItem) -> Unit // 콜백 추가
+) : RecyclerView.Adapter<FriendChallengeAdapter.FriendChallengeViewHolder>() {
 
-    inner class FriendChallengeViewHolder(binding: ItemHomeFriendChallengeBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class FriendChallengeViewHolder(
+        private val binding: ItemHomeFriendChallengeBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
         val img = binding.friendChallengeProfile
         val title = binding.friendChallengeTitleTv
         val desc = binding.friendChallengeDescriptionTv
         val pie1 = binding.friendChallengePc1
         val pie2 = binding.friendChallengePc2
         val pie3 = binding.friendChallengePc3
+
+        fun bind(item: FriendChallengeItem) {
+            img.setImageResource(item.profileResId)
+            title.text = item.name
+            desc.text = item.description
+
+            val pieColors = listOf(
+                Color.parseColor("#79B0F8"),
+                Color.parseColor("#F3C092"),
+                Color.parseColor("#71D9C4")
+            )
+            val remainderColor = Color.parseColor("#F2F2F2")
+
+            listOf(pie1, pie2, pie3).forEachIndexed { i, pie ->
+                setupPieChart(
+                    pie,
+                    item.pieValues.getOrNull(i) ?: 0f,
+                    pieColors.getOrNull(i) ?: Color.BLUE,
+                    remainderColor
+                )
+            }
+
+            // 클릭 이벤트 처리
+            binding.root.setOnClickListener {
+                onItemClick(item)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendChallengeViewHolder {
@@ -36,33 +67,13 @@ class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
     }
 
     override fun onBindViewHolder(holder: FriendChallengeViewHolder, position: Int) {
-        val item = items[position]
-        holder.img.setImageResource(item.profileResId)
-        holder.title.text = item.name
-        holder.desc.text = item.description
-
-        val pieColors = listOf(
-            Color.parseColor("#79B0F8"), // pie1
-            Color.parseColor("#F3C092"), // pie2
-            Color.parseColor("#71D9C4")  // pie3
-        )
-
-        val remainderColor = Color.parseColor("#F2F2F2") // 남은 부분 고정 색상
-
-        listOf(holder.pie1, holder.pie2, holder.pie3).forEachIndexed { i, pie ->
-            setupPieChart(
-                pie,
-                item.pieValues.getOrNull(i) ?: 0f,
-                pieColors.getOrNull(i) ?: Color.BLUE,
-                remainderColor
-            )
-        }
+        holder.bind(items[position])
     }
 
     override fun getItemCount() = items.size
 
     private fun setupPieChart(pie: PieChart, value: Float, mainColor: Int, remainderColor: Int) {
-        pie.setExtraOffsets(-3f,-3f,-3f,-3f)
+        pie.setExtraOffsets(-3f, -3f, -3f, -3f)
         pie.setUsePercentValues(false)
         pie.description.isEnabled = false
         pie.setDrawEntryLabels(false)
@@ -77,9 +88,7 @@ class FriendChallengeAdapter(private val items: List<FriendChallengeItem>) :
             PieEntry(100 - value)
         )
 
-        val colors = listOf(
-            mainColor, remainderColor
-        )
+        val colors = listOf(mainColor, remainderColor)
 
         val dataSet = PieDataSet(entries, "").apply {
             setColors(colors)
