@@ -1,22 +1,23 @@
 package com.example.planup.main.friend.ui
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.BottomShareDialogBinding
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
 import com.example.planup.main.MainActivity
+import com.example.planup.network.RetrofitInstance
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
 
 class FriendInviteFragment : Fragment() {
     lateinit var binding: FragmentFriendInviteBinding
@@ -28,7 +29,35 @@ class FriendInviteFragment : Fragment() {
     ): View {
         binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
         clickListener()
+        fetchMyInviteCode()   // ⬅️ 여기서 내 초대코드 자동 로드
         return binding.root
+    }
+
+    /** userInfo SharedPreferences 에서 액세스 토큰 읽기 */
+    private fun getAccessToken(): String? {
+        val prefs = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+        return prefs.getString("accessToken", null)
+    }
+
+    /** 서버에서 내 초대코드를 받아 EditText 에 채우기 */
+    private fun fetchMyInviteCode() {
+        val token = getAccessToken() ?: return
+        val auth = if (token.startsWith("Bearer ", true)) token else "Bearer $token"
+
+        lifecycleScope.launch {
+            try {
+                val resp = RetrofitInstance.userApi.getInviteCode(auth)
+                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+                    val inviteCode = resp.body()?.result?.inviteCode.orEmpty()
+                    // ▼ EditText id 를 실제 레이아웃 id 로 교체하세요
+                    binding.inviteFriendEt.setText(inviteCode)
+                } else {
+                    // 필요 시 토스트/로그
+                }
+            } catch (e: Exception) {
+                // 필요 시 토스트/로그
+            }
+        }
     }
 
     private fun clickListener() {
@@ -71,10 +100,8 @@ class FriendInviteFragment : Fragment() {
             setBackgroundDrawable(ColorDrawable())
         }
 
-        // 앵커 기준 표시
         popupWindow.showAsDropDown(anchor)
 
-        // 클릭 리스너들 (ViewBinding으로 접근)
         menuBinding.shareKakaoCl.setOnClickListener {
             // TODO: 카카오 공유 로직
             popupWindow.dismiss()
@@ -99,9 +126,8 @@ class FriendInviteFragment : Fragment() {
         dialog.setOnShowListener {
             val bottomSheet =
                 dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundColor(Color.TRANSPARENT) // 컨테이너 기본 흰배경 제거
+            bottomSheet?.setBackgroundColor(Color.TRANSPARENT)
         }
-        // 필요시 sheetBinding으로 아이템 클릭 리스너 연결
         dialog.show()
     }
 }
