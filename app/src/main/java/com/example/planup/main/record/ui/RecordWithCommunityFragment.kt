@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWithCommunityBinding
+import com.example.planup.main.MainActivity
+import com.example.planup.main.record.adapter.GoalReport
 import com.example.planup.main.record.adapter.PhotoAdapter
 import com.example.planup.main.record.adapter.RankAdapter
 import com.example.planup.main.record.adapter.RankItem
@@ -17,11 +19,26 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
+import java.util.Locale
 
 class RecordWithCommunityFragment : Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
+
+    companion object {
+        private const val ARG_GOAL_ID = "arg_goal_id"
+        private const val ARG_GOAL_TITLE = "arg_goal_title"
+
+        fun newInstance(goalId: Int?, goalTitle: String?): RecordWithCommunityFragment {
+            return RecordWithCommunityFragment().apply {
+                arguments = Bundle().apply {
+                    goalId?.let { putInt(ARG_GOAL_ID, it) }
+                    putString(ARG_GOAL_TITLE, goalTitle)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
