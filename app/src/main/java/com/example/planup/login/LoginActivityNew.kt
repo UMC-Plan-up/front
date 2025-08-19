@@ -342,8 +342,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
                         App.jwt.token = r.accessToken
-                        prefs.getString("kakaoCode",code)
-
+                        editor.putString("kakaoCode",code)
                         if (accessToken != null && userInfo != null) {
                             saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
                         } else {
