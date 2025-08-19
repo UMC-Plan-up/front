@@ -68,7 +68,7 @@ class CommonGoalFragment : Fragment() {
             showAll = false
             setTabActive(binding.friendTab, true)
             setTabActive(binding.communityTab, false)
-            fetchGoalsFromServer("FRIEND") // [친구와 함께] 탭
+            fetchGoalsFromServer("FRIEND")
         }
 
         binding.communityTab.setOnClickListener {
@@ -76,7 +76,7 @@ class CommonGoalFragment : Fragment() {
             showAll = false
             setTabActive(binding.friendTab, false)
             setTabActive(binding.communityTab, true)
-            fetchGoalsFromServer("COMMUNITY") // [커뮤니티와 함께] 탭
+            fetchGoalsFromServer("COMMUNITY")
         }
 
         /* 더보기 버튼 */
@@ -152,14 +152,22 @@ class CommonGoalFragment : Fragment() {
         list.forEach { goal ->
             val card = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
 
-            com.bumptech.glide.Glide.with(this)
+            Glide.with(this)
                 .load(goal.creatorProfileImg?.takeIf { it.isNotBlank() })
                 .placeholder(R.drawable.ic_profile_green)
                 .into(card.profileImage)
 
             card.goalOwner.text = goal.creatorNickname
             card.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
-            card.goalTime.text = getString(R.string.goal_time2, goal.goalTime)
+
+            if (goal.goalTime > 0) {
+                card.goalTime.visibility = View.VISIBLE
+                card.goalTime.text = formatSecondsToHhMmSs(goal.goalTime)
+            } else {
+                card.goalTime.visibility = View.GONE
+            }
+
+
             card.goalTitle.text = goal.goalName
             card.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
             card.goalDescription.text = getString(R.string.goal_one_dose, goal.oneDose)
@@ -167,6 +175,14 @@ class CommonGoalFragment : Fragment() {
             binding.goalCardContainer.addView(card.root)
         }
     }
+
+    private fun formatSecondsToHhMmSs(totalSeconds: Int): String {
+        val h = totalSeconds / 3600
+        val m = (totalSeconds % 3600) / 60
+        val s = totalSeconds % 60
+        return String.format("%02d:%02d:%02d", h, m, s)
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
