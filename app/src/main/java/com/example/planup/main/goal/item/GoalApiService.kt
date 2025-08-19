@@ -46,4 +46,10 @@ interface GoalApiService {
         @Path("goalId") goalId: Int
     ): FriendsTimerResponse
 
+    @GET("/goals/daily/{date}")
+    suspend fun getDailyGoal(
+        @Header("Authorization") token: String,
+        @Path("date") date: String
+    ): DailyGoalResponse
+
 }

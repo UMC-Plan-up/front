@@ -1,21 +1,27 @@
 package com.example.planup.main.home.ui
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.CalendarEventAdapter
+import com.example.planup.network.RetrofitInstance
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
@@ -23,18 +29,21 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
 
-
 class CalendarActivity : AppCompatActivity() {
 
     private val today = LocalDate.now()
     private var selectedDate = today
     private lateinit var eventAdapter: CalendarEventAdapter
+    private lateinit var prefs: SharedPreferences
 
-    private val eventList = listOf(
-        CalendarEvent(1,"토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
-        CalendarEvent(2,"헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
-        CalendarEvent(3,"스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
-        CalendarEvent(4,"<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
+
+    private val eventList = mutableListOf<CalendarEvent>(
+        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
+        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
+        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
+        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18)),
+        CalendarEvent("영어 단어 외우기", "DAY", 1, LocalDate.of(2025, 8, 20)),
+        CalendarEvent("코틀린 공부", "DAY", 1, LocalDate.of(2025, 8, 21))
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,22 +54,38 @@ class CalendarActivity : AppCompatActivity() {
         val monthYearText = findViewById<TextView>(R.id.monthYearText)
         val eventsRecyclerView = findViewById<RecyclerView>(R.id.eventsRecyclerView)
         val backBtn = findViewById<ImageView>(R.id.calendar_back_home_iv)
+        val arrowNext = findViewById<ImageView>(R.id.calendar_arrow_next_iv)
+        val arrowBefore = findViewById<ImageView>(R.id.calendar_arrow_before_iv)
+        prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
+        val token = prefs.getString("accessToken", null)
 
         eventAdapter = CalendarEventAdapter()
         eventsRecyclerView.adapter = eventAdapter
         eventsRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        updateEventList(selectedDate)
+        // 초기 오늘 날짜 목표 불러오기
+        loadDailyGoals(token = token, date = today)
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
+        var currentMonth = YearMonth.now()
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
 
         monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
 
+        arrowBefore.setOnClickListener {
+            currentMonth = currentMonth.minusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
+        arrowNext.setOnClickListener {
+            currentMonth = currentMonth.plusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
         calendarView.monthScrollListener = { month ->
-            monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+            currentMonth = month.yearMonth
+            monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -74,8 +99,12 @@ class CalendarActivity : AppCompatActivity() {
                 container.textView.setBackgroundResource(
                     if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
+                container.textView.setTextColor(
+                    if (date == selectedDate) ContextCompat.getColor(container.textView.context, R.color.white)
+                    else ContextCompat.getColor(container.textView.context, R.color.black_400)
+                )
 
-                // 기간 내 이벤트 가져오기
+                // 해당 날짜 이벤트 가져오기
                 val events = getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
@@ -85,11 +114,12 @@ class CalendarActivity : AppCompatActivity() {
                     bars[i].visibility = View.VISIBLE
                 }
 
-                // 날짜 클릭 시
+                // 날짜 클릭 시 API 호출
                 container.view.setOnClickListener {
                     selectedDate = date
                     calendarView.notifyCalendarChanged()
-                    updateEventList(selectedDate)
+                    updateEventList(date)
+                    //loadDailyGoals(token = token, date = selectedDate)
                 }
             }
         }
@@ -97,13 +127,56 @@ class CalendarActivity : AppCompatActivity() {
         backBtn.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish() // 현재 액티비티 종료
+            finish()
+        }
+    }
+
+    private fun loadDailyGoals(token: String?, date: LocalDate) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.goalApi.getDailyGoal(
+                    token = "Bearer $token",
+                    date = date.toString()
+                )
+
+                if (response.isSuccess) {
+                    val dailyGoals = response.result?.verifiedGoals ?: emptyList()
+
+                    // 기존 이벤트 초기화
+                    //eventList.clear()
+
+                    // API 응답을 CalendarEvent로 변환
+                    dailyGoals.forEach { goal ->
+                        eventList.add(
+                            CalendarEvent(
+                                goalName = goal.goalName,
+                                period = goal.period,
+                                frequency = goal.frequency,
+                                date = date
+                            )
+                        )
+                    }
+
+                    // RecyclerView 갱신
+                    updateEventList(date)
+                } else {
+                    Log.d("CalendarActivity", "Error: ${response.message}")
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("CalendarActivity", "Exception: $e")
+            }
         }
     }
 
     private fun updateEventList(date: LocalDate) {
         val events = getEventsForDate(date).map { it.goalName }
         eventAdapter.submitList(events)
+    }
+
+    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
+        return eventList.filter { it.date == date }
     }
 
     inner class DayViewContainer(view: View) : ViewContainer(view) {
@@ -116,20 +189,15 @@ class CalendarActivity : AppCompatActivity() {
 
     fun daysOfWeekFromLocale(): List<DayOfWeek> {
         val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        val days = DayOfWeek.entries
+        val days = DayOfWeek.values()
         return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
-    }
-
-    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
-        return eventList.filter { event ->
-            !date.isBefore(event.startDate) && !date.isAfter(event.endDate)
-        }
     }
 }
 
+// API 기반 CalendarEvent 데이터 클래스
 data class CalendarEvent(
-    val goalId: Int,
     val goalName: String,
-    val startDate: LocalDate,
-    val endDate: LocalDate
+    val period: String,
+    val frequency: Int,
+    val date: LocalDate
 )

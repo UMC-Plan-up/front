@@ -28,6 +28,8 @@ import android.os.Build
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.data.HomeTimer
 import com.example.planup.main.goal.item.GoalApiService
+import java.time.LocalDate
+import kotlin.collections.plus
 
 class TimerFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
@@ -37,6 +39,11 @@ class TimerFragment : Fragment() {
     private var timerJob: Job? = null
     private var isRunning = false
     private var elapsedSeconds = 0
+    private var events = listOf<HomeTimer>(
+        HomeTimer(1, "토익 공부하기"),
+        HomeTimer(2, "헬스장 가기"),
+        HomeTimer(3, "스터디 모임")
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,18 +57,15 @@ class TimerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val selectedDate = arguments?.getString("selectedDate")
-        val events = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            arguments?.getParcelableArrayList("events", HomeTimer::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            arguments?.getParcelableArrayList<HomeTimer>("events")
-        } ?: arrayListOf()
         val dateTv = binding.goalListTextDateTv
+
         val formattedDate = selectedDate?.replace("-", ".")
         val prefs = requireContext().getSharedPreferences("userInfo", 0)
         val token = prefs.getString("accessToken", null)
 
         dateTv.text = formattedDate
+
+        loadMyGoalList(token)
 
         setupSpinner(token, events)
         setupCameraPopup()
@@ -305,6 +309,30 @@ class TimerFragment : Fragment() {
                 }
             } catch (e: Exception) {
                 Log.e("TimerFragmentAPI", "친구 타이머 로드 에러: ${e.message}")
+            }
+        }
+    }
+
+    private fun loadMyGoalList(token: String?) {
+        if(token == null) {
+            Log.d("TimerFragment", "loadMyGoalList token null")
+            return
+        }
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getMyGoalList(token = "Bearer $token")
+                if (response.isSuccess) {
+                    val goals = response.result
+                    for (goal in goals) {
+                        events+HomeTimer(goal.goalId, goal.goalName)
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         }
     }
