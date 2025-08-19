@@ -154,12 +154,15 @@
                             android:textSize="16sp"
                             android:textColor="@color/blue_400"/>
 
+                        <!-- 결과 / 상대 / 패널티 값 텍스트에 id 부여 -->
                         <TextView
+                            android:id="@+id/tv_result_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="승리"
                             android:textSize="16sp"
                             android:layout_marginStart="5dp"/>
+
                     </LinearLayout>
 
                     <LinearLayout
@@ -176,6 +179,7 @@
                             android:textColor="@color/blue_400"/>
 
                         <TextView
+                            android:id="@+id/tv_opponent_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="그린"
@@ -197,6 +201,7 @@
                             android:textColor="@color/blue_400"/>
 
                         <TextView
+                            android:id="@+id/tv_penalty_value"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="커피 사기"
@@ -220,6 +225,7 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_friend1"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginEnd="12dp"
@@ -234,12 +240,14 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_friend1_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="친구1"
                                 android:textSize="16sp" />
 
                             <ProgressBar
+                                android:id="@+id/pb_friend1"
                                 style="?android:attr/progressBarStyleHorizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="10dp"
@@ -262,6 +270,7 @@
                         android:orientation="horizontal">
 
                         <ImageView
+                            android:id="@+id/iv_friend2"
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_marginEnd="12dp"
@@ -276,12 +285,14 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tv_friend2_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="친구2"
                                 android:textSize="16sp" />
 
                             <ProgressBar
+                                android:id="@+id/pb_friend2"
                                 style="?android:attr/progressBarStyleHorizontal"
                                 android:layout_width="match_parent"
                                 android:layout_height="10dp"

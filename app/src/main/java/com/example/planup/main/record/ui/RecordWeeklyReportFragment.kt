@@ -13,11 +13,12 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWeeklyReportBinding
 import com.example.planup.main.MainActivity
-import com.example.planup.main.home.ui.ChallengeCompleteFragment
 import com.example.planup.main.record.adapter.Badge
 import com.example.planup.main.record.adapter.DailyRecord
 import com.example.planup.main.record.adapter.GoalReport
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.getRetrofit
+import com.example.planup.network.port.ChallengePort
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -31,14 +32,32 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
 
+data class ChallengeCardData(
+    val resultText: String,       // "승리" | "패배" | "무승부"
+    val opponentName: String,     // 상대 닉네임
+    val penaltyText: String,      // 패널티 설명
+    val friend1Name: String,
+    val friend1Progress: Int,     // 0..100 (나)
+    val friend1ProfileRes: Int?,  // drawable res (없으면 null)
+    val friend2Name: String,
+    val friend2Progress: Int,     // 0..100 (상대)
+    val friend2ProfileRes: Int?   // drawable res (없으면 null)
+)
+
 class RecordWeeklyReportFragment : Fragment() {
     lateinit var binding: FragmentRecordWeeklyReportBinding
+
+    // 현재 챌린지 카드 상태 저장
+    private var currentChallenge: ChallengeCardData? = null
 
     // 주차 상태(ISO: 월요일 시작)
     private val weekFields = WeekFields.ISO
     private var currentYear: Int = 0
     private var currentMonth: Int = 0   // 1..12
     private var currentWeekOfMonth: Int = 0  // 1..maxWeeksInMonth
+
+    // 주간 리포트에서 계산한 내 평균 달성률(상대 퍼센트가 없으므로 내 퍼센트 대체로 사용)
+    private var myAvgAchievementPercent: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,19 +66,15 @@ class RecordWeeklyReportFragment : Fragment() {
     ): View {
         binding = FragmentRecordWeeklyReportBinding.inflate(inflater, container, false)
 
-        // 초기값: 오늘 날짜 기준
         val today = LocalDate.now()
-        currentYear = today.year
-        currentMonth = today.monthValue
-        currentWeekOfMonth = today.get(weekFields.weekOfMonth())
+        currentYear = arguments?.getInt(ARG_YEAR) ?: today.year
+        currentMonth = arguments?.getInt(ARG_MONTH) ?: today.monthValue
+        currentWeekOfMonth = arguments?.getInt(ARG_WEEK) ?: today.get(weekFields.weekOfMonth())
 
-        // 상단 제목 반영
         updateTitle()
-
-        // 첫 로드 데이터
         loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
 
-        // 화살표 리스너
+        // 좌우 화살표
         binding.backReportIv.setOnClickListener {
             moveToPreviousWeek()
             updateTitle()
@@ -71,13 +86,64 @@ class RecordWeeklyReportFragment : Fragment() {
             loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
         }
 
-        setFragmentClick(binding.checkChallengeRecordLl, ChallengeCompleteFragment())
-
+        // 완료 화면으로 데이터 전달
+        binding.checkChallengeRecordLl.setOnClickListener {
+            val c = currentChallenge
+            if (c == null) {
+                Toast.makeText(requireContext(), "불러올 챌린지 데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val frag = com.example.planup.main.home.ui.ChallengeCompleteFragment.newInstance(
+                resultText      = c.resultText,
+                opponentName    = c.opponentName,
+                penaltyText     = c.penaltyText,
+                myPercent       = c.friend1Progress,
+                opponentPercent = c.friend2Progress,
+                myName          = c.friend1Name,
+                myProfileRes    = c.friend1ProfileRes,
+                oppProfileRes   = c.friend2ProfileRes,
+                myBarName       = c.friend1Name,
+                oppBarName      = c.friend2Name
+            )
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, frag)
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
 
         return binding.root
     }
 
-    /** 이전 주차로 이동: 1주차에서 뒤로 가면 전월 마지막 주차로 */
+    companion object {
+        private const val ARG_YEAR = "year"
+        private const val ARG_MONTH = "month"
+        private const val ARG_WEEK = "week"
+
+        fun newInstance(year: Int, month: Int, week: Int) = RecordWeeklyReportFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_YEAR, year)
+                putInt(ARG_MONTH, month)
+                putInt(ARG_WEEK, week)
+            }
+        }
+    }
+
+    /** 1:1 챌린지 카드 UI에 값 세팅 */
+    private fun bindChallengeCard(data: ChallengeCardData) = with(binding) {
+        tvResultValue.text = data.resultText
+        tvOpponentValue.text = data.opponentName
+        tvPenaltyValue.text = data.penaltyText
+
+        tvFriend1Name.text = data.friend1Name
+        pbFriend1.progress = data.friend1Progress
+        data.friend1ProfileRes?.let { ivFriend1.setImageResource(it) }
+
+        tvFriend2Name.text = data.friend2Name
+        pbFriend2.progress = data.friend2Progress
+        data.friend2ProfileRes?.let { ivFriend2.setImageResource(it) }
+    }
+
+    /** 이전 주차로 이동 */
     private fun moveToPreviousWeek() {
         if (currentWeekOfMonth > 1) {
             currentWeekOfMonth--
@@ -92,7 +158,7 @@ class RecordWeeklyReportFragment : Fragment() {
         }
     }
 
-    /** 다음 주차로 이동: 마지막 주차에서 앞으로 가면 다음달 1주차로 */
+    /** 다음 주차로 이동 */
     private fun moveToNextWeek() {
         val maxWeeks = maxWeeksInMonth(currentYear, currentMonth)
         if (currentWeekOfMonth < maxWeeks) {
@@ -108,7 +174,7 @@ class RecordWeeklyReportFragment : Fragment() {
         }
     }
 
-    /** 해당 년/월의 주차 수(ISO 주차: 월요일 시작, 그 달에 걸친 모든 주차를 카운트) */
+    /** 해당 년/월의 주차 수(ISO 주차: 월요일 시작) */
     private fun maxWeeksInMonth(year: Int, month: Int): Int {
         val ym = YearMonth.of(year, month)
         var max = 0
@@ -123,20 +189,16 @@ class RecordWeeklyReportFragment : Fragment() {
         binding.tvReportTitle.text = "${currentYear}년 ${currentMonth}월 ${currentWeekOfMonth}주차 리포트"
     }
 
-    // RecordWeeklyReportFragment.kt 내부에 추가
+    // 인증 헤더
     private fun buildAuthHeader(): String? {
         val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
-        val prefsToken: String? = prefs.getString("accessToken", null) // 일반 로그인 저장 토큰(접두사 없음일 가능성 큼)
-        val appToken: String? = com.example.planup.network.App.jwt.token // 카카오/일반 모두 여기에 있을 수 있음 (접두사 있을 수도/없을 수도)
-
-        // 우선순위: prefsToken -> appToken
+        val prefsToken: String? = prefs.getString("accessToken", null)
+        val appToken: String? = com.example.planup.network.App.jwt.token
         val raw = when {
             !prefsToken.isNullOrBlank() -> prefsToken
             !appToken.isNullOrBlank() -> appToken
             else -> null
         } ?: return null
-
-        // "Bearer "가 붙어 있으면 그대로 사용, 없으면 붙이기
         return if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
     }
 
@@ -154,13 +216,10 @@ class RecordWeeklyReportFragment : Fragment() {
                 return@launch
             }
 
+            // 1) 주간 리포트 (내 목표/일일기록/배지 + 내 평균 달성률 산출)
             runCatching {
                 RetrofitInstance.weeklyReportApi.getWeeklyReports(
-                    token = tokenHeader,
-                    year = year,
-                    month = month,
-                    week = week,
-                    userId = userId
+                    token = tokenHeader, year = year, month = month, week = week, userId = userId
                 )
             }.onSuccess { response ->
                 if (!response.isSuccessful) {
@@ -170,11 +229,16 @@ class RecordWeeklyReportFragment : Fragment() {
                 val body = response.body()
                 if (body?.isSuccess == true) {
                     val r = body.result
-                    // result 자체가 null일 수도 있으니 방어
                     val nextMsg = r?.nextGoalMessage ?: ""
                     val goals = r?.goalReports.orEmpty()
                     val daily = r?.dailyRecordList.orEmpty()
                     val badges = r?.badgeList.orEmpty()
+
+                    // 내 평균 달성률(0~100) 계산
+                    myAvgAchievementPercent = if (goals.isNotEmpty()) {
+                        val avg = goals.mapNotNull { it.achievementRate }.ifEmpty { listOf(0) }.average()
+                        avg.toInt().coerceIn(0, 100)
+                    } else 0
 
                     binding.balloonText.text = nextMsg
                     renderGoalReports(goals)
@@ -188,17 +252,71 @@ class RecordWeeklyReportFragment : Fragment() {
                 it.printStackTrace()
                 Toast.makeText(requireContext(), "네트워크 오류: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
+
+            // 2) 기존 ChallengePort만 사용해 챌린지 상대 닉네임 확보(첫 친구)
+            val challengePort = getRetrofit().create(ChallengePort::class.java)
+            challengePort.showFriends(userId).enqueue(object :
+                retrofit2.Callback<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>> {
+                override fun onResponse(
+                    call: retrofit2.Call<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>,
+                    response: retrofit2.Response<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>
+                ) {
+                    val friends = response.body()?.result.orEmpty()
+                    val opponentName = friends.firstOrNull()?.nickname ?: "상대"
+
+                    // ★ 현재 API로 penalty, friendPercent는 알 수 없음 → 임시 값
+                    val penaltyText = ""             // TODO: API에서 제공되면 교체
+                    val myPercent   = myAvgAchievementPercent
+                    val friendPct   = 0              // TODO: API에서 상대 퍼센트 제공 시 교체
+
+                    val resultText = when {
+                        myPercent > friendPct -> "승리"
+                        myPercent < friendPct -> "패배"
+                        else -> "무승부"
+                    }
+
+                    val myName = getMyDisplayName()  // 내 닉네임(없으면 "나")
+                    val mapped = ChallengeCardData(
+                        resultText      = resultText,
+                        opponentName    = opponentName,
+                        penaltyText     = penaltyText,
+                        friend1Name     = myName,
+                        friend1Progress = myPercent,
+                        friend1ProfileRes = null,
+                        friend2Name     = opponentName,
+                        friend2Progress = friendPct,
+                        friend2ProfileRes = null
+                    )
+                    currentChallenge = mapped
+                    bindChallengeCard(mapped)
+                }
+
+                override fun onFailure(
+                    call: retrofit2.Call<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>,
+                    t: Throwable
+                ) {
+                    // 친구 조회 실패 시 챌린지 카드 숨기거나 더미 유지
+                    currentChallenge = null
+                    // 필요하다면 섹션 GONE 처리
+                    // binding.challengeCardRoot.visibility = View.GONE
+                }
+            })
         }
+    }
+
+    private fun getMyDisplayName(): String {
+        val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
+        // 앱에서 닉네임을 저장했다면 키에 맞게 꺼내세요. 없으면 "나"
+        return prefs.getString("nickname", null)?.takeIf { it.isNotBlank() } ?: "나"
     }
 
     // --- 렌더링 ---
 
     private fun renderGoalReports(goals: List<GoalReport>) {
-        val container = binding.goalReportContainer   // viewBinding 사용 가정
+        val container = binding.goalReportContainer
         container.removeAllViews()
 
         if (goals.isEmpty()) {
-            // 빈 상태 표시 (선택)
             val tv = TextView(requireContext()).apply {
                 text = "표시할 목표가 없습니다."
                 setTextColor(Color.parseColor("#666666"))
@@ -261,7 +379,6 @@ class RecordWeeklyReportFragment : Fragment() {
             card.addView(row)
             container.addView(card)
 
-            // divider
             val divider = View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
@@ -293,13 +410,11 @@ class RecordWeeklyReportFragment : Fragment() {
             val localDate = safeParseLocalDate(dr.date)
             val recMin = dr.recordedTime ?: 0
 
-            // 날짜
             TextView(requireContext()).apply {
                 text = localDate.format(dayFormatter)
                 textSize = 14f
             }.also(container::addView)
 
-            // 사진/시간 Row
             val row = LinearLayout(requireContext()).apply {
                 orientation = LinearLayout.HORIZONTAL
                 layoutParams = LinearLayout.LayoutParams(
@@ -307,7 +422,6 @@ class RecordWeeklyReportFragment : Fragment() {
                 )
             }
 
-            // 사진 카드
             val photoCard = CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(dp(80), dp(80)).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
@@ -318,7 +432,10 @@ class RecordWeeklyReportFragment : Fragment() {
                 useCompatPadding = true
             }
             val iv = ImageView(requireContext()).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
                 scaleType = ImageView.ScaleType.CENTER_CROP
             }
             decodeBase64DataUri(dr.photoVerified)?.let { iv.setImageBitmap(it) }
@@ -326,7 +443,6 @@ class RecordWeeklyReportFragment : Fragment() {
             photoCard.addView(iv)
             row.addView(photoCard)
 
-            // 기록시간 카드
             val timeCard = CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(0, dp(80), 1f).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
@@ -337,7 +453,10 @@ class RecordWeeklyReportFragment : Fragment() {
                 useCompatPadding = true
             }
             val timeBox = LinearLayout(requireContext()).apply {
-                layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT
+                )
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER
             }
@@ -354,7 +473,6 @@ class RecordWeeklyReportFragment : Fragment() {
 
             container.addView(row)
 
-            // 메모 카드(있을 때만)
             val memo = dr.simpleMessage.orEmpty()
             if (memo.isNotBlank()) {
                 val memoCard = CardView(requireContext()).apply {
@@ -423,7 +541,6 @@ class RecordWeeklyReportFragment : Fragment() {
 
     // --- 차트 세팅(응답 데이터 기반) ---
     private fun setupBarChartWithData(records: List<DailyRecord>) {
-        // 월(0)~일(6)
         val sums = FloatArray(7) { 0f }
 
         records.forEach { dr ->
@@ -497,7 +614,7 @@ class RecordWeeklyReportFragment : Fragment() {
         return (value * density).toInt()
     }
 
-    // fragment 전환
+    // (필요 시 남겨두는 공용 전환 함수)
     private fun setFragmentClick(view: View, fragment: Fragment) {
         view.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
