@@ -272,7 +272,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
-        Log.d("okhttp",user.profileImage)
         // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
         saveUserInfoAndGoToMain(
             user.id,
