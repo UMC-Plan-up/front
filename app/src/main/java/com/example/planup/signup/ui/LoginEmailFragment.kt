@@ -25,7 +25,6 @@ class LoginEmailFragment : Fragment() {
 
     private var _binding: FragmentLoginEmailBinding? = null
     private val binding get() = _binding!!
-
     private val api by lazy { RetrofitInstance.userApi }
     private var emailCheckJob: Job? = null
 
