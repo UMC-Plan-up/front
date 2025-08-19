@@ -321,7 +321,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             try {
                 val code = getKakaoAuthorizationCode()
                 Log.d("KakaoLogin", "Received authorization code: $code")
-
                 val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
                 val body = resp.body()
 
@@ -352,7 +351,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                         }
                     }
                 } else {
-                    // API 호출 실패(400, 500 등)
+                    // API 호출 실패
                     Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
                     toast(body?.message ?: "로그인 실패(${resp.code()})")
                 }
