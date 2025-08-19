@@ -195,11 +195,11 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
     private fun clickListener() {
 
-        binding.mypageBackIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, HomeFragment())
-                .commitAllowingStateLoss()
-        }
+//        binding.mypageBackIv.setOnClickListener {
+//            (context as MainActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.main_container, HomeFragment())
+//                .commitAllowingStateLoss()
+//        }
 
         binding.mypageMainImageCv.setOnClickListener {
             val intent = Intent(context as MainActivity, GoalActivity::class.java)

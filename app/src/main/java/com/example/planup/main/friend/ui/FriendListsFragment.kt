@@ -3,6 +3,7 @@ package com.example.planup.main.friend.ui
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Switch
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,12 +39,12 @@ class FriendListsFragment : Fragment() {
     ): View {
         binding = FragmentFriendListsBinding.inflate(inflater, container, false)
         binding.friendListsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.friendListsRecyclerView.adapter = FriendListsAdapter(
-            items = friends,
-            onDeleteClick = { friend -> deleteFriend(friend) },
-            onBlockClick  = { friend -> blockFriend(friend) },
-            onReportClick = { friend -> showReportDialog(friend) } // ← 여기!
-        )
+//        binding.friendListsRecyclerView.adapter = FriendListsAdapter(
+//            items = friends,
+//            onDeleteClick = { friend -> deleteFriend(friend) },
+//            onBlockClick = { friend -> blockFriend(friend) },
+//            onReportClick = { friend -> showReportDialog(friend) } // ← 여기!
+//        )
         clickListener()
         fetchFriends()
         return binding.root
@@ -82,7 +84,7 @@ class FriendListsFragment : Fragment() {
                         items = list,
                         onDeleteClick = { friend -> deleteFriend(friend) },
                         onBlockClick = { friend -> blockFriend(friend) },
-                        onReportClick = { friend -> reportFriend(friend) }
+                        onReportClick = { friend -> showReportDialog(friend) }
                     )
                 } else {
                     Toast.makeText(
@@ -102,9 +104,31 @@ class FriendListsFragment : Fragment() {
      * 백엔드에 “언프렌드” 엔드포인트를 요청해야 합니다.
      * 여기서는 편의상 ‘차단’과 동일하게 처리합니다.
      */
+    /** 삭제 API **/
     private fun deleteFriend(friend: FriendInfo) {
-        blockFriend(friend) // 임시로 차단과 동일 처리
+        lifecycleScope.launch {
+            val auth = buildAuthHeader() ?: return@launch
+            try {
+                val resp = RetrofitInstance.friendApi.deleteFriend(
+                    token = auth,
+                    request = friend.id
+                )
+                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+                    Toast.makeText(
+                        requireContext(),
+                        "${friend.nickname} 님을 차단했어요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    fetchFriends() // 갱신
+                } else {
+                    Toast.makeText(requireContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
+
 
     /** 차단 API */
     private fun blockFriend(friend: FriendInfo) {
@@ -113,10 +137,14 @@ class FriendListsFragment : Fragment() {
             try {
                 val resp = RetrofitInstance.friendApi.blockFriend(
                     token = auth,
-                    request = FriendActionRequestDto(friendId = friend.id)
+                    request = friend.id
                 )
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                    Toast.makeText(requireContext(), "${friend.nickname} 님을 차단했어요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "${friend.nickname} 님을 삭제했어요.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     fetchFriends() // 갱신
                 } else {
                     Toast.makeText(requireContext(), "차단에 실패했습니다.", Toast.LENGTH_SHORT).show()
@@ -170,12 +198,16 @@ class FriendListsFragment : Fragment() {
     private fun showReportDialog(friend: FriendInfo) {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
         dialog.setContentView(R.layout.dialog_report_friend)
-        dialog.window?.setLayout(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.window?.apply {
+            setLayout(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(ContextCompat.getDrawable(context, R.color.transparent))
+        }
 
         val radioGroup = dialog.findViewById<RadioGroup>(R.id.radio_group_reasons)
         val switchBlock = dialog.findViewById<Switch>(R.id.switch_block_user)
@@ -188,7 +220,8 @@ class FriendListsFragment : Fragment() {
                 Toast.makeText(requireContext(), "신고 사유를 선택해 주세요.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            val reason = dialog.findViewById<RadioButton>(checkedId)?.text?.toString()?.trim().orEmpty()
+            val reason =
+                dialog.findViewById<RadioButton>(checkedId)?.text?.toString()?.trim().orEmpty()
             val block = switchBlock.isChecked
 
             sendReport(friend, reason, block) {
@@ -241,6 +274,7 @@ class FriendListsFragment : Fragment() {
             }
         }
     }
+
     private fun clickListener() {
         binding.btnBack.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
