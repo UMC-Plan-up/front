@@ -3,11 +3,13 @@ package com.example.planup.network
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
+import com.example.planup.main.goal.item.DailyGoalResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GoalApi {
@@ -22,4 +24,10 @@ interface GoalApi {
     suspend fun getGoalsByCategory(
         @Query("goalCategory") goalCategory: String
     ): Response<GoalListResponseDto>
+
+    @GET("/goals/daily/{date}")
+    suspend fun getDailyGoal(
+        @Header("Authorization") token: String,
+        @Path("date") date: String
+    ): DailyGoalResponse
 }

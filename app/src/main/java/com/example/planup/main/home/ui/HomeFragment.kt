@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.graphics.Color
 import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
@@ -58,11 +59,12 @@ class HomeFragment : Fragment() {
     private lateinit var calendarCardView : CardView
     private val today = LocalDate.now()
     private var selectedDate = today
-    private var eventList = listOf(
-        CalendarEvent(1,"토익 공부하기", LocalDate.of(2025, 8, 17), LocalDate.of(2025, 8, 20)),
-        CalendarEvent(2,"헬스장 가기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 18)),
-        CalendarEvent(3,"스터디 모임", LocalDate.of(2025, 8, 19), LocalDate.of(2025, 8, 22)),
-        CalendarEvent(4,"<인간관계론> 읽기", LocalDate.of(2025, 8, 18), LocalDate.of(2025, 8, 25))
+    private var eventList = mutableListOf<CalendarEvent>(
+        // 더미 데이터
+        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
+        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
+        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
+        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18))
     )
     private var dailyToDos = listOf(
         DailyToDo("공부", 75, 5),
@@ -77,6 +79,9 @@ class HomeFragment : Fragment() {
     private lateinit var friendList : List<FriendInfo>
 
     private lateinit var binding: FragmentHomeBinding
+    companion object {
+        private var tutorialshownflag = false
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -103,10 +108,15 @@ class HomeFragment : Fragment() {
 
         //온보딩
         val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
-        if (!prefs.getBoolean("tutorial_shown", false)) {
+        if (!prefs.getBoolean("haveTutorial", false)) {
             TutorialManager(parentFragmentManager).startTutorial()
-            prefs.edit().putBoolean("tutorial_shown", true).apply()
+            prefs.edit().putBoolean("haveTutorial", true).apply()
         }
+//        if(!tutorialshownflag) {
+//            TutorialManager(parentFragmentManager).startTutorial()
+//            tutorialshownflag = true
+//        }
+
 
         loadMyGoalList(token) //api 불러오기
         getMyWeeklyReport(token)
@@ -130,15 +140,27 @@ class HomeFragment : Fragment() {
 
 
 
-        friendAdapter = FriendChallengeAdapter(dummyData)
+        friendAdapter = FriendChallengeAdapter(dummyData) { item ->
+            // 클릭 시 이동 처리
+            val fragment = FriendGoalListFragment().apply {
+                arguments = bundleOf("friendId" to item.name)
+            }
+            // 예시
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment) // fragment_container는 activity/fragment에 맞게 수정
+                .addToBackStack(null)
+                .commit()
+        }
         friendRecyclerView.adapter = friendAdapter
 
         //---------------------달력---------------------
         val calendarView = binding.homeCalendarView
         val monthYearText = binding.homeMonthYearText
+        val prevArrow = binding.homeCalendarArrowPrevIv
+        val nextArrow = binding.homeCalendarArrowNextIv
 
         val daysOfWeek = daysOfWeekFromLocale()
-        val currentMonth = YearMonth.now()
+        var currentMonth = YearMonth.now()
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
 
@@ -146,6 +168,17 @@ class HomeFragment : Fragment() {
 
         calendarView.monthScrollListener = { month ->
             monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        }
+
+        prevArrow.setOnClickListener {
+            currentMonth = currentMonth.minusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
+        }
+
+// 다음 달로 이동
+        nextArrow.setOnClickListener {
+            currentMonth = currentMonth.plusMonths(1)
+            calendarView.scrollToMonth(currentMonth)
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -160,7 +193,7 @@ class HomeFragment : Fragment() {
                     if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
 
-                // 기간 내 이벤트 가져오기
+                // 해당 날짜 이벤트 가져오기
                 val events = getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
@@ -170,10 +203,11 @@ class HomeFragment : Fragment() {
                     bars[i].visibility = View.VISIBLE
                 }
 
-                // 날짜 클릭 시
+                // 날짜 클릭 시 API 호출
                 container.view.setOnClickListener {
                     selectedDate = date
                     calendarView.notifyCalendarChanged()
+                    loadDailyGoals(token = token, date = selectedDate)
                 }
             }
         }
@@ -192,11 +226,11 @@ class HomeFragment : Fragment() {
             val bundle = Bundle().apply {
                 putString("selectedDate", selectedDate.toString())
 
-                val events = eventsForDate.map { goal ->
-                    HomeTimer(goal.goalId, goal.goalName)
-                }
-
-                putParcelableArrayList("events", ArrayList(events))
+//                val events = eventsForDate.map { goal ->
+//                    HomeTimer(goal.goalId, goal.goalName)
+//                }
+//
+//                putParcelableArrayList("events", ArrayList(events))
             }
 
             val fragmentTimer = TimerFragment().apply {
@@ -235,9 +269,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
-        return eventList.filter { event ->
-            !date.isBefore(event.startDate) && !date.isAfter(event.endDate)
-        }
+        return eventList.filter { it.date == date }
     }
     private fun showPopup(){
         val timerChallenge = ChallengeReceivedTimer(
@@ -295,10 +327,9 @@ class HomeFragment : Fragment() {
                 val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
                     val goals = response.result
-                    // goals 리스트를 RecyclerView 등에 표시
                     for (goal in goals) {
                         Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        eventList+(CalendarEvent(goal.goalId, goal.goalName, LocalDate.now(), LocalDate.now()))
+                        eventList+(CalendarEvent(goal.goalName,"DAY",goal.frequency,LocalDate.now()))
                         //
                     }
                     Log.d("HomeFragmentApi","eventList: $eventList")
@@ -386,10 +417,11 @@ class HomeFragment : Fragment() {
 
                     goalReports?.forEach { report ->
                         // 제목 길이 제한
-                        val title = if (report.goalTitle.length > 10) {
-                            report.goalTitle.take(10) + "..."
+                        val rawTitle = report.goalTitle ?: ""
+                        val title = if (rawTitle.length > 10) {
+                            rawTitle.take(10) + "..."
                         } else {
-                            report.goalTitle
+                            rawTitle
                         }
 
                         val rate = report.achievementRate
@@ -424,7 +456,7 @@ class HomeFragment : Fragment() {
                     goalReports?.forEach { report ->
                         // 제목 길이 제한
                         val title = report.goalTitle
-                        val rate = report.achievementRate.toFloat()
+                        val rate = (report.achievementRate ?: 0).toFloat()
                         if(rateArray.size < 3) rateArray+=rate
                         Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
                     }
@@ -445,6 +477,42 @@ class HomeFragment : Fragment() {
                 Log.d("HomeFragmentApi","네트워크 오류")
             }
 
+        }
+    }
+
+    private fun loadDailyGoals(token: String?, date: LocalDate) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.goalApi.getDailyGoal(
+                    token = "Bearer $token",
+                    date = date.toString()
+                )
+
+                if (response.isSuccess) {
+                    val dailyGoals = response.result?.verifiedGoals ?: emptyList()
+
+                    // 기존 이벤트 초기화
+                    //eventList.clear()
+
+                    // API 응답을 CalendarEvent로 변환
+                    dailyGoals.forEach { goal ->
+                        eventList.add(
+                            CalendarEvent(
+                                goalName = goal.goalName,
+                                period = goal.period,
+                                frequency = goal.frequency,
+                                date = date
+                            )
+                        )
+                    }
+                } else {
+                    Log.d("CalendarActivity", "Error: ${response.message}")
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("CalendarActivity", "Exception: $e")
+            }
         }
     }
 

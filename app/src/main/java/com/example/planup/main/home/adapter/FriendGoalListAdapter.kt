@@ -15,14 +15,16 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 
-class FriendGoalListAdapter(private val items: List<FriendGoalListItem>) :
-    RecyclerView.Adapter<FriendGoalListAdapter.FriendGoalViewHolder>() {
-
-    inner class FriendGoalViewHolder(binding: ItemFriendGoalListBinding) : RecyclerView.ViewHolder(binding.root) {
-        val pieChart: PieChart = binding.friendGoalListPc
-        val tvTitle: TextView = binding.friendGoalListTitleTv
-        val tvNumber: TextView = binding.friendGoalListNumberTv
-        val tvDescription: TextView = binding.friendGoalListDescriptionTv
+class FriendGoalListAdapter(
+    private val items: List<FriendGoalListItem>,
+    private val onItemClick: (FriendGoalListItem) -> Unit   // 클릭 이벤트 콜백 추가
+) : RecyclerView.Adapter<FriendGoalListAdapter.FriendGoalViewHolder>() {
+    inner class FriendGoalViewHolder(val binding: ItemFriendGoalListBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        val pieChart = binding.friendGoalListPc
+        val tvTitle = binding.friendGoalListTitleTv
+        val tvNumber = binding.friendGoalListNumberTv
+        val tvDescription = binding.friendGoalListDescriptionTv
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendGoalViewHolder {
@@ -31,7 +33,6 @@ class FriendGoalListAdapter(private val items: List<FriendGoalListItem>) :
             parent,
             false
         )
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend_goal_list, parent, false)
         return FriendGoalViewHolder(binding)
     }
 
@@ -43,6 +44,11 @@ class FriendGoalListAdapter(private val items: List<FriendGoalListItem>) :
         holder.tvDescription.text = item.description
 
         setupDonutChart(holder.pieChart, item.progress)
+
+        // ✅ 클릭 이벤트 연결
+        holder.binding.root.setOnClickListener {
+            onItemClick(item)
+        }
     }
 
     override fun getItemCount(): Int = items.size
@@ -77,3 +83,4 @@ class FriendGoalListAdapter(private val items: List<FriendGoalListItem>) :
         }
     }
 }
+

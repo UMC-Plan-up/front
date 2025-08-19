@@ -248,6 +248,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             "비밀번호가 일치하지 않습니다" -> makeToast("비밀번호를 다시 확인해 주세요.")
             else -> {
                 editor.putString("accessToken", loginResult.accessToken)
+                editor.apply() // 즉시 저장
                 App.jwt.token = "Bearer " + loginResult.accessToken
                 // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
                 service.setUserInfoAdapter(this)

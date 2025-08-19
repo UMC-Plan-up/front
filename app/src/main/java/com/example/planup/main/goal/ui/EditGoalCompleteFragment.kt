@@ -1,18 +1,15 @@
 package com.example.planup.main.goal.ui
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCompleteBinding
 
-class FragmentEditGoalComplete : Fragment() {
+class EditGoalCompleteFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalCompleteBinding
 
     override fun onCreateView(

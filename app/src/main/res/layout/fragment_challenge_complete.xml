@@ -19,7 +19,7 @@
             android:background="@color/white">
 
             <ImageView
-                android:id="@+id/service_back_iv"
+                android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_mypage_back"
@@ -33,8 +33,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintStart_toStartOf="@id/service_back_iv"
-                app:layout_constraintTop_toBottomOf="@id/service_back_iv"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
+                app:layout_constraintTop_toBottomOf="@id/btn_back"
                 android:layout_marginTop="15dp">
 
                 <ImageView
@@ -151,7 +151,7 @@
                 android:textSize="20sp"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/pretendard_semibold"
-                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
                 app:layout_constraintTop_toBottomOf="@id/challenge_cv"/>
 
             <androidx.cardview.widget.CardView
@@ -209,7 +209,7 @@
                 android:textSize="20sp"
                 android:layout_marginTop="30dp"
                 android:fontFamily="@font/pretendard_semibold"
-                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
                 app:layout_constraintTop_toBottomOf="@id/penalty_cv"/>
 
             <androidx.cardview.widget.CardView
@@ -325,7 +325,7 @@
                 android:fontFamily="@font/pretendard_semibold"
                 android:layout_marginTop="32dp"
                 android:gravity="center"
-                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
                 app:layout_constraintTop_toBottomOf="@id/goal_amount_cv"/>
 
             <!-- 생성 버튼 -->
@@ -338,7 +338,7 @@
                 app:cardCornerRadius="6dp"
                 app:cardElevation="4dp"
                 app:cardUseCompatPadding="true"
-                app:layout_constraintStart_toStartOf="@id/service_back_iv"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
                 app:layout_constraintTop_toBottomOf="@id/retry_title_tv"
                 android:background="@android:color/transparent">
 

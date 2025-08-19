@@ -9,6 +9,7 @@ import com.example.planup.R
 
 class EditFriendGoalActivity : AppCompatActivity() {
     private var goalId: Int = 0
+    private var isSolo: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,9 +18,17 @@ class EditFriendGoalActivity : AppCompatActivity() {
         goalId = intent.getIntExtra("goalId", 0)
 
         if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, EditGoalTitleFragment())
-                .commit()
+            if(isSolo){
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.edit_friend_goal_fragment_container, EditGoalCategoryFragment())
+                    .commit()
+            } else {
+                val titleFragment = EditGoalTitleFragment()
+                titleFragment.arguments = Bundle().apply { putBoolean("isSolo", isSolo) }
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
+                    .commit()
+            }
         }
     }
 
