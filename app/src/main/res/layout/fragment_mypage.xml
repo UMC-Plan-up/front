@@ -34,8 +34,8 @@
 
             <ImageView
                 android:id="@+id/mypage_main_image_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:src="@drawable/profile_image" />
 
         </androidx.cardview.widget.CardView>
@@ -52,7 +52,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/mypage_email"
+            android:text="@string/mypage_cur_email"
             style="@style/Typography_SM_Semibold"
             android:textColor="@color/black_400"
             app:layout_constraintEnd_toEndOf="parent"

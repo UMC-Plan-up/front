@@ -1,6 +1,8 @@
 package com.example.planup.network.data
 
 import com.google.gson.annotations.SerializedName
+import okhttp3.MultipartBody
+import retrofit2.http.Multipart
 
 //User Controller 기본 응답 양식
 data class UserResponse<T>(
@@ -79,5 +81,5 @@ data class EmailLink(
 
 //프로필 사진 업로드 및 변경
 data class ProfileImage(
-    @SerializedName("imageUrl") val imageUrl: String
+    @SerializedName("file") val file: String
 )

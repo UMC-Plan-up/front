@@ -271,9 +271,9 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
+        Log.d("okhttp",user.profileImage)
         // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
         saveUserInfoAndGoToMain(
-            prefs.getString("accessToken", null) ?: "",
             user.id,
             user.email,
             user.nickname,
@@ -295,7 +295,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     }
 
     private fun toast(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, msg, LENGTH_SHORT).show()
     }
 
     // 카카오 인가코드 얻기
@@ -313,12 +313,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                 client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
             }
         }
-
-    // 메인 이동
-    private fun goToMain() {
-        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
-        finish()
-    }
 
     // 카카오 로그인 실행
     private fun onClickKakaoLogin() {
@@ -345,9 +339,11 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     } else {
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
+                        App.jwt.token = r.accessToken
+                        prefs.getString("kakaoCode",code)
 
                         if (accessToken != null && userInfo != null) {
-                            saveUserInfoAndGoToMain(accessToken, userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
+                            saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
                         } else {
                             // API 응답은 성공했지만 필요한 데이터가 누락된 경우
                             Log.e("KakaoLogin", "API call successful but missing accessToken or userInfo.")
@@ -368,20 +364,19 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     }
 
     private fun saveUserInfoAndGoToMain(
-        accessToken: String,
         userId: Int,
         email: String?,
         nickname: String?,
         profileImg: String?
     ) {
-        editor.putString("accessToken", accessToken)
         editor.putInt("userId", userId)
         editor.putString("email", email)
         editor.putString("nickname", nickname)
         editor.putString("profileImg", profileImg)
         editor.apply()
 
-        //App.jwt.token = "Bearer $accessToken"
-        goToMain()
+        // 메인 이동
+        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
+        finish()
     }
 }
