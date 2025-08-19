@@ -386,10 +386,11 @@ class HomeFragment : Fragment() {
 
                     goalReports?.forEach { report ->
                         // 제목 길이 제한
-                        val title = if (report.goalTitle.length > 10) {
-                            report.goalTitle.take(10) + "..."
+                        val rawTitle = report.goalTitle ?: ""
+                        val title = if (rawTitle.length > 10) {
+                            rawTitle.take(10) + "..."
                         } else {
-                            report.goalTitle
+                            rawTitle
                         }
 
                         val rate = report.achievementRate
@@ -424,7 +425,7 @@ class HomeFragment : Fragment() {
                     goalReports?.forEach { report ->
                         // 제목 길이 제한
                         val title = report.goalTitle
-                        val rate = report.achievementRate.toFloat()
+                        val rate = (report.achievementRate ?: 0).toFloat()
                         if(rateArray.size < 3) rateArray+=rate
                         Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
                     }

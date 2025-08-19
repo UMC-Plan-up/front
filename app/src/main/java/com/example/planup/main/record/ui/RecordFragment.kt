@@ -50,7 +50,14 @@ class RecordFragment : Fragment() {
             }
         )
 
-        // ▼ Spannable 텍스트 설정
+        spannableText()
+        clickListener()
+
+        return binding.root
+    }
+
+    // ▼ Spannable 텍스트 설정
+    private fun spannableText(){
         val text1 = "그린 님을 위한\n플랜업의 "
         val text2 = "AI 응원 메시지"
         binding.textMessage.text = SpannableStringBuilder().apply {
@@ -61,8 +68,10 @@ class RecordFragment : Fragment() {
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
             )
         }
+    }
 
-        // ▼ 클릭 리스너 설정
+    // ▼ 클릭 리스너 설정
+    private fun clickListener(){
         setFragmentClick(binding.btnBadgeRecords, RecordBadgesFragment())
         setFragmentClick(binding.btnWeeklyReport1, RecordWeeklyReportFragment())
         setFragmentClick(binding.btnWeeklyReport2, RecordWithFriendsFragment())
@@ -70,7 +79,6 @@ class RecordFragment : Fragment() {
         setFragmentClick(binding.btnWeeklyReport4, RecordWithCommunityFragment())
         setFragmentClick(binding.btnWeeklyReport5, RecordWeeklyReportFragment())
 
-        return binding.root
     }
 
     /** 공통 드롭다운 생성 함수 */
@@ -111,6 +119,7 @@ class RecordFragment : Fragment() {
         view.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
     }

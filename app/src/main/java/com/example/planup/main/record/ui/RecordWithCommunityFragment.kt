@@ -2,9 +2,8 @@ package com.example.planup.main.record.ui
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,108 +14,100 @@ import com.example.planup.main.record.adapter.PhotoAdapter
 import com.example.planup.main.record.adapter.RankAdapter
 import com.example.planup.main.record.adapter.RankItem
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 
 class RecordWithCommunityFragment : Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentRecordWithCommunityBinding.inflate(inflater, container, false)
 
+        // ====== 사진 그리드 ======
         val sampleImages = listOf(
             R.drawable.img_sample1, R.drawable.img_sample2, R.drawable.img_sample3,
             R.drawable.img_sample4, R.drawable.img_sample5, R.drawable.img_sample6
         )
-
-        val gridRecyclerView = binding.photoGridrv
-        val gridAdapter = PhotoAdapter(sampleImages)
-        gridRecyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
-        gridRecyclerView.adapter = gridAdapter
-        val spacingInPixels = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
-        binding.photoGridrv.addItemDecoration(object : RecyclerView.ItemDecoration(){
-            override fun getItemOffsets(
-                outRect: android.graphics.Rect,
-                view: View,
-                parent: RecyclerView,
-                state: RecyclerView.State
-            ){
-                val position = parent.getChildAdapterPosition(view)
-                if(position >= 0){
-                    outRect.top = spacingInPixels / 2
-                    outRect.bottom = spacingInPixels / 2
+        binding.photoGridrv.apply {
+            layoutManager = GridLayoutManager(requireContext(), 4)
+            adapter = PhotoAdapter(sampleImages)
+            val spacing = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
+            addItemDecoration(object : RecyclerView.ItemDecoration() {
+                override fun getItemOffsets(
+                    outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                ) {
+                    val pos = parent.getChildAdapterPosition(view)
+                    if (pos >= 0) {
+                        outRect.top = spacing / 2
+                        outRect.bottom = spacing / 2
+                    }
                 }
-            }
-        })
-
-        val barChart = binding.barChart
-
-        val entries = listOf(
-            BarEntry(0f, 2f),
-            BarEntry(1f, 6f),
-            BarEntry(2f, 5f),
-            BarEntry(3f, 7f),
-            BarEntry(4f, 1f),
-            BarEntry(5f, 4f),
-            BarEntry(6f, 5f),
-            BarEntry(7f, 5f) // 평균
-        )
-
-        val dataSet = BarDataSet(entries, "요일별 기록")
-        dataSet.color = Color.parseColor("#508CFF") // 파란색 계열
-        dataSet.valueTextColor = Color.TRANSPARENT // 숫자 안 보이게
-
-        val barData = BarData(dataSet)
-        barData.barWidth = 0.5f
-
-        barChart.data = barData
-        barChart.description.isEnabled = false
-        barChart.setDrawGridBackground(false)
-        barChart.axisLeft.isEnabled = false
-        barChart.axisRight.isEnabled = false
-        barChart.xAxis.apply {
-            position = XAxis.XAxisPosition.BOTTOM
-            valueFormatter = IndexAxisValueFormatter(
-                listOf("월", "화", "수", "목", "금", "토", "일", "평균")
-            )
-            setDrawGridLines(false)
-            granularity = 1f
-            textColor = Color.parseColor("#4B4B4B")
-            textSize = 12f
+            })
         }
-        barChart.legend.isEnabled = false
-        barChart.setScaleEnabled(false)
-        barChart.setPinchZoom(false)
-        barChart.invalidate() // 갱신
 
+        // ====== 요일별 바차트(단순) ======
+        val barChart = binding.barChart
+        val entries = listOf(
+            BarEntry(0f, 2f), BarEntry(1f, 6f), BarEntry(2f, 5f), BarEntry(3f, 7f),
+            BarEntry(4f, 1f), BarEntry(5f, 4f), BarEntry(6f, 5f), BarEntry(7f, 5f)
+        )
+        val dataSet = BarDataSet(entries, "요일별 기록").apply {
+            color = Color.parseColor("#508CFF")
+            valueTextColor = Color.TRANSPARENT
+        }
+        barChart.apply {
+            data = BarData(dataSet).apply { barWidth = 0.5f }
+            description.isEnabled = false
+            setDrawGridBackground(false)
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = IndexAxisValueFormatter(listOf("월","화","수","목","금","토","일","평균"))
+                setDrawGridLines(false)
+                granularity = 1f
+                textColor = Color.parseColor("#4B4B4B")
+                textSize = 12f
+            }
+            legend.isEnabled = false
+            setScaleEnabled(false)
+            setPinchZoom(false)
+            invalidate()
+        }
+
+        // ====== CombinedChart (라운드+그라데이션 막대 + 연노랑 라인) ======
         // CombinedChart 설정
         val combinedChart = binding.combinedChart
         val labels = listOf("4월 4주차", "4월 5주차", "이번 주")
         val barValues = listOf(5f, 80f, 25f)
         val lineValues = listOf(10f, 85f, 30f)
 
-        val barEntries = barValues.mapIndexed { i, value -> BarEntry(i.toFloat(), value) }
+        val barEntries = barValues.mapIndexed { i, v -> BarEntry(i.toFloat(), v) }
+
+// ⬇️ 단색 → 그라데이션으로 변경
         val barDataSet = BarDataSet(barEntries, "퍼센트").apply {
-            color = Color.rgb(68, 109, 255)
-            valueTextColor = Color.WHITE
+            setGradientColor(
+                Color.parseColor("#AFC6FF"), // start(연한 파랑)
+                Color.parseColor("#3D63FF")  // end(진한 파랑)
+            )
+            valueTextColor = Color.WHITE       // 막대 위 숫자 흰색
             valueTextSize = 12f
             valueFormatter = PercentFormatter()
+            highLightAlpha = 0                 // 하이라이트 라인 제거
         }
         val barData2 = BarData(barDataSet)
 
-        val lineEntries = lineValues.mapIndexed { i, value -> Entry(i.toFloat(), value) }
+// ...라인 데이터 동일...
+        val lineEntries = lineValues.mapIndexed { i, v -> Entry(i.toFloat(), v) }
         val lineDataSet = LineDataSet(lineEntries, "추세선").apply {
-            color = Color.YELLOW
+            color = Color.parseColor("#FFE682") // 연노랑
             setDrawCircles(false)
             lineWidth = 2f
             mode = LineDataSet.Mode.CUBIC_BEZIER
@@ -132,39 +123,54 @@ class RecordWithCommunityFragment : Fragment() {
         combinedChart.apply {
             description.isEnabled = false
             axisRight.isEnabled = false
+            axisLeft.apply {
+                axisMinimum = 0f
+                axisMaximum = 100f
+                textColor = Color.BLACK
+                textSize = 12f
+                granularity = 10f
+            }
             xAxis.apply {
                 position = XAxis.XAxisPosition.BOTTOM
                 valueFormatter = IndexAxisValueFormatter(labels)
                 granularity = 1f
-                textSize = 12f
+                textSize = 14f
                 textColor = Color.BLACK
-            }
-            axisLeft.apply {
-                axisMinimum = 0f
-                textColor = Color.BLACK
-                textSize = 12f
+                setDrawGridLines(false)
+                axisMinimum = -0.5f
+                axisMaximum = labels.size - 0.5f
             }
             legend.isEnabled = false
+            extraTopOffset = 20f
+            extraBottomOffset = 50f
             data = combinedData
             setScaleEnabled(false)
             setPinchZoom(false)
             invalidate()
         }
 
+        // ====== 랭킹 리스트 ======
         val rankData = listOf(
             RankItem(4, "닉네임4", 12, R.drawable.img_friend_profile_sample4),
             RankItem(5, "닉네임5", 10, R.drawable.img_friend_profile_sample2),
             RankItem(6, "닉네임6", 8, R.drawable.img_friend_profile_sample3),
-            RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4)
+            RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
         )
-
         val rankAdapter = RankAdapter(rankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rankAdapter
         }
 
+        // 뒤로가기 처리
+        binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() = parentFragmentManager.popBackStack()
+            }
+        )
+
         return binding.root
     }
-
 }

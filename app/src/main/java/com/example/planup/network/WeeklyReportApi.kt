@@ -17,7 +17,7 @@ interface WeeklyReportApi {
     ): Response<WeeklyReportResponse>
 
     // 년/을 기준으로 존재하는 리포트 리스트 반환
-    @GET("/report/reports/{year}/{month}")
+    @GET("/report/reports")
     suspend fun getMonthlyReports(
         @Header("Authorization") token: String,
         @Path("year") year: Int,
@@ -26,7 +26,7 @@ interface WeeklyReportApi {
     ): Response<WeeklyReportResponse>
 
     // 각 주차별 종합 리포트 반환
-    @GET("/report/reports/{year}/{month}/{week}")
+    @GET("/report/reports")
     suspend fun getWeeklyReports(
         @Header("Authorization") token: String,
         @Query("year") year: Int,
