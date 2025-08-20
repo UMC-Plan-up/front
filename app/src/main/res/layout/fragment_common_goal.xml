@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
-    android:padding="24dp">
+    android:padding="28dp">
 
     <LinearLayout
         android:id="@+id/communityRootLayout"
@@ -17,7 +17,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/ic_arrow_back"
-            android:layout_marginTop="38dp" />
+            android:layout_marginTop="19dp" />
 
         <TextView
             android:id="@+id/communityTitle"
@@ -90,8 +90,7 @@
             android:id="@+id/goalCardContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp" />
+            android:orientation="vertical"  />
 
 
         <LinearLayout

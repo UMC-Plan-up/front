@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentSubscriptionPlanBinding
+import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.main.MainActivity // MainActivity 클래스 임포트
 
@@ -67,23 +68,23 @@ class SubscriptionPlanFragment : Fragment() {
     private fun completeSubscription() {
         Handler(Looper.getMainLooper()).postDelayed({
             if (isFromGoalDetail) {
-                // GoalActivity로 결과를 반환
                 val resultIntent = Intent()
                 resultIntent.putExtra("IS_UNLOCKED", true)
                 requireActivity().setResult(Activity.RESULT_OK, resultIntent)
                 requireActivity().finish()
             } else if (isFromGoalFragment) {
-                // MainActivity에서 GoalDetailFragment로 이동
+
                 val sharedPreferences = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
                 val nickname = sharedPreferences.getString("nickname", "사용자") ?: "사용자"
 
-                val goalDetailFragment = GoalDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", true)
-                        putString("goalOwnerName", nickname)
-                    }
+                val intent = Intent(requireContext(), GoalActivity::class.java).apply {
+                    putExtra("start_from_payment_to_goal_detail", true)
+                    putExtra("goalOwnerName", nickname)
                 }
-                (requireActivity() as? MainActivity)?.navigateToFragment(goalDetailFragment)
+                startActivity(intent)
+
+                requireActivity().finish()
+
             }
         }, 2000)
     }

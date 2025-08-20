@@ -3,6 +3,7 @@ package com.example.planup.goal.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.databinding.FragmentGoalCompleteBinding
+import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.main.MainActivity
 import com.example.planup.network.RetrofitInstance
@@ -26,16 +28,6 @@ class GoalCompleteFragment : Fragment() {
 
     private var _binding: FragmentGoalCompleteBinding? = null
     private val binding get() = _binding!!
-    private var goalOwnerName: String? = null
-    private var goalType: String? = null
-    private var goalCategory: String? = null
-    private var goalName: String? = null
-    private var goalAmount: String? = null
-    private var verificationType: String? = null
-    private var period: String? = null
-    private var frequency: Int = 0
-    private var limitFriendCount: Int = 0
-    private var goalTime: Int = 0
     private val ISO_UTC_MILLIS: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .withZone(ZoneOffset.UTC)
@@ -51,19 +43,6 @@ class GoalCompleteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        arguments?.let { args ->
-            goalOwnerName     = args.getString("goalOwnerName")
-            goalType          = args.getString("goalType")
-            goalCategory      = args.getString("goalCategory")
-            goalName          = args.getString("goalName")
-            goalAmount        = args.getString("goalAmount")
-            verificationType  = args.getString("verificationType")
-            period            = args.getString("period")
-            frequency         = args.getInt("frequency", 0)
-            limitFriendCount  = args.getInt("limitFriendCount", 0)
-            goalTime          = args.getInt("goalTime", 0)
-        }
 
         binding.backIcon.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -129,28 +108,31 @@ class GoalCompleteFragment : Fragment() {
     }
 
     private fun sendCreateGoal() {
-        val goalTypeApi  = toApiGoalType(goalType)
-        val categoryApi  = toApiCategory(goalCategory)
-        val periodApi    = toApiPeriod(period)
-        val verifyApi    = toApiVerification(verificationType)
+        val goalActivity = requireActivity() as GoalActivity
 
-        val endDateFromArg = arguments?.getString("endDate")
-        val endDateApi     = resolveEndDate(endDateFromArg, periodApi)
-        val oneDoseInt     = parseOneDose(goalAmount)
+        val goalTypeApi          = toApiGoalType(goalActivity.goalType)
+        val categoryApi          = toApiCategory(goalActivity.goalCategory)
+        val periodApi            = toApiPeriod(goalActivity.period)
+        val verifyApi            = toApiVerification(goalActivity.verificationType)
+        val endDateApi           = resolveEndDate(goalActivity.endDate, periodApi)
+        val oneDoseInt           = parseOneDose(goalActivity.oneDose)
 
         val req = GoalCreateRequest(
-            goalName         = goalName.orEmpty(),
-            goalAmount       = goalAmount.orEmpty(),
+            goalName         = goalActivity.goalName.orEmpty(),
+            goalAmount       = goalActivity.goalAmount.orEmpty(),
             goalCategory     = categoryApi,
             goalType         = goalTypeApi,
             oneDose          = oneDoseInt,
-            frequency        = frequency,
+            frequency        = goalActivity.frequency,
             period           = periodApi,
             endDate          = endDateApi,
             verificationType = verifyApi,
-            limitFriendCount = limitFriendCount,
-            goalTime         = goalTime
+            limitFriendCount = goalActivity.limitFriendCount,
+            goalTime         = goalActivity.goalTime
         )
+
+        Log.d("GoalDebug", "Final API Request GoalName: ${req.goalName}")
+        Log.d("GoalDebug", "Final API Request Body: $req")
 
         val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
         val token = prefs.getString("accessToken", "") ?: ""
@@ -168,6 +150,8 @@ class GoalCompleteFragment : Fragment() {
                 }
             }.onSuccess { resp ->
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+                    (requireActivity() as GoalActivity).saveGoalData()
+
                     goHome()
                 } else {
                     val msg = resp.body()?.message ?: resp.errorBody()?.string().orEmpty()
@@ -189,9 +173,12 @@ class GoalCompleteFragment : Fragment() {
         }
     }
 
+
     private fun goHome() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+            putExtra("IS_FROM_GOAL_CREATION", true)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(intent)
         requireActivity().finish()
     }

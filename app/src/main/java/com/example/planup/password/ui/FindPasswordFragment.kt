@@ -1,8 +1,10 @@
 package com.example.planup.password.ui
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -13,11 +15,15 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFindPasswordBinding
 import com.example.planup.databinding.PopupEmailBinding
 import com.example.planup.login.LoginActivityNew
+import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.ResetPasswordActivity
+import com.example.planup.password.data.PasswordChangeEmailRequestDto
+import kotlinx.coroutines.launch
 
 class FindPasswordFragment : Fragment() {
 
@@ -46,27 +52,66 @@ class FindPasswordFragment : Fragment() {
                 hideAllErrors()
                 enableNextButton()
             } else {
-                binding.emailFormatErrorText.visibility = View.VISIBLE
-                binding.emailNotFoundErrorText.visibility = View.GONE
+                showEmailFormatError()
                 disableNextButton()
             }
         }
 
-        // 다음 버튼 클릭 → 이메일 형식만 확인하고 "바로" 다음 화면으로 이동 (자동 발송은 다음 화면에서 처리)
         binding.nextButton.setOnClickListener {
             if (!binding.nextButton.isEnabled) return@setOnClickListener
+
             val email = binding.emailEditText.text.toString().trim()
-            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            val isFormatValid = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            if (!isFormatValid) {
                 showEmailFormatError()
                 disableNextButton()
                 return@setOnClickListener
             }
 
-            (requireActivity() as ResetPasswordActivity)
-                .navigateToFragment(FindPasswordEmailSentFragment.newInstance(email))
+            // 호출 동안 버튼 잠금 & 에러 숨김
+            binding.nextButton.isEnabled = false
+            hideAllErrors()
+
+            viewLifecycleOwner.lifecycleScope.launch {
+                Log.d(TAG, "API 호출 시작: $email")
+                runCatching {
+                    RetrofitInstance.userApi
+                        .sendPasswordChangeEmail(
+                            PasswordChangeEmailRequestDto(
+                                email = email,
+                                isLoggedIn = false
+                            )
+                        )
+                }.onSuccess { res ->
+                    val body = res.body()
+                    if (res.isSuccessful && body?.isSuccess == true) {
+                        (requireActivity() as ResetPasswordActivity)
+                            .navigateToFragment(
+                                FindPasswordEmailSentFragment.newInstance(email).apply {
+                                    arguments?.putBoolean("shouldSend", false)
+                                }
+                            )
+                    } else {
+                        // 가입되지 않은 이메일 또는 기타 실패
+                        val msg = body?.message.orEmpty()
+                        Log.d(TAG, "실패: 메시지=$msg")
+                        if (msg.contains("존재하지") || msg.contains("없")) {
+                            showEmailNotFoundError()
+                        } else {
+                            showEmailNotFoundError()
+                        }
+                        binding.nextButton.isEnabled = true
+                    }
+                }.onFailure { e ->
+                    // 네트워크/예외
+                    Log.e(TAG, "API 호출 예외 발생", e)
+                    showEmailNotFoundError()
+                    binding.nextButton.isEnabled = true
+                }
+            }
         }
 
-        // 뒤로가기 아이콘 클릭 → 로그인 화면 이동
+        // 뒤로가기 아이콘 → 로그인 화면
         binding.backIcon.setOnClickListener {
             val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
@@ -86,33 +131,35 @@ class FindPasswordFragment : Fragment() {
         }
     }
 
-    // 이메일 형식 에러 표시
+    // 에러/버튼 상태
     private fun showEmailFormatError() {
         binding.emailFormatErrorText.visibility = View.VISIBLE
         binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
-    // 모든 에러 문구 숨김
+    private fun showEmailNotFoundError() {
+        binding.emailFormatErrorText.visibility = View.GONE
+        binding.emailNotFoundErrorText.visibility = View.VISIBLE
+    }
+
     private fun hideAllErrors() {
         binding.emailFormatErrorText.visibility = View.GONE
         binding.emailNotFoundErrorText.visibility = View.GONE
     }
 
-    // 다음 버튼 활성화
     private fun enableNextButton() {
         binding.nextButton.isEnabled = true
         binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.blue_200)
     }
 
-    // 다음 버튼 비활성화
     private fun disableNextButton() {
         binding.nextButton.isEnabled = false
         binding.nextButton.backgroundTintList =
             requireContext().getColorStateList(R.color.black_200)
     }
 
-    // 이메일 도메인 선택 팝업
+    // 이메일 도메인 팝업
     private fun showEmailDomainPopup() {
         val inflater = LayoutInflater.from(requireContext())
         val popupBinding = PopupEmailBinding.inflate(inflater)
@@ -151,10 +198,8 @@ class FindPasswordFragment : Fragment() {
         popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
 
-    // 키보드 숨김
     private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 

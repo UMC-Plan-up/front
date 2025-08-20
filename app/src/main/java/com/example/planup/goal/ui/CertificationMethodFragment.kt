@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentCertificationMethodBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.ui.TimerSettingFragment
+import com.example.planup.goal.ui.PictureSettingFragment
 
 class CertificationMethodFragment : Fragment() {
 
@@ -17,6 +19,10 @@ class CertificationMethodFragment : Fragment() {
 
     private var selectedMethod: String? = null // "TIMER" or "PICTURE"
     private lateinit var goalOwnerName: String
+
+    // 이 변수들을 추가하여 Bundle의 데이터를 저장합니다.
+    private var goalName: String? = null
+    private var goalAmount: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,9 +35,11 @@ class CertificationMethodFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // GoalActivity의 멤버 변수에서 데이터 가져오기
         val activity = requireActivity() as GoalActivity
         goalOwnerName = activity.goalOwnerName
+
+        goalName = arguments?.getString("goalName")
+        goalAmount = arguments?.getString("goalAmount")
 
         binding.goalDetailTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
@@ -68,10 +76,12 @@ class CertificationMethodFragment : Fragment() {
                 nextFragment.arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                     putString("verificationType", method)
+
+                    putString("goalName", goalName)
+                    putString("goalAmount", goalAmount)
+
                     putString("goalType", activity.goalType)
                     putString("goalCategory", activity.goalCategory)
-                    putString("goalName", activity.goalName)
-                    putString("goalAmount", activity.goalAmount)
                 }
 
                 // 다음 프래그먼트로 이동

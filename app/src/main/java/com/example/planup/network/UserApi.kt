@@ -5,6 +5,8 @@ import com.example.planup.login.data.LoginResponseDto
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
+import com.example.planup.password.data.PasswordUpdateRequest
+import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse
 import com.example.planup.signup.data.ApiEnvelope
@@ -27,8 +29,11 @@ import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -131,4 +136,10 @@ interface UserApi {
     suspend fun checkNickname(
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
+
+    // 비밀번호 재설정
+    @POST("/users/password/change")
+    suspend fun changePassword(
+        @Body request: PasswordUpdateRequest
+    ): Response<PasswordUpdateResponse>
 }

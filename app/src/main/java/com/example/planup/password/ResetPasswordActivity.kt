@@ -2,6 +2,7 @@ package com.example.planup.password
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -42,25 +43,39 @@ class ResetPasswordActivity : AppCompatActivity() {
      */
     private fun handlePasswordResetDeepLink(intent: Intent): Boolean {
         val uri = intent.data ?: return false
+        Log.d("DeepLinkTest", "Received URI: $uri")
 
         val validPath = uri.scheme == "planup" &&
-                uri.host == "password" &&
-                (uri.path ?: "").startsWith("/change")
-        if (!validPath) return false
+                uri.host == "login" &&
+                (uri.path ?: "").startsWith("/password/change")
+
+        Log.d("DeepLinkTest", "Path validation result: $validPath")
+        if (!validPath) {
+            Log.d("DeepLinkTest", "Invalid path. Redirecting to FindPasswordFragment.")
+            Toast.makeText(this, "유효하지 않은 또는 만료된 링크입니다.", Toast.LENGTH_SHORT).show()
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.resetPasswordContainer, FindPasswordFragment())
+                .commit()
+            return true
+        }
 
         val email = uri.getQueryParameter("email")
         val token = uri.getQueryParameter("token")
         val verified = uri.getQueryParameter("verified")?.equals("true", true) == true
         val from = uri.getQueryParameter("from")
 
+        Log.d("DeepLinkTest", "Email: $email, Token: $token, Verified: $verified, From: $from")
+
         if (email.isNullOrBlank() || token.isNullOrBlank() || !verified || from != "password_change") {
+            Log.d("DeepLinkTest", "Invalid parameters. Redirecting to FindPasswordFragment.")
             Toast.makeText(this, "유효하지 않은 또는 만료된 링크입니다.", Toast.LENGTH_SHORT).show()
-            // 이메일 입력 화면으로 되돌리기
             supportFragmentManager.beginTransaction()
                 .replace(R.id.resetPasswordContainer, FindPasswordFragment())
                 .commit()
             return true
         }
+
+        Log.d("DeepLinkTest", "Valid deep link. Navigating to ResetPasswordFragment.")
         goToResetPassword(email, token)
         return true
     }

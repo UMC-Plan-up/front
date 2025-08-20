@@ -1,38 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="320dp"
-    android:layout_height="347dp"
-    android:background="#D9D9D9"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="368dp"
+    android:background="#E9F0FF"
     android:clickable="true"
-    android:focusable="true" >
+    android:focusable="true">
 
     <TextView
         android:id="@+id/termTitle"
-        android:layout_width="0dp"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="약관 팝업창"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="20dp"
         android:fontFamily="@font/pretendard_medium"
+        android:gravity="center"
         android:textColor="@color/black_400"
         android:textSize="16sp"
-        android:gravity="center"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="서비스 이용 약관" />
 
     <ImageView
         android:id="@+id/closeIcon"
         android:layout_width="29dp"
         android:layout_height="29dp"
-        android:layout_marginTop="22dp"
-        android:layout_marginEnd="21dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ic_close"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:contentDescription="닫기" />
+
+    <ScrollView
+        android:id="@+id/termScrollView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:minHeight="200dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="1dp"
+        android:fillViewport="true"
+        android:scrollbars="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/termTitle"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/termContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_regular"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/black_400"
+            android:textSize="14sp"
+            tools:text="이용 약관 설명" />
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

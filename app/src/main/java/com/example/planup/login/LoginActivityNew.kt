@@ -277,7 +277,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             user.id,
             user.email,
             user.nickname,
-           user.profileImage
+            user.profileImage
         )
     }
 
@@ -320,8 +320,6 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             try {
                 val code = getKakaoAuthorizationCode()
                 Log.d("KakaoLogin", "Received authorization code: $code")
-
-                // 카카오 로그인 API 호출
                 val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
                 val body = resp.body()
 
@@ -345,14 +343,18 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                         if (accessToken != null && userInfo != null) {
                             saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
                         } else {
+                            // API 응답은 성공했지만 필요한 데이터가 누락된 경우
+                            Log.e("KakaoLogin", "API call successful but missing accessToken or userInfo.")
                             toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
                         }
                     }
                 } else {
-                    toast(body?.message ?: "로그인 실패(${resp.code()})")
+                    // API 호출 실패
                     Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
+                    toast(body?.message ?: "로그인 실패(${resp.code()})")
                 }
             } catch (e: Exception) {
+                // 카카오 SDK 인증 과정에서 예외가 발생한 경우
                 Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
                 toast("카카오 인증 실패: ${e.localizedMessage}")
             }

@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
@@ -21,16 +22,26 @@ import com.example.planup.signup.data.TermItem
 import kotlinx.coroutines.launch
 import com.example.planup.databinding.FragmentAgreementBinding
 import com.example.planup.databinding.PopupTermsBinding
+import kotlin.math.min
 
 class AgreementFragment : Fragment() {
 
     private var _binding: FragmentAgreementBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var adapter: TermItemAdapter
     private val termsList = mutableListOf<TermItem>()
-
     private var isRequiredChecked = false
+
+    private val titleOverrideMap = mapOf(
+        2 to "서비스 이용약관",
+        3 to "개인정보 수집 및 이용 동의",
+        4 to "홍보 및 마케팅 정보 수집·이용 동의서",
+        5 to "광고성 정보 수신 동의"
+    )
+
+    companion object {
+        private const val TAG = "AgreementFragment"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +56,6 @@ class AgreementFragment : Fragment() {
 
         binding.requiredErrorText.visibility = View.GONE
 
-        /* 뒤로가기 아이콘 → 로그인 화면으로 이동 */
         binding.backIcon.setOnClickListener {
             val intent = Intent(requireContext(), LoginActivityNew::class.java)
             startActivity(intent)
@@ -54,22 +64,27 @@ class AgreementFragment : Fragment() {
 
         adapter = TermItemAdapter(
             termsList,
-            onCheckedChanged = { checkRequiredAgreement() },
+            onCheckedChanged = {
+                Log.d(TAG, "onCheckedChanged() 호출")
+                checkRequiredAgreement()
+                debugDump()
+            },
             onDetailClicked = { showTermsDetailPopup(it) }
         )
         binding.termsRecyclerView.adapter = adapter
         binding.termsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // 약관 목록 불러오기
         fetchTermsList()
 
         binding.checkAll.setOnCheckedChangeListener { _, isChecked ->
+            Log.d(TAG, "checkAll changed: $isChecked")
             adapter.setAllChecked(isChecked)
             checkRequiredAgreement()
+            debugDump()
         }
 
-        /* 다음 버튼 클릭 */
         binding.nextButton.setOnClickListener {
+            Log.d(TAG, "nextButton clicked, isRequiredChecked=$isRequiredChecked")
             if (isRequiredChecked) {
                 saveAgreements()
                 openNextStep()
@@ -80,40 +95,52 @@ class AgreementFragment : Fragment() {
         disableNextButton()
     }
 
-    /* 약관 목록 불러오는 API 요청 */
     private fun fetchTermsList() {
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.termsApi.getTermsList()
                 val body = response.body()
-
                 val result = body?.result
 
                 if (response.isSuccessful && !result.isNullOrEmpty()) {
                     termsList.clear()
                     termsList.addAll(result)
                     adapter.notifyDataSetChanged()
+                    Log.d(
+                        TAG,
+                        "fetchTermsList: total=${termsList.size}, required=${termsList.count { it.isRequired }}, ids=${termsList.map { it.id }}"
+                    )
                 } else {
                     Toast.makeText(requireContext(), "약관 불러오기 실패: ${body?.message}", Toast.LENGTH_SHORT).show()
+                    Log.d(TAG, "fetchTermsList 실패: msg=${body?.message}")
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "fetchTermsList 예외: ${e.message}", e)
             }
         }
     }
 
-    /* 필수 약관 모두 체크되었는지 검사 */
     private fun checkRequiredAgreement() {
         val requiredTerms = termsList.filter { it.isRequired }
         val checkedRequired = adapter.getCheckedTerms().filter { it.isRequired }
 
-        isRequiredChecked = requiredTerms.size == checkedRequired.size
+        isRequiredChecked = requiredTerms.size == checkedRequired.size && requiredTerms.isNotEmpty()
 
-        if (isRequiredChecked) enableNextButton()
-        else disableNextButton()
+        Log.d(
+            TAG,
+            "checkRequiredAgreement: requiredCount=${requiredTerms.size}, checkedRequiredCount=${checkedRequired.size}, isRequiredChecked=$isRequiredChecked"
+        )
+
+        if (isRequiredChecked) enableNextButton() else disableNextButton()
     }
 
-    /* 사용자 선택 약관 저장 */
+    private fun debugDump() {
+        val reqIds = termsList.filter { it.isRequired }.map { it.id }
+        val chkIds = adapter.getCheckedTerms().filter { it.isRequired }.map { it.id }
+        Log.d(TAG, "dump -> requiredIds=$reqIds, checkedRequiredIds=$chkIds")
+    }
+
     private fun saveAgreements() {
         val activity = requireActivity() as SignupActivity
         val agreements = termsList.map { term ->
@@ -123,26 +150,22 @@ class AgreementFragment : Fragment() {
             )
         }
         activity.agreements = agreements
+        Log.d(TAG, "saveAgreements: ${agreements.joinToString { "${it.termsId}:${it.isAgreed}" }}")
     }
 
-    /* 다음 화면으로 이동 (카카오/일반 회원가입 분기 처리) */
     private fun openNextStep() {
         val isKakaoSignup = arguments?.getBoolean("isKakaoSignup", false) ?: false
+        Log.d(TAG, "openNextStep: isKakaoSignup=$isKakaoSignup")
 
         if (isKakaoSignup) {
-            // 카카오 회원가입 경우
             val tempUserId = arguments?.getString("tempUserId")
-
-            val profileSetupBundle = Bundle().apply {
-                putString("tempUserId", tempUserId)
-            }
+            val profileSetupBundle = Bundle().apply { putString("tempUserId", tempUserId) }
 
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.signup_container, ProfileSetupFragment().apply { arguments = profileSetupBundle })
                 .addToBackStack(null)
                 .commit()
         } else {
-            // 일반 회원가입인 경우
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.signup_container, LoginEmailFragment())
                 .addToBackStack(null)
@@ -150,19 +173,18 @@ class AgreementFragment : Fragment() {
         }
     }
 
-    /* 다음 버튼 활성화 */
     private fun enableNextButton() {
         binding.nextButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
         binding.nextButton.backgroundTintList = null
+        Log.d(TAG, "enableNextButton()")
     }
 
-    /* 다음 버튼 비활성화 */
     private fun disableNextButton() {
         binding.nextButton.background = ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
         binding.nextButton.backgroundTintList = ColorStateList.valueOf(requireContext().getColor(R.color.black_200))
+        Log.d(TAG, "disableNextButton()")
     }
 
-    /* 필수 미체크 시 에러 표시 */
     private fun showRequiredError() {
         binding.requiredErrorText.alpha = 0f
         binding.requiredErrorText.visibility = View.VISIBLE
@@ -172,41 +194,63 @@ class AgreementFragment : Fragment() {
                 binding.requiredErrorText.visibility = View.GONE
             }.start()
         }, 2000)
+        Log.d(TAG, "showRequiredError()")
     }
 
-    /* 약관 상세 팝업 띄우기 */
+    private fun normalizedTitle(termsId: Int): String {
+        titleOverrideMap[termsId]?.let { return it }
+        val raw = termsList.firstOrNull { it.id == termsId }?.summary.orEmpty()
+        val cleaned = raw.replace(Regex("""^\s*[\[\(]?(필수|선택)[\]\)]?\s*"""), "")
+            .replace(Regex("""\s+"""), " ")
+            .trim()
+        return cleaned.ifBlank { "약관" }
+    }
+
+    private fun dpToPx(dp: Int): Int =
+        (dp * resources.displayMetrics.density).toInt()
+
+    /* 약관 상세 팝업 */
     private fun showTermsDetailPopup(termsId: Int) {
         val dialog = Dialog(requireContext())
-        val popupBinding = PopupTermsBinding.inflate(LayoutInflater.from(requireContext()))
+        val b = PopupTermsBinding.inflate(layoutInflater)
 
-        dialog.setContentView(popupBinding.root)
+        dialog.setContentView(b.root)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.setCancelable(true)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.show()
+
+        val w = (resources.displayMetrics.widthPixels * 0.9f).toInt()
+        val targetH = min(dpToPx(370), (resources.displayMetrics.heightPixels * 0.8f).toInt())
+        dialog.window?.setLayout(w, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setGravity(Gravity.CENTER)
+
+        b.root.maxHeight = targetH
+
+        b.termTitle.text = normalizedTitle(termsId)
+        b.termContent.text = ""
 
         lifecycleScope.launch {
             try {
-                val response = RetrofitInstance.termsApi.getTermsDetail(termsId)
-                val body = response.body()
-
-                if (response.isSuccessful && body?.result?.content != null) {
-                    popupBinding.termTitle.text = body.result.content
-                } else {
-                    popupBinding.termTitle.text = "약관 내용을 불러올 수 없습니다."
-                }
-            } catch (e: Exception) {
-                popupBinding.termTitle.text = "네트워크 오류가 발생했습니다."
+                val resp = RetrofitInstance.termsApi.getTermsDetail(termsId)
+                val body = resp.body()
+                b.termContent.text = if (resp.isSuccessful && body?.result?.content != null)
+                    body.result.content
+                else "약관 내용을 불러올 수 없습니다."
+            } catch (_: Exception) {
+                b.termContent.text = "네트워크 오류가 발생했습니다."
             }
         }
 
-        popupBinding.closeIcon.setOnClickListener {
-            dialog.dismiss()
+        b.closeIcon.isClickable = true
+        b.closeIcon.isFocusable = true
+        b.closeIcon.bringToFront()
+        b.closeIcon.setOnClickListener {
+            Log.d(TAG, "close clicked")
+            if (dialog.isShowing) dialog.dismiss()
         }
 
-        dialog.show()
-        dialog.window?.setLayout(
-            (320 * resources.displayMetrics.density).toInt(),
-            (347 * resources.displayMetrics.density).toInt()
-        )
+        dialog.setOnDismissListener { Log.d(TAG, "terms dialog dismissed") }
     }
 
     override fun onDestroyView() {
