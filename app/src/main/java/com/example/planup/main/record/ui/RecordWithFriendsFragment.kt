@@ -19,6 +19,20 @@ class RecordWithFriendsFragment : Fragment() {
     lateinit var binding: FragmentRecordWithFriendsBinding
     private lateinit var photoAdapter: PhotoAdapter
 
+    companion object {
+        private const val ARG_GOAL_ID = "arg_goal_id"
+        private const val ARG_GOAL_TITLE = "arg_goal_title"
+
+        fun newInstance(goalId: Int?, goalTitle: String?): RecordWithFriendsFragment {
+            return RecordWithFriendsFragment().apply {
+                arguments = Bundle().apply {
+                    goalId?.let { putInt(ARG_GOAL_ID, it) }
+                    putString(ARG_GOAL_TITLE, goalTitle)
+                }
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

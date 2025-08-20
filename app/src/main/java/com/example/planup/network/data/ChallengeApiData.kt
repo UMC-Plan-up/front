@@ -16,6 +16,27 @@ data class ChallengeResponseNoResult(
     @SerializedName("message") val message: String
 )
 
+// 챌린지 결과 Response 양식
+data class ChallengeResultResponse(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ChallengeResult
+)
+
+// 챌린지 결과
+data class ChallengeResult(
+    @SerializedName("id") val id: Int,
+    @SerializedName("name") val name: String,
+    @SerializedName("goalName") val goalName: String,
+    @SerializedName("goalAmount") val goalAmount: String,
+    @SerializedName("goalType") val goalType: String,
+    @SerializedName("endDate") val endDate: String,
+    @SerializedName("period") val period: String,
+    @SerializedName("frequency") val frequency: Int,
+    @SerializedName("targetTime") val targetTime: Int
+)
+
 //챌린지 정보 조회
 data class ChallengeInfo(
     @SerializedName("id") val id: String,
