@@ -65,7 +65,7 @@ class GoalDetailFragment : Fragment() {
             binding.goalContainer.visibility = View.GONE
         }
 
-        // GoalActivity를 통해 구독하고 돌아온 경우
+        // GoalActivity를 통해 유료 결제하고 돌아온 경우
         isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
         if (isPlanSelected) {
             binding.goalContainer.visibility = View.GONE

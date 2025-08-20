@@ -68,15 +68,10 @@ class PushAlertFragment : Fragment() {
     }
 
     private fun clickListener() {
-        //뒤로가기 버튼 클릭
+        //뒤로가기 버튼 클릭 (GoalActivity를 통해서만 이동)
         binding.alertBackIv.setOnClickListener {
             val participantLimitFragment = ParticipantLimitFragment()
-
-            (activity as? GoalActivity)?.navigateToFragment(participantLimitFragment)
-                ?: parentFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, participantLimitFragment)
-                    .addToBackStack(null)
-                    .commit()
+            (requireActivity() as GoalActivity).navigateToFragment(participantLimitFragment)
         }
 
         //알림받기 토글 끄기
@@ -101,7 +96,7 @@ class PushAlertFragment : Fragment() {
             binding.alertRegularOffIv.visibility = View.GONE
         }
 
-        //저장 버튼 클릭
+        //저장 버튼 클릭 (GoalActivity를 통해서만 이동)
         binding.nextButton.setOnClickListener {
             val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
@@ -136,55 +131,39 @@ class PushAlertFragment : Fragment() {
             appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
 
 
-            val activity = requireActivity() as? GoalActivity
-            if (activity != null) {
-                // GoalActivity에 알림 설정 정보 저장
-                activity.notificationEnabled = isAlertsEnabled
-                activity.regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
-                activity.alertTimeOfDay = binding.alertTimeTv.text.toString()
-                activity.alertHour = binding.alertHourTv.text.toString()
-                activity.alertMinute = binding.alertMinuteTv.text.toString()
-                activity.alertDays = selectedDays
+            // GoalActivity에 알림 설정 정보 저장
+            val activity = requireActivity() as GoalActivity
+            activity.notificationEnabled = isAlertsEnabled
+            activity.regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
+            activity.alertTimeOfDay = binding.alertTimeTv.text.toString()
+            activity.alertHour = binding.alertHourTv.text.toString()
+            activity.alertMinute = binding.alertMinuteTv.text.toString()
+            activity.alertDays = selectedDays
 
-                val goalCompleteFragment = GoalCompleteFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("goalOwnerName", activity.goalOwnerName)
-                        putString("goalType", activity.goalType)
-                        putString("goalCategory", activity.goalCategory)
-                        putString("goalName", activity.goalName)
-                        putString("goalAmount", activity.goalAmount)
-                        putString("verificationType", activity.verificationType)
-                        putString("period", activity.period)
-                        putInt("frequency", activity.frequency)
-                        putInt("limitFriendCount", activity.limitFriendCount)
-                        putInt("goalTime", activity.goalTime)
+            val goalCompleteFragment = GoalCompleteFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", activity.goalOwnerName)
+                    putString("goalType", activity.goalType)
+                    putString("goalCategory", activity.goalCategory)
+                    putString("goalName", activity.goalName)
+                    putString("goalAmount", activity.goalAmount)
+                    putString("verificationType", activity.verificationType)
+                    putString("period", activity.period)
+                    putInt("frequency", activity.frequency)
+                    putInt("limitFriendCount", activity.limitFriendCount)
+                    putInt("goalTime", activity.goalTime)
 
-                        // 알림 설정 정보도 함께 전달
-                        putBoolean("notificationEnabled", activity.notificationEnabled)
-                        putBoolean("regularAlertEnabled", activity.regularAlertEnabled)
-                        putString("alertTimeOfDay", activity.alertTimeOfDay)
-                        putString("alertHour", activity.alertHour)
-                        putString("alertMinute", activity.alertMinute)
-                        putStringArrayList("alertDays", ArrayList(selectedDays))
-                    }
+                    // 알림 설정 정보도 함께 전달
+                    putBoolean("notificationEnabled", activity.notificationEnabled)
+                    putBoolean("regularAlertEnabled", activity.regularAlertEnabled)
+                    putString("alertTimeOfDay", activity.alertTimeOfDay)
+                    putString("alertHour", activity.alertHour)
+                    putString("alertMinute", activity.alertMinute)
+                    putStringArrayList("alertDays", ArrayList(selectedDays))
                 }
-                activity.navigateToFragment(goalCompleteFragment)
-            } else {
-                val goalCompleteFragment = GoalCompleteFragment().apply {
-                    arguments = Bundle().apply {
-                        putBoolean("notificationEnabled", isAlertsEnabled)
-                        putBoolean("regularAlertEnabled", binding.alertRegularOnIv.visibility == View.VISIBLE)
-                        putString("alertTimeOfDay", binding.alertTimeTv.text.toString())
-                        putString("alertHour", binding.alertHourTv.text.toString())
-                        putString("alertMinute", binding.alertMinuteTv.text.toString())
-                        putStringArrayList("alertDays", ArrayList(selectedDays))
-                    }
-                }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, goalCompleteFragment)
-                    .addToBackStack(null)
-                    .commit()
             }
+            activity.navigateToFragment(goalCompleteFragment)
+
             makeToast()
         }
 
@@ -220,7 +199,6 @@ class PushAlertFragment : Fragment() {
                     dayView.isSelected = !dayView.isSelected
                     val isSelected = dayView.isSelected
 
-                    // '매일' 버튼이 선택되면 모든 요일을 선택
                     dayViews.forEach { otherDayView ->
                         otherDayView.isSelected = isSelected
                         otherDayView.setTextColor(if (isSelected) selected else unselected)

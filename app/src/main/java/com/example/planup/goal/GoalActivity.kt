@@ -1,6 +1,7 @@
 package com.example.planup.goal
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -12,6 +13,7 @@ import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
 import com.example.planup.goal.ui.GoalDetailFragment
+import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.main.MainActivity
 
 class GoalActivity : AppCompatActivity() {
@@ -41,7 +43,7 @@ class GoalActivity : AppCompatActivity() {
     private val subscriptionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val data = result.data
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
@@ -62,15 +64,29 @@ class GoalActivity : AppCompatActivity() {
 
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
 
+        loadLastGoalData()
+
         if (savedInstanceState == null) {
-            // GoalSelectFragment를 GoalCategoryFragment로 가정
-            val first = GoalCategoryFragment().apply {
-                arguments = (arguments ?: Bundle()).apply {
-                    putString("goalOwnerName", goalOwnerName)
+            val isFromPayment = intent.getBooleanExtra("start_from_payment", false)
+            val isFromPaymentToDetail = intent.getBooleanExtra("start_from_payment_to_goal_detail", false)
+
+            val startFragment = when {
+                isFromPayment -> PushAlertFragment()
+                isFromPaymentToDetail -> GoalDetailFragment().apply {
+                    arguments = Bundle().apply {
+                        putBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", true)
+                        putString("goalOwnerName", goalOwnerName)
+                    }
+                }
+                else -> GoalCategoryFragment().apply {
+                    arguments = (arguments ?: Bundle()).apply {
+                        putString("goalOwnerName", goalOwnerName)
+                    }
                 }
             }
+
             supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, first)
+                .replace(R.id.goal_container, startFragment)
                 .commit()
         }
     }
@@ -84,6 +100,58 @@ class GoalActivity : AppCompatActivity() {
             .replace(R.id.goal_container, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+
+    private fun loadLastGoalData() {
+        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+
+        goalName = sharedPref.getString("last_goal_name", goalName) ?: goalName
+        goalAmount = sharedPref.getString("last_goal_amount", goalAmount) ?: goalAmount
+        goalCategory = sharedPref.getString("last_goal_category", goalCategory) ?: goalCategory
+        goalType = sharedPref.getString("last_goal_type", goalType) ?: goalType
+        oneDose = sharedPref.getString("last_one_dose", oneDose) ?: oneDose
+        frequency = sharedPref.getInt("last_frequency", frequency)
+        period = sharedPref.getString("last_period", period) ?: period
+        endDate = sharedPref.getString("last_end_date", endDate) ?: endDate
+        verificationType = sharedPref.getString("last_verification_type", verificationType) ?: verificationType
+        limitFriendCount = sharedPref.getInt("last_limit_friend_count", limitFriendCount)
+        goalTime = sharedPref.getInt("last_goal_time", goalTime)
+
+        // 알림 설정 데이터도 불러오기
+        notificationEnabled = sharedPref.getBoolean("last_notification_enabled", notificationEnabled)
+        regularAlertEnabled = sharedPref.getBoolean("last_regular_alert_enabled", regularAlertEnabled)
+        alertTimeOfDay = sharedPref.getString("last_alert_time_of_day", alertTimeOfDay) ?: alertTimeOfDay
+        alertHour = sharedPref.getString("last_alert_hour", alertHour) ?: alertHour
+        alertMinute = sharedPref.getString("last_alert_minute", alertMinute) ?: alertMinute
+        alertDays = sharedPref.getStringSet("last_alert_days", alertDays)?.toMutableSet() ?: alertDays
+    }
+
+    fun saveGoalData() {
+        val sharedPref = getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+        editor.putString("last_goal_name", goalName)
+        editor.putString("last_goal_amount", goalAmount)
+        editor.putString("last_goal_category", goalCategory)
+        editor.putString("last_goal_type", goalType)
+        editor.putString("last_one_dose", oneDose)
+        editor.putInt("last_frequency", frequency)
+        editor.putString("last_period", period)
+        editor.putString("last_end_date", endDate)
+        editor.putString("last_verification_type", verificationType)
+        editor.putInt("last_limit_friend_count", limitFriendCount)
+        editor.putInt("last_goal_time", goalTime)
+
+        // 알림 설정 데이터 저장
+        editor.putBoolean("last_notification_enabled", notificationEnabled)
+        editor.putBoolean("last_regular_alert_enabled", regularAlertEnabled)
+        editor.putString("last_alert_time_of_day", alertTimeOfDay)
+        editor.putString("last_alert_hour", alertHour)
+        editor.putString("last_alert_minute", alertMinute)
+        editor.putStringSet("last_alert_days", alertDays)
+
+        editor.apply()
     }
 
     /* SubscriptionPlanFragment를 시작하고, 결과를 받기 위한 함수 */
