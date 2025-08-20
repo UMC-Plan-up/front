@@ -125,7 +125,7 @@ class InviteCodeFragment : Fragment() {
                 content = Content(
                     title = "Plan-Up에서 ${nickname}님이 친구가 되고 싶어요!",
                     description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: ${inviteCode}",
-                    imageUrl = "https://i.postimg.cc/QdM6ZKp0/image-5.png",
+                    imageUrl = "https://i.postimg.cc/6QCYNJk8/planup-share.png",
                     link = Link(
                         mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup"
                     )

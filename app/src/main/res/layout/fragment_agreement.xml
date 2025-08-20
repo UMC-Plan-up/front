@@ -19,7 +19,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:padding="28dp">
 
             <ImageView
                 android:id="@+id/backIcon"
@@ -28,7 +28,7 @@
                 android:src="@drawable/ic_arrow_back"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="38dp" />
+                android:layout_marginTop="19dp" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
@@ -165,13 +165,13 @@
         android:layout_height="44dp"
         android:text="@string/btn_next"
         android:textSize="16sp"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/white"
         android:fontFamily="@font/pretendard_medium"
         android:background="@drawable/btn_next_background"
         android:gravity="center"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
-        android:layout_marginBottom="33dp"
+        android:layout_marginBottom="30dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />

@@ -80,7 +80,7 @@ interface UserPort {
     @POST("profile/image")
     fun setProfileImage(@Part file: MultipartBody.Part): Call<UserResponse<ProfileImage>>
     //비밀번호 변경
-    @POST("mypage/profile/password/update")
+    @POST("/users/password/change")
     fun changePassword(@Query("password") password: String): Call<UserResponse<Boolean>>
     //닉네임 수정
     @POST("mypage/profile/nickname")

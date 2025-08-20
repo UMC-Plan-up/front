@@ -73,4 +73,5 @@ object RetrofitInstance {
     val verificationApi: VerificationApi by lazy{
         retrofit.create(VerificationApi::class.java)
     }
+
 }

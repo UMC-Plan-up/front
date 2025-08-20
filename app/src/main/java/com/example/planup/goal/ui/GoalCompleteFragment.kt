@@ -190,8 +190,10 @@ class GoalCompleteFragment : Fragment() {
     }
 
     private fun goHome() {
-        val intent = Intent(requireContext(), MainActivity::class.java)
-            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        val intent = Intent(requireContext(), MainActivity::class.java).apply {
+            putExtra("IS_FROM_GOAL_CREATION", true)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
         startActivity(intent)
         requireActivity().finish()
     }

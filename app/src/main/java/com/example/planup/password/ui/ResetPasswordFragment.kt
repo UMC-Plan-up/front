@@ -3,6 +3,7 @@ package com.example.planup.password.ui
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputType
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -22,6 +23,7 @@ import com.example.planup.databinding.FragmentResetPasswordBinding
 import com.example.planup.databinding.PopupResetBinding
 import com.example.planup.login.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.password.data.PasswordUpdateRequest
 import kotlinx.coroutines.launch
 
 class ResetPasswordFragment : Fragment() {
@@ -32,10 +34,12 @@ class ResetPasswordFragment : Fragment() {
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
     private var userEmail: String? = null
+    private var verificationToken: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         userEmail = arguments?.getString("email")
+        verificationToken = arguments?.getString("token")
     }
 
     override fun onCreateView(
@@ -66,13 +70,7 @@ class ResetPasswordFragment : Fragment() {
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
-            val prevFragment = FindPasswordEmailSentFragment().apply {
-                arguments = Bundle().apply { putString("email", userEmail) }
-            }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.resetPasswordContainer, prevFragment)
-                .addToBackStack(null)
-                .commit()
+            parentFragmentManager.popBackStack()
         }
 
         /* 클릭 시 비밀번호 보이기/숨기기 */
@@ -106,23 +104,20 @@ class ResetPasswordFragment : Fragment() {
         binding.passwordEditText.addTextChangedListener { validateConditions() }
         binding.confirmPasswordEditText.addTextChangedListener { validateConditions() }
 
-        /* 완료 버튼 클릭 → (1) 마지막 방어 검증 (2) API 호출 → 성공 시 팝업 */
+        /* 완료 버튼 클릭 */
         binding.nextButton.setOnClickListener {
             val pw = binding.passwordEditText.text.toString()
             val cpw = binding.confirmPasswordEditText.text.toString()
 
-            // (1) 마지막 방어 검증: UI가 혹시라도 꼬였을 때를 대비해 서버 호출 전 한 번 더 체크
             val lenOk = pw.length in 8..20
             val complexOk = pw.any { it.isDigit() } && pw.any { !it.isLetterOrDigit() }
             val matchOk = pw.isNotEmpty() && pw == cpw
 
             if (!lenOk || !complexOk || !matchOk) {
-                // 조건 미충족 시 버튼 비활성 + 가이드 유지
                 disableNextButton()
                 return@setOnClickListener
             }
 
-            // (2) 비밀번호 변경 API 호출
             updatePassword(pw)
         }
     }
@@ -184,25 +179,35 @@ class ResetPasswordFragment : Fragment() {
     private fun updatePassword(newPassword: String) {
         binding.nextButton.isEnabled = false
 
+        val token = verificationToken?.trim()
+        if (token.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "유효하지 않은 링크입니다.", Toast.LENGTH_SHORT).show()
+            binding.nextButton.isEnabled = true
+            return
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val res = RetrofitInstance.passwordApi.updatePassword(newPassword)
+                val req = PasswordUpdateRequest(token = token, newPassword = newPassword)
+                val res = RetrofitInstance.userApi.changePassword(req)
                 val body = res.body()
 
                 if (res.isSuccessful && body?.isSuccess == true && body.result) {
-                    // 성공 → 팝업 띄우기
                     showResetCompleteDialog()
                 } else {
                     val msg = body?.message ?: res.errorBody()?.string() ?: "비밀번호 변경 실패"
+                    Log.e("API_ERROR", "Password update failed: $msg")
                     Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                     binding.nextButton.isEnabled = true
                 }
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), e.message ?: "네트워크 오류", Toast.LENGTH_SHORT).show()
+                Log.e("NETWORK_ERROR", "updatePassword()", e)
+                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
                 binding.nextButton.isEnabled = true
             }
         }
     }
+
 
     private fun hideKeyboard() {
         val imm =

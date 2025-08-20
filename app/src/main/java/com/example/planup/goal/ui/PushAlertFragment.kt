@@ -56,6 +56,11 @@ class PushAlertFragment : Fragment() {
         minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList())
         times = resources.getStringArray(R.array.dropdown_morning_afternoon).toCollection(ArrayList())
 
+        // 알림 시간의 기본값을 '오전 7시 30분'으로 설정
+        binding.alertTimeTv.text = "오전"
+        binding.alertHourTv.text = "07"
+        binding.alertMinuteTv.text = "30"
+
         val prefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         isFirst = prefs.getBoolean("show_push_alert_popup", true)
 
@@ -197,7 +202,7 @@ class PushAlertFragment : Fragment() {
             showDropDown(minutes, R.layout.item_recycler_dropdown_time, binding.alertMinuteTv)
         }
 
-        //정기 알림 요일 설정
+        // 요일 선택 로직
         val selected = ContextCompat.getColor(requireContext(), R.color.blue_200)
         val unselected = ContextCompat.getColor(requireContext(), R.color.black_300)
         val dayViews = listOf(
@@ -205,12 +210,44 @@ class PushAlertFragment : Fragment() {
             binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
             binding.alertSaturdayTv, binding.alertSundayTv
         )
+
         dayViews.forEach { dayView ->
             dayView.setOnClickListener {
-                dayView.isSelected = !dayView.isSelected
-                dayView.setTextColor(
-                    if (dayView.isSelected) selected else unselected
-                )
+                val isEverydayClicked = dayView.id == R.id.alert_everyday_tv
+
+                if (isEverydayClicked) {
+                    // '매일' 버튼 클릭 시
+                    dayView.isSelected = !dayView.isSelected
+                    val isSelected = dayView.isSelected
+
+                    // '매일' 버튼이 선택되면 모든 요일을 선택
+                    dayViews.forEach { otherDayView ->
+                        otherDayView.isSelected = isSelected
+                        otherDayView.setTextColor(if (isSelected) selected else unselected)
+                    }
+                } else {
+                    // 월~일 중 하나를 클릭 시
+                    dayView.isSelected = !dayView.isSelected
+                    dayView.setTextColor(
+                        if (dayView.isSelected) selected else unselected
+                    )
+
+                    if (!dayView.isSelected) {
+                        binding.alertEverydayTv.isSelected = false
+                        binding.alertEverydayTv.setTextColor(unselected)
+                    }
+
+                    val allDaysSelected = listOf(
+                        binding.alertMondayTv, binding.alertTuesdayTv, binding.alertWednesdayTv,
+                        binding.alertThursdayTv, binding.alertFridayTv, binding.alertSaturdayTv,
+                        binding.alertSundayTv
+                    ).all { it.isSelected }
+
+                    if (allDaysSelected) {
+                        binding.alertEverydayTv.isSelected = true
+                        binding.alertEverydayTv.setTextColor(selected)
+                    }
+                }
             }
         }
     }

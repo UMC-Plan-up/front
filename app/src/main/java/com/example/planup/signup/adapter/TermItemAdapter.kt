@@ -35,8 +35,6 @@ class TermItemAdapter(
         holder.summary.text = term.summary
 
         holder.checkBox.buttonTintList = holder.checkBox.context.getColorStateList(R.color.black_400)
-
-        // 리스너 중복 방지
         holder.checkBox.setOnCheckedChangeListener(null)
         holder.checkBox.isChecked = checkedMap[term.id] ?: false
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -49,8 +47,6 @@ class TermItemAdapter(
             onDetailClicked(term.id)
         }
     }
-
-
 
     // 전체동의 동작 시 호출
     fun setAllChecked(isChecked: Boolean) {

@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -85,16 +86,31 @@ class GoalDetailFragment : Fragment() {
         setupNextButton()
         setupDirectSetSection()
 
-        binding.root.setOnTouchListener { v, event ->
-            if (event.action == android.view.MotionEvent.ACTION_DOWN) {
-                val focused = requireActivity().currentFocus
-                if (focused != null) {
-                    focused.clearFocus()
-                    hideKeyboard()
+        setupKeyboardHiding()
+    }
+
+    private fun hideKeyboardAndClearFocus() {
+        _binding?.let { binding ->
+            val view = requireActivity().currentFocus ?: binding.root
+            view.clearFocus()
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
+    }
+
+    private fun setupKeyboardHiding() {
+        _binding?.let { binding ->
+            binding.root.setOnTouchListener { _, event ->
+                if (event.action == android.view.MotionEvent.ACTION_DOWN) {
+                    hideKeyboardAndClearFocus()
+                }
+                false
+            }
+            binding.frequencyInputEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (!hasFocus) {
+                    hideKeyboardAndClearFocus()
                 }
             }
-            v.performClick()
-            false
         }
     }
 
@@ -315,12 +331,6 @@ class GoalDetailFragment : Fragment() {
             binding.nextButton.background =
                 ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
         }
-    }
-
-    private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
     private fun setupNextButton() {

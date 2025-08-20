@@ -9,7 +9,7 @@
         android:id="@+id/textPlan"
         android:layout_width="82dp"
         android:layout_height="60dp"
-        android:layout_marginStart="105dp"
+        android:layout_marginStart="100dp"
         android:fontFamily="@font/pretendard_bold"
         android:text="@string/plan"
         android:textColor="#FFFFFF"

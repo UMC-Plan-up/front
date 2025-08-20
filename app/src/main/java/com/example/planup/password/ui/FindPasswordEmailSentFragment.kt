@@ -45,9 +45,6 @@ class FindPasswordEmailSentFragment : Fragment() {
         userEmail?.let { email ->
             binding.emailSentDescription.text =
                 "($email) 인증을 위한 \n링크를 보내드렸어요. \n메일함에서 링크를 확인해 주세요."
-
-            // 화면 진입 시 자동 발송
-            sendPasswordChangeEmail(email)
         }
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
@@ -73,7 +70,8 @@ class FindPasswordEmailSentFragment : Fragment() {
         }
     }
 
-    // 비밀번호 변경 확인 이메일 발송 API (자동 발송용)
+    // 비밀번호 변경 확인 이메일 발송 API
+    // 이 함수는 "재전송"을 위한 것이므로, onViewCreated에서 자동 호출하지 않음
     private fun sendPasswordChangeEmail(email: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             runCatching {
