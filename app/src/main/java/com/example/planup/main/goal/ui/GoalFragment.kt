@@ -172,30 +172,6 @@ class GoalFragment : Fragment() {
         }
     }
 
-    /** 공개/비공개 토글 */
-    private fun requestTogglePublic(goalId: Int) {
-        val token = requireTokenOrNull() ?: run {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        lifecycleScope.launch {
-            runCatching {
-                goalEditApi.setGoalPublic(token, goalId)
-            }.onSuccess { res ->
-                if (res.isSuccessful && (res.body()?.isSuccess == true)) {
-                    // 서버에서 상태 메시지를 내려주면 적절히 토스트 교체 가능
-                    Toast.makeText(requireContext(), "공개 상태가 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                    goalController.fetchMyGoals()
-                } else {
-                    Toast.makeText(requireContext(), "공개 상태 변경 실패: ${res.body()?.message ?: res.code()}", Toast.LENGTH_SHORT).show()
-                }
-            }.onFailure {
-                Toast.makeText(requireContext(), "공개 상태 변경 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                Log.e("GoalFragment", "setGoalPublic error", it)
-            }
-        }
-    }
-
     /** 활성/비활성 토글 (이번 클릭 의도 전달) */
     private fun requestToggleActive(goalId: Int, willActivate: Boolean) {
         val token = requireTokenOrNull() ?: return Toast.makeText(requireContext(),"로그인이 필요합니다.",Toast.LENGTH_SHORT).show()

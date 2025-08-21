@@ -1,13 +1,10 @@
 package com.example.planup.network
 
-import com.example.planup.main.record.adapter.DetailWeeklyReportResponse
-import com.example.planup.main.record.adapter.WeeklyReportResponse
-import com.example.planup.main.record.data.ChallengeWeeklySummary
-import com.example.planup.network.data.ChallengeResponse
+import com.example.planup.main.record.data.DetailWeeklyReportResponse
+import com.example.planup.main.record.data.WeeklyReportResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WeeklyReportApi {
