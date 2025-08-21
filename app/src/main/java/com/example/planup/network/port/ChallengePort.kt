@@ -4,6 +4,7 @@ import com.example.planup.network.data.ChallengeResponse
 import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.data.ChallengeInfo
 import com.example.planup.network.data.ChallengeResponseNoResult
+import com.example.planup.network.data.ChallengeResult
 import com.example.planup.network.data.ChallengeResultResponse
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.RepenaltyDto
@@ -20,8 +21,8 @@ interface ChallengePort {
     @GET("challenges/{challengeId}")
     fun challengeInfo(@Path("challengeId") challengeId: Int): Call<ChallengeResponse<ChallengeInfo>>
     //챌린지 결과 조회
-    @GET("challenges/{challengeId/result")
-    fun challengeResult(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResultResponse>
+    @GET("challenges/{challengeId}/result")
+    fun challengeResult(@Query("userId") userId: Int, @Path("challengeId") challengeId: Int): Call<ChallengeResponse<ChallengeResult>>
     //챌린지 거절
     @GET("challenges/{challengeId}/reject")
     fun rejectChallenge(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResponseNoResult>

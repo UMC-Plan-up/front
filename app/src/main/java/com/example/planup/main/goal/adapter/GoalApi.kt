@@ -5,6 +5,7 @@ import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
 import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.item.DailyGoalResponse
 import com.example.planup.main.goal.item.FriendPhotosResponse
 import com.example.planup.main.goal.item.TotalAchievementResponse

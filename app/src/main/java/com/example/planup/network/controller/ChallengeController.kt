@@ -10,6 +10,7 @@ import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.data.ChallengeInfo
 import com.example.planup.network.data.ChallengeResponse
 import com.example.planup.network.data.ChallengeResponseNoResult
+import com.example.planup.network.data.ChallengeResult
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.RepenaltyDto
 import com.example.planup.network.getRetrofit
@@ -102,6 +103,29 @@ class ChallengeController {
     //챌린지 이름 조회: 25.08.13 미구현
     fun showChallengeName(challengeId: Int, userId: Int) {
         val service = getRetrofit().create(ChallengePort::class.java)
+    }
+    //챌린지  결과 조회
+    fun showChallengeResult(userId: Int, challengeId: Int){
+        val service = getRetrofit().create(ChallengePort::class.java)
+        service.challengeResult(userId, challengeId).enqueue(object : Callback<ChallengeResponse<ChallengeResult>>{
+            override fun onResponse(
+                call: Call<ChallengeResponse<ChallengeResult>>,
+                response: Response<ChallengeResponse<ChallengeResult>>
+            ) {
+                if (response.isSuccessful && response.body() != null){
+
+                } else if (!response.isSuccessful && response.body() != null){
+
+                } else{
+
+                }
+            }
+
+            override fun onFailure(call: Call<ChallengeResponse<ChallengeResult>>, t: Throwable) {
+
+            }
+
+        })
     }
 
     //챌린지 수락

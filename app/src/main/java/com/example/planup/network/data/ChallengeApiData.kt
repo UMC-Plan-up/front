@@ -27,22 +27,21 @@ data class ChallengeResultResponse(
 // 챌린지 결과
 data class ChallengeResult(
     @SerializedName("id") val id: Int,
-    @SerializedName("name") val name: String,
-    @SerializedName("goalName") val goalName: String,
-    @SerializedName("goalAmount") val goalAmount: String,
-    @SerializedName("goalType") val goalType: String,
-    @SerializedName("endDate") val endDate: String,
-    @SerializedName("period") val period: String,
-    @SerializedName("frequency") val frequency: Int,
-    @SerializedName("targetTime") val targetTime: Int
+    @SerializedName("myName") val myName: String,
+    @SerializedName("myProfile") val myProfile: String,
+    @SerializedName("friendName") val friendName: String,
+    @SerializedName("friendProfile") val friendProfile: String,
+    @SerializedName("penalty") val penalty: String,
+    @SerializedName("myPercent") val myPercent: Int,
+    @SerializedName("friendPercent") val friendPercent: Int
 )
 
 //챌린지 정보 조회
 data class ChallengeInfo(
     @SerializedName("id") val id: String,
-    @SerializedName("code") val name: String,
+    @SerializedName("name") val name: String,
     @SerializedName("goalName") val goalName: String,
-    @SerializedName("goalAmount") val goalAmount: String,
+    @SerializedName("oneDose") val oneDose: String,
     @SerializedName("goalType") val goalType: String,
     @SerializedName("endDate") val endDate: String,
     @SerializedName("period") val period: String,
