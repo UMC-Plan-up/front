@@ -221,11 +221,9 @@ class AgreementFragment : Fragment() {
         dialog.show()
 
         val w = (resources.displayMetrics.widthPixels * 0.9f).toInt()
-        val targetH = min(dpToPx(370), (resources.displayMetrics.heightPixels * 0.8f).toInt())
-        dialog.window?.setLayout(w, ViewGroup.LayoutParams.WRAP_CONTENT)
+        val targetH = min(dpToPx(420), (resources.displayMetrics.heightPixels * 0.8f).toInt())
+        dialog.window?.setLayout(w, targetH)
         dialog.window?.setGravity(Gravity.CENTER)
-
-        b.root.maxHeight = targetH
 
         b.termTitle.text = normalizedTitle(termsId)
         b.termContent.text = ""

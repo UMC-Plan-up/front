@@ -4,11 +4,11 @@
     android:layout_width="118dp"
     android:layout_height="90dp"
     android:orientation="vertical"
-    android:background="@drawable/bg_bottomsheet_round2">
+    android:background="@drawable/bg_bottomsheet_round2" >
 
     <TextView
         android:id="@+id/domainGmail"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_gmail"
         android:fontFamily="@font/pretendard_medium"
@@ -20,7 +20,7 @@
 
     <TextView
         android:id="@+id/domainNaver"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_naver"
         android:fontFamily="@font/pretendard_medium"
@@ -31,7 +31,7 @@
 
     <TextView
         android:id="@+id/domainKakao"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_kakao"
         android:fontFamily="@font/pretendard_medium"
