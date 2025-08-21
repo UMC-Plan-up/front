@@ -1,4 +1,4 @@
-package com.example.planup.main.record.adapter
+package com.example.planup.main.record.data
 
 import com.google.gson.annotations.SerializedName
 

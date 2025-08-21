@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            app:trackThickness="6dp"
+            app:trackThickness="4dp"
             app:indicatorSize="56dp"
             app:indicatorDirectionCircular="clockwise"
             app:trackCornerRadius="6dp"

@@ -96,7 +96,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
 
                 <LinearLayout
@@ -133,13 +135,6 @@
                         android:textColor="@color/black_400"/>
                 </LinearLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="장"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/black_400"/>
 
                 <!-- RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
@@ -159,7 +154,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -362,7 +359,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -389,7 +388,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -419,7 +420,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"

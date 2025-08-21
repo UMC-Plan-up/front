@@ -76,7 +76,7 @@
 
                     <!-- 상단 카드: 내 정보(왼쪽) -->
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center">
@@ -94,22 +94,24 @@
                             android:id="@+id/tv_my_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_gravity="center"
                             android:text="토끼"
-                            android:textSize="22sp"
+                            android:textSize="20sp"
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <ImageView
                             android:id="@+id/iv_my_profile"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
+                            android:layout_marginTop="10dp"
                             android:src="@drawable/img_rabbiti_profile"/>
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="60dp"
-                        android:layout_marginEnd="60dp"
+                        android:layout_marginStart="40dp"
+                        android:layout_marginEnd="40dp"
                         android:layout_marginTop="20dp"
                         android:text="vs"
                         android:textSize="20sp"
@@ -117,7 +119,7 @@
 
                     <!-- 상단 카드: 상대 정보(오른쪽) -->
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="100dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:gravity="center">
@@ -136,13 +138,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="토끼"
-                            android:textSize="22sp"
+                            android:layout_gravity="center"
+                            android:textSize="20sp"
                             android:fontFamily="@font/pretendard_medium"/>
 
                         <ImageView
                             android:id="@+id/iv_opponent_profile"
                             android:layout_width="60dp"
                             android:layout_height="60dp"
+                            android:layout_marginTop="10dp"
                             android:src="@drawable/img_rabbiti_profile"/>
                     </LinearLayout>
 
@@ -272,7 +276,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="토끼"
-                            android:textSize="22sp"
+                            android:textSize="20sp"
                             android:layout_marginTop="22dp"
                             android:layout_marginBottom="24dp"/>
                     </LinearLayout>
@@ -317,7 +321,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="강아지"
-                            android:textSize="22sp"
+                            android:textSize="20sp"
                             android:layout_marginTop="22dp"
                             android:layout_marginBottom="24dp"/>
                     </LinearLayout>

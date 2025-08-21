@@ -1,4 +1,4 @@
-package com.example.planup.main.record.adapter
+package com.example.planup.main.record.data
 
 // 주간 리포트 전체 응답
 data class DetailWeeklyReportResponse(
