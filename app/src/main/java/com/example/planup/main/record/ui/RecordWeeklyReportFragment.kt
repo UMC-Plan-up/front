@@ -13,10 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWeeklyReportBinding
 import com.example.planup.main.MainActivity
-import com.example.planup.main.friend.ui.FriendFragment
-import com.example.planup.main.record.adapter.Badge
-import com.example.planup.main.record.adapter.DailyRecord
-import com.example.planup.main.record.adapter.GoalReport
+import com.example.planup.main.record.data.Badge
+import com.example.planup.main.record.data.DailyRecord
+import com.example.planup.main.record.data.GoalReport
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.ChallengePort
@@ -72,6 +71,40 @@ class RecordWeeklyReportFragment : Fragment() {
         updateTitle()
         loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
 
+        return binding.root
+    }
+
+    companion object {
+        private const val ARG_YEAR = "year"
+        private const val ARG_MONTH = "month"
+        private const val ARG_WEEK = "week"
+
+        fun newInstance(year: Int, month: Int, week: Int) = RecordWeeklyReportFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_YEAR, year)
+                putInt(ARG_MONTH, month)
+                putInt(ARG_WEEK, week)
+            }
+        }
+    }
+
+    private fun clickListener(){
+        // 이전, 이후 주차 이동
+        binding.backReportIv.setOnClickListener {
+            moveToPreviousWeek()
+            updateTitle()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
+        }
+        binding.frontReportIv.setOnClickListener {
+            moveToNextWeek()
+            updateTitle()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
+        }
+        binding.backBtn.setOnClickListener{
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordFragment())
+                .commitAllowingStateLoss()
+        }
         // "기록 확인하러 가기" → 완료 화면 이동
         binding.checkChallengeRecordLl.setOnClickListener {
             val c = currentChallenge
@@ -96,41 +129,10 @@ class RecordWeeklyReportFragment : Fragment() {
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
-
-        return binding.root
     }
 
-    companion object {
-        private const val ARG_YEAR = "year"
-        private const val ARG_MONTH = "month"
-        private const val ARG_WEEK = "week"
-
-        fun newInstance(year: Int, month: Int, week: Int) = RecordWeeklyReportFragment().apply {
-            arguments = Bundle().apply {
-                putInt(ARG_YEAR, year)
-                putInt(ARG_MONTH, month)
-                putInt(ARG_WEEK, week)
-            }
-        }
-    }
-
-    private fun clickListener(){
-        // 좌우 주차 이동
-        binding.backReportIv.setOnClickListener {
-            moveToPreviousWeek()
-            updateTitle()
-            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
-        }
-        binding.frontReportIv.setOnClickListener {
-            moveToNextWeek()
-            updateTitle()
-            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
-        }
-        binding.backBtn.setOnClickListener{
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, RecordFragment())
-                .commitAllowingStateLoss()
-        }
+    private fun stripQuotes(name: String?): String {
+        return name?.trim('"') ?: ""
     }
 
     private fun bindChallengeCard(data: ChallengeCardData) = with(binding) {
@@ -143,6 +145,10 @@ class RecordWeeklyReportFragment : Fragment() {
         tvFriend2Name.text = data.friend2Name
         pbFriend2.progress = data.friend2Progress
         data.friend2ProfileRes?.let { ivFriend2.setImageResource(it) }
+
+        tvOpponentValue.text = stripQuotes(data.opponentName)
+        tvFriend1Name.text   = stripQuotes(data.friend1Name)
+        tvFriend2Name.text   = stripQuotes(data.friend2Name)
     }
 
     private fun moveToPreviousWeek() {

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.main.record.data.NotificationDTO
 
 class NotificationAdapter(
     private val onItemClick: (NotificationDTO) -> Unit

@@ -1,4 +1,4 @@
-package com.example.planup.main.record.adapter
+package com.example.planup.main.record.data
 
 data class ApiResponseGoalReportResponse(
     val isSuccess: Boolean,

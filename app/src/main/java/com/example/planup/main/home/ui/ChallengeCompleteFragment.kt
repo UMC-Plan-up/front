@@ -1,5 +1,6 @@
 package com.example.planup.main.home.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -60,6 +61,12 @@ class ChallengeCompleteFragment : Fragment() {
         return binding.root
     }
 
+    // 유틸: 따옴표 제거
+    private fun stripQuotes(name: String?): String {
+        return name?.trim('"') ?: ""
+    }
+
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -72,15 +79,15 @@ class ChallengeCompleteFragment : Fragment() {
         )
 
         val resultText     = arguments?.getString(ARG_RESULT).orEmpty()
-        val opponentName   = arguments?.getString(ARG_OPPONENT).orEmpty()
+        val opponentName   = stripQuotes(arguments?.getString(ARG_OPPONENT))  // 따옴표 제거
         val penaltyText    = arguments?.getString(ARG_PENALTY).orEmpty()
         val myPercent      = (arguments?.getInt(ARG_MY_PERCENT) ?: 0).coerceIn(0, 100)
         val oppPercent     = (arguments?.getInt(ARG_OPP_PERCENT) ?: 0).coerceIn(0, 100)
-        val myName         = arguments?.getString(ARG_MY_NAME).orEmpty().ifBlank { "나" }
+        val myName         = stripQuotes(arguments?.getString(ARG_MY_NAME)).ifBlank { "나" }
         val myProfileRes   = arguments?.getInt(ARG_MY_PROFILE_RES, 0)?.takeIf { it != 0 }
         val oppProfileRes  = arguments?.getInt(ARG_OPP_PROFILE_RES, 0)?.takeIf { it != 0 }
-        val myBarName      = arguments?.getString(ARG_MY_BAR_NAME).orEmpty().ifBlank { myName }
-        val oppBarName     = arguments?.getString(ARG_OPP_BAR_NAME).orEmpty().ifBlank { opponentName }
+        val myBarName      = stripQuotes(arguments?.getString(ARG_MY_BAR_NAME)).ifBlank { myName }
+        val oppBarName     = stripQuotes(arguments?.getString(ARG_OPP_BAR_NAME)).ifBlank { opponentName }
 
         // 상단 카드
         binding.tvMyResult.text = resultText
@@ -89,7 +96,7 @@ class ChallengeCompleteFragment : Fragment() {
 
         val opponentResult = when (resultText) { "승리" -> "패배"; "패배" -> "승리"; else -> resultText }
         binding.tvOpponentResult.text = opponentResult
-        binding.tvOpponentName.text   = opponentName
+        binding.tvOpponentName.text   = opponentName   // 따옴표 제거된 값
         oppProfileRes?.let { binding.ivOpponentProfile.setImageResource(it) }
 
         // 패널티
@@ -99,24 +106,9 @@ class ChallengeCompleteFragment : Fragment() {
         binding.tvMyPercent.text = "${myPercent}%"
         binding.tvOpponentPercent.text = "${oppPercent}%"
 
-        // 하단 라벨 (XML id에 맞춰 설정)
-        binding.tvMyBarName.text = myBarName                 // @+id/tv_my_bar_name
-        binding.tvOppnentBarName.text = oppBarName           // @+id/tv_oppnent_bar_name (오타 포함 id)
-
-        // 막대 높이
-        val maxBarHeightDp = 174
-        setBarHeightByPercent(binding.rabbitBar, myPercent, maxBarHeightDp)
-        setBarHeightByPercent(binding.dogBar,    oppPercent, maxBarHeightDp)
-
-        binding.newChallengeBtn.setOnClickListener {
-            // TODO: 새로운 1:1 챌린지 생성 화면으로 이동
-        }
-    }
-
-    private fun setBarHeightByPercent(view: View, percent: Int, maxHeightDp: Int) {
-        val px = (maxHeightDp * resources.displayMetrics.density).toInt()
-        val h  = (px * (percent / 100f)).toInt().coerceAtLeast((8 * resources.displayMetrics.density).toInt())
-        view.updateLayoutParams<ViewGroup.LayoutParams> { height = h }
+        // 하단 라벨
+        binding.tvMyBarName.text     = myBarName
+        binding.tvOppnentBarName.text = oppBarName
     }
 
     override fun onDestroyView() {
