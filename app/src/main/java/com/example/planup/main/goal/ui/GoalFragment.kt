@@ -40,6 +40,9 @@ import com.example.planup.network.controller.GoalController
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.data.GoalType
+import com.example.planup.network.RetrofitInstance
+import retrofit2.HttpException
+import java.time.LocalDate
 import com.example.planup.main.goal.adapter.GoalApi
 import com.example.planup.network.RetrofitInstance
 import retrofit2.HttpException
