@@ -3,20 +3,19 @@ package com.example.planup.network.port
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
-import com.example.planup.network.data.KakaoAccount
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.MyInviteCode
 import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.Signup
+import com.example.planup.network.data.SyncKakao
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.SignupDto
-import kotlinx.serialization.BinaryFormat
 import okhttp3.MultipartBody
-import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,7 +35,7 @@ interface UserPort {
     fun getUserInfo(): Call<UserResponse<UserInfo>>
     //카카오 계정 연동상태 확인
     @GET("mypage/kakao-account")
-    fun getKakao(): Call<UserResponse<KakaoAccount>>
+    fun getKakao(): Call<UserResponse<UsingKakao>>
 
     //혜택 및 마케팅 동의 변경
     @PATCH("mypage/notification/agree")
@@ -85,4 +84,7 @@ interface UserPort {
     //닉네임 수정
     @POST("mypage/profile/nickname")
     fun changeNickname(@Body nickname: String): Call<UserResponse<String>>
+
+    @POST("users/auth/kakao")
+    fun syncKakao(@Body code: String): Call<SyncKakao>
 }

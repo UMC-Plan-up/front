@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.databinding.FragmentChallengeFinishSettingBinding
 import com.example.planup.goal.GoalActivity
@@ -29,6 +30,14 @@ class ChallengeFinishSettingFragment:Fragment() {
     private fun init(){
         //나에게 챌린지를 보낸 친구의 이름
         friendName = arguments?.getString("friend","friend").toString()
+        binding.challengeFinishSettingCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeFinishSettingCl.height
+                binding.challengeFinishSettingInnerCl.minHeight = height
+                binding.challengeFinishSettingCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
     private fun clickListener(){
         //"네, 확인했어요" 버튼 클릭 시 홈 화면으로 이동

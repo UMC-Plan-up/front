@@ -221,7 +221,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         toast.show()
     }
 
-    private fun makeToast(message: String) {
+    private fun errorToast(message: String) {
         val inflater = LayoutInflater.from(this)
         val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
@@ -244,8 +244,8 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     //로그인 통신 성공
     override fun successLogin(loginResult: Login) {
         when (loginResult.message) {
-            "존재하지 않는 사용자입니다" -> makeToast("등록되지 않은 이메일이에요")
-            "비밀번호가 일치하지 않습니다" -> makeToast("비밀번호를 다시 확인해 주세요.")
+            "존재하지 않는 사용자입니다" -> errorToast("등록되지 않은 이메일이에요")
+            "비밀번호가 일치하지 않습니다" -> errorToast("비밀번호를 다시 확인해 주세요.")
             else -> {
                 editor.putString("accessToken", loginResult.accessToken)
                 editor.apply() // 즉시 저장

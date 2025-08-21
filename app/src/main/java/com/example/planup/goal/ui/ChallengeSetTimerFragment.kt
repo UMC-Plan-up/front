@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -39,6 +40,14 @@ class ChallengeSetTimerFragment : Fragment() {
 
     //프레그먼트 초기화
     private fun init() {
+        binding.challengeSetTimerCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeSetTimerCl.height
+                binding.challengeSetTimerInnerCl.minHeight = height
+                binding.challengeSetTimerCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         hours =
             resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>()) //시간
         minutes = resources.getStringArray(R.array.dropdown_minute_second)

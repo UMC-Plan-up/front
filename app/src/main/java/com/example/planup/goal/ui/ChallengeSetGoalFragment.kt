@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeSetGoalBinding
@@ -36,6 +37,13 @@ class ChallengeSetGoalFragment : Fragment() {
     }
 
     private fun init(){
+        binding.challengeSetGoalCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeSetGoalCl.height
+                binding.challengeSetGoalInnerCl.minHeight = height
+                binding.challengeSetGoalCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
     }

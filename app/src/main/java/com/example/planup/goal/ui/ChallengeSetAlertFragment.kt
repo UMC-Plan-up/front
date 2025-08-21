@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
@@ -43,6 +44,15 @@ class ChallengeSetAlertFragment : Fragment() {
 
     //프레그먼트 초기화
     private fun init(){
+        binding.challengeSetAlertCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeSetAlertCl.height
+                binding.challengeSetAlertInnerCl.minHeight = height
+                binding.challengeSetAlertCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
+
         hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
         minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
         times = resources.getStringArray((R.array.dropdown_morning_afternoon)).toCollection(ArrayList<String>())
