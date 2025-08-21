@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +21,11 @@ class PictureSettingFragment : Fragment() {
     private var _binding: FragmentPictureSettingBinding? = null
     private val binding get() = _binding!!
     private var selectedFrequency: Int? = null
+
+    // SharedPreferences 추가
+    private val PREFS_NAME = "goal_data"
+    private val KEY_FREQUENCY = "last_frequency"
+    private val KEY_VERIFICATION_TYPE = "last_verification_type"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,15 +61,16 @@ class PictureSettingFragment : Fragment() {
                 activity.frequency = selectedFrequency!!
                 activity.verificationType = "PICTURE"
 
+                // SharedPreferences에 저장
+                val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                prefs.edit()
+                    .putInt(KEY_FREQUENCY, selectedFrequency!!)
+                    .putString(KEY_VERIFICATION_TYPE, "PICTURE")
+                    .apply()
+
                 val goalDetailFragment = GoalDetailFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", activity.goalOwnerName)
-                        putString("goalType", activity.goalType)
-                        putString("goalCategory", activity.goalCategory)
-                        putString("goalName", activity.goalName)
-                        putString("goalAmount", activity.goalAmount)
-                        putString("verificationType", activity.verificationType)
-                        putInt("frequency", activity.frequency)
                     }
                 }
                 activity.navigateToFragment(goalDetailFragment)

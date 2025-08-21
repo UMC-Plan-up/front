@@ -34,7 +34,6 @@ class GoalInputFragment : Fragment() {
         goalType = arguments?.getString("goalType")
         goalCategory = arguments?.getString("selectedCategory")
 
-        // args로 들어온 값 있으면 prefs에도 동기화 (화면을 건너뛰더라도 보강되도록)
         goalType?.let { prefs.edit().putString(KEY_GOAL_TYPE, it).apply() }
         goalCategory?.let { prefs.edit().putString(KEY_GOAL_CATEGORY, it).apply() }
     }
@@ -53,13 +52,11 @@ class GoalInputFragment : Fragment() {
         // 타이틀에 닉네임 반영
         binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
-        // 힌트 초기 숨김
         binding.goalNameMinLengthHint.visibility = View.GONE
         binding.goalNameMaxLengthHint.visibility = View.GONE
         binding.goalVolumeMinLengthHint.visibility = View.GONE
         binding.goalVolumeMaxLengthHint.visibility = View.GONE
 
-        // prefs에 저장된 기존 값이 있으면 미리 채워두기 (재진입/복구용)
         val savedName = prefs.getString(KEY_GOAL_NAME, "") ?: ""
         val savedAmount = prefs.getString(KEY_GOAL_AMOUNT, "") ?: ""
         if (savedName.isNotBlank()) binding.nicknameEditText.setText(savedName)
@@ -113,7 +110,6 @@ class GoalInputFragment : Fragment() {
             goalType?.let { activity.goalType = it }
             goalCategory?.let { activity.goalCategory = it }
 
-            // SharedPreferences에 최종 저장(중복이지만 안전하게)
             prefs.edit()
                 .putString(KEY_GOAL_NAME, activity.goalName)
                 .putString(KEY_GOAL_AMOUNT, activity.goalAmount)
