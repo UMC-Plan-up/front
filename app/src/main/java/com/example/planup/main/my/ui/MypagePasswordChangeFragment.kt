@@ -8,10 +8,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -23,6 +25,7 @@ import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.databinding.FragmentMypagePasswordChangeBinding
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.network.controller.UserController
+import com.example.planup.network.dto.user.ChangePassword
 
 class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     lateinit var binding: FragmentMypagePasswordChangeBinding
@@ -30,6 +33,7 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     private var length:Boolean = false
     private var special:Boolean = false
     private var recheck:Boolean = false
+    private lateinit var verificationToken: String
 
     private lateinit var prefs: SharedPreferences
 
@@ -46,7 +50,16 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
     }
 
     private fun init(){
-        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        verificationToken = arguments?.getString("verificationToken","no-data")!!
+        binding.mypagePasswordChangeCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypagePasswordChangeCl.height
+                binding.mypagePasswordChangeInnerCl.minHeight = height
+                binding.mypagePasswordChangeCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
     private fun clickListener(){
         /*뒤로 가기*/
@@ -60,7 +73,7 @@ class MypagePasswordChangeFragment : Fragment(),PasswordChangeAdapter {
             if (!binding.btnPasswordCompleteTv.isActivated) return@setOnClickListener
             val service = UserController()
             service.setPasswordChangeAdapter(this)
-            service.passwordUpdateService(binding.passwordThirdCheckEnterEt.text.toString())
+            service.passwordUpdateService(ChangePassword(verificationToken,binding.passwordThirdCheckEnterEt.text.toString()))
         }
     }
 

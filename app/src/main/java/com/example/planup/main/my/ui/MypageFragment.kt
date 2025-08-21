@@ -19,6 +19,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
@@ -178,6 +179,14 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     private fun init() {
+        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageCl.height
+                binding.mypageInnerCl.minHeight = height
+                binding.mypageCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         //API 서비스
         service = UserController()
         service.setServiceAdapter(this)

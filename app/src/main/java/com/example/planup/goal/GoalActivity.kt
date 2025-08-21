@@ -13,11 +13,8 @@ import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
 import com.example.planup.goal.ui.GoalDetailFragment
-<<<<<<< Updated upstream
 import com.example.planup.goal.ui.PushAlertFragment
-=======
 import com.example.planup.goal.ui.GoalSelectFragment
->>>>>>> Stashed changes
 import com.example.planup.main.MainActivity
 
 class GoalActivity : AppCompatActivity() {
@@ -52,7 +49,8 @@ class GoalActivity : AppCompatActivity() {
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
                 Handler(Looper.getMainLooper()).postDelayed({
-                    val goalDetailFragment = supportFragmentManager.findFragmentById(R.id.goal_container)
+                    val goalDetailFragment =
+                        supportFragmentManager.findFragmentById(R.id.goal_container)
                     if (goalDetailFragment is GoalDetailFragment) {
                         goalDetailFragment.updateLockStatus(true)
                     }
@@ -71,9 +69,9 @@ class GoalActivity : AppCompatActivity() {
         loadLastGoalData()
 
         if (savedInstanceState == null) {
-<<<<<<< Updated upstream
             val isFromPayment = intent.getBooleanExtra("start_from_payment", false)
-            val isFromPaymentToDetail = intent.getBooleanExtra("start_from_payment_to_goal_detail", false)
+            val isFromPaymentToDetail =
+                intent.getBooleanExtra("start_from_payment_to_goal_detail", false)
 
             val startFragment = when {
                 isFromPayment -> PushAlertFragment()
@@ -83,25 +81,25 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                else -> GoalCategoryFragment().apply {
-                    arguments = (arguments ?: Bundle()).apply {
-                        putString("goalOwnerName", goalOwnerName)
-                    }
-                }
+//                else -> GoalCategoryFragment().apply {
+//                    arguments = (arguments ?: Bundle()).apply {
+//                        putString("goalOwnerName", goalOwnerName)
+//                    }
+                else -> GoalSelectFragment()
             }
 
-=======
+
             // GoalSelectFragment를 GoalCategoryFragment로 가정
 //            val first = GoalCategoryFragment().apply {
 //                arguments = (arguments ?: Bundle()).apply {
 //                    putString("goalOwnerName", goalOwnerName)
 //                }
 //            }
-            val first = GoalSelectFragment()
->>>>>>> Stashed changes
+//            val first = GoalSelectFragment()
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)
                 .commit()
+//        }
         }
     }
 
@@ -128,17 +126,22 @@ class GoalActivity : AppCompatActivity() {
         frequency = sharedPref.getInt("last_frequency", frequency)
         period = sharedPref.getString("last_period", period) ?: period
         endDate = sharedPref.getString("last_end_date", endDate) ?: endDate
-        verificationType = sharedPref.getString("last_verification_type", verificationType) ?: verificationType
+        verificationType =
+            sharedPref.getString("last_verification_type", verificationType) ?: verificationType
         limitFriendCount = sharedPref.getInt("last_limit_friend_count", limitFriendCount)
         goalTime = sharedPref.getInt("last_goal_time", goalTime)
 
         // 알림 설정 데이터도 불러오기
-        notificationEnabled = sharedPref.getBoolean("last_notification_enabled", notificationEnabled)
-        regularAlertEnabled = sharedPref.getBoolean("last_regular_alert_enabled", regularAlertEnabled)
-        alertTimeOfDay = sharedPref.getString("last_alert_time_of_day", alertTimeOfDay) ?: alertTimeOfDay
+        notificationEnabled =
+            sharedPref.getBoolean("last_notification_enabled", notificationEnabled)
+        regularAlertEnabled =
+            sharedPref.getBoolean("last_regular_alert_enabled", regularAlertEnabled)
+        alertTimeOfDay =
+            sharedPref.getString("last_alert_time_of_day", alertTimeOfDay) ?: alertTimeOfDay
         alertHour = sharedPref.getString("last_alert_hour", alertHour) ?: alertHour
         alertMinute = sharedPref.getString("last_alert_minute", alertMinute) ?: alertMinute
-        alertDays = sharedPref.getStringSet("last_alert_days", alertDays)?.toMutableSet() ?: alertDays
+        alertDays =
+            sharedPref.getStringSet("last_alert_days", alertDays)?.toMutableSet() ?: alertDays
     }
 
     fun saveGoalData() {
