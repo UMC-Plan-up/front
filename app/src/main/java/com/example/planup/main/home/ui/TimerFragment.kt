@@ -1,7 +1,11 @@
 package com.example.planup.main.home.ui
 
+import android.Manifest
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,12 +28,22 @@ import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import android.os.Build
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.data.HomeTimer
 import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.MemoRequest
+import retrofit2.HttpException
 import java.time.LocalDate
 import kotlin.collections.plus
+import android.view.inputmethod.InputMethodManager
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import androidx.core.content.edit
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 
 class TimerFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
@@ -39,16 +53,33 @@ class TimerFragment : Fragment() {
     private var timerJob: Job? = null
     private var isRunning = false
     private var elapsedSeconds = 0
-    private var events = listOf<HomeTimer>(
-        HomeTimer(1, "토익 공부하기"),
-        HomeTimer(2, "헬스장 가기"),
-        HomeTimer(3, "스터디 모임")
-    )
+    private var events = listOf<HomeTimer>()
+    private lateinit var selectedDate: String
+    private var photoUri: Uri? = null
+    private var tempGoalId: Int = 0
+
+    // 카메라 런처
+    private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+        if (success) {
+            photoUri?.let { uploadImage(it, tempGoalId) }
+        }
+    }
+    // 갤러리 런처
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { uploadImage(it, tempGoalId) }
+    }
+    private val requestCameraPermission = registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+        if (granted) {
+            launchCamera()
+        } else {
+            Toast.makeText(requireContext(), "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentTimerBinding.inflate(inflater, container, false)
         return binding.root
@@ -56,18 +87,16 @@ class TimerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val selectedDate = arguments?.getString("selectedDate")
+        selectedDate = arguments?.getString("selectedDate") ?: LocalDate.now().toString()
         val dateTv = binding.goalListTextDateTv
 
-        val formattedDate = selectedDate?.replace("-", ".")
-        val prefs = requireContext().getSharedPreferences("userInfo", 0)
+        val formattedDate = selectedDate.replace("-", ".")
+        prefs = requireContext().getSharedPreferences("userInfo", 0)
         val token = prefs.getString("accessToken", null)
 
         dateTv.text = formattedDate
 
         loadMyGoalList(token)
-
-        setupSpinner(token, events)
         setupCameraPopup()
         setupTimerButton(token, selectedSpinnerItem)
 
@@ -89,9 +118,29 @@ class TimerFragment : Fragment() {
         backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+        binding.editMemo.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) {  // 포커스를 잃었을 때
+                Log.d("editMemo", "포커스 잃음")
+                val memoText = binding.editMemo.text.toString()
+                val request = MemoRequest(
+                    memo = memoText,
+                    memoDate = selectedDate,
+                    empty = memoText.isEmpty(),
+                    trimmedMemo = memoText.trim()
+                )
+                postMemo(token, selectedSpinnerItem, selectedDate, request)
+            }
+        }
+        binding.root.setOnClickListener {
+            binding.editMemo.clearFocus()
+
+            val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.editMemo.windowToken, 0)
+        }
     }
 
     private fun setupSpinner(token: String?, events: List<HomeTimer>) {
+        Log.d("setupSpinner","$events")
         val spinner: Spinner = binding.goalListSpinner
         val goalNames = events.map { it.goalName }
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, goalNames)
@@ -106,6 +155,8 @@ class TimerFragment : Fragment() {
 
                 loadTodayTotalTime(token, selectedGoal.goalId)
                 loadFriendsTimer(token, selectedGoal.goalId)
+                loadGoalInfo(token, selectedGoal.goalId)
+                loadDateMemo(token, selectedGoal.goalId, selectedDate)
 
                 val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
                 val savedTimerId = prefs.getInt("timer_${selectedGoal.goalId}", -1)
@@ -159,19 +210,35 @@ class TimerFragment : Fragment() {
             val chooseGallery = popupBinding.chooseGalleryTv
 
             takePhoto.setOnClickListener {
-                Toast.makeText(requireContext(), "사진 찍기 선택", Toast.LENGTH_SHORT).show()
                 popupWindow.dismiss()
+                tempGoalId = selectedSpinnerItem
+                if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA)
+                    == PackageManager.PERMISSION_GRANTED) {
+                    launchCamera()
+                } else {
+                    requestCameraPermission.launch(Manifest.permission.CAMERA)
+                }
             }
 
             chooseGallery.setOnClickListener {
-                Toast.makeText(requireContext(), "앨범에서 선택하기 선택", Toast.LENGTH_SHORT).show()
                 popupWindow.dismiss()
+                tempGoalId = selectedSpinnerItem
+                pickImageLauncher.launch("image/*")
             }
 
             popupWindow.showAsDropDown(cameraImageView, 0, 10)
         }
     }
 
+    private fun launchCamera() {
+        val photoFile = File(requireContext().cacheDir, "temp_photo.jpg")
+        photoUri = FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.provider",
+            photoFile
+        )
+        takePhotoLauncher.launch(photoUri)
+    }
     private fun setupTimerButton(token: String?, goalId: Int) {
         val playButton = binding.goalListPlayBtn
 
@@ -192,16 +259,18 @@ class TimerFragment : Fragment() {
             try {
                 val response = RetrofitInstance.verificationApi.postTimerStart(token = "Bearer $token", goalId = goalId)
                 if (response.isSuccess) {
+                    Log.d("startTimer", "타이머 시작 성공")
                     val timerId = response.result.timerId
                     val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
                     prefs.edit().putInt("timer_$goalId", timerId).apply()
                     startTimerWithSavedId(token, goalId, timerId)
-                    Log.d("TimerFragmentAPI", "타이머 시작 성공, timerId: $timerId")
+                    Log.d("startTimer", "타이머 시작 성공, timerId: $timerId")
                 } else {
-                    Log.e("TimerFragmentAPI", "타이머 시작 실패: ${response.message}")
+                    Log.e("startTImer", "타이머 시작 실패: ${response.message}")
                 }
             } catch (e: Exception) {
-                Log.e("TimerFragmentAPI", "에러: ${e.message}")
+                if(e is HttpException) Log.e("startTimer", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                else Log.e("startTimer", "Other error: ${e.message}", e)
             }
         }
     }
@@ -211,10 +280,11 @@ class TimerFragment : Fragment() {
         binding.goalListPlayBtn.setImageResource(R.drawable.ic_play_circle)
         timerJob?.cancel()
 
-        val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
-        prefs.edit().remove("timer_$selectedSpinnerItem").apply()
+        val timerPrefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
+        timerPrefs.edit { remove("timer_$selectedSpinnerItem") }
 
-        stopTimerApi(token = null, goalId = selectedSpinnerItem) // 필요 시 token 전달
+        val token = prefs.getString("accessToken", null)
+        stopTimerApi(token = "Bearer $token", goalId = selectedSpinnerItem) // 필요 시 token 전달
     }
 
     private fun updateTimerText() {
@@ -235,12 +305,16 @@ class TimerFragment : Fragment() {
                 val response = RetrofitInstance.verificationApi.getTodayTotalTime(token = "Bearer $token", goalId = goalId)
                 if (response.isSuccess) {
                     val formattedTime = response.result.formattedTime
-                    Log.d("TimerFragmentAPI", "오늘 총 시간: $formattedTime")
+                    Log.d("loadTotalTime", "오늘 총 시간: $formattedTime")
                 } else {
-                    Log.e("TimerFragmentAPI", "실패: ${response.message}")
+                    Log.e("loadTotalTime", "실패: ${response.message}")
                 }
             } catch (e: Exception) {
-                Log.e("TimerFragmentAPI", "에러: ${e.message}")
+                if (e is HttpException) {
+                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("API", "Other error: ${e.message}", e)
+                }
             }
         }
     }
@@ -269,14 +343,14 @@ class TimerFragment : Fragment() {
             try {
                 val response = RetrofitInstance.verificationApi.putTimerStop(token = "Bearer $token", timerId)
                 if (response.isSuccess) {
-                    Log.d("TimerFragmentAPI", "타이머 중지 성공")
+                    Log.d("stoptimerapi", "타이머 중지 성공")
                     // 중지 성공 시 SharedPreferences 삭제
                     prefs.edit().remove("timer_$goalId").apply()
                 } else {
-                    Log.e("TimerFragmentAPI", "타이머 중지 실패: ${response.message}")
+                    Log.e("stoptimerapi", "타이머 중지 실패: ${response.message}")
                 }
             } catch (e: Exception) {
-                Log.e("TimerFragmentAPI", "에러: ${e.message}")
+                Log.e("stoptimerapi", "에러: ${e.message}")
             }
         }
     }
@@ -284,8 +358,8 @@ class TimerFragment : Fragment() {
     private fun loadFriendsTimer(token: String?, goalId: Int) {
         lifecycleScope.launch {
             try {
-                val apiservice = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiservice.getFriendsTimer(
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getFriendsTimer(
                     token = "Bearer $token",
                     goalId = goalId
                 )
@@ -308,7 +382,11 @@ class TimerFragment : Fragment() {
                     Log.e("TimerFragmentAPI", "친구 타이머 불러오기 실패: ${response.message}")
                 }
             } catch (e: Exception) {
-                Log.e("TimerFragmentAPI", "친구 타이머 로드 에러: ${e.message}")
+                if (e is HttpException) {
+                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("API", "Other error: ${e.message}", e)
+                }
             }
         }
     }
@@ -324,17 +402,119 @@ class TimerFragment : Fragment() {
                 val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
                     val goals = response.result
+                    Log.d("TimerFragment", "loadMyGoalList success: $goals")
                     for (goal in goals) {
-                        events+HomeTimer(goal.goalId, goal.goalName)
+                        events+=HomeTimer(goal.goalId, goal.goalName)
                     }
+                    setupSpinner(token, events)
                 } else {
-                    Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d("timer_loadgoal","실패")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                if (e is HttpException) {
+                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("API", "Other error: ${e.message}", e)
+                }
             }
         }
     }
 
+    private fun loadGoalInfo(token: String?, goalId: Int){
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getEditGoal(token = "Bearer $token", goalId = goalId)
+                if (response.isSuccess) {
+                    val goalData = response.result
+                    binding.timerGoalAmountTv.text = goalData.goalAmount
+                    binding.timerGoalFrequencyTv.text = goalData.frequency.toString()
+
+                } else {
+                    Log.d("EditGoalTitleFragment", "API 실패: ${response.message}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
+            }
+        }
+    }
+
+    private fun loadDateMemo(token: String?, goalId: Int, date: String){
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getDateMemo(token = "Bearer $token", goalId = goalId, date = date)
+                if(response.isSuccess){
+                    val result = response.result
+                    if(result.exists) binding.editMemo.setText(result.memo)
+                    else binding.editMemo.setText("")
+                } else {
+                    Log.d("loadDateMemo", "메모 불러오기 실패")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
+    }
+
+    private fun postMemo(token: String?, goalId: Int, date: String, request: MemoRequest){
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.saveMemo(
+                    token = "Bearer $token",
+                    goalId = goalId,
+                    request = request
+                )
+
+                if (response.isSuccess) {
+                    Log.d("postMemo", "메모 저장 성공")
+                } else {
+
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+            }
+        }
+
+    }
+
+    private fun uploadImage(uri: Uri, goalId: Int ) {
+        val contentResolver = requireContext().contentResolver
+        val inputStream = contentResolver.openInputStream(uri) ?: return
+        val file = File(requireContext().cacheDir, "upload_photo.jpg")
+        inputStream.use { input ->
+            file.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val body = MultipartBody.Part.createFormData("photoFile", file.name, requestFile)
+        val token = prefs.getString("accessToken",null)
+        lifecycleScope.launch {
+            try {
+                val service = RetrofitInstance.verificationApi
+                val response = service.uploadPhoto(
+                    token = "Bearer $token", // 실제 토큰
+                    goalId = goalId, // 실제 goalId
+                    photoFile = body
+                )
+
+                if (response.isSuccess) {
+                    Toast.makeText(requireContext(), "사진 업로드 성공!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "실패: ${response.message}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if(e is HttpException) Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                else Log.e("API", "Other error: ${e.message}", e)
+            }
+        }
+    }
 }

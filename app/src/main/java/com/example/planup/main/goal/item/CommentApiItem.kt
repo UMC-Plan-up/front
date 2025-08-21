@@ -1,0 +1,23 @@
+package com.example.planup.main.goal.item
+
+import com.example.planup.network.data.MyInviteCode
+
+data class GetCommentsResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<GetCommentsResult>
+)
+
+data class GetCommentsResult(
+    val id: Int,
+    val content: String,
+    val writerId: Int,
+    val writerNickname: String,
+    val writerProfileImg: String,
+    val parentCommentId: Int,
+    val parentCommentContent: String,
+    val parentCommentWriter: String,
+    val reply: Boolean,
+    val myComment: Boolean
+)

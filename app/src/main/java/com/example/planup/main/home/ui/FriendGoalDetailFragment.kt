@@ -1,8 +1,11 @@
 package com.example.planup.main.home.ui
 
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,18 +26,35 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import androidx.core.graphics.toColorInt
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalRetrofitInstance
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import com.example.planup.R
 
 class FriendGoalDetailFragment : Fragment() {
 
     private var _binding: FragmentFriendGoalDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var chart: CombinedChart
+    private lateinit var userPrefs: SharedPreferences
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFriendGoalDetailBinding.inflate(inflater, container, false)
+        userPrefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+        val token = userPrefs.getString("accessToken", null)
+
+        val goalId = arguments?.getInt("goalId") ?: 0
+        val title = arguments?.getString("title") ?: ""
+        binding.friendDetailTitleTv.text = title
+        binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
+        loadComment(token, goalId)
+
         chart = binding.friendGoalChart
         setupCombinedChart()
 
@@ -141,5 +161,27 @@ class FriendGoalDetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun loadComment(token: String?, goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = apiService.getComments(token = "Bearer $token", goalId = goalId)
+                if(response.isSuccess) {
+                    binding.friendGoalCommentTv.text = response.result[0].content
+                    binding.friendGoalOtherNicknameTv.text = response.result[0].writerNickname
+                    Glide.with(this@FriendGoalDetailFragment)
+                        .load(response.result[0].writerProfileImg)
+                        .error(R.drawable.img_friend_profile_sample1)
+                        .into(binding.friendGoalOtherProfileIv)
+                } else {
+                    Log.d("FriendGoalDetailFragment", "loadComment 실패: ${response.message}")
+                    binding.friendGoalOtherCommentLl.visibility = View.GONE
+                }
+            } catch(e: Exception) {
+                Log.d("FriendGoalDetailFragment", "loadComment 오류: ${e.message}")
+            }
+        }
     }
 }

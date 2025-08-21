@@ -15,6 +15,7 @@ import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class PushAlertFragment : Fragment() {
     private lateinit var binding: FragmentPushAlertBinding
@@ -73,6 +74,7 @@ class PushAlertFragment : Fragment() {
                 limitFriendCount = limitFriendCount,
                 goalTime = goalTime
             )
+            Log.d("EditGoalFragment", "$request")
             updateGoal(goalId = goalId, request = request)
             val nextfragment = EditGoalCompleteFragment()
             val bundle = Bundle().apply {
@@ -105,8 +107,11 @@ class PushAlertFragment : Fragment() {
                     Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("EditGoalFragment", "네트워크 오류: ${e.localizedMessage}")
+                if (e is HttpException) {
+                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("API", "Other error: ${e.message}", e)
+                }
             }
         }
     }

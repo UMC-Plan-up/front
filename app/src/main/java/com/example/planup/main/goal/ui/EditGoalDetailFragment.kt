@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -59,7 +58,7 @@ class EditGoalDetailFragment : Fragment(){
             parentFragmentManager.popBackStack()
         }
 
-        val frequency = frequencyEt.text.toString()
+        val freqStr = frequencyEt.text.toString()
 
         // 버튼들을 리스트로 묶어 관리
         val buttonList = listOf(dailyBtn, weeklyBtn, monthlyBtn)
@@ -75,10 +74,10 @@ class EditGoalDetailFragment : Fragment(){
                 }
             }
             duration = when (selectedBtn) {
-                dailyBtn -> "DAILY"
-                weeklyBtn -> "WEEKLY"
-                monthlyBtn -> "MONTHLY"
-                else -> "DAILY"
+                dailyBtn -> "DAY"
+                weeklyBtn -> "WEEK"
+                monthlyBtn -> "MONTH"
+                else -> "DAY"
             }
         }
 
@@ -90,6 +89,8 @@ class EditGoalDetailFragment : Fragment(){
         monthlyBtn.setOnClickListener { selectButton(monthlyBtn) }
 
         nextBtn.setOnClickListener {
+            val freqValue = freqStr.toIntOrNull() ?: frequency
+
             val nextfragment = PushAlertFragment()
             val bundle = Bundle().apply {
                 putInt("goalId", goalId)
@@ -98,7 +99,7 @@ class EditGoalDetailFragment : Fragment(){
                 putString("goalCategory", goalCategory)
                 putString("goalType", goalType)
                 putInt("oneDose", oneDose)
-                putInt("frequency", frequency.toInt())
+                putInt("frequency", freqValue)
                 putString("period", duration)
                 putString("endDate", endDate)
                 putString("verificationType", verificationType)

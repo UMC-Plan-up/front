@@ -28,6 +28,7 @@ class EditGoalTitleFragment : Fragment() {
         super.onCreate(savedInstanceState)
         // arguments에서 goalId 받아오기
         goalId = arguments?.getInt("goalId") ?: 0
+        Log.d("EditGoalTitleFragment", "goalId: $goalId")
 
         isSolo = arguments?.getBoolean("isSolo") ?: false
     }
