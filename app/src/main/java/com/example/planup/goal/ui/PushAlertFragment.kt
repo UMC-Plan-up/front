@@ -2,7 +2,6 @@ package com.example.planup.goal.ui
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -11,14 +10,12 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPushAlertBinding
 import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
 import com.example.planup.goal.GoalActivity
@@ -163,8 +160,7 @@ class PushAlertFragment : Fragment() {
                 }
             }
             activity.navigateToFragment(goalCompleteFragment)
-
-            makeToast()
+            showSizedToast(binding.nextButton, getString(R.string.toast_alert_setting))
         }
 
         //정기 알림 시간 설정
@@ -306,18 +302,39 @@ class PushAlertFragment : Fragment() {
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = adapter
     }
 
-    //설정 완료 후 토스트 메시지 출력
-    private fun makeToast() {
-        val inflater = LayoutInflater.from(requireContext())
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_alert_setting)
 
-        val toast = Toast(requireContext())
-        toast.view = layout
-        toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 200)
-        toast.show()
+    private fun showSizedToast(matchTo: View, text: CharSequence) {
+        val doShow: () -> Unit = {
+            val layout = layoutInflater.inflate(R.layout.toast_grey_template, null) as android.widget.LinearLayout
+            val tv = layout.findViewById<TextView>(R.id.toast_grey_template_tv)
+
+            val lp = matchTo.layoutParams as ViewGroup.MarginLayoutParams
+            val w = matchTo.width
+            val h = matchTo.height
+
+            layout.setPadding(lp.marginStart, 0, lp.marginEnd, 0)
+
+            tv.layoutParams = android.widget.LinearLayout.LayoutParams(w, h)
+            tv.text = text
+
+            Toast(requireContext()).apply {
+                view = layout
+                duration = Toast.LENGTH_SHORT
+                setGravity(Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM, 0, 400)
+            }.show()
+        }
+
+        if (matchTo.width == 0 || matchTo.height == 0) {
+            matchTo.post { doShow() }
+        } else {
+            doShow()
+        }
     }
+
+
+    private fun Int.dp(): Int =
+        (this * resources.displayMetrics.density).toInt()
+
 
     override fun onDestroyView() {
         super.onDestroyView()

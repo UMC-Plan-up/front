@@ -19,9 +19,13 @@ interface GoalApi {
         @Body goalCreateRequest: GoalCreateRequest
     ): Response<GoalCreateResponse>
 
-    // 카테고리별 목표 조회 API
-    @GET("/goals/create/list")
-    suspend fun getGoalsByCategory(
+    @GET("/goals/create/list/friend")
+    suspend fun getFriendGoalsByCategory(
+        @Query("goalCategory") goalCategory: String
+    ): Response<GoalListResponseDto>
+
+    @GET("/goals/create/list/community")
+    suspend fun getCommunityGoalsByCategory(
         @Query("goalCategory") goalCategory: String
     ): Response<GoalListResponseDto>
 

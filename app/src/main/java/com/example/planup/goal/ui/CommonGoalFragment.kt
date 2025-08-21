@@ -12,7 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalItemDto
+import com.example.planup.goal.data.GoalDto
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import android.util.Log
@@ -31,7 +31,7 @@ class CommonGoalFragment : Fragment() {
     private var goalOwnerName: String = "사용자"
     private var goalCategory: String = "STUDYING"
 
-    private var currentFilteredGoals: List<GoalItemDto> = emptyList()
+    private var currentFilteredGoals: List<GoalDto> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -111,12 +111,16 @@ class CommonGoalFragment : Fragment() {
     private fun fetchGoalsFromServer(goalType: String) {
         lifecycleScope.launch {
             try {
-                val res = RetrofitInstance.goalApi.getGoalsByCategory(goalCategory)
+                val res = if (goalType.equals("FRIEND", ignoreCase = true)) {
+                    RetrofitInstance.goalApi.getFriendGoalsByCategory(goalCategory)
+                } else {
+                    RetrofitInstance.goalApi.getCommunityGoalsByCategory(goalCategory)
+                }
+
                 if (res.isSuccessful) {
-                    val all = res.body()?.result.orEmpty()
-                    val filtered = all.filter { it.goalType.equals(goalType, ignoreCase = true) }
-                    currentFilteredGoals = filtered
-                    renderFirstThree(filtered)
+                    val list = res.body()?.result.orEmpty()
+                    currentFilteredGoals = list
+                    renderFirstThree(list)
                 } else {
                     Log.e("GoalAPI", "code=${res.code()} msg=${res.errorBody()?.string()}")
                     renderFirstThree(emptyList())
@@ -129,7 +133,7 @@ class CommonGoalFragment : Fragment() {
     }
 
     /* 목표 카드를 goalContainer에 추가 */
-    private fun renderFirstThree(goals: List<GoalItemDto>) {
+    private fun renderFirstThree(goals: List<GoalDto>) {
         binding.goalCardContainer.removeAllViews()
 
         val first = goals.take(3)
@@ -147,13 +151,13 @@ class CommonGoalFragment : Fragment() {
         }
     }
 
-    private fun addCards(list: List<GoalItemDto>) {
+    private fun addCards(list: List<GoalDto>) {
         val inflater = LayoutInflater.from(requireContext())
         list.forEach { goal ->
             val card = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
 
             Glide.with(this)
-                .load(goal.creatorProfileImg?.takeIf { it.isNotBlank() })
+                .load(goal.creatorProfileImg.takeIf { it.isNotBlank() })
                 .placeholder(R.drawable.ic_profile_green)
                 .into(card.profileImage)
 
@@ -166,7 +170,6 @@ class CommonGoalFragment : Fragment() {
             } else {
                 card.goalTime.visibility = View.GONE
             }
-
 
             card.goalTitle.text = goal.goalName
             card.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
@@ -182,7 +185,6 @@ class CommonGoalFragment : Fragment() {
         val s = totalSeconds % 60
         return String.format("%02d:%02d:%02d", h, m, s)
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
