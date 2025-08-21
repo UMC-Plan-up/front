@@ -1,3 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-files-path name="images" path="Pictures/" />
+    <!-- cacheDir 사용 가능하게 -->
+    <cache-path
+        name="cache"
+        path="." />
+
+    <!-- 만약 filesDir 안도 쓸 거라면 -->
+    <files-path
+        name="files"
+        path="." />
+
+    <!-- 외부 저장소 쓰려면 (필요할 때만) -->
+    <external-files-path
+        name="external"
+        path="." />
 </paths>

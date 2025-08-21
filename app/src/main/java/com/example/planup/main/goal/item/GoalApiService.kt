@@ -6,21 +6,23 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface GoalApiService {
     @PUT("/goals/{goalId}")
     suspend fun editGoal(
         @Header("Authorization") token: String,
-        @Path("goalId") goalId: Int,
+        @Query("goalId") goalId: Int,
         @Body editGoalRequest: EditGoalRequest
     ): EditGoalApiResponse
 
     @GET("/goals/{goalId}/edit")
     suspend fun getEditGoal(
         @Header("Authorization") token: String,
-        @Path("goalId") goalId: Int
+        @Query("goalId") goalId: Int
     ): EditGoalApiResponse
 
     @GET("/goals/mygoal/list")
@@ -31,7 +33,7 @@ interface GoalApiService {
     @GET("/goals/friendgoal/list")
     suspend fun getFriendGoalList(
         @Header("Authorization") token: String,
-        @Path ("friendId") friendId: Int
+        @Query ("friendId") friendId: Int
     ): FriendGoalListResponse
 
     @GET("/goals/mygoal/{goalId}")
@@ -52,4 +54,23 @@ interface GoalApiService {
         @Path("date") date: String
     ): DailyGoalResponse
 
+    @GET("/goals/{goalId}/memo/{date}")
+    suspend fun getDateMemo(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int,
+        @Path("date") date: String
+    ): DateMemoResponse
+
+    @POST("goals/{goalId}/memo")
+    suspend fun saveMemo(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int,
+        @Body request: MemoRequest
+    ): PostMemoResponse
+
+    @GET("/goals/{goalId}/comments")
+    suspend fun getComments(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int
+    ): GetCommentsResponse
 }

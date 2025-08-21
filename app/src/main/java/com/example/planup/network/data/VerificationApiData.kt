@@ -40,3 +40,10 @@ data class TimerStopResult(
     val currentVerificationCount: Int,
     val goalAchieved: Boolean
 )
+
+data class UploadResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: Any?
+)

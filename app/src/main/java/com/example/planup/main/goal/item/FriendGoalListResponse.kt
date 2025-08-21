@@ -4,10 +4,10 @@ data class FriendGoalListResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: List<FriendGoalApiItem>
+    val result: List<FriendGoalListResult>
 )
 
-data class FriendGoalApiItem(
+data class FriendGoalListResult(
     val goalId: Int,
     val goalName: String,
     val goalType: String,

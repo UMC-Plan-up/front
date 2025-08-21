@@ -25,7 +25,7 @@
         <!-- 2. 이번 주 집중 시간 -->
 
         <TextView
-            android:id="@+id/textView11"
+            android:id="@+id/friend_detail_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
@@ -36,7 +36,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView13"
+            android:id="@+id/friend_detail_week_focus_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -44,7 +44,7 @@
             style="@style/Typography_XL_Medium"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView11" />
+            app:layout_constraintTop_toBottomOf="@+id/friend_detail_title_tv" />
 
         <!-- 3. 시간 표시 -->
         <TextView
@@ -57,7 +57,7 @@
             android:textSize="35sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView13"
+            app:layout_constraintTop_toBottomOf="@+id/friend_detail_week_focus_tv"
             android:layout_marginTop="8dp"/>
 
         <!-- 4. 응원해요 / 5. 본받겠어요 -->
@@ -254,13 +254,143 @@
             android:lineSpacingExtra="9dp"
             android:layout_marginStart="33dp"
             android:layout_marginTop="24dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_comment_tv"/>
         <!-- 댓글 부분 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_comment_tv">
+
+            <LinearLayout
+                android:id="@+id/friend_goal_other_comment_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="10dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:id="@+id/friend_goal_other_profile_iv"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/img_friend_profile_sample1"
+                        android:scaleType="centerCrop"
+                        android:clipToOutline="true"/>
+
+                    <TextView
+                        android:id="@+id/friend_goal_other_nickname_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="친구1"
+                        android:textSize="14sp"
+                        android:textColor="#222222"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="6dp"/>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/friend_goal_comment_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/img_speech_balloon_friend"
+                    android:padding="16dp"
+                    android:paddingStart="30dp"
+                    android:text="벌써 이만큼 했음? 부지런하네..."
+                    style="@style/Typography_SM_Medium"
+                    android:textColor="@color/black_300"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:elevation="4dp"
+                    android:layout_gravity="center"/>
+
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/friend_goal_comment_my_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="20dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:id="@+id/linearLayout5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:orientation="vertical"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:clipToOutline="true"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/img_friend_profile_sample2" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="닉네임"
+                        android:textColor="#222222"
+                        android:textSize="14sp"
+                        android:layout_marginTop="6dp"/>
+
+                </LinearLayout>
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@id/linearLayout5"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <EditText
+                        android:id="@+id/friend_goal_comment_et"
+                        style="@style/Typography_SM_Medium"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/img_speech_ballon"
+                        android:hint="댓글을 입력하세요"
+                        android:paddingStart="26dp"
+                        android:paddingEnd="60dp"  />
+
+                    <ImageView
+                        android:id="@+id/friend_goal_send_comment_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_send_comment"
+                        android:layout_gravity="end|bottom"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="7dp"/>
+                </FrameLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
