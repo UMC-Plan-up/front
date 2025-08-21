@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -24,6 +25,7 @@ import com.example.planup.network.controller.UserController
 import com.example.planup.network.data.PasswordLink
 
 class MypagePasswordLinkFragment: Fragment(), PasswordLinkAdapter {
+
 
     lateinit var binding: FragmentMypagePasswordLinkBinding
     lateinit var email: String
@@ -42,6 +44,14 @@ class MypagePasswordLinkFragment: Fragment(), PasswordLinkAdapter {
     }
 
     private fun init(){
+        binding.mypagePasswordLinkCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypagePasswordLinkCl.height
+                binding.mypagePasswordInnerInnnerCl.minHeight = height
+                binding.mypagePasswordLinkCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         editor = prefs.edit()
         email = prefs.getString("email","email").toString()
@@ -82,7 +92,9 @@ class MypagePasswordLinkFragment: Fragment(), PasswordLinkAdapter {
         }
     }
 
-    override fun successPasswordLink(email: String) {
+    override fun successPasswordLink(token: String) {
+        editor.putString("verificationToken",token)
+        editor.apply()
         Log.d("okhttp",email)
     }
     override fun failPasswordLink(message: String) {

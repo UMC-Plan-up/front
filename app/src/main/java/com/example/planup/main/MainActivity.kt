@@ -1,8 +1,11 @@
 package com.example.planup.main
 
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -14,17 +17,26 @@ import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.MypagePasswordChangeFragment
+import com.example.planup.main.my.ui.MypagePasswordLinkFragment
 import com.example.planup.main.record.ui.RecordFragment
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
+        editor = prefs.edit()
 
         val actionNavigate = intent.getStringExtra("ACTION_NAVIGATE")
         val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
@@ -39,26 +51,46 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             // 딥링크 로직
+            else -> HomeFragment()
+        }
+        initBottomNavigation(startFragment)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        val deeplinkFragment = when {
             intent?.action == Intent.ACTION_VIEW -> {
                 val data: Uri? = intent?.data
+                Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
                 when {
-                    data?.host.equals("password") && data?.path?.startsWith("/change")!! && data.getQueryParameter("verified").equals("true") -> {
-                        MypagePasswordChangeFragment()
+                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
+                        "verified"
+                    ).equals("true") -> {
+                        MypagePasswordChangeFragment().apply {
+                            arguments = Bundle().apply {
+                                putString("verificationToken", prefs.getString("verificationToken","no-data"))
+                                editor.remove("passwordToken")
+                                editor.apply()
+                            }
+                        }
                     }
-                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter("verified").equals("true") -> {
+
+                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
+                        "verified"
+                    ).equals("true") -> {
                         MypageEmailLinkFragment().apply {
                             arguments = Bundle().apply {
                                 putBoolean("deepLink", true)
                             }
                         }
                     }
+
                     else -> HomeFragment()
                 }
-            }
-            else -> HomeFragment()
+            } else -> HomeFragment()
         }
 
-        initBottomNavigation(startFragment)
+        initBottomNavigation(deeplinkFragment)
     }
 
     fun navigateToFragment(fragment: Fragment) {

@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -41,6 +42,14 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
     }
 
     private fun init() {
+        binding.mypageDeleteAccountCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageDeleteAccountCl.height
+                binding.mypageDeleteAccountInnerCl.minHeight = height
+                binding.mypageDeleteAccountCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         binding.deleteAccountNameTv.text = prefs.getString("nickname","no-data")
     }

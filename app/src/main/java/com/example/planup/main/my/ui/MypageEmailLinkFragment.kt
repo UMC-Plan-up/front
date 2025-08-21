@@ -12,6 +12,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -43,6 +44,7 @@ class MypageEmailLinkFragment:Fragment(), EmailLinkAdapter {
         //이전 프레그먼트에서 전달받은 이메일
         init()
         clickListener()
+        Log.d("okhttp","adfadfdsa")
         Log.d("okhttp",arguments?.getBoolean("deepLink")!!.toString())
         if (arguments?.getBoolean("deepLink")!!){
             showPopup(newEmail)
@@ -51,6 +53,14 @@ class MypageEmailLinkFragment:Fragment(), EmailLinkAdapter {
     }
 
     private fun init(){
+        binding.mypageEmailLinkCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height =binding.mypageEmailLinkCl.height
+                binding.mypageEmailLinkInnerCl.minHeight = height
+                binding.mypageEmailLinkCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         editor = prefs.edit()
         newEmail = prefs.getString("newEmail","no-email")!!

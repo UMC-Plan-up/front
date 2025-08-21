@@ -30,6 +30,12 @@ interface GoalApiService {
         @Header("Authorization") token: String
     ): MyGoalListResponse
 
+    // 내 목표 상세 조회 API
+    @GET("/goals/mygoal/{goalId}")
+    suspend fun getMySpecificGoalList(
+        @Header("Authorization") token: String,
+        @Query("goalId") goalId: Int
+    ): ApiResponseListMyGoalListDto
     @GET("/goals/friendgoal/list")
     suspend fun getFriendGoalList(
         @Header("Authorization") token: String,

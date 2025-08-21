@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
@@ -18,9 +19,22 @@ class MypagePolicyFragment:Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypagePolicyBinding.inflate(inflater,container,false)
+        init()
         clickListener()
         return binding.root
     }
+
+    private fun init(){
+        binding.mypagePolicyCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypagePolicyCl.height
+                binding.mypagePolicyInnerCl.minHeight = height
+                binding.mypagePolicyCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
+    }
+
     private fun clickListener(){
         /*뒤로 가기*/
         binding.policyBackIv.setOnClickListener{

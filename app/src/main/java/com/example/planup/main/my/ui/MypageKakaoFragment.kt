@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -43,6 +44,14 @@ class MypageKakaoFragment : Fragment(), KakaoAdapter {
     }
 
     private fun init() {
+        binding.mypageKakaoCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageKakaoCl.height
+                binding.mypageKakaoInnerCl.minHeight = height
+                binding.mypageKakaoCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         val service = UserController()
         service.setKakaoAdapter(this)

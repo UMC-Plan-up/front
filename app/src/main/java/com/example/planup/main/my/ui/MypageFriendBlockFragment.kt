@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -48,6 +49,14 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
 
     //프레그먼트 초기화
     private fun init() {
+        binding.mypageFriendBlockCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageFriendBlockCl.height
+                binding.mypageFriendBlockInnerCl.minHeight = height
+                binding.mypageFriendBlockCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         //API 컨트롤러 생성
         controller = FriendController()
         //차단 친구 목록 요청

@@ -24,7 +24,9 @@ import com.example.planup.network.data.SyncKakao
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
+import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.LoginDto
+import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserPort
 import okhttp3.MultipartBody
@@ -40,15 +42,16 @@ class UserController {
 
     //닉네임 변경
     private lateinit var nicknameChangeAdapter: NicknameChangeAdapter
-    fun setNicknameChangeAdapter(adapter: NicknameChangeAdapter){
+    fun setNicknameChangeAdapter(adapter: NicknameChangeAdapter) {
         this.nicknameChangeAdapter = adapter
     }
 
     //회원 정보 조회
     private lateinit var userInfoAdapter: UserInfoAdapter
-    fun setUserInfoAdapter(adapter: UserInfoAdapter){
+    fun setUserInfoAdapter(adapter: UserInfoAdapter) {
         this.userInfoAdapter = adapter
     }
+
     //회원 탈퇴
     private lateinit var closeAccountAdapter: CloseAccountAdapter
     fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
@@ -87,42 +90,43 @@ class UserController {
 
     //비밀번호 변경 시 이메일 인증링크 발송
     private lateinit var passwordLinkAdapter: PasswordLinkAdapter
-    fun setPasswordLinkAdapter(adapter: PasswordLinkAdapter){
+    fun setPasswordLinkAdapter(adapter: PasswordLinkAdapter) {
         this.passwordLinkAdapter = adapter
     }
 
     //비밀번호 변경
     private lateinit var passwordChangeAdapter: PasswordChangeAdapter
-    fun setPasswordChangeAdapter(adapter: PasswordChangeAdapter){
+    fun setPasswordChangeAdapter(adapter: PasswordChangeAdapter) {
         this.passwordChangeAdapter = adapter
     }
+
     //이메일 변경 시 이메일 인증링크 발송
     private lateinit var emailLinkAdapter: EmailLinkAdapter
-    fun setEmailLinkAdapter(adapter: EmailLinkAdapter){
+    fun setEmailLinkAdapter(adapter: EmailLinkAdapter) {
         emailLinkAdapter = adapter
     }
 
     private lateinit var profileImageAdapter: ProfileImageAdapter
-    fun setProfileImageAdapter(adapter: ProfileImageAdapter){
+    fun setProfileImageAdapter(adapter: ProfileImageAdapter) {
         profileImageAdapter = adapter
     }
 
     private lateinit var kakaoSyncAdapter: KakaoSyncAdapter
-    fun setKakaoSyncAdapter(adapter: KakaoSyncAdapter){
+    fun setKakaoSyncAdapter(adapter: KakaoSyncAdapter) {
         this.kakaoSyncAdapter = adapter
     }
 
     //유저 정보 조회
-    fun userInfoService(){
+    fun userInfoService() {
         val service = getRetrofit().create(UserPort::class.java)
-        service.getUserInfo().enqueue(object : Callback<UserResponse<UserInfo>>{
+        service.getUserInfo().enqueue(object : Callback<UserResponse<UserInfo>> {
             override fun onResponse(
                 call: Call<UserResponse<UserInfo>>,
                 response: Response<UserResponse<UserInfo>>
             ) {
-                if (response.isSuccessful && response.body() != null){
+                if (response.isSuccessful && response.body() != null) {
                     userInfoAdapter.successUserInfo(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null){
+                } else if (!response.isSuccessful && response.body() != null) {
                     userInfoAdapter.failUserInfo(response.body()!!.message)
                 } else {
                     userInfoAdapter.failUserInfo("null")
@@ -207,15 +211,15 @@ class UserController {
     }
 
     // 비밀번호 변경 시 인증링크 발송
-    fun passwordLinkService(email: String){
+    fun passwordLinkService(email: EmailForPassword) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.passwordLink(email).enqueue(object : Callback<UserResponse<PasswordLink>>{
+        service.passwordLink(email).enqueue(object : Callback<UserResponse<PasswordLink>> {
             override fun onResponse(
                 call: Call<UserResponse<PasswordLink>>,
                 response: Response<UserResponse<PasswordLink>>
             ) {
-                if (response.isSuccessful && response.body() != null){
-                    passwordLinkAdapter.successPasswordLink(response.body()!!.result.email)
+                if (response.isSuccessful && response.body() != null) {
+                    passwordLinkAdapter.successPasswordLink(response.body()!!.result.token)
                 } else if (!response.isSuccessful && response.body() != null) {
                     passwordLinkAdapter.failPasswordLink(response.body()!!.message)
                 } else {
@@ -230,14 +234,14 @@ class UserController {
     }
 
     // 비밀번호 변경 시 인증링크 재발송
-    fun passwordRelinkService(email: String){
+    fun passwordRelinkService(email: String) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.passwordRelink(email).enqueue(object : Callback<UserResponse<PasswordLink>>{
+        service.passwordRelink(email).enqueue(object : Callback<UserResponse<PasswordLink>> {
             override fun onResponse(
                 call: Call<UserResponse<PasswordLink>>,
                 response: Response<UserResponse<PasswordLink>>
             ) {
-                if (response.isSuccessful && response.body() != null){
+                if (response.isSuccessful && response.body() != null) {
                     passwordLinkAdapter.successPasswordLink(response.body()!!.result.email)
                 } else if (!response.isSuccessful && response.body() != null) {
                     passwordLinkAdapter.failPasswordLink(response.body()!!.message)
@@ -253,7 +257,7 @@ class UserController {
     }
 
     // 비밀번호 변경
-    fun passwordUpdateService(password: String) {
+    fun passwordUpdateService(password: ChangePassword) {
         val passwordService = getRetrofit().create(UserPort::class.java)
         passwordService.changePassword(password)
             .enqueue(object : Callback<UserResponse<Boolean>> {
@@ -356,7 +360,7 @@ class UserController {
                 response: Response<UserResponse<Boolean>>
             ) {
                 if (response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp","로그인 액티비티")
+                    Log.d("okhttp", "로그인 액티비티")
                     logoutAdapter.successLogout()
                 } else if (!response.isSuccessful && response.body() != null) {
                     logoutAdapter.failLogout(response.body()!!.message)
@@ -396,17 +400,23 @@ class UserController {
     }
 
     //이메일 변경 시 인증링크 발송
-    fun emailLinkService(email: String){
+    fun emailLinkService(email: String) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.emailLink(email).enqueue(object : Callback<UserResponse<EmailLink>>{
+        service.emailLink(email).enqueue(object : Callback<UserResponse<EmailLink>> {
             override fun onResponse(
                 call: Call<UserResponse<EmailLink>>,
                 response: Response<UserResponse<EmailLink>>
             ) {
-                if (response.isSuccessful && response.body() != null){
+                if (response.isSuccessful && response.body() != null) {
+
                     emailLinkAdapter.successEmailLink(response.body()!!.result.email)
-                } else if (!response.isSuccessful && response.body() != null){
-                    emailLinkAdapter.failEmailLink(response.message())
+
+
+                } else if (!response.isSuccessful && response.body() != null) {
+                    when (response.body()!!.code) {
+                        "USER403" -> emailLinkAdapter.failEmailLink("이미 존재하는 이메일입니다.")
+                    }
+                    emailLinkAdapter.failEmailLink(response.body()!!.message)
                 } else {
                     emailLinkAdapter.failEmailLink("null")
                 }
@@ -420,16 +430,16 @@ class UserController {
     }
 
     //이메일 변경 시 인증링크 재발송
-    fun emailRelinkService(email: String){
+    fun emailRelinkService(email: String) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.emailReLink(email).enqueue(object : Callback<UserResponse<EmailLink>>{
+        service.emailReLink(email).enqueue(object : Callback<UserResponse<EmailLink>> {
             override fun onResponse(
                 call: Call<UserResponse<EmailLink>>,
                 response: Response<UserResponse<EmailLink>>
             ) {
-                if (response.isSuccessful && response.body() != null){
+                if (response.isSuccessful && response.body() != null) {
                     emailLinkAdapter.successEmailLink(response.body()!!.result.email)
-                } else if (!response.isSuccessful && response.body() != null){
+                } else if (!response.isSuccessful && response.body() != null) {
                     emailLinkAdapter.failEmailLink(response.message())
                 } else {
                     emailLinkAdapter.failEmailLink("null")
@@ -444,22 +454,22 @@ class UserController {
     }
 
     //프로필 사진 업로드
-    fun imageUploadService(file: MultipartBody.Part){
+    fun imageUploadService(file: MultipartBody.Part) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.setProfileImage(file).enqueue(object : Callback<UserResponse<ProfileImage>>{
+        service.setProfileImage(file).enqueue(object : Callback<UserResponse<ProfileImage>> {
             override fun onResponse(
                 call: Call<UserResponse<ProfileImage>>,
                 response: Response<UserResponse<ProfileImage>>
             ) {
-                if (response.isSuccessful && response.body() != null){
-                    when(response.body()!!.code){
+                if (response.isSuccessful && response.body() != null) {
+                    when (response.body()!!.code) {
                         "200" -> profileImageAdapter.successProfileImage(response.body()!!.result.file)
                         "U001" -> profileImageAdapter.failProfileImage(response.body()!!.message)
                     }
                 } else if (!response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp","image, ${response.body()!!.message}")
+                    Log.d("okhttp", "image, ${response.body()!!.message}")
                 } else {
-                    Log.d("okhttp","image, null")
+                    Log.d("okhttp", "image, null")
                 }
             }
 
@@ -473,12 +483,12 @@ class UserController {
     //카카오 소셜 로그인
     fun kakaoSyncronizeService(code: String) {
         val service = getRetrofit().create(UserPort::class.java)
-        service.syncKakao(code).enqueue(object : Callback<SyncKakao>{
+        service.syncKakao(code).enqueue(object : Callback<SyncKakao> {
             override fun onResponse(call: Call<SyncKakao>, response: Response<SyncKakao>) {
                 if (response.isSuccessful && response.body() != null) {
                     kakaoSyncAdapter.successKakaoSync(response.body()!!.result.userInfo.email)
                 } else if (!response.isSuccessful && response.body() != null) {
-                    when(response.body()!!.code){
+                    when (response.body()!!.code) {
                         "S001" -> kakaoSyncAdapter.failKakaoSync("잘못된 입력값입니다.")
                         "S002" -> kakaoSyncAdapter.failKakaoSync("서버 에러가 발생했습니다")
                         "U001" -> kakaoSyncAdapter.failKakaoSync("존재하지 않는 사용자입니다.")

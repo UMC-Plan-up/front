@@ -9,6 +9,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -30,10 +31,21 @@ class MypageOtherFragment:Fragment(), LogoutAdapter {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypageOtherBinding.inflate(inflater,container,false)
+        init()
         clickListener()
         return binding.root
     }
 
+    private fun init(){
+        binding.mypageOtherCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageOtherCl.height
+                binding.mypageOtherInnerCl.minHeight = height
+                binding.mypageOtherCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
+    }
     private fun clickListener(){
         /*뒤로 가기*/
         binding.otherBackIv.setOnClickListener {
