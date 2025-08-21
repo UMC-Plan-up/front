@@ -13,7 +13,9 @@ import com.example.planup.network.data.SyncKakao
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.WithDraw
+import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.LoginDto
+import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.SignupDto
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -49,7 +51,7 @@ interface UserPort {
     fun signup(@Body signup: SignupDto): Call<UserResponse<Signup>>
     //비밀번호 변경 시 이메일 인증 발송
     @POST("users/password/change-email/send")
-    fun passwordLink(@Body email: String): Call<UserResponse<PasswordLink>>
+    fun passwordLink(@Body email: EmailForPassword): Call<UserResponse<PasswordLink>>
     //비밀번호 변경 시 이메일 인증 재발송
     @POST("users/password/change-email/resend")
     fun passwordRelink(@Body email: String): Call<UserResponse<PasswordLink>>
@@ -80,7 +82,7 @@ interface UserPort {
     fun setProfileImage(@Part file: MultipartBody.Part): Call<UserResponse<ProfileImage>>
     //비밀번호 변경
     @POST("/users/password/change")
-    fun changePassword(@Query("password") password: String): Call<UserResponse<Boolean>>
+    fun changePassword(@Body password: ChangePassword): Call<UserResponse<Boolean>>
     //닉네임 수정
     @POST("mypage/profile/nickname")
     fun changeNickname(@Body nickname: String): Call<UserResponse<String>>
