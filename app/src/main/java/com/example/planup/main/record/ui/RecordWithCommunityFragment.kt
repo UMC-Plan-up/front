@@ -10,8 +10,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWithCommunityBinding
-import com.example.planup.main.MainActivity
-import com.example.planup.main.record.adapter.GoalReport
 import com.example.planup.main.record.adapter.PhotoAdapter
 import com.example.planup.main.record.adapter.RankAdapter
 import com.example.planup.main.record.adapter.RankItem
@@ -19,7 +17,6 @@ import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
-import java.util.Locale
 
 class RecordWithCommunityFragment : Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding

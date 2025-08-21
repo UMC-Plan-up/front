@@ -10,7 +10,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendRequestsBinding
+import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendRequestAdapter
 import com.example.planup.main.friend.data.FriendActionRequestDto
 import com.example.planup.main.friend.data.FriendRequest
@@ -28,6 +30,7 @@ class FriendRequestsFragment : Fragment() {
         binding = FragmentFriendRequestsBinding.inflate(inflater, container, false)
         binding.friendRequestRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         fetchFriendRequests()
+        clickListener()
         return binding.root
     }
 
@@ -124,6 +127,14 @@ class FriendRequestsFragment : Fragment() {
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    private fun clickListener(){
+        binding.btnBack.setOnClickListener {
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, FriendFragment())
+                .commitAllowingStateLoss()
         }
     }
 }
