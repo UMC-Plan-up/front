@@ -48,6 +48,7 @@ import com.example.planup.main.home.adapter.CalendarEventAdapter
 import com.example.planup.main.home.data.ChallengeReceivedTimer
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class HomeFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
@@ -72,11 +73,11 @@ class HomeFragment : Fragment() {
         DailyToDo("운동", 50, 3)
     )
     private var dummyData = listOf(
-        FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
-        FriendChallengeItem("블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
+        FriendChallengeItem(1,"블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
+        FriendChallengeItem(2,"블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
     )
 
-    private lateinit var friendList : List<FriendInfo>
+    private var friendList = listOf<FriendInfo>()
 
     private lateinit var binding: FragmentHomeBinding
     companion object {
@@ -121,7 +122,9 @@ class HomeFragment : Fragment() {
         loadMyGoalList(token) //api 불러오기
         getMyWeeklyReport(token)
         loadFriendsList(token)
-
+        for (friend in friendList) {
+            loadFriendGoalList(token = "Bearer $token", friendId = friend.id, friendNickName = friend.nickname)
+        }
 
         dailyRecyclerVIew = binding.dailyTodoRv
         dailyRecyclerVIew.layoutManager =
@@ -144,6 +147,9 @@ class HomeFragment : Fragment() {
             // 클릭 시 이동 처리
             val fragment = FriendGoalListFragment().apply {
                 arguments = bundleOf("friendId" to item.name)
+            }
+            val bundle = Bundle().apply {
+                putInt("friendId", item.friendId)
             }
             // 예시
             parentFragmentManager.beginTransaction()
@@ -343,24 +349,26 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun loadFriendGoalList(token: String, friendId: Int) {
+    private fun loadFriendGoalList(token: String, friendId: Int, friendNickName: String) {
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
                 val response = apiService.getFriendGoalList(token = "Bearer $token", friendId = friendId)
                 if (response.isSuccess) {
                     val goals = response.result
-                    // goals 리스트를 RecyclerView 등에 표시
-                    for (goal in goals) {
-                        Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        //
-                    }
+                    dummyData += FriendChallengeItem(
+                        friendId = friendId,
+                        name = friendNickName,
+                        description = "평균 목표 달성률 : 75",
+                        profileResId = R.drawable.profile_example,
+                        pieValues = listOf(75f,75f,75f)
+                    )
                 } else {
-                    Toast.makeText(requireContext(), "친구 목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d("HomeFragmentApi","loadFriendGoalList 실패 : ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                Log.d("HomeFragmentApi", "loadFriendGoalList 에러 : ${e.message}")
             }
         }
     }
@@ -371,7 +379,8 @@ class HomeFragment : Fragment() {
                 val apiService = RetrofitInstance.friendApi
                 val response = apiService.getFriendSummary(token = "Bearer $token")
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    friendList = response.body()!!.result.first().friendInfoSummaryList.take(3)
+                    Log.d("HomeFragmentApi", "loadFriendsList 성공")
+                    friendList = response.body()!!.result.first().friendInfoSummaryList
                     // goals 리스트를 RecyclerView 등에 표시
                 } else {
                     Toast.makeText(requireContext(), "친구 리스트 불러오기 실패", Toast.LENGTH_SHORT).show()
@@ -408,12 +417,19 @@ class HomeFragment : Fragment() {
                     token = "Bearer $token",
                     year = today.year,
                     month = today.monthValue,
-                    week = today.get(WeekFields.of(Locale.KOREA).weekOfYear()),
+                    week = today.get(WeekFields.of(Locale.KOREA).weekOfMonth()),
                     userId = prefs.getInt("userId", 0)
                 )
                 if (response.isSuccessful) {
                     val body = response.body()
                     val goalReports = body?.result?.goalReports
+                    Log.d("homefragmentapi.getweeklyreport", "" +
+                            "year : ${today.year}, \n" +
+                            "month : ${today.monthValue}, \n" +
+                            "week : ${today.get(WeekFields.of(Locale.KOREA).weekOfMonth())}, \n" +
+                            "uwerId : ${prefs.getInt("userId", 0)}"
+                    )
+                    Log.d("HomeFragmentApi","goalReports: $goalReports")
 
                     goalReports?.forEach { report ->
                         // 제목 길이 제한
@@ -425,15 +441,18 @@ class HomeFragment : Fragment() {
                         }
 
                         val rate = report.achievementRate
-                        Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
+                        Log.d("HomeFragmentApi.weeklyReport", "Goal: $title, Achievement: $rate%")
                     }
 
                 } else {
                     Log.d("HomeFragmentApi","getWeeklyReport 실패")
                 }
             } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("HomeFragmentApi","네트워크 오류")
+                if (e is HttpException) {
+                    Log.e("homefragmentAPI", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("homefragmentAPI", "Other error: ${e.message}", e)
+                }
             }
 
         }
@@ -462,6 +481,7 @@ class HomeFragment : Fragment() {
                     }
                     friendList.forEach { friend ->
                         val item = FriendChallengeItem(
+                            0,
                             friend.nickname,
                             "평균 목표 달성률 : ${rateArray.average().toInt()}%",
                             R.drawable.ic_launcher_background,

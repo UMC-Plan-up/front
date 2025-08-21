@@ -31,10 +31,19 @@ interface WeeklyReportApi {
     @GET("/report/reports")
     suspend fun getWeeklyReports(
         @Header("Authorization") token: String,
+        @Query("userId") userId: Int,
         @Query("year") year: Int,
         @Query("month") month: Int,
-        @Query("week") week: Int,
-        @Query("userId") userId: Int
+        @Query("week") week: Int
     ): Response<DetailWeeklyReportResponse>
+
+    @GET("/report/reports/{year}/{month}/{week}")
+    suspend fun getWeekReport(
+        @Header("Authorization") token: String,
+        @Query("userId") userId: Int,
+        @Query("year") year: Int,
+        @Query("month") month: Int,
+        @Query("week") week: Int
+    ): DetailWeeklyReportResponse
 
 }

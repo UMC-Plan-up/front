@@ -2,7 +2,7 @@ package com.example.planup.main.goal.item
 
 data class FriendsTimerResponse(
     val isSuccess: Boolean,
-    val code: Int,
+    val code: String,
     val message: String,
     val result: List<FriendsTimerResult>
 )

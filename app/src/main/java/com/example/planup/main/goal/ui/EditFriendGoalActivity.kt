@@ -16,15 +16,21 @@ class EditFriendGoalActivity : AppCompatActivity() {
         setContentView(R.layout.activity_edit_friend_goal)
 
         goalId = intent.getIntExtra("goalId", 0)
+        Log.d("EditFriendGoalActivity", "goalId: $goalId")
 
         if (savedInstanceState == null) {
             if(isSolo){
+                val categoryFragment = EditGoalCategoryFragment()
+                categoryFragment.arguments = Bundle().apply { putInt("goalId", goalId) }
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.edit_friend_goal_fragment_container, EditGoalCategoryFragment())
+                    .replace(R.id.edit_friend_goal_fragment_container, categoryFragment)
                     .commit()
             } else {
                 val titleFragment = EditGoalTitleFragment()
-                titleFragment.arguments = Bundle().apply { putBoolean("isSolo", isSolo) }
+                titleFragment.arguments = Bundle().apply {
+                    putBoolean("isSolo", isSolo)
+                    putInt("goalId", goalId)
+                }
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
                     .commit()

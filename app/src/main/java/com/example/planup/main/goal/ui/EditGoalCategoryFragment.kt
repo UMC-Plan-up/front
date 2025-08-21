@@ -3,6 +3,7 @@ package com.example.planup.main.goal.ui
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -94,11 +95,13 @@ class EditGoalCategoryFragment : Fragment() {
             } else {
                 getCategoryCode(selectedCategory!!.id)
             }
-            //TODO: 다음 fragment 넘기기
 
             val titlefragment = EditGoalTitleFragment()
+            val goalId = arguments?.getInt("goalId") ?: 0
+            Log.d("EditGoalCategoryFragment", "goalId: $goalId")
             titlefragment.arguments = Bundle().apply {
                 putString("selectedCategory", selectedCategoryCode)
+                putInt("goalId", goalId)
             }
 
             parentFragmentManager.beginTransaction()

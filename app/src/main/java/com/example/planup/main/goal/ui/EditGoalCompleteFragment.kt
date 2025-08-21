@@ -26,8 +26,7 @@ class EditGoalCompleteFragment : Fragment() {
         // 완료 버튼 클릭 시 Activity 종료
         val completeButton = binding.editCompleteStartBtn
         completeButton.setOnClickListener {
-            // activity를 EditFriendGoalActivity로 캐스팅
-            (activity as? EditFriendGoalActivity)?.onGoalEditComplete(true)
+            requireActivity().finish()
         }
 
         return view
