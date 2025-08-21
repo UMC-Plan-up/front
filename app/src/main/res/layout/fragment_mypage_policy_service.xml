@@ -1,493 +1,509 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mypage_policy_service_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white">
 
-    <ImageView
-        android:id="@+id/policy_service_back_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:src="@drawable/arrow_left"
-        app:layout_constraintBottom_toBottomOf="@id/policy_service_back_tv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/policy_service_back_tv" />
-
-    <TextView
-        android:id="@+id/policy_service_back_tv"
-        style="@style/TextAppearance.Pretendard.Medium.XL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/category"
-        app:layout_constraintStart_toEndOf="@id/policy_service_back_iv"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/policy_service_title_tv"
-        style="@style/TextAppearance.Pretendard.SemiBold.XL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/policy_service_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/policy_service_back_tv" />
-
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/policy_service_title_tv"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="31dp">
+        app:layout_constraintTop_toTopOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mypage_policy_service_inner_cl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/policy_service_title_first_tv"
+
+            <ImageView
+                android:id="@+id/policy_service_back_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_first"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
+                android:layout_marginStart="20dp"
+                android:src="@drawable/arrow_left"
+                app:layout_constraintBottom_toBottomOf="@id/policy_service_back_tv"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="@id/policy_service_back_tv" />
 
             <TextView
-                android:id="@+id/policy_service_content_first_tv"
+                android:id="@+id/policy_service_back_tv"
+                style="@style/TextAppearance.Pretendard.Medium.XL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_first"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_first_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                android:layout_marginTop="20dp"
+                android:text="@string/category"
+                app:layout_constraintStart_toEndOf="@id/policy_service_back_iv"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/policy_service_title_second_tv"
+                android:id="@+id/policy_service_title_tv"
+                style="@style/TextAppearance.Pretendard.SemiBold.XL"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_second"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
+                android:layout_marginTop="20dp"
+                android:text="@string/policy_service_title"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_first_tv"/>
+                app:layout_constraintTop_toBottomOf="@id/policy_service_back_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_second_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_second"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_second_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:scrollbars="none"
+                android:nestedScrollingEnabled="true"
+                app:layout_constraintBottom_toBottomOf="@id/mypage_policy_service_inner_cl"
+                app:layout_constraintTop_toBottomOf="@id/policy_service_title_tv">
 
-            <TextView
-                android:id="@+id/policy_service_title_third_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_third"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_second_tv"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/policy_service_content_third_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_third"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_third_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_first_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_first"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/policy_service_title_fourth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_fourth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_third_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_first_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_first"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_first_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_fourth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_fourth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_fourth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_second_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_second"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_first_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_fifth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_fifth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_fourth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_second_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_second"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_second_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_fifth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_fifth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_fifth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_third_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_third"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_second_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_sixth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_sixth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_fifth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_third_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_third"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_third_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_sixth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_sixth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_sixth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_fourth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_fourth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_third_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_seventh_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_seventh"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_sixth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_fourth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_fourth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_fourth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_seventh_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_seventh"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_seventh_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
-            <TextView
-                android:id="@+id/policy_service_title_eighth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_eighth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_seventh_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_fifth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_fifth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_fourth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_eighth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_eighth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_eighth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_fifth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_fifth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_fifth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_ninth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_ninth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_eighth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_sixth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_sixth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_fifth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_ninth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_ninth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_ninth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_sixth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_sixth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_sixth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_tenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_tenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_ninth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_seventh_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_seventh"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_sixth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_tenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_tenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_tenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_seventh_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_seventh"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_seventh_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_eleventh_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_eleventh"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_tenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_eighth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_eighth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_seventh_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_eleventh_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_eleventh"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_eleventh_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_eighth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_eighth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_eighth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_twelfth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_twelfth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_eleventh_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_ninth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_ninth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_eighth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_twelfth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_twelfth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_twelfth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_ninth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_ninth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_ninth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_thirteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_thirteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_twelfth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_tenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_tenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_ninth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_thirteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_thirteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_thirteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_tenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_tenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_tenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_fourteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_fourteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_thirteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_eleventh_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_eleventh"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_tenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_fourteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_fourteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_fourteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_eleventh_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_eleventh"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_eleventh_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_fifteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_fifteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_fourteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_twelfth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_twelfth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_eleventh_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_fifteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_fifteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_fifteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_twelfth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_twelfth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_twelfth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_sixteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_sixteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_fifteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_thirteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_thirteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_twelfth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_sixteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_sixteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_sixteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_thirteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_thirteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_thirteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_seventeenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_seventeenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_sixteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_fourteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_fourteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_thirteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_seventeenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_seventeenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_seventeenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_fourteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_fourteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_fourteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_eighteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_eighteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_seventeenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_fifteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_fifteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_fourteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_eighteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_eighteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_eighteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_fifteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_fifteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_fifteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_nineteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_nineteenth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_eighteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_sixteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_sixteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_fifteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_nineteenth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_nineteenth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_nineteenth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_sixteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_sixteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_sixteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_twentieth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_twentieth"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_nineteenth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_seventeenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_seventeenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_sixteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_twentieth_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_twentieth"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentieth_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_seventeenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_seventeenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_seventeenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_twentyfirst_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_twenty_first"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_twentieth_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_eighteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_eighteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_seventeenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_twentyfirst_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_twenty_first"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentyfirst_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_eighteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_eighteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_eighteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_title_twentysecond_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_title_twenty_second"
-                style="@style/Typography_S_Semibold"
-                android:textColor="@color/black_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_content_twentyfirst_tv"/>
+                    <TextView
+                        android:id="@+id/policy_service_title_nineteenth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_nineteenth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_eighteenth_tv" />
 
-            <TextView
-                android:id="@+id/policy_service_content_twentysecond_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/policy_service_content_twenty_second"
-                style="@style/Typography_S_Medium"
-                android:textColor="@color/black_300"
-                app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentysecond_tv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                    <TextView
+                        android:id="@+id/policy_service_content_nineteenth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_nineteenth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_nineteenth_tv" />
 
+                    <TextView
+                        android:id="@+id/policy_service_title_twentieth_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_twentieth"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_nineteenth_tv" />
 
+                    <TextView
+                        android:id="@+id/policy_service_content_twentieth_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_twentieth"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentieth_tv" />
+
+                    <TextView
+                        android:id="@+id/policy_service_title_twentyfirst_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_twenty_first"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_twentieth_tv" />
+
+                    <TextView
+                        android:id="@+id/policy_service_content_twentyfirst_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_twenty_first"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentyfirst_tv" />
+
+                    <TextView
+                        android:id="@+id/policy_service_title_twentysecond_tv"
+                        style="@style/Typography_S_Semibold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_title_twenty_second"
+                        android:textColor="@color/black_400"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_content_twentyfirst_tv" />
+
+                    <TextView
+                        android:id="@+id/policy_service_content_twentysecond_tv"
+                        style="@style/Typography_S_Medium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/policy_service_content_twenty_second"
+                        android:textColor="@color/black_300"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/policy_service_title_twentysecond_tv" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </ScrollView>
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

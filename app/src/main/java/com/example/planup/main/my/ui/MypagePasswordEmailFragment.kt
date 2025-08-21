@@ -1,13 +1,16 @@
 package com.example.planup.main.my.ui
 
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
@@ -18,8 +21,8 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypagePasswordEmailBinding
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.controller.UserController
+import com.example.planup.network.dto.user.EmailForPassword
 
 class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
 
@@ -30,17 +33,33 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
     var curDomain: Int = 0 //지금 선택된 도메인
     var lastDomain: Int = 0 //가장 최근에 선택된 도메인
 
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMypagePasswordEmailBinding.inflate(inflater, container, false)
+        init()
         clickListener()
         textListener()
         return binding.root
     }
 
+    private fun init(){
+        binding.mypagePasswordEmailCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypagePasswordEmailCl.height
+                binding.mypagePasswordEmailInnerCl.minHeight = height
+                binding.mypagePasswordEmailCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
+        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
+        editor = prefs.edit()
+    }
     private fun clickListener() {
         /*뒤로 가기*/
         binding.passwordFirstBackIv.setOnClickListener {
@@ -174,7 +193,7 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
         else{
             val mailService = UserController()
             mailService.setPasswordLinkAdapter(this)
-            mailService.passwordLinkService(binding.emailEt.text.toString())
+            mailService.passwordLinkService(EmailForPassword(binding.emailEt.text.toString(),true))
         }
     }
     private fun makeToast(text:Int){
@@ -189,7 +208,9 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
         toast.show()
     }
 
-    override fun successPasswordLink(email: String) {
+    override fun successPasswordLink(token: String) {
+        editor.putString("verificationToken",token)
+        editor.apply()
         (context as MainActivity).navigateToFragment(MypagePasswordLinkFragment())
     }
 

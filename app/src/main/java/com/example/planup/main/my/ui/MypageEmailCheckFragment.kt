@@ -14,6 +14,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -56,6 +57,14 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
     }
 
     private fun init(){
+        binding.mypageEmailCheckCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageEmailCheckCl.height
+                binding.mypageEmailCheckInnerCl.minHeight = height
+                binding.mypageEmailCheckCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
         editor = prefs.edit()
     }

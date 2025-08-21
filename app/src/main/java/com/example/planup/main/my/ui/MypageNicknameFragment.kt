@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -43,6 +44,14 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
 
     //초기 세팅
     private fun init(){
+        binding.mypageNicknameCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.mypageNicknameCl.height
+                binding.mypageNicknameInnerCl.minHeight = height
+                binding.mypageNicknameCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
     }
