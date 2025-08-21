@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
@@ -26,6 +27,11 @@ class GoalCategoryFragment : Fragment() {
     private var selectedCategory: LinearLayout? = null
     private var isCustomMode = false
 
+    // SharedPreferences 추가
+    private val PREFS_NAME = "goal_data"
+    private val KEY_GOAL_TYPE = "last_goal_type"
+    private val KEY_GOAL_CATEGORY = "last_goal_category"
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -36,7 +42,6 @@ class GoalCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
@@ -93,9 +98,17 @@ class GoalCategoryFragment : Fragment() {
 
             val goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "challenge" else "community"
 
+            // GoalActivity에 값 저장
             val activity = requireActivity() as GoalActivity
             activity.goalType = goalType
             activity.goalCategory = selectedCategoryText
+
+            // SharedPreferences에 목표 유형 및 카테고리 정보 저장
+            val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit()
+                .putString(KEY_GOAL_TYPE, goalType)
+                .putString(KEY_GOAL_CATEGORY, selectedCategoryText)
+                .apply()
 
             val nextFragment = if (goalType == "challenge") {
                 GoalInputFragment()
@@ -180,7 +193,7 @@ class GoalCategoryFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
         imm.hideSoftInputFromWindow(requireView().windowToken, 0)
     }
 
