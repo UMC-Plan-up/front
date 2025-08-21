@@ -5,4 +5,5 @@
         android:width="1dp"
         android:color="@color/black_200" />
     <corners android:radius="6dp" />
+    <padding android:top="24dp" android:bottom="24dp"/>
 </shape>

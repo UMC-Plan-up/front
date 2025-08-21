@@ -121,14 +121,14 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             prefs.getString("goalName","no-data")!!, //목표명
             prefs.getString("goalAmount","no-data")!!, //1회 분량
             prefs.getString("goalType","no-data")!!, //인증 방식
-            prefs.getInt("targetTime",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
+            prefs.getInt("oneDoes",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
             prefs.getString("endDate","no-data")!!, //종료일
             prefs.getString("status","no-data")!!, //요청 형태
             prefs.getString("penalty","no-data")!!, //페널티
             friendId, //친구 id
             GoalPeriod.DAY, //기준기간
             prefs.getInt("frequency",0), //빈도
-            Time(prefs.getInt("targetTime",0)) //타이머 총 시간
+            Time(prefs.getInt("oneDoes",0)) //타이머 총 시간
         )
         challengeService.requestChallenge(challengeDto)
     }
