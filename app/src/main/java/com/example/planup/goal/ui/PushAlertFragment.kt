@@ -65,7 +65,7 @@ class PushAlertFragment : Fragment() {
     }
 
     private fun clickListener() {
-        //뒤로가기 버튼 클릭 (GoalActivity를 통해서만 이동)
+        //뒤로가기 버튼 클릭
         binding.alertBackIv.setOnClickListener {
             val participantLimitFragment = ParticipantLimitFragment()
             (requireActivity() as GoalActivity).navigateToFragment(participantLimitFragment)
@@ -330,10 +330,6 @@ class PushAlertFragment : Fragment() {
             doShow()
         }
     }
-
-
-    private fun Int.dp(): Int =
-        (this * resources.displayMetrics.density).toInt()
 
 
     override fun onDestroyView() {
