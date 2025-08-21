@@ -9,6 +9,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengePenaltyBinding
@@ -42,6 +43,14 @@ class ChallengePenaltyFragment : Fragment() {
         if (!isFirst) binding.challengePenaltyNextBtn.isActivated = true //페널티가 선택된 경우 버튼 활성화
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
+        binding.challengePenaltyCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengePenaltyCl.height
+                binding.challengePenaltyInnerCl.minHeight = height
+                binding.challengePenaltyCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
 
     //페널티 직접입력 관리

@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeTimerPhotoBinding
@@ -31,6 +32,14 @@ class ChallengeTimerPhotoFragment:Fragment() {
 
     //프레그먼트 초기화
     private fun init(){
+        binding.challengeTimerPhotoCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeTimerPhotoCl.height
+                binding.challengeTimerPhotoInnerCl.minHeight = height
+                binding.challengeTimerPhotoCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         //챌린지 정보를 저장할 sharedPreferences 생성
         prefs = (context as GoalActivity).getSharedPreferences("challenge", MODE_PRIVATE)
         editor = prefs.edit()

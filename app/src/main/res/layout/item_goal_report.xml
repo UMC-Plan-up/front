@@ -1,0 +1,64 @@
+<!-- res/layout/item_goal_report.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="82dp"
+    android:gravity="center_vertical"
+    android:padding="12dp"
+    android:orientation="horizontal">
+
+    <FrameLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp">
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/cpi"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            app:trackThickness="6dp"
+            app:indicatorSize="56dp"
+            app:indicatorDirectionCircular="clockwise"
+            app:trackCornerRadius="6dp"
+            app:indicatorInset="0dp"
+            app:showAnimationBehavior="inward"
+            app:hideAnimationBehavior="outward"
+            app:indicatorColor="@color/black"
+            app:trackColor="#FFEFEFEF"
+            android:max="100"
+            android:progress="0"/>
+
+        <TextView
+            android:id="@+id/tv_percent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="0%"
+            android:textSize="14sp"
+            android:textColor="#222222"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:text="목표명" />
+
+        <TextView
+            android:id="@+id/tv_criteria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="매주 5번 이상"
+            android:textSize="14sp"
+            android:textColor="#444444"/>
+    </LinearLayout>
+</LinearLayout>

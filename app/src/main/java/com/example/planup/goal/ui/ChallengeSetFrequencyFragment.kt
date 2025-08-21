@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -60,6 +61,14 @@ class ChallengeSetFrequencyFragment : Fragment() {
         return binding.root
     }
     private fun init(){
+        binding.challengeSetFrequencyCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeSetFrequencyCl.height
+                binding.challengeSetFrequencyInnerCl.minHeight = height
+                binding.challengeSetFrequencyCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         //prevFragment = arguments?.getString("previous","null").toString()
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()

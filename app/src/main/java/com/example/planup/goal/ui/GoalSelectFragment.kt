@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -37,6 +38,13 @@ class GoalSelectFragment : Fragment() {
     private fun init() {
         category = binding.categoryStudyTv
         nickname = arguments?.getString("GoalOwnerName", "사용자").toString()
+        binding.goalSelectCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val height = binding.goalSelectCl.height  // 화면에 보이는 영역 높이 (픽셀 단위)
+                binding.goalSelectInnerCl.minHeight = height
+                binding.goalSelectCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+        })
     }
 
     //클릭 이벤트 처리

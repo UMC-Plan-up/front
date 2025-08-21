@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
@@ -52,6 +53,14 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
         challengeService.setChallengeFriendsAdapter(this)
         challengeService.setRequestChallengeAdapter(this)
         friend = ChallengeFriends(0,"no-data",0)
+        binding.challengeFriendCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeFriendCl.height
+                binding.challengeFriendInnerCl.minHeight = height
+                binding.challengeFriendCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
 
     //클릭 이벤트 관리

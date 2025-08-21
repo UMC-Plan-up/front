@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeFinishRequestBinding
@@ -30,6 +31,14 @@ class ChallengeFinishRequestFragment:Fragment() {
     private fun init(){
         friend = arguments?.getString("friend","친구").toString()
         binding.challengeFinishRequestSubtitleTv.text = getString(R.string.challenge_finish_request_subtitle,friend)
+        binding.challengeFinishRequestCl.viewTreeObserver.addOnGlobalLayoutListener (object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeFinishRequestCl.height
+                binding.challengeFinishRequestInnerCl.minHeight = height
+                binding.challengeFinishRequestCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
     }
     private fun clickListener(){
         //완료 버튼: 메인 액티비티, 홈 프레그먼트로 이동

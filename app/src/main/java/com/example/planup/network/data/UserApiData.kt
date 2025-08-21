@@ -1,8 +1,6 @@
 package com.example.planup.network.data
 
 import com.google.gson.annotations.SerializedName
-import okhttp3.MultipartBody
-import retrofit2.http.Multipart
 
 //User Controller 기본 응답 양식
 data class UserResponse<T>(
@@ -26,7 +24,7 @@ data class UserInfo(
 )
 
 //카카오 연동 상태 확인
-data class KakaoAccount(
+data class UsingKakao(
     @SerializedName(value = "kakaoEmail") var kakaoEmail: String,
     @SerializedName(value = "linked") var linked: Boolean
 )
@@ -82,4 +80,17 @@ data class EmailLink(
 //프로필 사진 업로드 및 변경
 data class ProfileImage(
     @SerializedName("file") val file: String
+)
+
+data class SyncKakao(
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: KakaoAccount,
+    @SerializedName("newUser") val newUser: Boolean
+)
+data class KakaoAccount(
+    @SerializedName("tempUserId") val tempUserId: String,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("userInfo") val userInfo: UserInfo
 )

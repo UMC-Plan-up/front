@@ -22,8 +22,8 @@ interface WeeklyReportApi {
     @GET("/report/reports")
     suspend fun getMonthlyReports(
         @Header("Authorization") token: String,
-        @Path("year") year: Int,
-        @Path("month") month: Int,
+        @Query("year") year: Int,
+        @Query("month") month: Int,
         @Query("userId") userId: Int
     ): Response<WeeklyReportResponse>
 

@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
@@ -40,6 +41,14 @@ class ChallengeReceivedPhotoFragment :
     }
 
     private fun init() {
+        binding.challengeReceivedPhotoCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeReceivedPhotoCl.height
+                binding.challengeReceivedPhotoInnerCl.minHeight = height
+                binding.challengeReceivedPhotoCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         // 전달받은 챌린지 정보
         challengeInfo =
             requireArguments().getParcelable("receivedChallenge")!!

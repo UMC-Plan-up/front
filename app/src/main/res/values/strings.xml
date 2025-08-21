@@ -544,13 +544,18 @@
     <string name="challenge_finish_setting_title">1:1 챌린지 설정이 완료되었어요!</string>
     <string name="challenge_finish_setting_subtitle">친구들에게 내 목표가 공개됩니다!</string>
     <string name="challenge_finish_setting_content">플랜업애서 설정한 목표들은 기본적으로 친구와 공유됩니다. 목표 공유 설정은 추후에도 \'목표\’탭에서 변경 가능해요!</string>
+    <string name="challenge_finish_setting_content_goal">\'목표\'</string>
     <!-- fragment_challenge_finish_request.xml -->
     <string name="challenge_finish_request_title">챌린지 참여 요청을 보냈어요!</string>
     <string name="challenge_finish_request_subtitle">%1$s에게 챌린지 참여를 요청했어요.</string>
     <string name="challenge_finish_request_content">친구에게 답변이 오면, 바로 알려드릴게요!</string>
     <!-- fragment_challenge_setting.xml -->
     <string name="set_challenge_subtitle">친구와 1:1로 단기 목표 성취에 도전해 보세요!</string>
-    <!-- fragment_challenge_certification_method.xml -->
+    <!-- fragment_challenge_timer_photo.xml -->
+    <string name="challenge_set_timer">타이머 인증</string>
+    <string name="challenge_set_photo">사진 인증</string>
+    <string name="challenge_set_timer_explain">타이머 인증을 선택할 시, 유저의 타이머 기록이 성취율 측정 및 랭킹에 반영됩니다.</string>
+    <string name="challenge_set_photo_explain">사진 인증을 선택할 시, 유저의 인증샷 업로드 기록이 성취율 측정 및 랭킹에 반영됩니다.</string>
     <string name="set_certification_method_notice">한 가지 인증 방식을 선택하더라도, 이외의 방식을 추가적으로 활용할 수 있어요. 단, 한번 정한 인증 방식은 수정할 수 없으니 신중하게 결정해 주세요.</string>
     <!-- fragment_challenge_timer -->
     <string name="timer_expect_time">목표 투자 시간</string>
@@ -712,7 +717,7 @@
 
 
     <!-- 토스트 메시지 -->
-    <string name="toast_challenge_setting">비활성화된 챌린지 목표는 2개 이하 생성 가능합니다.</string>
+    <string name="toast_challenge_setting">친구 수락 대기 중인 1:1 챌린지는 최대 2개까지 생성할 수 있습니다.</string>
     <string name="toast_challenge_accept">챌린지 참여를 수락했어요.</string>
     <string name="toast_challenge_reject">챌린지 참여를 거절했어요.</string>
     <string name="toast_incorrect_email">이메일 형식을 다시 확인해주세요</string>
