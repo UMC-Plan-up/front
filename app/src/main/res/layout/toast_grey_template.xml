@@ -2,10 +2,12 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toast_grey_template_tv"
-    android:layout_width="320dp"
-    android:layout_height="35dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@drawable/bg_toast_grey_template"
     android:textColor="@color/white_font"
     style="@style/Typography_SM_Medium"
     android:textAlignment="center"
-    android:gravity="center"/>
+    android:gravity="center"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"/>

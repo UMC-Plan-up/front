@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -33,6 +34,14 @@ class ChallengeSetPhotoFragment:Fragment() {
     }
 
     private fun init(){
+        binding.challengeSetPhotoCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+            override fun onGlobalLayout() {
+                val height = binding.challengeSetPhotoCl.height
+                binding.challengeSetPhotoInnerCl.minHeight = height
+                binding.challengeSetPhotoCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
+            }
+
+        })
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
     }

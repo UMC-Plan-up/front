@@ -90,7 +90,9 @@ class MypageKakaoFragment : Fragment(), KakaoAdapter {
 
     private fun kakaoLogin(){
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(context as MainActivity)) {
+            // 액세스 토큰 정보 조회
             UserApiClient.instance.loginWithKakaoTalk(context as MainActivity) { token, error ->
+                Log.e("asdfdasfdsafdsfdsa", "$$token")
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
 
