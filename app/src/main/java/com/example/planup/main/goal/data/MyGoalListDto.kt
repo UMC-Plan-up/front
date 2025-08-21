@@ -7,7 +7,8 @@ data class MyGoalListDto(
     @SerializedName("goalName") val goalName: String?,
     @SerializedName("goalType") val goalType: GoalType,
     @SerializedName("frequency") val frequency: Int,
-    @SerializedName("oneDose") val oneDose: Int
+    @SerializedName("oneDose") val oneDose: Int,
+    @SerializedName("active") val isActive: Boolean
 )
 
 enum class GoalType {
