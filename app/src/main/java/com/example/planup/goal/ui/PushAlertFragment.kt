@@ -332,6 +332,9 @@ class PushAlertFragment : Fragment() {
     }
 
 
+    private fun Int.dp(): Int =
+        (this * resources.displayMetrics.density).toInt()
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

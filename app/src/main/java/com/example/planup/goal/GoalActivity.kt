@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.data.GoalViewModel
-
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
@@ -106,7 +105,7 @@ class GoalActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
         goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
-        Log.d("okhttpasdfdsfdassssss",goalViewModel.fromWhere.value.toString())
+        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
@@ -125,6 +124,7 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
+
                 else -> GoalSelectFragment().apply {
 //                        putString("from",intent.getStringExtra("TO_CHALLENGE_FROM"))
                 }
@@ -219,9 +219,9 @@ class GoalActivity : AppCompatActivity() {
             map.forEach { (k, v) ->
                 when (v) {
                     is String -> putString(k, v)
-                    is Int    -> putInt(k, v)
-                    is Boolean-> putBoolean(k, v)
-                    else      -> Unit
+                    is Int -> putInt(k, v)
+                    is Boolean -> putBoolean(k, v)
+                    else -> Unit
                 }
             }
         }.apply()
@@ -229,8 +229,10 @@ class GoalActivity : AppCompatActivity() {
 
     fun readDraftString(key: String, def: String = "") =
         draftPrefs().getString(key, def) ?: def
+
     fun readDraftInt(key: String, def: Int = 0) =
         draftPrefs().getInt(key, def)
+
     fun readDraftBool(key: String, def: Boolean = false) =
         draftPrefs().getBoolean(key, def)
 }
