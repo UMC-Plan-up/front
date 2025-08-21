@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWeeklyReportBinding
 import com.example.planup.main.MainActivity
+import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.record.adapter.Badge
 import com.example.planup.main.record.adapter.DailyRecord
 import com.example.planup.main.record.adapter.GoalReport
@@ -67,20 +68,9 @@ class RecordWeeklyReportFragment : Fragment() {
         currentMonth = arguments?.getInt(ARG_MONTH) ?: today.monthValue
         currentWeekOfMonth = arguments?.getInt(ARG_WEEK) ?: today.get(weekFields.weekOfMonth())
 
+        clickListener()
         updateTitle()
         loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
-
-        // 좌우 주차 이동
-        binding.backReportIv.setOnClickListener {
-            moveToPreviousWeek()
-            updateTitle()
-            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
-        }
-        binding.frontReportIv.setOnClickListener {
-            moveToNextWeek()
-            updateTitle()
-            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
-        }
 
         // "기록 확인하러 가기" → 완료 화면 이동
         binding.checkChallengeRecordLl.setOnClickListener {
@@ -121,6 +111,25 @@ class RecordWeeklyReportFragment : Fragment() {
                 putInt(ARG_MONTH, month)
                 putInt(ARG_WEEK, week)
             }
+        }
+    }
+
+    private fun clickListener(){
+        // 좌우 주차 이동
+        binding.backReportIv.setOnClickListener {
+            moveToPreviousWeek()
+            updateTitle()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
+        }
+        binding.frontReportIv.setOnClickListener {
+            moveToNextWeek()
+            updateTitle()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
+        }
+        binding.backBtn.setOnClickListener{
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, RecordFragment())
+                .commitAllowingStateLoss()
         }
     }
 
