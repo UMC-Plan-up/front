@@ -736,6 +736,17 @@
 
     <string name="toast_complete_add_friend">[닉네임] 님과 친구가 되었어요!</string>
 
+    <string name="goal_description_goal_title">달리기</string>
+    <string name="goal_description_one_dose">1KM 이상</string>
+    <string name="goal_description_period">매달</string>
+    <string name="goal_description_frequency">3회 이상</string>
+    <string name="goal_description_verification">사진 인증</string>
+
+    <string name="goal_description_public">공개</string>
+    <string name="goal_description_not_public">비공개</string>
+    <string name="goal_description_page_title">목록</string>
+    <string name="goal_description_attendee_cnt">35명 참여중</string>
+    <string name="goal_description_attendee_cnt_fmt">%1$d명 참여중</string>
 
     <!-- 에러 메시지 -->
     <string name="error_more_one_word">1글자 이상 작성해주세요.</string>
