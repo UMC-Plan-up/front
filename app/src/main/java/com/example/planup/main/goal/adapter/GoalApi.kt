@@ -3,8 +3,11 @@ package com.example.planup.main.goal.adapter
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
+import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.data.GoalEditResponse
 import com.example.planup.main.goal.item.DailyGoalResponse
+import com.example.planup.main.goal.item.FriendPhotosResponse
+import com.example.planup.main.goal.item.TotalAchievementResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -59,4 +62,24 @@ interface GoalApi {
         @Header("Authorization") token: String,
         @Path("date") date: String
     ): DailyGoalResponse
+
+    @GET("/community/daily-achievement")
+    suspend fun getDailyAchievement(
+        @Header("Authorization") token: String,
+        @Query("targetDate") targetDate: String
+    ): DailyAchievementResponse
+
+    @GET("/community/{goalId}/total-achievement")
+    suspend fun getTotalAchievement(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int
+    ): TotalAchievementResponse
+
+    @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
+    suspend fun getFriendPhotos(
+        @Header("Authorization") token: String,
+        @Path("friendId") friendId: Int,
+        @Path("goalId") goalId: Int,
+        @Query("userId") userId: Int
+    ): FriendPhotosResponse
 }

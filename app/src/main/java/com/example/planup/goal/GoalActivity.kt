@@ -93,6 +93,7 @@ class GoalActivity : AppCompatActivity() {
 //                    putString("goalOwnerName", goalOwnerName)
 //                }
 //            }
+            val first = GoalSelectFragment()
 
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)

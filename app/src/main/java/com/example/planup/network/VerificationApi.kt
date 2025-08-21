@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.network.data.TimerStartResponse
 import com.example.planup.network.data.TimerStopResponse
+import com.example.planup.network.data.TodayFriendTimerResponse
 import com.example.planup.network.data.TodayTotalTimeResponse
 import com.example.planup.network.data.UploadResponse
 import okhttp3.MultipartBody
@@ -40,4 +41,11 @@ interface VerificationApi {
         @Query("goalId") goalId: Int,
         @Part photoFile: MultipartBody.Part
     ): UploadResponse
+
+    @GET("/verification/friend/{friendId}/timer/today-total")
+    suspend fun getTodayFriendTimer(
+        @Header("Authorization") token: String,
+        @Path("friendId") friendId: Int,
+        @Query("goalId") goalId: Int
+    ): TodayFriendTimerResponse
 }
