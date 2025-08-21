@@ -88,7 +88,6 @@ class GoalActivity : AppCompatActivity() {
                 else -> GoalSelectFragment()
             }
 
-
             // GoalSelectFragment를 GoalCategoryFragment로 가정
 //            val first = GoalCategoryFragment().apply {
 //                arguments = (arguments ?: Bundle()).apply {
