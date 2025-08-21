@@ -72,7 +72,6 @@ class GoalCategoryFragment : Fragment() {
         }
 
         binding.customCategoryEditText.addTextChangedListener { checkNextButtonEnabled() }
-
         binding.nextButton.isEnabled = false
 
         /* 다음 버튼 클릭 시 */
