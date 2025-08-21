@@ -73,4 +73,10 @@ interface GoalApiService {
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
     ): GetCommentsResponse
+
+    @GET("/community/daily-achievement")
+    suspend fun getDailyAchievement(
+        @Header("Authorization") token: String,
+        @Query("targetDate") targetDate: String
+    ): DailyAchievementResponse
 }

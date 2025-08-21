@@ -47,3 +47,13 @@ data class UploadResponse(
     val message: String,
     val result: Any?
 )
+
+data class TodayFriendTimerResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: TodayFriendTimerResult
+)
+data class TodayFriendTimerResult(
+    val formattedTime: String
+)

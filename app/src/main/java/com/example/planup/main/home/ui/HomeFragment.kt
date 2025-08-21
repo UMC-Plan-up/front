@@ -48,7 +48,9 @@ import com.example.planup.main.home.adapter.CalendarEventAdapter
 import com.example.planup.main.home.data.ChallengeReceivedTimer
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.HttpException
+import kotlin.coroutines.resume
 
 class HomeFragment : Fragment() {
     private lateinit var prefs: SharedPreferences
@@ -67,7 +69,7 @@ class HomeFragment : Fragment() {
         CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
         CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18))
     )
-    private var dailyToDos = listOf(
+    private var dailyToDos = mutableListOf(
         DailyToDo("공부", 75, 5),
         DailyToDo("독서", 100, 5),
         DailyToDo("운동", 50, 3)
@@ -132,8 +134,8 @@ class HomeFragment : Fragment() {
 
 
 
-        dailyAdapter = DailyToDoAdapter(dailyToDos)
-        dailyRecyclerVIew.adapter = dailyAdapter
+//        dailyAdapter = DailyToDoAdapter(dailyToDos)
+//        dailyRecyclerVIew.adapter = dailyAdapter
 
         val progressBar = binding.dailyTodoPb
         progressBar.progress = 75
@@ -322,29 +324,34 @@ class HomeFragment : Fragment() {
         dialog.show()
     }
 
-    private fun loadMyGoalList(token: String?) {
-        if(token == null) {
-            Log.d("HomeFragment", "loadMyGoalList token null")
-            return
+    private suspend fun loadTotalAchievementSuspend(token: String, goalId: Int): Int? {
+        return suspendCancellableCoroutine { cont ->
+            loadTotalAchievement(token, goalId) { total ->
+                cont.resume(total)
+            }
         }
+    }
+
+    private fun loadMyGoalList(token: String?) {
+        if(token == null) return
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
                 val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
                     val goals = response.result
+                    dailyToDos.clear() // 기존 데이터 초기화
                     for (goal in goals) {
-                        Log.d("HomeFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        eventList+(CalendarEvent(goal.goalName,"DAY",goal.frequency,LocalDate.now()))
-                        //
+                        val total = loadTotalAchievementSuspend(token, goal.goalId) ?: 0
+                        dailyToDos.add(DailyToDo(goal.goalName, total, goal.frequency))
                     }
-                    Log.d("HomeFragmentApi","eventList: $eventList")
+                    dailyAdapter = DailyToDoAdapter(dailyToDos)
+                    dailyRecyclerVIew.adapter = dailyAdapter
                 } else {
-                    Toast.makeText(requireContext(), "목표 불러오기 실패", Toast.LENGTH_SHORT).show()
+                    Log.d("HomeFragmentApi","loadMyGoalList 실패 : ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -458,48 +465,6 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun getFriendWeeklyReport(token: String?, friendId: Int) {
-        lifecycleScope.launch {
-            try{
-                val response = RetrofitInstance.weeklyReportApi.getWeeklyReports(
-                    token = "Bearer $token",
-                    year = today.year,
-                    month = today.monthValue,
-                    week = today.get(WeekFields.of(Locale.KOREA).weekOfYear()),
-                    userId = prefs.getInt("userId", 0)
-                )
-                if (response.isSuccessful) {
-                    val body = response.body()
-                    val goalReports = body?.result?.goalReports
-                    var rateArray: List<Float> = listOf()
-                    goalReports?.forEach { report ->
-                        // 제목 길이 제한
-                        val title = report.goalTitle
-                        val rate = (report.achievementRate ?: 0).toFloat()
-                        if(rateArray.size < 3) rateArray+=rate
-                        Log.d("HomeFragmentApi", "Goal: $title, Achievement: $rate%")
-                    }
-                    friendList.forEach { friend ->
-                        val item = FriendChallengeItem(
-                            0,
-                            friend.nickname,
-                            "평균 목표 달성률 : ${rateArray.average().toInt()}%",
-                            R.drawable.ic_launcher_background,
-                            rateArray
-                        )
-                        dummyData+=item
-                    }
-                } else {
-                    Log.d("HomeFragmentApi","getWeeklyReport 실패")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("HomeFragmentApi","네트워크 오류")
-            }
-
-        }
-    }
-
     private fun loadDailyGoals(token: String?, date: LocalDate) {
         lifecycleScope.launch {
             try {
@@ -532,6 +497,25 @@ class HomeFragment : Fragment() {
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d("CalendarActivity", "Exception: $e")
+            }
+        }
+    }
+
+    private fun loadTotalAchievement(token: String?, goalId: Int, callback: (Int?) -> Unit) {
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitInstance.goalApi
+                val response = apiService.getTotalAchievement("Bearer $token", goalId)
+                if (response.isSuccess) {
+                    Log.d("loadToTalAchievement", "totalAchievementRate: ${response.result.totalAchievementRate}")
+                    callback(response.result.totalAchievementRate)
+                } else {
+                    Log.d("loadTotalAchievement", "Error: ${response.message}")
+                    callback(null)
+                }
+            } catch (e: Exception) {
+                Log.e("loadTotalAchievement", "Error: ${e.message}", e)
+                callback(null)
             }
         }
     }

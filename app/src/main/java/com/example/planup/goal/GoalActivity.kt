@@ -13,11 +13,8 @@ import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
 import com.example.planup.goal.ui.GoalDetailFragment
-<<<<<<< Updated upstream
 import com.example.planup.goal.ui.PushAlertFragment
-=======
 import com.example.planup.goal.ui.GoalSelectFragment
->>>>>>> Stashed changes
 import com.example.planup.main.MainActivity
 
 class GoalActivity : AppCompatActivity() {
@@ -71,7 +68,6 @@ class GoalActivity : AppCompatActivity() {
         loadLastGoalData()
 
         if (savedInstanceState == null) {
-<<<<<<< Updated upstream
             val isFromPayment = intent.getBooleanExtra("start_from_payment", false)
             val isFromPaymentToDetail = intent.getBooleanExtra("start_from_payment_to_goal_detail", false)
 
@@ -89,8 +85,6 @@ class GoalActivity : AppCompatActivity() {
                     }
                 }
             }
-
-=======
             // GoalSelectFragment를 GoalCategoryFragment로 가정
 //            val first = GoalCategoryFragment().apply {
 //                arguments = (arguments ?: Bundle()).apply {
@@ -98,7 +92,6 @@ class GoalActivity : AppCompatActivity() {
 //                }
 //            }
             val first = GoalSelectFragment()
->>>>>>> Stashed changes
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)
                 .commit()
