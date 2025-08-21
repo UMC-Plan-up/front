@@ -327,7 +327,7 @@ class HomeFragment : Fragment() {
     private suspend fun loadTotalAchievementSuspend(token: String, goalId: Int): Int? {
         return suspendCancellableCoroutine { cont ->
             loadTotalAchievement(token, goalId) { total ->
-                cont.resume(total)
+                cont.resume( total)
             }
         }
     }
