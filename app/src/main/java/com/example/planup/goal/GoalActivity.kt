@@ -1,6 +1,5 @@
 package com.example.planup.goal
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -206,7 +205,7 @@ class GoalActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    /* SubscriptionPlanFragment를 시작하고, 결과를 받기 위한 함수 */
+    /* SubscriptionPlanFragment를 시작하고 결과를 받기 위한 함수 */
     fun startSubscriptionActivity() {
         val intent = Intent(this, MainActivity::class.java)
         // 어떤 경로로 SubscriptionFragment가 호출되었는지 판단
@@ -214,4 +213,26 @@ class GoalActivity : AppCompatActivity() {
         intent.putExtra("IS_FROM_GOAL_DETAIL", true)
         subscriptionResultLauncher.launch(intent)
     }
+
+    fun draftPrefs() = getSharedPreferences("user_data", MODE_PRIVATE)
+
+    fun saveDraft(map: Map<String, Any?>) {
+        draftPrefs().edit().apply {
+            map.forEach { (k, v) ->
+                when (v) {
+                    is String -> putString(k, v)
+                    is Int    -> putInt(k, v)
+                    is Boolean-> putBoolean(k, v)
+                    else      -> Unit
+                }
+            }
+        }.apply()
+    }
+
+    fun readDraftString(key: String, def: String = "") =
+        draftPrefs().getString(key, def) ?: def
+    fun readDraftInt(key: String, def: Int = 0) =
+        draftPrefs().getInt(key, def)
+    fun readDraftBool(key: String, def: Boolean = false) =
+        draftPrefs().getBoolean(key, def)
 }
