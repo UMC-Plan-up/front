@@ -115,65 +115,18 @@
             app:layout_constraintTop_toBottomOf="@+id/goal_detail_emotion_button_ll"
             android:layout_marginTop="27dp"/>
 
-<!--        <ProgressBar-->
-<!--            android:id="@+id/friend_goal_upload_picture_pb"-->
-<!--            style="@style/DailyToDoProgressBar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="4dp"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginTop="2dp"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            android:max="100"-->
-<!--            android:progress="50"-->
-<!--            android:progressTint="#5383E3"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/week_upload_picture_tv" />-->
-        <GridLayout
-            android:id="@+id/friend_goal_upload_picture_hs"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/photoRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3"
-            android:alignmentMode="alignMargins"
-            android:rowCount="2"
-            android:useDefaultMargins="true"
+            app:spanCount="4"
+            app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             android:layout_marginBottom="16dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginEnd="28dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/week_upload_picture_tv">
-                    <!-- 동적으로 이미지 추가 예정 -->
-        </GridLayout>
-<!--        <HorizontalScrollView-->
-<!--            android:id="@+id/friend_goal_upload_picture_hs"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="16dp"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/friend_goal_upload_picture_pb">-->
-
-<!--            <LinearLayout-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:orientation="horizontal">-->
-
-<!--                &lt;!&ndash; 예시 이미지들 &ndash;&gt;-->
-<!--                <ImageView-->
-<!--                    android:layout_width="64dp"-->
-<!--                    android:layout_height="64dp"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:src="@drawable/ic_launcher_background" />-->
-
-<!--                <ImageView-->
-<!--                    android:layout_width="64dp"-->
-<!--                    android:layout_height="64dp"-->
-<!--                    android:layout_marginEnd="8dp"-->
-<!--                    android:src="@drawable/ic_launcher_background" />-->
-
-<!--            </LinearLayout>-->
-<!--        </HorizontalScrollView>-->
+            app:layout_constraintTop_toBottomOf="@+id/week_upload_picture_tv"/>
 
         <!-- 7. 오늘 집중 시간 -->
         <TextView
@@ -188,7 +141,7 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/friend_goal_upload_picture_hs" />
+            app:layout_constraintTop_toBottomOf="@id/photoRecyclerView" />
 
         <TextView
             android:id="@+id/goal_detail_today_timer_tv"

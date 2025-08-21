@@ -27,12 +27,15 @@ import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import com.example.planup.R
+import com.example.planup.main.home.adapter.PhotoAdapter
+import com.example.planup.network.RetrofitInstance
 
 class FriendGoalDetailFragment : Fragment() {
 
@@ -51,9 +54,13 @@ class FriendGoalDetailFragment : Fragment() {
 
         val goalId = arguments?.getInt("goalId") ?: 0
         val title = arguments?.getString("title") ?: ""
+        val friendId = arguments?.getInt("friendId") ?: 0
+
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
         loadComment(token, goalId)
+        loadTodayFriendTime(token, friendId, goalId)
+        loadFriendPhotos(token, friendId, goalId)
 
         chart = binding.friendGoalChart
         setupCombinedChart()
@@ -69,6 +76,8 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendGoalDetailBackIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
+
+
 
 //        binding.btnSend.setOnClickListener {
 //            val comment = binding.etComment.text.toString()
@@ -183,5 +192,50 @@ class FriendGoalDetailFragment : Fragment() {
                 Log.d("FriendGoalDetailFragment", "loadComment 오류: ${e.message}")
             }
         }
+    }
+
+    private fun loadTodayFriendTime(token: String?, friendId: Int, goalId: Int){
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitInstance.verificationApi
+                val response = apiService.getTodayFriendTimer(
+                    token = "Bearer $token",
+                    friendId = friendId,
+                    goalId = goalId
+                )
+                if (response.isSuccess) {
+                    binding.goalDetailTodayTimerTv.text = response.result.formattedTime
+                } else {
+                    Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 실패: ${response.message}")
+                }
+            } catch (e: Exception){
+                Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 오류: ${e.message}")
+            }
+        }
+    }
+
+    private fun loadFriendPhotos(token: String?, friendId: Int, goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.goalApi.getFriendPhotos(
+                    token = "Bearer $token",
+                    friendId = friendId,
+                    goalId = goalId,
+                    userId = userPrefs.getInt("userId", 0)
+                )
+                if (response.isSuccess) {
+                    val photoUrls = response.result.map { it.photoImg } // result 안에 url 속성이 있다고 가정
+                    setupRecyclerView(photoUrls)
+                }
+            } catch (e: Exception){
+
+            }
+        }
+
+    }
+    private fun setupRecyclerView(photoUrls: List<String>) {
+        val recyclerView = binding.photoRecyclerView
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 4) // 4열
+        recyclerView.adapter = PhotoAdapter(photoUrls)
     }
 }

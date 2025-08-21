@@ -57,6 +57,7 @@ class TimerFragment : Fragment() {
     private lateinit var selectedDate: String
     private var photoUri: Uri? = null
     private var tempGoalId: Int = 0
+    private var tempLoadedGoalId: Int = 0
 
     // 카메라 런처
     private val takePhotoLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
@@ -98,7 +99,6 @@ class TimerFragment : Fragment() {
 
         loadMyGoalList(token)
         setupCameraPopup()
-        setupTimerButton(token, selectedSpinnerItem)
 
         val recyclerView = binding.friendTimerRv
 
@@ -149,24 +149,33 @@ class TimerFragment : Fragment() {
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+
+                // 1️⃣ 기존 타이머 종료
+                if (isRunning) {
+                    stopTimer()
+                } else {
+                    val timerPrefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
+                    timerPrefs.edit().remove("timerId").apply()
+                }
+
+                // 2️⃣ 새로 선택된 목표
                 val selectedGoal = events[position]
                 selectedSpinnerItem = selectedGoal.goalId
-                Toast.makeText(requireContext(), "선택: ${selectedGoal.goalName}", Toast.LENGTH_SHORT).show()
 
+                // 3️⃣ UI 초기화
+                binding.goalListTextTimerTv.text = "00:00:00"
+                elapsedSeconds = 0
+
+                // 4️⃣ 새 타이머 시작
+                //startTimer(token, selectedGoal.goalId)
+
+                // 5️⃣ 기타 UI 로드
                 loadTodayTotalTime(token, selectedGoal.goalId)
                 loadFriendsTimer(token, selectedGoal.goalId)
                 loadGoalInfo(token, selectedGoal.goalId)
                 loadDateMemo(token, selectedGoal.goalId, selectedDate)
 
-                val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
-                val savedTimerId = prefs.getInt("timer_${selectedGoal.goalId}", -1)
-
-                if (savedTimerId != -1) {
-                    // 타이머 진행 중이면 계속 실행
-                    startTimerWithSavedId(token, selectedGoal.goalId, savedTimerId)
-                } else {
-                    stopTimer() // 없으면 멈춤
-                }
+                setupTimerButton(token, selectedGoal.goalId)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -241,7 +250,7 @@ class TimerFragment : Fragment() {
     }
     private fun setupTimerButton(token: String?, goalId: Int) {
         val playButton = binding.goalListPlayBtn
-
+        Log.d("TimerFragment", "setupTimerButton goalId: $goalId")
         playButton.setOnClickListener {
             if (isRunning) {
                 stopTimer()
@@ -262,7 +271,7 @@ class TimerFragment : Fragment() {
                     Log.d("startTimer", "타이머 시작 성공")
                     val timerId = response.result.timerId
                     val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
-                    prefs.edit().putInt("timer_$goalId", timerId).apply()
+                    prefs.edit().putInt("timerId", timerId).apply()
                     startTimerWithSavedId(token, goalId, timerId)
                     Log.d("startTimer", "타이머 시작 성공, timerId: $timerId")
                 } else {
@@ -276,15 +285,41 @@ class TimerFragment : Fragment() {
     }
 
     private fun stopTimer() {
+        if (!isRunning) return
         isRunning = false
         binding.goalListPlayBtn.setImageResource(R.drawable.ic_play_circle)
         timerJob?.cancel()
 
-        val timerPrefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
-        timerPrefs.edit { remove("timer_$selectedSpinnerItem") }
-
         val token = prefs.getString("accessToken", null)
-        stopTimerApi(token = "Bearer $token", goalId = selectedSpinnerItem) // 필요 시 token 전달
+        stopTimerApi(token = "Bearer $token", goalId = selectedSpinnerItem)
+
+        // 🔹 SharedPreferences에 저장된 timerId 제거
+        val timerPrefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
+        timerPrefs.edit().remove("timerId").apply()
+    }
+
+    private fun stopTimerApi(token: String?, goalId: Int) {
+        val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
+        val timerId = prefs.getInt("timerId", -1)
+        Log.d("stoptimerapi", "timerId: $timerId")
+
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.verificationApi.putTimerStop(token = "Bearer $token", timerId)
+                if (response.isSuccess) {
+                    Log.d("stoptimerapi", "타이머 중지 성공")
+                    isRunning = false
+                } else {
+                    Log.e("stoptimerapi", "타이머 중지 실패: ${response.message}")
+                }
+            } catch (e: Exception) {
+                if (e is HttpException) {
+                    Log.e("stoptimerapi", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("stoptimerapi", "Other error: ${e.message}", e)
+                }
+            }
+        }
     }
 
     private fun updateTimerText() {
@@ -292,11 +327,6 @@ class TimerFragment : Fragment() {
         val minutes = (elapsedSeconds % 3600) / 60
         val seconds = elapsedSeconds % 60
         binding.goalListTextTimerTv.text = String.format("%02d:%02d:%02d", hours, minutes, seconds)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        timerJob?.cancel()
     }
 
     private fun loadTodayTotalTime(token: String?, goalId: Int) {
@@ -319,41 +349,7 @@ class TimerFragment : Fragment() {
         }
     }
 
-    private fun startTimerApi(token: String?, goalId: Int){
-        lifecycleScope.launch {
-            try{
-                val response = RetrofitInstance.verificationApi.postTimerStart(token = "Bearer $token", goalId = goalId)
-                if (response.isSuccess) {
-                    Log.d("TimerFragmentAPI", "타이머 시작 성공")
-                } else {
-                    Log.e("TimerFragmentAPI", "타이머 시작 실패: ${response.message}")
-                }
-            } catch (e: Exception){
-                Log.e("TimerFragmentAPI", "에러: ${e.message}")
-            }
-        }
-    }
 
-    private fun stopTimerApi(token: String?, goalId: Int) {
-        val prefs = requireContext().getSharedPreferences("timerPrefs", MODE_PRIVATE)
-        val timerId = prefs.getInt("timer_$goalId", -1)
-        if (timerId == -1) return // 타이머가 없으면 호출 안함
-
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.verificationApi.putTimerStop(token = "Bearer $token", timerId)
-                if (response.isSuccess) {
-                    Log.d("stoptimerapi", "타이머 중지 성공")
-                    // 중지 성공 시 SharedPreferences 삭제
-                    prefs.edit().remove("timer_$goalId").apply()
-                } else {
-                    Log.e("stoptimerapi", "타이머 중지 실패: ${response.message}")
-                }
-            } catch (e: Exception) {
-                Log.e("stoptimerapi", "에러: ${e.message}")
-            }
-        }
-    }
 
     private fun loadFriendsTimer(token: String?, goalId: Int) {
         lifecycleScope.launch {
@@ -506,15 +502,37 @@ class TimerFragment : Fragment() {
                 )
 
                 if (response.isSuccess) {
-                    Toast.makeText(requireContext(), "사진 업로드 성공!", Toast.LENGTH_SHORT).show()
+                    Log.d("uploadImage", "사진 업로드 성공")
                 } else {
-                    Toast.makeText(requireContext(), "실패: ${response.message}", Toast.LENGTH_SHORT).show()
+                    Log.d("uploadImage", "사진 업로드 실패: ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
                 if(e is HttpException) Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
                 else Log.e("API", "Other error: ${e.message}", e)
             }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (isRunning) {
+            stopTimer()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        if (isRunning) {
+            stopTimer()
+        }
+        timerJob?.cancel()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isRunning) {
+            stopTimer()
         }
     }
 }

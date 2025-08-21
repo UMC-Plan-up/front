@@ -41,6 +41,9 @@ import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.data.GoalType
 import com.example.planup.main.goal.adapter.GoalApi
+import com.example.planup.network.RetrofitInstance
+import retrofit2.HttpException
+import java.time.LocalDate
 
 class GoalFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
@@ -96,7 +99,7 @@ class GoalFragment : Fragment() {
         loadMyGoalList(token)
 
         dailyPieChart = binding.dailyGoalCompletePc
-        setupPieChart(dailyPieChart, 70)
+        loadTodayAchievement(token)
 
         recyclerView = binding.goalListRv
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -371,6 +374,41 @@ class GoalFragment : Fragment() {
             }
         } else {
             binding.userProfileIv.setImageResource(R.drawable.img_profile_green)
+        }
+    }
+
+    private fun loadTodayAchievement(token: String?) {
+        if(token.isNullOrEmpty()) {
+            Log.e("loadTodayAchievement", "Token is null or empty")
+            return
+        }
+
+        lifecycleScope.launch {
+            try {
+                val apiService = RetrofitInstance.goalApi
+                val today = LocalDate.now().toString() // yyyy-MM-dd
+
+                val response = apiService.getDailyAchievement(
+                    token = "Bearer $token",
+                    targetDate = today
+                )
+
+                if (response.isSuccess) {
+                    val achievementRate = response.result.achievementRate
+                    binding.dailyGoalCompletePercentTv.text = "$achievementRate%"
+                    setupPieChart(dailyPieChart, achievementRate)
+                } else {
+                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message}")
+                }
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                if (e is HttpException) {
+                    Log.e("todayachievement", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("todayachievement", "Other error: ${e.message}", e)
+                }
+            }
         }
     }
 }
