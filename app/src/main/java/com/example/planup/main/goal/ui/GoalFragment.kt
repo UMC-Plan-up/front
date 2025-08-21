@@ -25,7 +25,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.goal.item.GoalAdapter
+import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.adapter.UserInfoAdapter
@@ -40,6 +40,7 @@ import com.example.planup.network.controller.GoalController
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.data.GoalType
+import com.example.planup.main.goal.adapter.GoalApi
 
 class GoalFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
@@ -47,14 +48,9 @@ class GoalFragment : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GoalAdapter
     private lateinit var dailyPieChart: PieChart
-    private var goals = listOf(
-        GoalItem(1, "목표명", "[기준 기간]&[빈도]&\"이상\"", percent = 82, criteria = "PHOTO", progress = 82),
-        GoalItem(2, "토익 공부하기", "매주 5번 이상", percent = 82, criteria = "PHOTO", progress = 82),
-        GoalItem(3, "헬스장 가기", "매일 30분 이상", percent = 82, criteria = "PHOTO", progress = 82)
-    )
-
     private val userController = UserController()
     private val goalController = GoalController()
+    private var isEditMode: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,12 +101,14 @@ class GoalFragment : Fragment() {
         recyclerView = binding.goalListRv
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        // 초기 빈 리스트
         adapter = GoalAdapter(
             emptyList(),
             onItemClick = { goalItem ->
-                val fragment = GoalDescriptionFragment()
-                fragment.arguments = Bundle().apply { /* 필요 시 데이터 전달 */ }
+                val fragment = GoalDescriptionFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt(GoalDescriptionFragment.ARG_GOAL_ID, goalItem.goalId)
+                    }
+                }
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_container, fragment)
                     .addToBackStack(null)
@@ -118,21 +116,109 @@ class GoalFragment : Fragment() {
             },
             onEditClick = { goalId ->
                 val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
-                intent.putExtra("goalId", goalId)
+                intent.putExtra("goalId",goalId)
                 editGoalLauncher.launch(intent)
-                Log.d("GoalFragment", "goalId: $goalId")
             },
-            onDeactivateConfirmed = { showDeactivateToast() },
-            onActivateConfirmed = { showActivateToast() },
-            onDeleteConfirmed = { showDeleteToast() }
+            onDeactivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = false) },
+            onActivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = true) },
+            onDeleteConfirmed = {goalId -> requestDeleteGoal(goalId)}
         )
         recyclerView.adapter = adapter
+
     }
 
-    override fun onResume() {
-        super.onResume()
-        // 필요하다면 조건부로
-        // if (shouldRefresh) refreshGoals()
+    private val goalEditApi by lazy{
+        GoalRetrofitInstance.api.create(GoalApi::class.java)
+    }
+
+    // 액세스 토큰 가져오기
+    private fun requireTokenOrNull(): String?{
+        if(!::prefs.isInitialized) return null
+        val token = prefs.getString("accessToken", null) ?: return null
+        return "Bearer $token"
+    }
+
+    // 삭제
+    /** 삭제 */
+    private fun requestDeleteGoal(goalId: Int) {
+        val token = requireTokenOrNull() ?: run {
+            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            runCatching {
+                goalEditApi.deleteGoal(token = token, goalId = goalId)
+            }.onSuccess { res ->
+                if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+                    showDeleteToast()
+                    // 1) 즉시 UI에서 제거
+                    adapter.removeItemById(goalId)
+                    // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
+                    goalController.fetchMyGoals()
+                } else {
+                    Toast.makeText(requireContext(),
+                        "삭제 실패: ${res.body()?.message ?: res.code()}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    Log.w("GoalFragment", "deleteGoal fail body=${res.body()} code=${res.code()}")
+                }
+            }.onFailure {
+                Toast.makeText(requireContext(), "삭제 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("GoalFragment", "deleteGoal error", it)
+            }
+        }
+    }
+
+    /** 공개/비공개 토글 */
+    private fun requestTogglePublic(goalId: Int) {
+        val token = requireTokenOrNull() ?: run {
+            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            runCatching {
+                goalEditApi.setGoalPublic(token, goalId)
+            }.onSuccess { res ->
+                if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+                    // 서버에서 상태 메시지를 내려주면 적절히 토스트 교체 가능
+                    Toast.makeText(requireContext(), "공개 상태가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    goalController.fetchMyGoals()
+                } else {
+                    Toast.makeText(requireContext(), "공개 상태 변경 실패: ${res.body()?.message ?: res.code()}", Toast.LENGTH_SHORT).show()
+                }
+            }.onFailure {
+                Toast.makeText(requireContext(), "공개 상태 변경 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                Log.e("GoalFragment", "setGoalPublic error", it)
+            }
+        }
+    }
+
+    /** 활성/비활성 토글 (이번 클릭 의도 전달) */
+    private fun requestToggleActive(goalId: Int, willActivate: Boolean) {
+        val token = requireTokenOrNull() ?: return Toast.makeText(requireContext(),"로그인이 필요합니다.",Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            runCatching { goalEditApi.setGoalActive(token, goalId) }
+                .onSuccess { res ->
+                    if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+                        if (willActivate) showActivateToast() else showDeactivateToast()
+
+                        // 1) 즉시 해당 아이템만 UI 반영
+                        adapter.updateItemActive(goalId, willActivate)
+
+                        // 2) 정확성 위해 서버 리스트 재조회(옵션)
+                        goalController.fetchMyGoals()
+                    } else {
+                        Toast.makeText(requireContext(),
+                            "활성 상태 변경 실패: ${res.body()?.message ?: res.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                .onFailure {
+                    Toast.makeText(requireContext(),"활성 상태 변경 중 오류가 발생했습니다.",Toast.LENGTH_SHORT).show()
+                    Log.e("GoalFragment","setGoalActive error", it)
+                }
+        }
     }
 
     /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -146,53 +232,27 @@ class GoalFragment : Fragment() {
             }
             val criteria = "$typeLabel · 빈도 ${dto.frequency}회 · 1회 기준 ${dto.oneDose}"
 
-            // 서버에 진행률/퍼센트가 없으므로 기본값 0으로 시작
-            val percent = 0
-            val progress = 0
-            val description = criteria
-            val authType = when (dto.goalType) {
-                GoalType.CHALLENGE_PHOTO -> "camera"
-                GoalType.CHALLENGE_TIME  -> "timer"
-                else -> "none"
-            }
-
             GoalItem(
                 goalId     = dto.goalId,
                 title      = dto.goalName.orEmpty(),
-                description= description,
-                percent    = percent,
-                authType   = authType,
-                isActive   = true,     // 서버 플래그가 있으면 반영
-                isEditMode = false,    // UI 상태
+                description= criteria,
+                percent    = 0,
+                authType   = when (dto.goalType) {
+                    GoalType.CHALLENGE_PHOTO -> "camera"
+                    GoalType.CHALLENGE_TIME  -> "timer"
+                    else -> "none"
+                },
+                isEditMode = false,
+                isActive = !dto.isActive,
                 criteria   = criteria,
-                progress   = progress
+                progress   = 0
             )
         }
 
-    /** RecyclerView에 아이템 반영 */
     private fun setGoals(items: List<GoalItem>) {
-        // GoalAdapter에 데이터 갱신 메서드가 없다면 인스턴스 교체
-        adapter = GoalAdapter(
-            items,
-            onItemClick = { goalItem ->
-                val fragment = GoalDescriptionFragment()
-                fragment.arguments = Bundle().apply { /* 필요 시 데이터 전달 */ }
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            },
-            onEditClick = { goalId ->
-                val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
-                intent.putExtra("goalId", goalId)
-                editGoalLauncher.launch(intent)
-                Log.d("GoalFragment", "goalId: $goalId")
-            },
-            onDeactivateConfirmed = { showDeactivateToast() },
-            onActivateConfirmed = { showActivateToast() },
-            onDeleteConfirmed = { showDeleteToast() }
-        )
-        recyclerView.adapter = adapter
+        adapter.updateItems(items)        // ✅ 리스트만 교체
+        adapter.setEditMode(isEditMode)   // 편집 모드 유지
+        binding.manageButton.text = if (isEditMode) "완료" else "관리"
     }
 
     private fun showDeactivateToast() {
@@ -248,8 +308,10 @@ class GoalFragment : Fragment() {
     }
 
     private fun clickListener() {
+
         binding.manageButton.setOnClickListener {
-            val isEditMode = adapter.toggleEditMode()
+            isEditMode = !isEditMode
+            adapter.setEditMode(isEditMode)  // 어댑터에 반영
             binding.manageButton.text = if (isEditMode) "완료" else "관리"
         }
 
