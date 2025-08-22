@@ -92,4 +92,10 @@ interface GoalApiService {
         @Path("friendId") friendId: Int,
         @Path("goalId") goalId: Int
     ): FriendGoalAchievementResponse
+
+    @GET("/goals/{goalId}/photos")
+    suspend fun getGoalPhotos(
+        @Header("Authorization") token: String,
+        @Query("goalId") goalId: Int
+    ): GoalPhotosResponse
 }

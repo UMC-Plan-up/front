@@ -26,6 +26,8 @@ class FriendGoalListAdapter(
         val tvDescription = binding.friendGoalListDescriptionTv
         val certificationTimerBtn = binding.certificationTimerCbtn
         val certificationPhotoBtn = binding.certificationPhotoCbtn
+        val supportBtn = binding.supportbtnTv
+        val motivateBtn = binding.motivatebtnTv
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendGoalViewHolder {
@@ -67,6 +69,10 @@ class FriendGoalListAdapter(
         // ✅ 클릭 이벤트
         holder.binding.root.setOnClickListener {
             onItemClick(item)
+        }
+
+        holder.supportBtn.setOnClickListener {
+
         }
     }
 
