@@ -78,21 +78,33 @@ class MainActivity : AppCompatActivity() {
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
 
-        val actionNavigate = intent.getStringExtra("ACTION_NAVIGATE")
+        val fromChallenge = intent.getStringExtra("FROM_CHALLENGE_TO")
         val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
 
-        // onCreate에서 시작할 화면 결정
-        val startFragment = when {
-            isFromGoalDetail -> {
-                SubscriptionPlanFragment().apply {
+        val startFragment = if (isFromGoalDetail){
+            SubscriptionPlanFragment().apply {
                     arguments = Bundle().apply {
                         putBoolean("IS_FROM_GOAL_DETAIL", true)
                     }
                 }
-            }
-            // 딥링크 로직
-            else -> HomeFragment()
+        } else if (fromChallenge == "GoalFragment") {
+            GoalFragment()
+        } else if(fromChallenge == "RecordFragment") {
+            RecordFragment()
+        } else {
+            HomeFragment()
         }
+        // onCreate에서 시작할 화면 결정
+//        val startFragment = when {
+//            isFromGoalDetail -> {
+//                SubscriptionPlanFragment().apply {
+//                    arguments = Bundle().apply {
+//                        putBoolean("IS_FROM_GOAL_DETAIL", true)
+//                    }
+//                }
+//            }
+//            else -> HomeFragment()
+//        }
         initBottomNavigation(startFragment)
     }
 
