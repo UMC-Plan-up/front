@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,14 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalSelectBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.main.MainActivity
+import com.example.planup.main.goal.ui.GoalFragment
 
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
@@ -25,6 +30,8 @@ class GoalSelectFragment : Fragment() {
     private var isCategory = false //카테고리 선택 처음 클릭했을 때
     private var sleepChallenge: Int = 2 //비활성화된 챌린지 목표 개수
     lateinit var nickname: String //사용자 닉네임
+
+    private val goalViewModel: GoalViewModel by activityViewModels()
 
     private lateinit var fromWhere: String
     override fun onCreateView(
@@ -40,7 +47,11 @@ class GoalSelectFragment : Fragment() {
 
     //초기화 내용
     private fun init() {
-        fromWhere = arguments?.getString("from")!!
+        fromWhere = goalViewModel.fromWhere.value?.toString() ?: "no-value"
+//        goalViewModel.fromWhere.observe(viewLifecycleOwner) { value ->
+//            fromWhere = value ?: "null"
+//            // 여기에서 정확한 값을 사용할 수 있음
+//        }
         category = binding.categoryStudyTv
         nickname = arguments?.getString("GoalOwnerName", "사용자").toString()
         binding.goalSelectCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -64,7 +75,7 @@ class GoalSelectFragment : Fragment() {
                 "CommunityIntroFragment" -> {
                     val inflater = LayoutInflater.from(context)
                     val layout = inflater.inflate(R.layout.toast_grey_template,null)
-                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = "임시 토스트"
+                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_make_new_goal)
 
                     val toast = Toast(context)
                     toast.view = layout
@@ -74,10 +85,16 @@ class GoalSelectFragment : Fragment() {
                 }
                 "GoalFragment" -> {
                     val intent = Intent(context as GoalActivity, MainActivity::class.java)
+                    intent.apply {
+                        putExtra("FROM_CHALLENGE_TO", "GoalFragment")
+                    }
                     startActivity(intent)
                 }
                 "ChallengeCompleteFragment" -> {
                     val intent = Intent(context as GoalActivity, MainActivity::class.java)
+                    intent.apply {
+                        putExtra("FROM_CHALLENGE_TO","RecordFragment")
+                    }
                     startActivity(intent)
                 }
             }

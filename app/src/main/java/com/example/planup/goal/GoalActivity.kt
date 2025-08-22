@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -13,8 +14,10 @@ import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
+import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
@@ -104,11 +107,12 @@ class GoalActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
+        goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
+        Log.d("okhttpasdfdsfdassssss",goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
-
         loadLastGoalData()
 
         if (savedInstanceState == null) {
@@ -125,9 +129,7 @@ class GoalActivity : AppCompatActivity() {
                     }
                 }
                 else -> GoalSelectFragment().apply {
-                    arguments = Bundle().apply {
-                        putString("from",intent.getStringExtra("from"))
-                    }
+//                        putString("from",intent.getStringExtra("TO_CHALLENGE_FROM"))
                 }
             }
             supportFragmentManager.beginTransaction()

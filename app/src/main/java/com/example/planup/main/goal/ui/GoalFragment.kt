@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService
@@ -312,7 +314,7 @@ class GoalFragment : Fragment() {
 
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname)
-                putExtra("from","GoalFragment")
+                putExtra("TO_CHALLENGE_FROM","GoalFragment")
             }
             startActivity(intent)
         }
