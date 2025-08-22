@@ -243,7 +243,6 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_edittext_background1"
-                    android:hint="@string/category_cooking"
                     android:textColor="@color/black_400"
                     android:textColorHint="@color/black_300"
                     app:layout_constraintStart_toStartOf="parent"

@@ -145,7 +145,11 @@ class ChallengeSetTimerFragment : Fragment() {
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = dropdownAdapter
         dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
-                view.text = items[position]
+                when(selected){
+                    0 -> view.text = getString(R.string.timer_hour, items[position])
+                    1 -> view.text = getString(R.string.timer_minute,items[position])
+                    2 -> view.text = getString(R.string.timer_second,items[position])
+                }
                 timeWatcher(items[position].toInt(), selected)
                 popupWindow.dismiss()
             }

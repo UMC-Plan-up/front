@@ -184,7 +184,7 @@
     <string name="nickname_title">닉네임</string>
 
     <!-- fragment_email.xml -->
-    <string name="link_by_email">(%1$s)인증을 위한\n링크를 보내드렸어요.\n메일함에서 링크를 확인해 주세요.</string>
+    <string name="link_by_email">%1$s인증을 위한\n링크를 보내드렸어요.\n메일함에서 링크를 확인해 주세요.</string>
     <string name="not_receive_email">이메일을 받지 못하셨나요?</string>
     <string name="new_email">새롭게 사용할 이메일 주소를 입력해 주세요</string>
     <string name="email_enter">이메일 주소를 입력하세요</string>
@@ -561,6 +561,9 @@
     <!-- fragment_challenge_timer -->
     <string name="timer_expect_time">목표 투자 시간</string>
     <string name="timer_ask">타이머 기반 성취 데이터 활용을 위한 질문이에요. 해당 목표를 1회 성취하는 데 시간이 얼마나 소요되나요?</string>
+    <string name="timer_hour">%1$s시간</string>
+    <string name="timer_minute">%1$s분</string>
+    <string name="timer_second">%1$s초</string>
     <!-- fragment_challenge_photo.xml -->
     <string name="photo_finish_day">일주일 기한 내에서 종료일을 선택하세요.</string>
     <string name="photo_duration">선정한 회당 목표를 실시할 기준 기간을 선택하세요. 종료일보다 긴 기준 기간은 설정할 수 없어요.</string>
@@ -798,7 +801,7 @@
 
     <string name="next_share"><u>다음에 공유할게요</u></string>
     <string name="next_input"><u>다음에 입력할게요</u></string>
-    <string name="home_main_text">그린 님, 벌써 이만큼이나 왔어요!</string>
+    <string name="home_main_text">%1$s 님,\n벌써 이만큼이나 왔어요!</string>
     <string name="daily_to_do_list">Daily To-Do List</string>
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>

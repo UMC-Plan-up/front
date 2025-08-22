@@ -62,6 +62,16 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
         }
         //완료 버튼 클릭: 마이페이지 화면으로 이동
         binding.nicknameCompleteBtn.setOnClickListener{
+            val newNickname = prefs.getString("nickname","null")
+            val prevNickname = binding.nicknameEt.text.toString()
+
+            if (prevNickname == newNickname?.removeSurrounding("\"")
+                && newNickname != "null"){
+                val errorColor = ContextCompat.getColor(context, R.color.semanticR1)
+                binding.nickNameErrorTv.setText(R.string.error_already_nickname)
+                binding.nickNameLv.setBackgroundColor(errorColor)
+                return@setOnClickListener
+            }
             val nicknameService = UserController()
             nicknameService.setNicknameChangeAdapter(this)
             nicknameService.nicknameService(binding.nicknameEt.text.toString())
@@ -79,10 +89,12 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
                     //정상
                     binding.nickNameErrorTv.setText(null)
                     binding.nickNameLv.setBackgroundColor(normalColor)
+                    binding.nicknameCompleteBtn.isActivated = true
                 }else if (20 < binding.nicknameEt.text.toString().length){
                     //20자 초과
                     binding.nickNameErrorTv.setText(R.string.error_under_twenty_word)
                     binding.nickNameLv.setBackgroundColor(errorColor)
+                    binding.nicknameCompleteBtn.isActivated = false
                 }
             }
 

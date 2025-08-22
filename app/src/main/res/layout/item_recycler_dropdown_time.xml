@@ -7,7 +7,7 @@
         android:id="@+id/dropdown_recycler_rv"
         android:layout_width="wrap_content"
         android:minWidth="70dp"
-        android:layout_height="wrap_content"
+        android:layout_height="216dp"
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:background="@drawable/bg_timer_dropdown"

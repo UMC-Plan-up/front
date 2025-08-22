@@ -106,7 +106,7 @@ class GoalActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
         goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
-        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
+        //Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
