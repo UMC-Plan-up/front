@@ -61,31 +61,7 @@ class ParticipantLimitFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.backIcon.setOnClickListener {
-            val ga = activity as? GoalActivity
-
-            val prev = GoalDetailFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", ga?.goalOwnerName ?: goalOwnerName ?: "사용자")
-                    putString("goalType",       ga?.goalType)
-                    putString("goalCategory",   ga?.goalCategory)
-                    putString("goalName",       ga?.goalName)
-                    putString("goalAmount",     ga?.goalAmount)
-                    putString("verificationType", ga?.verificationType)
-                    putString("period",         ga?.period)
-                    putInt("frequency",         ga?.frequency ?: 0)
-                    putInt("limitFriendCount",  ga?.limitFriendCount ?: 0)
-                }
-            }
-
-            if (ga != null) {
-                ga.navigateToFragment(prev)
-            } else {
-                val containerId = (view?.parent as? ViewGroup)?.id ?: android.R.id.content
-                parentFragmentManager.beginTransaction()
-                    .replace(containerId, prev)
-                    .addToBackStack(null)
-                    .commit()
-            }
+            parentFragmentManager.popBackStack()
         }
 
         binding.nextButton.setOnClickListener {

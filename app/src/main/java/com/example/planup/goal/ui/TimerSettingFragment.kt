@@ -44,8 +44,10 @@ class TimerSettingFragment : Fragment() {
     // 프레그먼트 초기화
     private fun init() {
         hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
-        minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
-        seconds = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
+        minutes = resources.getStringArray(R.array.dropdown_minute_second)
+            .toCollection(ArrayList<String>())
+        seconds = resources.getStringArray(R.array.dropdown_minute_second)
+            .toCollection(ArrayList<String>())
     }
 
     private fun clickListener() {
@@ -137,11 +139,14 @@ class TimerSettingFragment : Fragment() {
         binding.challengeTimerNextBtn.background = bg
     }
 
+    private fun Int.dp(): Int =
+        (this * resources.displayMetrics.density).toInt()
+
     private fun showDropdown(
         items: ArrayList<String>,
         view: TextView,
         selected: Int
-    ) { // 리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
+    ) {
         val inflater = LayoutInflater.from(context)
         val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
         val popupWindow = PopupWindow(
@@ -150,19 +155,34 @@ class TimerSettingFragment : Fragment() {
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
         )
-        val dropdownAdapter = TimerRVAdapter(items)
-        popupWindow.showAsDropDown(view) // 선택된 뷰 하단에 드롭다운 표시
-        popupWindow.isOutsideTouchable = true // 바깥 터치 허용
-        popupWindow.setBackgroundDrawable(
-            resources.getColor(R.color.transparent).toDrawable()
-        ) // 투명 배경 설정
 
-        // 드롭다운 터치 이벤트 관리하는 어댑터
+        val desiredWidthPx = when (selected) {
+            0 -> 90.dp()  // 시간
+            1 -> 70.dp()  // 분
+            else -> 70.dp() // 초
+        }
+        popupWindow.width = desiredWidthPx
+        popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        popupWindow.isOutsideTouchable = true
+        popupWindow.setBackgroundDrawable(
+            ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
+        )
+
+        val dropdownAdapter = TimerRVAdapter(items)
         popupBinding.dropdownRecyclerRv.adapter = dropdownAdapter
+
+        popupWindow.showAsDropDown(view)
+
         dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
-                view.text = items[position]
-                timeWatcher(items[position].toInt(), selected)
+                val raw = items[position]
+                val labeled = when (selected) {
+                    0 -> "${raw}시간"
+                    1 -> "${raw}분"
+                    else -> "${raw}초"
+                }
+                view.text = labeled
+                timeWatcher(raw.toInt(), selected)
                 popupWindow.dismiss()
             }
         })

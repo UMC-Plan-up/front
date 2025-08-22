@@ -55,8 +55,8 @@ class PushAlertFragment : Fragment() {
 
         // 알림 시간의 기본값을 '오전 7시 30분'으로 설정
         binding.alertTimeTv.text = "오전"
-        binding.alertHourTv.text = "07"
-        binding.alertMinuteTv.text = "30"
+        binding.alertHourTv.text = "07시"
+        binding.alertMinuteTv.text = "30분"
 
         val prefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
         isFirst = prefs.getBoolean("show_push_alert_popup", true)
@@ -289,13 +289,23 @@ class PushAlertFragment : Fragment() {
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
             View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         )
-        // 뷰 아래에 팝업 표시
         popupWindow.showAsDropDown(view)
 
         val adapter = TimerRVAdapter(items)
         adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
             override fun setTime(position: Int) {
-                view.text = items[position]
+                val selectedItem = items[position]
+                when (view.id) {
+                    R.id.alert_hour_tv -> {
+                        view.text = "${selectedItem}시"
+                    }
+                    R.id.alert_minute_tv -> {
+                        view.text = "${selectedItem}분"
+                    }
+                    else -> {
+                        view.text = selectedItem
+                    }
+                }
                 popupWindow.dismiss()
             }
         })

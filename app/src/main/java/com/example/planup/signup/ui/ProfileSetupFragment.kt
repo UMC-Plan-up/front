@@ -56,12 +56,10 @@ class ProfileSetupFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1) 딥링크에서 전달된 토큰/이메일 받기
         verifyToken = arguments?.getString("verifyToken")
         Log.d("ProfileSetup", "verifyToken arg = ${verifyToken?.take(12)}...")
         val emailFromDeepLink = arguments?.getString("email")
 
-        // 2) 토큰 적용
         verifyToken?.takeIf { it.isNotBlank() }?.let {
             App.jwt.token = "Bearer $it"
             Log.d("ProfileSetup", "Applied verify token for signup flow")
@@ -77,7 +75,6 @@ class ProfileSetupFragment : Fragment() {
         binding.nicknameGuide2.visibility = View.GONE
         setNextButtonEnabled(false)
 
-        /* 닉네임 입력 변화 감지 → 유효성 검사 */
         binding.nicknameEditText.addTextChangedListener {
             val nickname = it.toString().trim()
 
@@ -114,7 +111,6 @@ class ProfileSetupFragment : Fragment() {
             Log.d("PSF", "args email=$emailFromDeepLink, verifyToken=${verifyToken?.take(12)}..., jwt=${App.jwt.token}")
         }
 
-        // 뒤로가기 아이콘 → 이전 화면으로 이동
         binding.backIcon.setOnClickListener {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
@@ -127,12 +123,10 @@ class ProfileSetupFragment : Fragment() {
             }
         )
 
-        /* editIcon 클릭 → 프로필 수정 popup 띄우기 */
         binding.editIcon.setOnClickListener {
             showProfilePopup(it)
         }
 
-        /* 다음 버튼 클릭 → 최종 회원가입 진행 */
         binding.nextButton.setOnClickListener {
             val nickname = binding.nicknameEditText.text.toString().trim()
             val isTooLong = nickname.length > 20
@@ -155,7 +149,6 @@ class ProfileSetupFragment : Fragment() {
             }
         }
 
-        // 갤러리
         galleryLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -166,7 +159,6 @@ class ProfileSetupFragment : Fragment() {
             }
         }
 
-        // 카메라
         cameraLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -176,7 +168,6 @@ class ProfileSetupFragment : Fragment() {
             }
         }
 
-        // 파일
         fileLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -384,23 +375,52 @@ class ProfileSetupFragment : Fragment() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val token = App.jwt.token ?: return@launch
-                val response = RetrofitInstance.profileApi.uploadProfileImage(token, body)
+                val token = App.jwt.token ?: run {
+                    Log.e("프로필 업로드", "토큰이 null입니다. API 요청을 중단합니다.")
+                    return@launch
+                }
+
+                val email = (requireActivity() as SignupActivity).email
+                    ?: SignUpDraftStore.loadEmail(requireContext())
+                    ?: ""
+
+                if (email.isBlank()) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "이메일 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+
+                Log.d("프로필 업로드", "API 요청 시작. 토큰: ${token.take(10)}..., email=$email")
+
+                val response = RetrofitInstance.profileApi.uploadProfileImage(email, body)
 
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.result?.imageUrl
+                    Log.d("프로필 업로드", "API 요청 성공. 받은 이미지 URL: $imageUrl")
+
                     withContext(Dispatchers.Main) {
                         (requireActivity() as SignupActivity).profileImgUrl = imageUrl ?: ""
+
+                        Log.d("프로필 업로드", "SignupActivity의 profileImgUrl 변수 업데이트: ${(requireActivity() as SignupActivity).profileImgUrl}")
+
                         if (!imageUrl.isNullOrBlank()) {
+                            Log.d("프로필 업로드", "Glide로 이미지 로딩 시작: $imageUrl")
                             Glide.with(this@ProfileSetupFragment)
                                 .load(imageUrl)
                                 .circleCrop()
                                 .into(binding.profileImage)
+                        } else {
+                            Log.w("프로필 업로드", "서버에서 받은 이미지 URL이 비어 있습니다. Glide 로딩을 건너뜁니다.")
                         }
                     }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    val errorCode = response.code()
+                    Log.e("프로필 업로드", "API 요청 실패. 상태 코드: $errorCode, 오류 본문: $errorBody")
                 }
             } catch (e: Exception) {
-                Log.e("프로필 업로드", "예외 발생", e)
+                Log.e("프로필 업로드", "예외 발생: ${e.message}", e)
             }
         }
     }

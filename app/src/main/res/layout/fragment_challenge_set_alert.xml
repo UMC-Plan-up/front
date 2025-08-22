@@ -241,7 +241,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="2.5dp"
-                    android:src="@drawable/ic_arrow_up_14"
+                    android:src="@drawable/ic_arrow_down"
                     app:layout_constraintBottom_toBottomOf="@id/alert_time_tv"
                     app:layout_constraintEnd_toEndOf="@id/alert_time_tv"
                     app:layout_constraintTop_toTopOf="@id/alert_time_tv" />
@@ -263,7 +263,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="2.5dp"
-                    android:src="@drawable/ic_arrow_up_14"
+                    android:src="@drawable/ic_arrow_down"
                     app:layout_constraintBottom_toBottomOf="@id/alert_hour_tv"
                     app:layout_constraintEnd_toEndOf="@id/alert_hour_tv"
                     app:layout_constraintTop_toTopOf="@id/alert_hour_tv" />
@@ -285,7 +285,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="2.5dp"
-                    android:src="@drawable/ic_arrow_up_14"
+                    android:src="@drawable/ic_arrow_down"
                     app:layout_constraintBottom_toBottomOf="@id/alert_minute_tv"
                     app:layout_constraintEnd_toEndOf="@id/alert_minute_tv"
                     app:layout_constraintTop_toTopOf="@id/alert_minute_tv" />

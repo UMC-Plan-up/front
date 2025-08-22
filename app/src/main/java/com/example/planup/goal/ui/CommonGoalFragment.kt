@@ -60,19 +60,20 @@ class CommonGoalFragment : Fragment() {
 
         Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
 
-        /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
             (requireActivity() as GoalActivity)
                 .navigateToFragment(GoalSelectFragment())
         }
 
-        /* 기본 탭: 친구와 함께 활성화 */
+        // 기본 탭: 친구와 함께
         setTabActive(binding.friendTab, true)
         setTabActive(binding.communityTab, false)
+        isFriendTab = true
+        showAll = false
 
         fetchGoalsFromServer("FRIEND")
 
-        /* 탭 전환 (친구 ↔ 커뮤니티) */
+        // 탭 전환
         binding.friendTab.setOnClickListener {
             isFriendTab = true
             showAll = false
@@ -89,7 +90,7 @@ class CommonGoalFragment : Fragment() {
             fetchGoalsFromServer("COMMUNITY")
         }
 
-        /* 새 목표 만들기 → GoalInputFragment 이동 */
+        // 새 목표 만들기
         binding.createCommunityButton.setOnClickListener {
             val goalInputFragment = GoalInputFragment().apply {
                 arguments = Bundle().apply {
@@ -103,7 +104,6 @@ class CommonGoalFragment : Fragment() {
     private fun setTabActive(tab: AppCompatButton, active: Boolean) {
         val activeBg = ColorStateList.valueOf(Color.parseColor("#CCDDFE"))
         val inactiveBg = ColorStateList.valueOf(Color.parseColor("#E4E6E8"))
-
         if (active) {
             tab.setTextColor("#5383E3".toColorInt())
             tab.backgroundTintList = activeBg
@@ -113,9 +113,31 @@ class CommonGoalFragment : Fragment() {
         }
     }
 
-    /* 서버에서 목표 리스트 받아오는 함수 */
+    /* 탭에 맞춰 카드/리스트/문구 토글 */
+    private fun updateEmptyState(isEmpty: Boolean) {
+        if (isEmpty) {
+            binding.emptyStateCard.visibility = View.VISIBLE
+            binding.goalCardContainer.visibility = View.GONE
+            binding.moreButton.visibility = View.GONE
+
+            // 문구 토글
+            binding.emptyFriendText.visibility = if (isFriendTab) View.VISIBLE else View.GONE
+            binding.emptyCommunityText.visibility = if (isFriendTab) View.GONE else View.VISIBLE
+        } else {
+            binding.emptyStateCard.visibility = View.GONE
+            binding.goalCardContainer.visibility = View.VISIBLE
+        }
+    }
+
+    /* 목표 리스트 받아오기 */
     private fun fetchGoalsFromServer(goalType: String) {
         val serverCategory = toServerCategory(goalCategory)
+
+
+        binding.goalCardContainer.removeAllViews()
+        binding.goalCardContainer.visibility = View.GONE
+        binding.moreButton.visibility = View.GONE
+        binding.emptyStateCard.visibility = View.GONE
 
         lifecycleScope.launch {
             try {
@@ -129,27 +151,36 @@ class CommonGoalFragment : Fragment() {
                     val list = res.body()?.result.orEmpty()
 
                     list.forEachIndexed { index, goal ->
-                        Log.d("GoalData", "Goal #${index}: goalId=${goal.goalId}, " +
-                                "verificationType=${goal.verificationType}, " +
-                                "goalTime=${goal.goalTime}")
+                        Log.d(
+                            "GoalData",
+                            "Goal #$index: goalId=${goal.goalId}, verificationType=${goal.verificationType}, goalTime=${goal.goalTime}"
+                        )
                     }
 
                     currentFilteredGoals = list
                     renderFirstThree(list)
                 } else {
                     Log.e("GoalAPI", "code=${res.code()} msg=${res.errorBody()?.string()}")
+                    currentFilteredGoals = emptyList()
                     renderFirstThree(emptyList())
                 }
             } catch (e: Exception) {
                 Log.e("GoalAPI", "network error", e)
+                currentFilteredGoals = emptyList()
                 renderFirstThree(emptyList())
             }
         }
     }
 
-    /* 목표 카드를 goalContainer에 추가 */
     private fun renderFirstThree(goals: List<GoalDto>) {
         binding.goalCardContainer.removeAllViews()
+
+        if (goals.isEmpty()) {
+            updateEmptyState(true)
+            return
+        }
+
+        updateEmptyState(false)
 
         val first = goals.take(3)
         val rest = goals.drop(3)
@@ -187,22 +218,21 @@ class CommonGoalFragment : Fragment() {
                 card.goalTime.visibility = View.VISIBLE
 
                 val timeInSeconds = goal.goalTime
-                if (timeInSeconds != null && timeInSeconds > 0) {
-                    card.goalTime.text = formatSecondsToHhMmSs(timeInSeconds)
+                card.goalTime.text = if (timeInSeconds != null && timeInSeconds > 0) {
+                    formatSecondsToHhMmSs(timeInSeconds)
                 } else {
-                    card.goalTime.text = "목표 투자 시간"
+                    "목표 투자 시간"
                 }
-
             } else {
                 card.goalTime.visibility = View.GONE
                 card.certCamera.visibility = View.VISIBLE
             }
+
             card.goalTitle.text = goal.goalName
 
             val period = periodKoFromGoalType(goal.goalType)
             card.goalFrequency.text = "$period ${goal.frequency}번 이상"
             card.goalDescription.text = goal.oneDose.toString()
-
 
             binding.goalCardContainer.addView(card.root)
         }

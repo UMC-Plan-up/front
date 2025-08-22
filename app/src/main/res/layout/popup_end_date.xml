@@ -1,0 +1,82 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="248dp"
+    android:background="@drawable/bg_popup_push_alert"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <ImageView
+        android:id="@+id/popup_push_bar_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:src="@drawable/popup_push_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/popup_push_title_tv"
+        android:layout_marginBottom="27dp"/>
+
+    <TextView
+        android:id="@+id/popup_push_title_tv"
+        style="@style/Typography_L_Semibold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="27dp"
+        android:text="종료일 설정을 완료하세요!"
+        android:textColor="@color/black_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_push_bar_iv" />
+
+    <TextView
+        android:id="@+id/popup_push_explain_tv"
+        style="@style/Typography_SM_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="종료일이 정상적으로 설정되지 않았어요. 계속하면 종료일이 설정되지 않아요. 종료일을 다시 설정하시겠어요?"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_push_title_tv" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/popup_push_setting_cl"
+        android:layout_width="312dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_push_explain_tv"
+        android:layout_marginTop="36dp"
+        android:layout_marginBottom="20dp">
+
+        <TextView
+            android:id="@+id/popup_push_no_btn"
+            style="@style/Typography_SM_Medium"
+            android:layout_width="148dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/bg_btn_transparent"
+            android:gravity="center"
+            android:text="@string/btn_no"
+            android:textAlignment="center"
+            android:textColor="@color/black_300"
+            app:layout_constraintEnd_toStartOf="@id/popup_push_yes_btn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/popup_push_yes_btn"
+            style="@style/Typography_SM_Medium"
+            android:layout_width="148dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:background="@drawable/bg_btn_blue"
+            android:gravity="center"
+            android:text="@string/btn_yes1"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toEndOf="@id/popup_push_no_btn"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
