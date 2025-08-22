@@ -729,6 +729,7 @@
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
+    <string name="toast_make_new_goal">새로운 목표를 추가하세요</string>
 
     <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
     <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
@@ -801,6 +802,10 @@
     <string name="daily_to_do_list">Daily To-Do List</string>
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
+    <string name="friend_photo_verification_btn">사진 인증</string>
+    <string name="friend_today_time">##:##:##</string>
+    <string name="friend_goal_count">N 개의 목표 진행 중</string>
+    <string name="friend_friend_name">친구 1</string>
     <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
 </resources>
