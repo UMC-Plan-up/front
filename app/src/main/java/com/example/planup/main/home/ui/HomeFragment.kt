@@ -109,7 +109,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val summaries = loadFriendGoalSummaries(token)
             Log.d("FriendGoalSummary","summaries: $summaries")
-            friendChallengingList.clear()
+             friendChallengingList.clear()
             for (summary in summaries) friendChallengingList.add(summary)
             Log.d("FriendGoalSummary", "최종 summaries: $friendChallengingList")
 
