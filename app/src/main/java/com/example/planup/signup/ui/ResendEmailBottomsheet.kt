@@ -1,5 +1,6 @@
 package com.example.planup.signup.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,10 @@ import com.example.planup.signup.data.ResendEmailRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 import com.kakao.sdk.auth.AuthCodeClient
+import com.kakao.sdk.user.UserApiClient
 import com.example.planup.signup.data.AlternativeLoginRequest
+import com.example.planup.signup.data.KakaoLoginRequest
+import com.example.planup.network.App
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 
@@ -52,66 +56,111 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
         binding.cancelButton.setOnClickListener { dismiss() }
     }
 
+    // [카카오톡 소셜 로그인 사용하기] 선택
     private fun startKakaoLogin() {
         isSending = true
         binding.kakaoLoginOption.isEnabled = false
+        binding.resendEmailOption.isEnabled = false
 
         val ctx = requireActivity()
-        AuthCodeClient.instance.authorizeWithKakaoTalk(ctx) { code, _ ->
-            if (code != null) {
-                callAlternativeLogin(code)
-            } else {
-                AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code2, _ ->
-                    if (code2 != null) {
-                        callAlternativeLogin(code2)
-                    } else {
-                        Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
-                        binding.kakaoLoginOption.isEnabled = true
-                        isSending = false
+
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(ctx)) {
+            AuthCodeClient.instance.authorizeWithKakaoTalk(ctx) { code, _ ->
+                if (code != null) {
+                    callKakaoLogin(code)
+                } else {
+                    AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code2, _ ->
+                        if (code2 != null) {
+                            callKakaoLogin(code2)
+                        } else {
+                            Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
+                            restoreKakaoButtons()
+                        }
                     }
+                }
+            }
+        } else {
+            AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code, _ ->
+                if (code != null) {
+                    callKakaoLogin(code)
+                } else {
+                    Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
+                    restoreKakaoButtons()
                 }
             }
         }
     }
 
-    private fun callAlternativeLogin(authCode: String) {
+    private fun callKakaoLogin(authCode: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val res = RetrofitInstance.userApi.alternativeLogin(
-                    AlternativeLoginRequest(authCode)
-                )
-                val ok = res.isSuccessful && res.body()?.isSuccess == true
-                if (ok) {
-                    val tempUserId = res.body()!!.result?.tempUserId ?: ""
-                    val profileSetupFragment = ProfileSetupFragment().apply {
-                        arguments = Bundle().apply { putString("tempUserId", tempUserId) }
-                    }
-                    parentFragmentManager.beginTransaction()
-                        .replace(R.id.signup_container, profileSetupFragment)
-                        .addToBackStack(null)
-                        .commit()
+                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(authCode))
+                val body = resp.body()
 
-                    dismiss()
+                if (resp.isSuccessful && body?.isSuccess == true) {
+                    val r = body.result
+
+                    if (r.newUser) {
+                        // 신규 유저: SignupActivity로
+                        startActivity(
+                            Intent(requireContext(), com.example.planup.signup.SignupActivity::class.java).apply {
+                                putExtra("provider", "KAKAO")
+                                putExtra("tempUserId", r.tempUserId ?: "")
+                                putExtra("email", r.userInfo?.email)
+                                putExtra("profileImg", r.userInfo?.profileImg)
+                            }
+                        )
+                        dismiss()
+                        requireActivity().overridePendingTransition(0, 0)
+                    } else {
+                        val accessToken = r.accessToken
+                        val userInfo = r.userInfo
+                        if (!accessToken.isNullOrBlank() && userInfo != null) {
+                            App.jwt.token = "Bearer $accessToken"
+
+                            val prefs = requireActivity().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
+                            prefs.edit().apply {
+                                putString("accessToken", accessToken)
+                                putInt("userId", userInfo.id.toInt())
+                                putString("email", userInfo.email)
+                                putString("nickname", userInfo.nickname)
+                                putString("profileImg", userInfo.profileImg)
+                            }.apply()
+
+                            startActivity(Intent(requireContext(), com.example.planup.main.MainActivity::class.java))
+                            dismiss()
+                            requireActivity().finish()
+                        } else {
+                            Toast.makeText(requireContext(), "로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
+                            restoreKakaoButtons()
+                        }
+                    }
                 } else {
-                    val msg = res.body()?.message ?: res.errorBody()?.string() ?: "로그인 실패"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
-                    binding.kakaoLoginOption.isEnabled = true
+                    Toast.makeText(requireContext(), body?.message ?: "로그인 실패", Toast.LENGTH_LONG).show()
+                    restoreKakaoButtons()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-                binding.kakaoLoginOption.isEnabled = true
+                restoreKakaoButtons()
             } finally {
                 isSending = false
             }
         }
     }
 
+    private fun restoreKakaoButtons() {
+        binding.kakaoLoginOption.isEnabled = true
+        binding.resendEmailOption.isEnabled = true
+    }
+
+    // [이메일 다시 보내기] 선택
     private fun resendEmail() {
         if (email.isBlank()) {
             return
         }
         isSending = true
         binding.resendEmailOption.isEnabled = false
+        binding.kakaoLoginOption.isEnabled = false
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -126,6 +175,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             dismiss()
                         } else {
                             binding.resendEmailOption.isEnabled = true
+                            binding.kakaoLoginOption.isEnabled = true
                         }
                     }
 
@@ -139,11 +189,13 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             dismiss()
                         } else {
                             binding.resendEmailOption.isEnabled = true
+                            binding.kakaoLoginOption.isEnabled = true
                         }
                     }
                 }
             } catch (e: Exception) {
                 binding.resendEmailOption.isEnabled = true
+                binding.kakaoLoginOption.isEnabled = true
             } finally {
                 isSending = false
             }

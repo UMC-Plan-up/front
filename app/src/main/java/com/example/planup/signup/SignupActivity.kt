@@ -9,10 +9,10 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.signup.data.SignUpDraftStore
 import com.example.planup.signup.ui.*
+import com.kakao.sdk.user.UserApiClient
 
 class SignupActivity : AppCompatActivity() {
 
-    // 회원가입 과정에서 필요한 데이터들을 저장하는 변수들
     var email: String? = null
     var password: String? = null
     var nickname: String? = null
@@ -26,6 +26,7 @@ class SignupActivity : AppCompatActivity() {
         Log.d("SignupActivity", "onCreate: intent=$intent data=${intent?.data}")
         setContentView(R.layout.activity_signup)
 
+
         // 1) 딥링크를 최우선으로 처리
         val handled = handleEmailDeepLink(intent)
         if (handled) return
@@ -38,14 +39,29 @@ class SignupActivity : AppCompatActivity() {
             this.tempUserId = intent.getStringExtra("tempUserId")
             this.password = "social_login_password_placeholder"
 
-
-            val bundle = Bundle().apply {
-                putString("tempUserId", this@SignupActivity.tempUserId)
-                putBoolean("isKakaoSignup", true)
+            if (this.email.isNullOrBlank()) {
+                // 이메일이 없으면 추가 동의 요청
+                val scopes = listOf("account_email")
+                UserApiClient.instance.loginWithNewScopes(this, scopes) { token, error ->
+                    if (error != null) {
+                        Log.e("SignupActivity", "이메일 추가 동의 실패", error)
+                        openAgreementForKakao()
+                    } else {
+                        // 추가 동의 후 사용자 정보 다시 요청
+                        UserApiClient.instance.me { user, error2 ->
+                            if (error2 != null) {
+                                Log.e("SignupActivity", "동의 후 사용자 정보 요청 실패", error2)
+                            } else {
+                                this.email = user?.kakaoAccount?.email
+                                Log.d("SignupActivity", "동의 후 이메일=${this.email}")
+                            }
+                            openAgreementForKakao()
+                        }
+                    }
+                }
+            } else {
+                openAgreementForKakao()
             }
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
-                .commit()
             return
         }
 
@@ -73,6 +89,17 @@ class SignupActivity : AppCompatActivity() {
         setIntent(intent)
         handleEmailDeepLink(intent)
     }
+
+    private fun openAgreementForKakao() {
+        val bundle = Bundle().apply {
+            putString("tempUserId", this@SignupActivity.tempUserId)
+            putBoolean("isKakaoSignup", true)
+        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.signup_container, AgreementFragment().apply { arguments = bundle })
+            .commit()
+    }
+
 
     /*
      * URL: planup://profile/setup?email=...&verified=true&token=...&from=email_verification
@@ -121,17 +148,6 @@ class SignupActivity : AppCompatActivity() {
         return true
     }
 
-    // LoginSentEmailFragment로 이동하는 함수
-    fun openLoginSentEmail(email: String?, pushToBackStack: Boolean = true) {
-        val f = LoginSentEmailFragment().apply {
-            arguments = Bundle().apply { putString("email", email) }
-        }
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.signup_container, f)
-            if (pushToBackStack) addToBackStack(null)
-            commit()
-        }
-    }
 
     // ProfileSetupFragment로 이동하는 함수
     fun openProfileSetup(email: String?, verifyToken: String?, addToBackStack: Boolean) {
