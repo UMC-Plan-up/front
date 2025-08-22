@@ -61,7 +61,7 @@ class EditGoalTitleFragment : Fragment() {
                 goalName = goalName,
                 oneDose = 0,
                 goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING",
-                goalType = "SOLO",
+                goalType = "FRIEND",
                 period = "DAY",
                 endDate = "",
                 verificationType = "PHOTO",

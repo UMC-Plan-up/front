@@ -120,7 +120,7 @@
                 app:layout_constraintTop_toTopOf="@id/goal_list_text_timer_tv"/>
 
             <!-- 드롭다운 -->
-            <Spinner
+            <androidx.appcompat.widget.AppCompatSpinner
                 android:id="@+id/goal_list_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="36dp"
@@ -132,6 +132,7 @@
                 android:paddingEnd="12dp"
                 android:paddingBottom="8dp"
                 android:spinnerMode="dropdown"
+                android:popupBackground="@drawable/bg_time_spinner_dropdown"
                 app:layout_constraintEnd_toEndOf="@+id/goal_list_play_btn"
                 app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
                 app:layout_constraintTop_toBottomOf="@+id/goal_list_text_timer_tv" />
@@ -246,6 +247,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/achievement_status_mcv"
             android:layout_width="46dp"
             android:layout_height="46dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -258,6 +260,7 @@
             app:strokeColor="@color/transparent">
 
             <ImageView
+                android:id="@+id/achievement_status_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_achivement_status"
