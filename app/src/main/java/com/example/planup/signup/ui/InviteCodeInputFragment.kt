@@ -97,7 +97,7 @@ class InviteCodeInputFragment : Fragment() {
 
                             if (result.valid) {
                                 hideInvalidCodeMessage()
-                                // 유효한 코드이면 팝업을 띄우고, 팝업의 확인 버튼이 다음 화면으로 이동
+                                // 유효한 코드이면 팝업을 띄우고, 팝업의 확인 버튼이 팝업만 닫도록 변경
                                 showPopupCenter(view, result.targetUserNickname, enteredCode)
                             } else {
                                 showInvalidCodeMessage()
@@ -165,7 +165,7 @@ class InviteCodeInputFragment : Fragment() {
         }
     }
 
-    /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 다음 화면으로 이동 */
+    /* popup_code.xml을 화면 중앙에 띄우고, 확인 시 팝업만 닫힘 */
     private fun showPopupCenter(anchorView: View, nickname: String, inviteCode: String) {
         val popupBinding = PopupCodeBinding.inflate(LayoutInflater.from(requireContext()))
 
@@ -186,10 +186,8 @@ class InviteCodeInputFragment : Fragment() {
         popupWindow.isOutsideTouchable = false
         popupWindow.isFocusable = true
 
-        /* popup 확인 버튼 → 초대코드 처리 API 호출 후 다음 화면으로 이동 */
+        // 팝업 확인 버튼 → 초대코드 처리 API 호출 후 팝업만 닫음
         popupBinding.confirmButton.setOnClickListener {
-            popupBinding.confirmButton.isEnabled = false
-
             viewLifecycleOwner.lifecycleScope.launch {
                 try {
                     val processRes = RetrofitInstance.userApi.processInviteCode(
@@ -200,17 +198,13 @@ class InviteCodeInputFragment : Fragment() {
 
                     if (ok) {
                         popupWindow.dismiss()
-                        (requireActivity() as SignupActivity).inviteCode = inviteCode
-                        // 초대코드 처리 성공 후 다음 화면으로 이동
-                        (requireActivity() as SignupActivity).navigateToFragment(CommunityIntroFragment())
+                        Toast.makeText(requireContext(), "초대 코드가 처리되었습니다.", Toast.LENGTH_SHORT).show()
                     } else {
                         val msg = processRes.body()?.message ?: "초대코드 처리 실패"
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                        popupBinding.confirmButton.isEnabled = true
                     }
                 } catch (e: Exception) {
                     Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-                    popupBinding.confirmButton.isEnabled = true
                 }
             }
         }

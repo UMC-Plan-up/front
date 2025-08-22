@@ -36,6 +36,9 @@
     <string name="goal_photo_auth_option_2">2번</string>
     <string name="goal_photo_auth_option_3">3번</string>
 
+    <string name="year_unit">%s년</string>
+    <string name="month_unit">%s월</string>
+    <string name="day_unit">%s일</string>
 
     <string name="year">연도</string>
     <string name="month">월</string>
@@ -89,7 +92,7 @@
 
     <string name="find_password_email_desc">가입한 이메일 주소를 입력해 주세요</string>
     <string name="find_password">비밀번호 찾기</string>
-    <string name="find_password_email_sent">(입력 이메일@email.com)인증을 위한 \n링크를 보내드렸어요. \n메일함에서 링크를 확인해 주세요.</string>
+    <string name="find_password_email_sent">입력 이메일@email.com인증을 위한 \n링크를 보내드렸어요. \n메일함에서 링크를 확인해 주세요.</string>
 
     <string name="reset_password">비밀번호 재설정</string>
     <string name="password">비밀번호</string>

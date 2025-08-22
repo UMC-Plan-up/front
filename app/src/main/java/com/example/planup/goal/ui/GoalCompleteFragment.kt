@@ -29,7 +29,7 @@ class GoalCompleteFragment : Fragment() {
     private var _binding: FragmentGoalCompleteBinding? = null
     private val binding get() = _binding!!
     private val ISO_UTC_MILLIS: DateTimeFormatter =
-        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(ZoneOffset.UTC)
 
     override fun onCreateView(

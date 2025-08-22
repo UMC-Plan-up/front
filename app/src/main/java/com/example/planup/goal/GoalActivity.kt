@@ -34,7 +34,7 @@ class GoalActivity : AppCompatActivity() {
     var oneDose: String = ""
     var frequency: Int = 0
     var period: String = ""
-    var endDate: String = ""
+    var endDate: String? = null
     var verificationType: String = ""
     var limitFriendCount: Int = 0
     var goalTime: Int = 0

@@ -46,7 +46,9 @@ class LoginEmailFragment : Fragment() {
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
+            val agreementFragment = AgreementFragment()
+            (activity as? SignupActivity)?.navigateToFragment(agreementFragment)
+                ?: requireActivity().supportFragmentManager.popBackStack()
         }
 
         /* 이메일 입력 변화 감지 → 실시간 검증 */
