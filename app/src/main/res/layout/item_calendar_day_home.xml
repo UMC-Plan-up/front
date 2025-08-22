@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/home_calendarDayText"
+        android:text="1"
+        style="@style/Typography_L_Medium"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:gravity="center"
+        android:textColor="#0F2552"
+        android:background="@drawable/bg_calendar_select" />
+
+    <LinearLayout
+        android:id="@+id/home_eventBarsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="2dp">
+
+        <View
+            android:id="@+id/home_eventBar1"
+            android:layout_width="30dp"
+            android:layout_height="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="#6591CA" />
+
+        <View
+            android:id="@+id/home_eventBar2"
+            android:layout_width="30dp"
+            android:layout_height="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="#2B65B0" />
+
+        <View
+            android:id="@+id/home_eventBar3"
+            android:layout_width="30dp"
+            android:layout_height="2dp"
+            android:background="#B0D9D5" />
+    </LinearLayout>
+</LinearLayout>
