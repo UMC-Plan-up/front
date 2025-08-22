@@ -800,5 +800,9 @@
     <string name="daily_to_do_list">Daily To-Do List</string>
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
+    <string name="friend_photo_verification_btn">사진 인증</string>
+    <string name="friend_today_time">##:##:##</string>
+    <string name="friend_goal_count">N 개의 목표 진행 중</string>
+    <string name="friend_friend_name">친구 1</string>
 
 </resources>

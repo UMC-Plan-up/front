@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@drawable/bg_bottom_sheet"
     android:paddingStart="24dp"
@@ -38,10 +39,13 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_kakao_logo"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,10 +66,12 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_kakao_profile1"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -86,10 +92,12 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_kakao_profile2"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -110,10 +118,12 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_kakao_logo"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -134,10 +144,12 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_insta_logo"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -158,10 +170,12 @@
             android:paddingVertical="8dp"
             android:foreground="?attr/selectableItemBackgroundBorderless">
 
-            <View
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:background="@drawable/bg_share_icon" />
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_msg"
+                android:padding="6dp"
+                app:tint="@null" />
 
             <TextView
                 android:layout_width="wrap_content"
