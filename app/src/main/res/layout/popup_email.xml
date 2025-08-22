@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/emailBottomSheet"
-    android:layout_width="118dp"
+    android:layout_width="wrap_content"
     android:layout_height="90dp"
     android:orientation="vertical"
-    android:background="@drawable/bg_bottomsheet_round2">
+    android:background="@drawable/bg_bottomsheet_round2" >
 
     <TextView
         android:id="@+id/domainGmail"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_gmail"
         android:fontFamily="@font/pretendard_medium"
@@ -16,26 +16,29 @@
         android:textColor="#4D4D4D"
         android:paddingVertical="4dp"
         android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:drawablePadding="8dp" />
 
     <TextView
         android:id="@+id/domainNaver"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_naver"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
         android:textColor="#4D4D4D"
+        android:paddingEnd="8dp"
         android:paddingVertical="4dp"
         android:paddingStart="8dp" />
 
     <TextView
         android:id="@+id/domainKakao"
-        android:layout_width="118dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dropdown_kakao"
         android:fontFamily="@font/pretendard_medium"
         android:textSize="14sp"
+        android:paddingEnd="8dp"
         android:textColor="#4D4D4D"
         android:paddingVertical="4dp"
         android:paddingStart="8dp" />

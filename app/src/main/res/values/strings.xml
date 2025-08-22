@@ -781,9 +781,9 @@
     <string name="dropdown_profile_album">사진 보관함</string>
     <string name="dropdown_profile_camera">사진 찍기</string>
     <string name="dropdown_profile_file">파일 선택</string>
-    <string name="dropdown_naver">naver.com</string>
-    <string name="dropdown_kakao">kakao.com</string>
-    <string name="dropdown_gmail">gmail.com</string>
+    <string name="dropdown_naver">\@naver.com</string>
+    <string name="dropdown_kakao">\@kakao.com</string>
+    <string name="dropdown_gmail">\@gmail.com</string>
 
     <!-- 밑줄 -->
     <string name="password_text"><u>비밀번호를 잊어버리셨나요?</u></string>

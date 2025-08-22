@@ -24,7 +24,7 @@
         android:roundIcon="@drawable/ic_splash_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanUP"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true" >
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

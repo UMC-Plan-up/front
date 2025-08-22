@@ -1,6 +1,5 @@
 package com.example.planup.goal
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -15,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
-import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
+import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
@@ -91,13 +90,11 @@ class GoalActivity : AppCompatActivity() {
             val data = result.data
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    val goalDetailFragment =
-                        supportFragmentManager.findFragmentById(R.id.goal_container)
-                    if (goalDetailFragment is GoalDetailFragment) {
-                        goalDetailFragment.updateLockStatus(true)
-                    }
-                }, 2000)
+                val goalDetailFragment =
+                    supportFragmentManager.findFragmentById(R.id.goal_container)
+                if (goalDetailFragment is GoalDetailFragment) {
+                    goalDetailFragment.updateLockStatus(true)
+                }
             }
         }
     }
@@ -204,7 +201,7 @@ class GoalActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    /* SubscriptionPlanFragment를 시작하고, 결과를 받기 위한 함수 */
+    /* SubscriptionPlanFragment를 시작하고 결과를 받기 위한 함수 */
     fun startSubscriptionActivity() {
         val intent = Intent(this, MainActivity::class.java)
         // 어떤 경로로 SubscriptionFragment가 호출되었는지 판단
@@ -212,4 +209,26 @@ class GoalActivity : AppCompatActivity() {
         intent.putExtra("IS_FROM_GOAL_DETAIL", true)
         subscriptionResultLauncher.launch(intent)
     }
+
+    fun draftPrefs() = getSharedPreferences("user_data", MODE_PRIVATE)
+
+    fun saveDraft(map: Map<String, Any?>) {
+        draftPrefs().edit().apply {
+            map.forEach { (k, v) ->
+                when (v) {
+                    is String -> putString(k, v)
+                    is Int    -> putInt(k, v)
+                    is Boolean-> putBoolean(k, v)
+                    else      -> Unit
+                }
+            }
+        }.apply()
+    }
+
+    fun readDraftString(key: String, def: String = "") =
+        draftPrefs().getString(key, def) ?: def
+    fun readDraftInt(key: String, def: Int = 0) =
+        draftPrefs().getInt(key, def)
+    fun readDraftBool(key: String, def: Boolean = false) =
+        draftPrefs().getBoolean(key, def)
 }
