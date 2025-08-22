@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PlanUP</string>
+    <string name="app_version">1.0.0</string>
 
     <string name="premium_policy">유료 정책</string>
     <string name="benefit_question">어떤 혜택을 누릴 수 있나요?</string>
@@ -728,6 +729,7 @@
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
+    <string name="toast_make_new_goal">새로운 목표를 추가하세요</string>
 
     <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
     <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
@@ -780,9 +782,9 @@
     <string name="dropdown_profile_album">사진 보관함</string>
     <string name="dropdown_profile_camera">사진 찍기</string>
     <string name="dropdown_profile_file">파일 선택</string>
-    <string name="dropdown_naver">naver.com</string>
-    <string name="dropdown_kakao">kakao.com</string>
-    <string name="dropdown_gmail">gmail.com</string>
+    <string name="dropdown_naver">\@naver.com</string>
+    <string name="dropdown_kakao">\@kakao.com</string>
+    <string name="dropdown_gmail">\@gmail.com</string>
 
     <!-- 밑줄 -->
     <string name="password_text"><u>비밀번호를 잊어버리셨나요?</u></string>
@@ -804,5 +806,6 @@
     <string name="friend_today_time">##:##:##</string>
     <string name="friend_goal_count">N 개의 목표 진행 중</string>
     <string name="friend_friend_name">친구 1</string>
+    <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
 </resources>

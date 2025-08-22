@@ -1,155 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/communityRootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
+    android:orientation="vertical"
     android:padding="28dp">
 
+    <ImageView
+        android:id="@+id/backIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="19dp"
+        android:src="@drawable/ic_arrow_back" />
+
+    <TextView
+        android:id="@+id/communityTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_marginTop="31dp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:text="@string/goal_select_together"
+        android:textColor="@color/black_400"
+        android:textSize="20sp" />
+
     <LinearLayout
-        android:id="@+id/communityRootLayout"
+        android:id="@+id/tabContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
-        <ImageView
-            android:id="@+id/backIcon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow_back"
-            android:layout_marginTop="19dp" />
-
-        <TextView
-            android:id="@+id/communityTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:text="@string/goal_select_together"
-            android:textSize="20sp"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textColor="@color/black_400"
-            android:layout_marginTop="31dp" />
-
-        <LinearLayout
-            android:id="@+id/tabContainer"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
-            android:weightSum="2">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginEnd="0dp"
-                app:cardElevation="8dp"
-                app:cardMaxElevation="12dp"
-                app:cardUseCompatPadding="false"
-                app:cardPreventCornerOverlap="false"
-                app:shapeAppearanceOverlay="@style/TopRoundedShape">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="0dp"
+            android:layout_weight="1"
+            app:cardElevation="8dp"
+            app:cardMaxElevation="12dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="false"
+            app:shapeAppearanceOverlay="@style/TopRoundedShape">
 
             <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/friendTab"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/community_with_friends"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:backgroundTint="@null"
-                    android:background="#E4E6E8"
-                    android:textColor="#4B5563" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
+                android:id="@+id/friendTab"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="0dp"
-                app:cardElevation="8dp"
-                app:cardMaxElevation="12dp"
-                app:cardUseCompatPadding="false"
-                app:cardPreventCornerOverlap="false"
-                app:shapeAppearanceOverlay="@style/TopRoundedShape">
+                android:background="#E4E6E8"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="@string/community_with_friends"
+                android:textColor="#4B5563"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
 
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/communityTab"
-                    style="@style/Widget.AppCompat.Button.Borderless"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="@string/community_with_community"
-                    android:textSize="16sp"
-                    android:fontFamily="@font/pretendard_medium"
-                    android:backgroundTint="@null"
-                    android:background="#CCDDFE"
-                    android:textColor="#5383E3" />
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="0dp"
+            android:layout_weight="1"
+            app:cardElevation="8dp"
+            app:cardMaxElevation="12dp"
+            app:cardPreventCornerOverlap="false"
+            app:cardUseCompatPadding="false"
+            app:shapeAppearanceOverlay="@style/TopRoundedShape">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/communityTab"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#CCDDFE"
+                android:backgroundTint="@null"
+                android:fontFamily="@font/pretendard_medium"
+                android:text="@string/community_with_community"
+                android:textColor="#5383E3"
+                android:textSize="16sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/goalScroll"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/goalCardContainer"
+            android:id="@+id/goalScrollContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"  />
+            android:orientation="vertical">
 
-
-        <LinearLayout
-            android:id="@+id/moreButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:background="@drawable/btn_more"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:gravity="center" >
-
-            <TextView
-                android:id="@+id/moreText"
-                android:layout_width="wrap_content"
+            <!-- 이 부분에 divider 속성을 추가합니다. -->
+            <LinearLayout
+                android:id="@+id/goalCardContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/community_see_more"
-                android:textSize="16sp"
-                android:textColor="@color/black_400"
-                android:fontFamily="@font/pretendard_medium" />
+                android:orientation="vertical"
+                android:showDividers="middle"
+                android:divider="@drawable/divider_line" />
 
-            <ImageView
-                android:id="@+id/moreIcon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_arrow_down"
-                android:layout_marginStart="4dp" />
+            <LinearLayout
+                android:id="@+id/moreButton"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/btn_more"
+                android:gravity="center"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <TextView
+                    android:id="@+id/moreText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="@string/community_see_more"
+                    android:textColor="@color/black_400"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:id="@+id/moreIcon"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="4dp"
+                    android:src="@drawable/ic_arrow_down" />
+            </LinearLayout>
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <LinearLayout
-            android:id="@+id/createCommunityButton"
+    <LinearLayout
+        android:id="@+id/createCommunityButton"
+        android:layout_width="wrap_content"
+        android:layout_height="34dp"
+        android:layout_gravity="end"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/btn_next_background"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <TextView
+            android:id="@+id/createCommunityText"
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:background="@drawable/btn_next_background"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
+            android:layout_height="match_parent"
             android:gravity="center_vertical"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="end">
+            android:fontFamily="@font/pretendard_medium"
+            android:text="@string/community_create_new"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/createCommunityText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:text="@string/community_create_new"
-                android:textSize="14sp"
-                android:textColor="@color/white"
-                android:fontFamily="@font/pretendard_medium" />
-
-            <ImageView
-                android:id="@+id/createCommunityIcon"
-                android:layout_width="14dp"
-                android:layout_height="23dp"
-                android:src="@drawable/ic_arrow_right"
-                android:layout_marginStart="2dp"
-                app:tint="@color/white" />
-        </LinearLayout>
-
+        <ImageView
+            android:id="@+id/createCommunityIcon"
+            android:layout_width="14dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="2dp"
+            android:src="@drawable/ic_arrow_right"
+            app:tint="@color/white" />
     </LinearLayout>
-</ScrollView>
 
+</LinearLayout>

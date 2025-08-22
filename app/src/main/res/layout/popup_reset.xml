@@ -5,10 +5,9 @@
     android:layout_height="wrap_content"
     app:cardElevation="8dp"
     app:cardCornerRadius="10dp"
-    app:cardBackgroundColor="#FFFFFF"
+    app:cardBackgroundColor="@color/white"
     app:cardUseCompatPadding="true"
     app:cardPreventCornerOverlap="false">
-
 
     <LinearLayout
         android:id="@+id/resetPasswordBottomSheet"
@@ -18,18 +17,18 @@
         android:paddingTop="28dp"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:paddingBottom="20dp">
-
+        android:paddingBottom="20dp"
+        android:layout_gravity="center_horizontal">
 
         <TextView
-            android:id="@+id/resetCompleteTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/popup_password_changed"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textSize="18sp"
-            android:textColor="@color/black_400"/>
+        android:id="@+id/resetCompleteTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/popup_password_changed"
+        android:fontFamily="@font/pretendard_semibold"
+        android:textSize="18sp"
+        android:textColor="@color/black_400"/>
 
 
         <TextView
@@ -51,7 +50,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
             android:text="@string/btn_ok"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/white"
             android:textSize="16sp"
             android:fontFamily="@font/pretendard_medium"
             android:background="@drawable/btn_confirm2"/>

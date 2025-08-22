@@ -89,7 +89,6 @@ class ProfileSetupFragment : Fragment() {
 
             when {
                 isTooLong -> {
-                    // 20자 초과 → 안내문 표시
                     binding.nicknameGuide1.visibility = View.VISIBLE
                     isNicknameAvailable = false
                     setNextButtonEnabled(false)
@@ -103,7 +102,6 @@ class ProfileSetupFragment : Fragment() {
                 }
 
                 else -> {
-                    // 모든 조건 만족 → 버튼 활성화
                     isNicknameAvailable = false
                     setNextButtonEnabled(false)
                     nicknameCheckJob?.cancel()
@@ -217,7 +215,6 @@ class ProfileSetupFragment : Fragment() {
         fetchRandomNickname()
     }
 
-    /* 최종 회원가입 API 호출을 담당하는 함수 */
     private fun completeSignup() {
         val activity = requireActivity() as SignupActivity
         val isKakaoSignup = !activity.tempUserId.isNullOrBlank()
@@ -235,23 +232,14 @@ class ProfileSetupFragment : Fragment() {
                         } ?: emptyList()
                     )
 
-                    Log.d("회원가입/카카오", "request=$request")
-                    Log.d("회원가입/카카오", "Authorization(App.jwt)=${App.jwt.token}")
-
                     val response = RetrofitInstance.userApi.kakaoComplete(request)
-                    val code = response.code()
                     val ok = response.isSuccessful
                     val body = response.body()
                     val err = response.errorBody()?.string()
 
-                    Log.d("회원가입/카카오", "HTTP code=$code isSuccessful=$ok")
-                    Log.d("회원가입/카카오", "body?.isSuccess=${body?.isSuccess} message=${body?.message}")
-                    if (!err.isNullOrEmpty()) Log.e("회원가입/카카오", "errorBody=$err")
-
                     if (ok && body?.isSuccess == true) {
                         val result = body.result
                         val accessToken = result.accessToken
-                        Log.d("회원가입/카카오", "OK accessToken.len=${accessToken?.length}")
 
                         if (accessToken != null) {
                             val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
@@ -273,44 +261,23 @@ class ProfileSetupFragment : Fragment() {
                     val restoredEmail = activity.email ?: SignUpDraftStore.loadEmail(requireContext())
                     val restoredPw = activity.password ?: SignUpDraftStore.loadPw(requireContext())
 
-                    Log.d("회원가입", "restoredEmail=$restoredEmail pw.len=${restoredPw?.length} nickname=${activity.nickname}")
-                    Log.d("회원가입", "agreements=${activity.agreements}")
-                    Log.d("회원가입", "profileImg='${activity.profileImgUrl}'")
-                    Log.d("회원가입", "Authorization(App.jwt)=${App.jwt.token}")
-
-                    if (restoredEmail.isNullOrBlank()) {
-                        Log.e("회원가입", "email 복원 실패 → LoginEmailFragment")
-                        (requireActivity() as SignupActivity).navigateToFragment(LoginEmailFragment()); return@launch
-                    }
-                    if (restoredPw.isNullOrBlank()) {
-                        Log.e("회원가입", "pw 복원 실패 → LoginPasswordFragment")
-                        (requireActivity() as SignupActivity).navigateToFragment(LoginPasswordFragment()); return@launch
-                    }
-
                     val request = SignupRequestDto(
-                        email = restoredEmail,
-                        password = restoredPw,
-                        passwordCheck = restoredPw,
+                        email = restoredEmail ?: "",
+                        password = restoredPw ?: "",
+                        passwordCheck = restoredPw ?: "",
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl ?: "",
                         agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList()
                     )
-                    Log.d("회원가입", "request=$request")
 
                     val response = RetrofitInstance.userApi.signup(request)
-                    val code = response.code()
                     val ok = response.isSuccessful
                     val body = response.body()
                     val err = response.errorBody()?.string()
 
-                    Log.d("회원가입", "HTTP code=$code isSuccessful=$ok")
-                    Log.d("회원가입", "body?.isSuccess=${body?.isSuccess} message=${body?.message}")
-                    if (!err.isNullOrEmpty()) Log.e("회원가입", "errorBody=$err")
-
                     if (ok && body?.isSuccess == true) {
                         val result = body.result
                         val accessToken = result?.accessToken
-                        Log.d("회원가입", "OK accessToken.len=${accessToken?.length}")
 
                         if (accessToken != null) {
                             val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
@@ -331,32 +298,27 @@ class ProfileSetupFragment : Fragment() {
                     }
                 }
             } catch (e: Exception) {
-                Log.e("회원가입", "네트워크 예외", e)
                 Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    /* 다음 버튼 활성 ↔ 비활성 처리 함수 */
     private fun setNextButtonEnabled(enabled: Boolean) {
         binding.nextButton.isEnabled = enabled
         binding.nextButton.setBackgroundResource(R.drawable.btn_next_background)
     }
 
-    /* 현재 닉네임과 프로필 이미지를 저장하는 함수 */
     private fun saveProfileData(nickname: String) {
         val activity = requireActivity() as SignupActivity
         activity.nickname = nickname
     }
 
-    /* 사진 저장할 파일 만드는 함수 */
     private fun createImageFile(): File {
         val fileName = "profile_${System.currentTimeMillis()}"
         val storageDir = requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(fileName, ".jpg", storageDir)
     }
 
-    /* editIcon 클릭 시 popup_profile.xml 띄우는 함수 */
     private fun showProfilePopup(anchorView: View) {
         val popupBinding = PopupProfileBinding.inflate(LayoutInflater.from(requireContext()))
 
@@ -408,7 +370,6 @@ class ProfileSetupFragment : Fragment() {
         )
     }
 
-    /* 프로필 이미지 업로드 → 서버에 POST */
     private fun uploadProfileImage(uri: Uri) {
         val file = when {
             cameraImageUri != null && uri == cameraImageUri && latestPhotoFile != null -> latestPhotoFile!!
@@ -417,20 +378,17 @@ class ProfileSetupFragment : Fragment() {
             else -> copyUriToCache(uri)
         }
 
-        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val mime = requireContext().contentResolver.getType(uri) ?: "image/jpeg"
+        val requestFile = file.asRequestBody(mime.toMediaTypeOrNull())
         val body = MultipartBody.Part.createFormData("file", file.name, requestFile)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                Log.d("프로필 업로드", "파일명: ${file.name}, 크기: ${file.length()} bytes")
-                Log.d("프로필 업로드", "JWT 토큰: ${App.jwt.token}")
-
-                val response = RetrofitInstance.profileApi.uploadProfileImage(App.jwt.token ?: "", body)
+                val token = App.jwt.token ?: return@launch
+                val response = RetrofitInstance.profileApi.uploadProfileImage(token, body)
 
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.result?.imageUrl
-                    Log.d("프로필 업로드", "성공! URL: $imageUrl")
-
                     withContext(Dispatchers.Main) {
                         (requireActivity() as SignupActivity).profileImgUrl = imageUrl ?: ""
                         if (!imageUrl.isNullOrBlank()) {
@@ -440,8 +398,6 @@ class ProfileSetupFragment : Fragment() {
                                 .into(binding.profileImage)
                         }
                     }
-                } else {
-                    Log.e("프로필 업로드", "실패: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
                 Log.e("프로필 업로드", "예외 발생", e)
@@ -451,7 +407,6 @@ class ProfileSetupFragment : Fragment() {
 
     private fun copyUriToCache(uri: Uri): File {
         val resolver = requireContext().contentResolver
-
         var name = "upload_${System.currentTimeMillis()}.jpg"
         resolver.query(uri, arrayOf(MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { c ->
             if (c.moveToFirst()) {
@@ -459,7 +414,6 @@ class ProfileSetupFragment : Fragment() {
                 if (idx >= 0) name = c.getString(idx)
             }
         }
-
         val outFile = File(requireContext().cacheDir, name)
         resolver.openInputStream(uri)?.use { input ->
             outFile.outputStream().use { output ->
@@ -481,10 +435,8 @@ class ProfileSetupFragment : Fragment() {
         }
     }
 
-    /* 키보드 숨기는 메서드 */
     private fun hideKeyboard() {
-        val imm =
-            requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
@@ -493,7 +445,6 @@ class ProfileSetupFragment : Fragment() {
         _binding = null
     }
 
-    /* 랜덤 닉네임 생성 */
     private fun fetchRandomNickname() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -501,13 +452,8 @@ class ProfileSetupFragment : Fragment() {
                 if (res.isSuccessful && res.body()?.isSuccess == true) {
                     val nn = res.body()!!.result.nickname
                     binding.nicknameEditText.setText(nn)
-                } else {
-                    val msg = res.body()?.message ?: "닉네임 생성 실패"
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+            } catch (_: Exception) { }
         }
     }
 

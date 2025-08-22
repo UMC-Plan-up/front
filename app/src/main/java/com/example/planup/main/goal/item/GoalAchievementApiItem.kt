@@ -22,3 +22,15 @@ data class TotalAchievementResult(
     val goalId: Int,
     val totalAchievementRate: Int
 )
+
+data class FriendGoalAchievementResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: FriendGoalAchievementResult
+)
+
+data class FriendGoalAchievementResult(
+    val goalId: Int,
+    val totalAchievement: Int
+)

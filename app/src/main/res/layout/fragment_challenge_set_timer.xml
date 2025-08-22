@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="15dp"
-                android:src="@drawable/ic_back"
+                android:src="@drawable/ic_arrow_back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -54,6 +54,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title_tv" />
 
             <TextView
+                android:id="@+id/expected_time_explain_tv"
                 style="@style/Typography_S_Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,12 +74,12 @@
                 android:layout_width="70dp"
                 android:layout_height="33dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="58dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_timer_setting"
                 android:text="@string/time"
                 android:textColor="@color/black_400"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/expected_time_tv" />
+                app:layout_constraintTop_toBottomOf="@id/expected_time_explain_tv" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -95,12 +96,12 @@
                 android:layout_width="70dp"
                 android:layout_height="33dp"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="58dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_timer_setting"
                 android:text="@string/minute"
                 android:textColor="@color/black_400"
                 app:layout_constraintStart_toEndOf="@id/challenge_timer_hour_tv"
-                app:layout_constraintTop_toBottomOf="@id/expected_time_tv" />
+                app:layout_constraintTop_toBottomOf="@id/expected_time_explain_tv" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -118,12 +119,12 @@
                 android:layout_width="70dp"
                 android:layout_height="33dp"
                 android:layout_marginStart="4dp"
-                android:layout_marginTop="58dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_timer_setting"
                 android:text="@string/second"
                 android:textColor="@color/black_400"
                 app:layout_constraintStart_toEndOf="@id/challenge_timer_minute_tv"
-                app:layout_constraintTop_toBottomOf="@id/expected_time_tv" />
+                app:layout_constraintTop_toBottomOf="@id/expected_time_explain_tv" />
 
             <ImageView
                 android:layout_width="wrap_content"

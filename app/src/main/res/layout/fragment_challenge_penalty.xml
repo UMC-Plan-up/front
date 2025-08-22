@@ -93,7 +93,7 @@
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_coffee_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="4dp">
                 <ImageView
                     android:id="@+id/challenge_penalty_snack_iv"
                     android:layout_width="24dp"
@@ -131,7 +131,7 @@
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_snack_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="4dp">
                 <ImageView
                     android:id="@+id/challenge_penalty_cleaning_iv"
                     android:layout_width="24dp"
@@ -169,7 +169,7 @@
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_cleaning_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="4dp">
                 <ImageView
                     android:id="@+id/challenge_penalty_wish_iv"
                     android:layout_width="24dp"
@@ -207,7 +207,7 @@
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_wish_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="4dp">
                 <ImageView
                     android:id="@+id/challenge_penalty_present_iv"
                     android:layout_width="24dp"
@@ -245,7 +245,7 @@
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_present_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="12dp">
+                android:layout_marginTop="4dp">
                 <TextView
                     android:id="@+id/challenge_penalty_skip_tv"
                     style="@style/Typography_L_Semibold"
@@ -268,8 +268,8 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/challenge_penalty_complete_btn"
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_skip_cl"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="48dp"
                 android:layout_marginEnd="8dp"/>
             <TextView
                 android:id="@+id/challenge_penalty_complete_btn"
@@ -284,8 +284,8 @@
                 app:layout_constraintEnd_toEndOf="@id/challenge_penalty_present_cl"
                 app:layout_constraintTop_toBottomOf="@id/challenge_penalty_skip_cl"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"/>
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="30dp"/>
 
             <TextView
                 android:id="@+id/challenge_penalty_error_tv"
@@ -314,7 +314,7 @@
                 android:layout_marginBottom="24dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="40dp"/>
+                android:layout_marginTop="133dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

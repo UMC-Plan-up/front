@@ -1,17 +1,23 @@
 package com.example.planup.goal
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
-import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
+import com.example.planup.goal.data.GoalViewModel
+import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
@@ -41,6 +47,45 @@ class GoalActivity : AppCompatActivity() {
     var alertMinute: String = ""
     var alertDays: MutableSet<String> = mutableSetOf()
 
+
+    /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) { // 현재 포커스가 EditText일 경우만
+                    val outRect = android.graphics.Rect()
+                    view.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        view.clearFocus()
+                        hideKeyboard(view) // 키보드 숨김
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // 혹시 dispatchTouchEvent에서 놓치는 경우 보완
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) {
+                    view.clearFocus()
+                    hideKeyboard(view)
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    //화면 터치 시 키보드 사라지게
+    private fun hideKeyboard(view: View?) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        view?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
+
     private val subscriptionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -48,24 +93,23 @@ class GoalActivity : AppCompatActivity() {
             val data = result.data
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    val goalDetailFragment =
-                        supportFragmentManager.findFragmentById(R.id.goal_container)
-                    if (goalDetailFragment is GoalDetailFragment) {
-                        goalDetailFragment.updateLockStatus(true)
-                    }
-                }, 2000)
+                val goalDetailFragment =
+                    supportFragmentManager.findFragmentById(R.id.goal_container)
+                if (goalDetailFragment is GoalDetailFragment) {
+                    goalDetailFragment.updateLockStatus(true)
+                }
             }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
+        goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
+        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
-
         loadLastGoalData()
 
         if (savedInstanceState == null) {
@@ -81,25 +125,14 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-//                else -> GoalCategoryFragment().apply {
-//                    arguments = (arguments ?: Bundle()).apply {
-//                        putString("goalOwnerName", goalOwnerName)
-//                    }
-                else -> GoalSelectFragment()
+
+                else -> GoalSelectFragment().apply {
+//                        putString("from",intent.getStringExtra("TO_CHALLENGE_FROM"))
+                }
             }
-
-            // GoalSelectFragment를 GoalCategoryFragment로 가정
-//            val first = GoalCategoryFragment().apply {
-//                arguments = (arguments ?: Bundle()).apply {
-//                    putString("goalOwnerName", goalOwnerName)
-//                }
-//            }
-            val first = GoalSelectFragment()
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)
                 .commit()
-//        }
         }
     }
 
@@ -171,7 +204,7 @@ class GoalActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    /* SubscriptionPlanFragment를 시작하고, 결과를 받기 위한 함수 */
+    /* SubscriptionPlanFragment를 시작하고 결과를 받기 위한 함수 */
     fun startSubscriptionActivity() {
         val intent = Intent(this, MainActivity::class.java)
         // 어떤 경로로 SubscriptionFragment가 호출되었는지 판단
@@ -179,4 +212,26 @@ class GoalActivity : AppCompatActivity() {
         intent.putExtra("IS_FROM_GOAL_DETAIL", true)
         subscriptionResultLauncher.launch(intent)
     }
+
+    fun draftPrefs() = getSharedPreferences("user_data", MODE_PRIVATE)
+
+    fun saveDraft(map: Map<String, Any?>) {
+        draftPrefs().edit().apply {
+            map.forEach { (k, v) ->
+                when (v) {
+                    is Int    -> putInt(k, v)
+                    is Boolean-> putBoolean(k, v)
+                    else      -> Unit
+                }
+            }
+        }.apply()
+    }
+
+    fun readDraftString(key: String, def: String = "") =
+        draftPrefs().getString(key, def) ?: def
+ 
+    fun readDraftInt(key: String, def: Int = 0) =
+        draftPrefs().getInt(key, def)
+    fun readDraftBool(key: String, def: Boolean = false) =
+        draftPrefs().getBoolean(key, def)
 }

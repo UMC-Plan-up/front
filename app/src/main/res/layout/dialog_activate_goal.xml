@@ -1,93 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#80000000"> <!-- 반투명 배경 -->
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_popup_goal_adapter"> <!-- 반투명 배경 -->
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="320dp"
+    <!-- 제목 -->
+    <TextView
+        android:id="@+id/popup_unblock_title_tv"
+        style="@style/Typography_L_Medium"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:text="목표를 활성화하시겠어요?"
+        android:textAlignment="center"
+        android:textColor="@color/black_400"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="20dp">
+    <!-- 설명 -->
+    <TextView
+        android:id="@+id/popup_block_description_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="비활성화된 목표를 다시 활성화하면, 달성 기록을 계속 이어갈 수 있어요. 지금 활성화하시겠어요?"
+        android:textColor="@color/black_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_unblock_title_tv" />
 
-            <!-- 제목 -->
-            <TextView
-                android:id="@+id/popup_unblock_title_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="목표를 활성화하시겠어요?"
-                android:textColor="#1A1A1A"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:gravity="center"
-                android:textAlignment="center"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+    <!-- 버튼 영역 -->
 
-            <!-- 설명 -->
-            <TextView
-                android:id="@+id/popup_block_description_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:text="비활성화된 목표를 다시 활성화하면, 달성 기록을 계속 이어갈 수 있어요. 지금 활성화하시겠어요?"
-                android:textColor="#333333"
-                android:textSize="14sp"
-                android:lineSpacingExtra="4dp"
-                android:textAlignment="center"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/popup_unblock_title_tv"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+    <TextView
+        android:id="@+id/popup_activate_goal_no_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/bg_btn_transparent"
+        android:gravity="center"
+        android:text="@string/btn_no"
+        android:textColor="@color/black_300"
+        app:layout_constraintEnd_toStartOf="@id/popup_activate_goal_yes_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/popup_block_description_tv" />
 
-            <!-- 버튼 영역 -->
-            <LinearLayout
-                android:id="@+id/popup_button_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="4dp"
-                android:orientation="horizontal"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@id/popup_block_description_tv"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+    <TextView
+        android:id="@+id/popup_activate_goal_yes_btn"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_btn_blue"
+        android:gravity="center"
+        android:text="@string/btn_yes1"
+        android:textColor="@color/white_font"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/popup_activate_goal_no_btn"
+        app:layout_constraintTop_toBottomOf="@id/popup_block_description_tv" />
 
-                <ImageView
-                    android:id="@+id/popup_block_no_iv"
-                    android:layout_width="110dp"
-                    android:layout_height="34dp"
-                    android:src="@drawable/no_btn_transparant"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/popup_block_yes_iv"
-                    android:layout_marginEnd="20dp"/>
-
-                <ImageView
-                    android:id="@+id/popup_block_yes_iv"
-                    android:layout_width="110dp"
-                    android:layout_height="34dp"
-                    android:src="@drawable/yes_btn"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/popup_block_no_iv"
-                    app:layout_constraintEnd_toEndOf="parent"/>
-            </LinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

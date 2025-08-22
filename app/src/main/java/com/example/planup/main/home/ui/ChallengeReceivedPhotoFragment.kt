@@ -139,7 +139,7 @@ class ChallengeReceivedPhotoFragment :
         Toast(context).apply {
             view = layout
             duration = LENGTH_SHORT
-            setGravity(Gravity.BOTTOM, 0, 300)
+            setGravity(Gravity.BOTTOM, 0, 477)
         }.show()
     }
 

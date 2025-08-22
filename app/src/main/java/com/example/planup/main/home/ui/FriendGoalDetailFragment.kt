@@ -34,6 +34,7 @@ import com.example.planup.main.goal.item.GoalRetrofitInstance
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import com.example.planup.R
+import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.home.adapter.PhotoAdapter
 import com.example.planup.network.RetrofitInstance
 
@@ -58,6 +59,7 @@ class FriendGoalDetailFragment : Fragment() {
 
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
+        binding.friendGoalDetailTodayfocusTv.text = getString(R.string.friend_goal_detail_today_text, title)
         loadComment(token, goalId)
         loadTodayFriendTime(token, friendId, goalId)
         loadFriendPhotos(token, friendId, goalId)
@@ -79,13 +81,12 @@ class FriendGoalDetailFragment : Fragment() {
 
 
 
-//        binding.btnSend.setOnClickListener {
-//            val comment = binding.etComment.text.toString()
-//            if (comment.isNotEmpty()) {
-//                // TODO: 댓글 저장 처리
-//                binding.etComment.text.clear()
-//            }
-//        }
+        binding.friendGoalSendCommentIv.setOnClickListener {
+            val comment = binding.friendGoalCommentEt.text.toString()
+            if (comment.isNotEmpty()) {
+                sendComment(token, goalId, comment)
+            }
+        }
 
         return binding.root
     }
@@ -190,6 +191,7 @@ class FriendGoalDetailFragment : Fragment() {
                 }
             } catch(e: Exception) {
                 Log.d("FriendGoalDetailFragment", "loadComment 오류: ${e.message}")
+                binding.friendGoalOtherCommentLl.visibility = View.GONE
             }
         }
     }
@@ -237,5 +239,25 @@ class FriendGoalDetailFragment : Fragment() {
         val recyclerView = binding.photoRecyclerView
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 4) // 4열
         recyclerView.adapter = PhotoAdapter(photoUrls)
+    }
+
+    private fun sendComment(token: String?, goalId: Int, comment: String) {
+        lifecycleScope.launch {
+            try {
+                val request = CreateCommentRequest(content = comment, parentCommentId = 0, reply = false)
+                val goalService = RetrofitInstance.goalApi
+                val response = goalService.createComment(token = "Bearer $token", goalId = goalId, comment = request)
+                if(response.isSuccess){
+                    binding.friendGoalCommentEt.text.clear()
+                    loadComment(token, goalId)
+                } else {
+                    Log.d("FriendGoalDetailFragment", "sendComment 실패: ${response.message}")
+                }
+            } catch (e: Exception) {
+                if(e is HttpException) Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.code()} ${e.message()}")
+                else Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.message}")
+            }
+
+        }
     }
 }

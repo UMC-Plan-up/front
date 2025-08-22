@@ -5,6 +5,8 @@ import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
 import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.item.CreateCommentRequest
+import com.example.planup.main.goal.item.CreateCommentResponse
 import com.example.planup.main.goal.item.DailyGoalResponse
 import com.example.planup.main.goal.item.FriendPhotosResponse
 import com.example.planup.main.goal.item.TotalAchievementResponse
@@ -17,6 +19,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.time.LocalDate
 
 interface GoalApi {
 
@@ -47,9 +50,13 @@ interface GoalApi {
         @Body goalCreateRequest: GoalCreateRequest
     ): Response<GoalCreateResponse>
 
-    // 카테고리별 목표 조회 API
-    @GET("/goals/create/list")
-    suspend fun getGoalsByCategory(
+    @GET("/goals/create/list/friend")
+    suspend fun getFriendGoalsByCategory(
+        @Query("goalCategory") goalCategory: String
+    ): Response<GoalListResponseDto>
+
+    @GET("/goals/create/list/community")
+    suspend fun getCommunityGoalsByCategory(
         @Query("goalCategory") goalCategory: String
     ): Response<GoalListResponseDto>
 
@@ -78,4 +85,11 @@ interface GoalApi {
         @Path("goalId") goalId: Int,
         @Query("userId") userId: Int
     ): FriendPhotosResponse
+
+    @POST("/goals/{goalId}/comment")
+    suspend fun createComment(
+        @Header("Authorization") token: String,
+        @Path("goalId") goalId: Int,
+        @Body comment: CreateCommentRequest
+    ): CreateCommentResponse
 }

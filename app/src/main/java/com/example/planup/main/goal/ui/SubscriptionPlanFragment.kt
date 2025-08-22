@@ -66,27 +66,25 @@ class SubscriptionPlanFragment : Fragment() {
 
 
     private fun completeSubscription() {
-        Handler(Looper.getMainLooper()).postDelayed({
-            if (isFromGoalDetail) {
-                val resultIntent = Intent()
-                resultIntent.putExtra("IS_UNLOCKED", true)
-                requireActivity().setResult(Activity.RESULT_OK, resultIntent)
-                requireActivity().finish()
-            } else if (isFromGoalFragment) {
+        if (isFromGoalDetail) {
+            val resultIntent = Intent()
+            resultIntent.putExtra("IS_UNLOCKED", true)
+            requireActivity().setResult(Activity.RESULT_OK, resultIntent)
+            requireActivity().finish()
+        } else if (isFromGoalFragment) {
+            val sharedPreferences = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+            val nickname = sharedPreferences.getString("nickname", "사용자") ?: "사용자"
 
-                val sharedPreferences = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-                val nickname = sharedPreferences.getString("nickname", "사용자") ?: "사용자"
+            val intent = Intent(requireContext(), GoalActivity::class.java).apply {
+                putExtra("start_from_payment_to_goal_detail", true)
+                putExtra("goalOwnerName", nickname)
 
-                val intent = Intent(requireContext(), GoalActivity::class.java).apply {
-                    putExtra("start_from_payment_to_goal_detail", true)
-                    putExtra("goalOwnerName", nickname)
-                }
-                startActivity(intent)
-
-                requireActivity().finish()
-
+                putExtra("IS_UNLOCKED", true)
             }
-        }, 2000)
+            startActivity(intent)
+
+            requireActivity().finish()
+        }
     }
 
     private fun resetCardBackgrounds() {

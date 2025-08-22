@@ -6,29 +6,40 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.main.home.ui.CalendarEvent
+import java.util.Calendar
+import androidx.core.graphics.toColorInt
 
 class CalendarEventAdapter : RecyclerView.Adapter<CalendarEventAdapter.EventViewHolder>() {
 
-    private var events: List<String> = emptyList()
+    private var events: List<CalendarEvent> = emptyList()
 
     // 사용할 색상 목록
     private val colors = listOf("#548DFF", "#D454FF", "#FFEB54")
 
-    fun submitList(newEvents: List<String>) {
+    fun submitList(newEvents: List<CalendarEvent>) {
         events = newEvents
         notifyDataSetChanged()
     }
 
     inner class EventViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val titleText: TextView = itemView.findViewById(R.id.titleText)
+        private val titleText: TextView = itemView.findViewById(R.id.calendar_event_title_tv)
+        private val subtitleText: TextView = itemView.findViewById(R.id.calendar_event_subtitle_tv)
         private val eventView: View = itemView.findViewById(R.id.calendar_event_v)
 
-        fun bind(event: String, position: Int) {
-            titleText.text = event
+        fun bind(event: CalendarEvent, position: Int) {
+            titleText.text = event.goalName
+            val period = when (event.period) {
+                "WEEK" -> "매주"
+                "MONTH" -> "매달"
+                "DAY" -> "매일"
+                else -> ""
+            }
+            subtitleText.text = "${period} ${event.frequency}회 이상"
 
             // 순차적으로 색상 적용
             val color = colors[position % colors.size]
-            eventView.setBackgroundColor(android.graphics.Color.parseColor(color))
+            eventView.setBackgroundColor(color.toColorInt())
         }
     }
 

@@ -87,7 +87,7 @@
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:clipToOutline="true"
-                    android:src="@drawable/img_profile_green" />
+                    android:src="@drawable/ic_profile" />
 
                 <TextView
                     android:id="@+id/user_goal_list_tv"
