@@ -44,6 +44,7 @@ import com.example.planup.network.RetrofitInstance
 import retrofit2.HttpException
 import java.time.LocalDate
 import com.example.planup.main.goal.adapter.GoalApi
+import java.time.LocalDateTime
 
 class GoalFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
@@ -386,11 +387,11 @@ class GoalFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val apiService = RetrofitInstance.goalApi
-                val today = LocalDate.now().toString() // yyyy-MM-dd
+                val today = LocalDate.now() // yyyy-MM-dd
 
                 val response = apiService.getDailyAchievement(
                     token = "Bearer $token",
-                    targetDate = today
+                    targetDate = today.toString()
                 )
 
                 if (response.isSuccess) {

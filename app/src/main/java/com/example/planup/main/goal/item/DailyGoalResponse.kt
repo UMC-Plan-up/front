@@ -15,6 +15,6 @@ data class DailyGoalResult(
 
 data class VerifiedGoal(
     val goalName: String,
-    val period: String,
+    val period: String?,
     val frequency: Int
 )

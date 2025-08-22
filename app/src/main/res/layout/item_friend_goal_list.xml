@@ -18,12 +18,12 @@
         <!-- 도넛 차트 -->
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/friend_goal_list_pc"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="16dp"/>
+            android:layout_marginStart="10dp"/>
 
         <!-- 텍스트 내용 -->
 
@@ -52,7 +52,7 @@
                     android:textColor="@color/black_400" />
 
                 <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/certification_type_cbtn"
+                    android:id="@+id/certification_timer_cbtn"
                     style="@style/Typography_S_Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="28dp"
@@ -60,6 +60,15 @@
                     android:background="@drawable/bg_manage_button"
                     android:elevation="2dp"
                     android:text="01:30:00" />
+
+                <androidx.appcompat.widget.AppCompatImageButton
+                    android:id="@+id/certification_photo_cbtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/img_camera_cbtn"
+                    android:layout_marginStart="15dp"
+                    android:elevation="2dp"/>
+
             </LinearLayout>
 
             <TextView
