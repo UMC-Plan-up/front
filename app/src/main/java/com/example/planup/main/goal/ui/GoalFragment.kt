@@ -44,7 +44,7 @@ import com.example.planup.network.RetrofitInstance
 import retrofit2.HttpException
 import java.time.LocalDate
 import com.example.planup.main.goal.adapter.GoalApi
-import java.time.LocalDateTime
+
 
 class GoalFragment : Fragment() {
     private lateinit var prefs : SharedPreferences

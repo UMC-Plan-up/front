@@ -76,19 +76,19 @@ class ChallengeSetPhotoFragment:Fragment() {
         popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_once_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_once)
-            editor.putInt("number",1)
+            editor.putInt("oneDoes",1)
             binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_twice_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_twice)
-            editor.putInt("number",2)
+            editor.putInt("oneDoes",2)
             binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_three_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_three)
-            editor.putInt("number",3)
+            editor.putInt("oneDoes",3)
             binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
