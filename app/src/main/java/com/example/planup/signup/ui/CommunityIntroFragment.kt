@@ -143,6 +143,7 @@ class CommunityIntroFragment : Fragment() {
             val realNickname = (requireActivity() as SignupActivity).nickname ?: "사용자"
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", realNickname)
+                putExtra("from","CommunityIntroFragment")
             }
             startActivity(intent)
         }

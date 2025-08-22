@@ -1,6 +1,7 @@
 package com.example.planup.main.home.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import com.example.planup.databinding.FragmentChallengeCompleteBinding
+import com.example.planup.goal.GoalActivity
+import com.example.planup.main.MainActivity
 
 class ChallengeCompleteFragment : Fragment() {
 
@@ -58,9 +61,17 @@ class ChallengeCompleteFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentChallengeCompleteBinding.inflate(inflater, container, false)
+        clickListener()
         return binding.root
     }
 
+    private fun clickListener(){
+        binding.newChallengeBtn.setOnClickListener {
+            val intent = Intent(context as MainActivity, GoalActivity::class.java)
+            intent.putExtra("from","ChallengeCompleteFragment")
+            startActivity(intent)
+        }
+    }
     // 유틸: 따옴표 제거
     private fun stripQuotes(name: String?): String {
         return name?.trim('"') ?: ""

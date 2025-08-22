@@ -542,7 +542,7 @@
                             android:id="@+id/mypage_version_current_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="N.N.N"
+                            android:text="@string/app_version"
                             style="@style/Typography_S_Semibold"
                             android:textColor="@color/mypage_version"
                             app:layout_constraintEnd_toEndOf="parent"

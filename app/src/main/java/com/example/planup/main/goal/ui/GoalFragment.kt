@@ -312,6 +312,7 @@ class GoalFragment : Fragment() {
 
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname)
+                putExtra("from","GoalFragment")
             }
             startActivity(intent)
         }

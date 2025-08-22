@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PlanUP</string>
+    <string name="app_version">1.0.0</string>
 
     <string name="premium_policy">유료 정책</string>
     <string name="benefit_question">어떤 혜택을 누릴 수 있나요?</string>
