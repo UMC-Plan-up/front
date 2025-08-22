@@ -80,10 +80,6 @@ class CommonGoalFragment : Fragment() {
             fetchGoalsFromServer("COMMUNITY")
         }
 
-        /* 더보기 버튼 */
-        binding.moreButton.setOnClickListener {
-        }
-
         /* 새 목표 만들기 → GoalInputFragment 이동 */
         binding.createCommunityButton.setOnClickListener {
             val goalInputFragment = GoalInputFragment().apply {
@@ -165,19 +161,31 @@ class CommonGoalFragment : Fragment() {
             card.goalOwner.text = goal.creatorNickname
             card.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
 
-            if (goal.goalTime > 0) {
+            val isTimer = goal.verificationType.equals("TIMER", ignoreCase = true) && goal.goalTime > 0
+            if (isTimer) {
+                card.certCamera.visibility = View.GONE
                 card.goalTime.visibility = View.VISIBLE
                 card.goalTime.text = formatSecondsToHhMmSs(goal.goalTime)
             } else {
                 card.goalTime.visibility = View.GONE
+                card.certCamera.visibility = View.VISIBLE
             }
 
             card.goalTitle.text = goal.goalName
-            card.goalFrequency.text = getString(R.string.goal_frequency, goal.frequency)
+
+            val period = periodKoFromGoalType(goal.goalType)
+            card.goalFrequency.text = "$period ${goal.frequency}번 이상"
             card.goalDescription.text = getString(R.string.goal_one_dose, goal.oneDose)
 
             binding.goalCardContainer.addView(card.root)
         }
+    }
+
+    private fun periodKoFromGoalType(type: String?): String = when (type?.uppercase()) {
+        "DAILY", "DAY"     -> "매일"
+        "WEEKLY", "WEEK"   -> "매주"
+        "MONTHLY", "MONTH" -> "매월"
+        else               -> "매주"
     }
 
     private fun formatSecondsToHhMmSs(totalSeconds: Int): String {

@@ -46,24 +46,43 @@
                 android:id="@+id/memberCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="35명"
+                android:text="%1$d명"
                 android:textSize="14sp"
                 android:textColor="@color/black_300"
                 android:layout_marginStart="3dp" />
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/goalTime"
-            android:layout_width="108dp"
+        <!-- 인증 방식에 따라 토글 -->
+        <FrameLayout
+            android:id="@+id/certSlot"
+            android:layout_width="wrap_content"
             android:layout_height="28dp"
-            android:text="목표 투자 시간"
-            android:textSize="16sp"
-            android:textColor="@color/black_300"
-            android:fontFamily="@font/pretendard_medium"
-            android:background="@drawable/bg_time_chip"
-            android:paddingHorizontal="8dp"
-            android:paddingVertical="3dp"
-            android:layout_marginStart="5dp" />
+            android:layout_marginStart="5dp">
+
+            <!-- 타이머 인증 -->
+            <TextView
+                android:id="@+id/goalTime"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:text="목표 투자 시간"
+                android:textSize="16sp"
+                android:textColor="@color/black_300"
+                android:fontFamily="@font/pretendard_medium"
+                android:background="@drawable/bg_time_chip"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="3dp"
+                android:visibility="gone"/>
+
+            <!-- 사진 인증 -->
+            <ImageView
+                android:id="@+id/certCamera"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_camera"
+                android:visibility="gone"/>
+        </FrameLayout>
     </LinearLayout>
 
     <TextView
@@ -81,7 +100,7 @@
         android:id="@+id/goalFrequency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="매주 %1$d번 이상"
+        android:text="%1$s %2$d번 이상"
         android:textSize="13sp"
         android:textColor="@color/black_300"
         android:fontFamily="@font/pretendard_medium"
@@ -92,7 +111,7 @@
         android:id="@+id/goalDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1회 분량"
+        android:text="%1$d회 분량"
         android:textSize="13sp"
         android:textColor="@color/black_300"
         android:fontFamily="@font/pretendard_medium"
