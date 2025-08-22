@@ -6,7 +6,6 @@
     android:background="@color/white"
     android:padding="28dp">
 
-
     <ImageView
         android:id="@+id/backIcon"
         android:layout_width="24dp"
@@ -15,7 +14,6 @@
         android:layout_marginTop="19dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 
     <TextView
         android:id="@+id/friendGoalTitleText"
@@ -37,9 +35,8 @@
         android:textSize="14sp"
         android:fontFamily="@font/pretendard_medium"
         android:textColor="@color/black_300"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="64dp" />
+        app:layout_constraintTop_toBottomOf="@id/friendGoalTitleText"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/goalNameLabel"
@@ -63,7 +60,7 @@
         android:padding="8dp"
         android:fontFamily="@font/pretendard_medium"
         android:layout_marginTop="155dp"
-        android:textColorHint="@color/black_300"
+        android:textColorHint="@color/black_200"
         android:textColor="@color/black_300"
         android:inputType="text"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
@@ -76,7 +73,7 @@
         android:text="@string/error_more_one_word"
         android:textSize="12sp"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="@color/black_300"
+        android:textColor="@color/red_200"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="203dp" />
@@ -88,7 +85,7 @@
         android:text="@string/error_less_twenty_word"
         android:textSize="12sp"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="#4B5563"
+        android:textColor="@color/red_200"
         android:layout_marginTop="203dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent" />
@@ -115,7 +112,7 @@
         android:padding="8dp"
         android:fontFamily="@font/pretendard_medium"
         android:layout_marginTop="279dp"
-        android:textColorHint="@color/black_300"
+        android:textColorHint="@color/black_200"
         android:textColor="@color/black_300"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -127,7 +124,7 @@
         android:text="@string/error_more_one_word"
         android:textSize="12sp"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="@color/black_300"
+        android:textColor="@color/red_200"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="327dp" />
@@ -139,7 +136,7 @@
         android:text="@string/error_less_thirty_word"
         android:textSize="12sp"
         android:fontFamily="@font/pretendard_medium"
-        android:textColor="@color/black_300"
+        android:textColor="@color/red_200"
         android:layout_marginTop="327dp"
         app:layout_constraintTop_toBottomOf="@id/backIcon"
         app:layout_constraintStart_toStartOf="parent" />
