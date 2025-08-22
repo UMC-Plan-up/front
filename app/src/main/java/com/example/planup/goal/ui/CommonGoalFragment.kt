@@ -63,7 +63,8 @@ class CommonGoalFragment : Fragment() {
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
             (requireActivity() as GoalActivity)
-                .navigateToFragment(GoalCategoryFragment())
+                .navigateToFragment(GoalSelectFragment())
+//                .navigateToFragment(GoalCategoryFragment())
         }
 
         /* 기본 탭: 친구와 함께 활성화 */

@@ -176,6 +176,7 @@ class GoalSelectFragment : Fragment() {
                 commonGoalFragment.arguments = Bundle().apply{
                     putString("goalOwnerName", nickname)
                     putString("selectedCategory", category.text.toString())
+                    putString("goalType","COMMUNITY")
                 }
                 (context as GoalActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.goal_container, CommonGoalFragment())

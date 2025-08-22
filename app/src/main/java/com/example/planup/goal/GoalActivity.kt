@@ -17,7 +17,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.data.GoalViewModel
-import com.example.planup.goal.ui.GoalCategoryFragment // GoalSelectFragment를 GoalCategoryFragment로 가정
+
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
