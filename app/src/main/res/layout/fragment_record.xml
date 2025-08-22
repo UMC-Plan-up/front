@@ -37,7 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginStart="10dp">
 
                 <TextView
                     android:id="@+id/text_selected_year"
@@ -75,17 +76,18 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/btn_weekly_report_1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:text="1주차 리포트"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:gravity="center"
                     android:padding="5dp"
-                    android:layout_marginStart="10dp"
                     android:textColor="@color/blue_400"
                     android:background="@drawable/bg_weekly_report"
                     android:layout_marginTop="5dp"
@@ -94,10 +96,10 @@
 
                 <TextView
                     android:id="@+id/btn_weekly_report_2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:text="2주차 리포트"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:gravity="center"
                     android:padding="5dp"
                     android:layout_marginStart="10dp"
@@ -109,10 +111,10 @@
 
                 <TextView
                     android:id="@+id/btn_weekly_report_3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:text="3주차 리포트"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:gravity="center"
                     android:padding="5dp"
                     android:layout_marginStart="10dp"
@@ -124,10 +126,10 @@
 
                 <TextView
                     android:id="@+id/btn_weekly_report_4"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:text="4주차 리포트"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:gravity="center"
                     android:padding="5dp"
                     android:layout_marginStart="10dp"
@@ -139,10 +141,10 @@
 
                 <TextView
                     android:id="@+id/btn_weekly_report_5"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
+                    android:layout_width="55dp"
+                    android:layout_height="55dp"
                     android:text="5주차 리포트"
-                    android:textSize="15sp"
+                    android:textSize="13sp"
                     android:gravity="center"
                     android:padding="5dp"
                     android:layout_marginStart="10dp"

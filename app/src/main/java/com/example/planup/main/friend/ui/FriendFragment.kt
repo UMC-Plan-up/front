@@ -63,6 +63,7 @@ class FriendFragment : Fragment() {
                 if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val resultList = response.body()!!.result
                     val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                    binding.tvFriendCount.text = "목록 (${friendList.size}명)"
 
                     binding.rvFriendList.layoutManager = LinearLayoutManager(requireContext())
                     binding.rvFriendList.adapter = FriendAdapter(friendList)
