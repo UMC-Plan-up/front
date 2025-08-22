@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
 import com.example.planup.databinding.FragmentCommunityIntroBinding
 import com.example.planup.databinding.ItemGoalAltBinding
+import com.example.planup.goal.data.GoalViewModel
 
 class CommunityIntroFragment : Fragment() {
 
@@ -143,7 +145,10 @@ class CommunityIntroFragment : Fragment() {
             val realNickname = (requireActivity() as SignupActivity).nickname ?: "사용자"
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", realNickname)
+                putExtra("TO_CHALLENGE_FROM","CommunityIntroFragment")
             }
+//            val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
+//            goalViewModel.fromWhere.value = "CommunityIntroFragment"
             startActivity(intent)
         }
     }

@@ -6,7 +6,6 @@ import com.example.planup.main.friend.data.FriendReportRequestDto
 import com.example.planup.main.friend.data.FriendRequestsResponse
 import com.example.planup.main.friend.data.FriendResponseDto
 import com.example.planup.main.friend.data.UnblockFriendRequestDto
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -38,14 +37,14 @@ interface FriendApi {
     @POST("/friends/accept")
     suspend fun acceptFriendRequest(
         @Header("Authorization") token: String,
-        @Body request: FriendActionRequestDto
+        @Query("friendId") goalId: Int
     ): Response<BaseResponse>
 
     // 친구 신청 거절
     @POST("/friends/reject")
     suspend fun rejectFriendRequest(
         @Header("Authorization") token: String,
-        @Body request: FriendActionRequestDto
+        @Query("friendId") goalId: Int
     ): Response<BaseResponse>
 
     // 친구 차단

@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="15dp"
-                android:src="@drawable/ic_back"
+                android:src="@drawable/ic_arrow_back"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
             <TextView
@@ -117,7 +117,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_cl"
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginTop="20dp"
@@ -126,8 +126,8 @@
 
                 <ImageView
                     android:id="@+id/challenge_certification_photo_iv"
-                    android:layout_width="82dp"
-                    android:layout_height="82dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/ic_picture"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -137,7 +137,7 @@
                     android:id="@+id/challenge_certification_photo_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="사진 인증"
+                    android:text="@string/challenge_set_photo"
                     style="@style/Typography_S_Medium"
                     android:textColor="@color/black_400"
                     app:layout_constraintTop_toTopOf="parent"
@@ -166,7 +166,7 @@
                 style="@style/Typography_SM_Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="152dp"
+                android:layout_marginTop="153dp"
                 android:layout_marginBottom="24dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"

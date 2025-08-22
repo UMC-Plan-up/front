@@ -60,12 +60,34 @@ class ParticipantLimitFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
-        // 뒤로가기 아이콘 클릭 시 이전 Fragment로 이동
         binding.backIcon.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            val ga = activity as? GoalActivity
+
+            val prev = GoalDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", ga?.goalOwnerName ?: goalOwnerName ?: "사용자")
+                    putString("goalType",       ga?.goalType)
+                    putString("goalCategory",   ga?.goalCategory)
+                    putString("goalName",       ga?.goalName)
+                    putString("goalAmount",     ga?.goalAmount)
+                    putString("verificationType", ga?.verificationType)
+                    putString("period",         ga?.period)
+                    putInt("frequency",         ga?.frequency ?: 0)
+                    putInt("limitFriendCount",  ga?.limitFriendCount ?: 0)
+                }
+            }
+
+            if (ga != null) {
+                ga.navigateToFragment(prev)
+            } else {
+                val containerId = (view?.parent as? ViewGroup)?.id ?: android.R.id.content
+                parentFragmentManager.beginTransaction()
+                    .replace(containerId, prev)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
-        // 다음 버튼 클릭 시 다음 Fragment로 이동
         binding.nextButton.setOnClickListener {
             if (isInputValid) {
                 val limit = binding.participantLimitEditText.text.toString().toIntOrNull() ?: 0

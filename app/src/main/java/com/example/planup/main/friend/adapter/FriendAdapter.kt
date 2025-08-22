@@ -24,16 +24,25 @@ class FriendAdapter(private val items: List<FriendInfo>) :
         return FriendViewHolder(view)
     }
 
-    override fun onBindViewHolder(
-        holder: FriendViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: FriendViewHolder, position: Int) {
         val item = items[position]
         holder.tvNickname.text = item.nickname
-        holder.tvGoalCount.text="${item.goalCnt}개의 목표 진행 중"
+        holder.tvGoalCount.text = "${item.goalCnt}개의 목표 진행 중"
         holder.tvTodayTime.text = "오늘 진행 시간 ${item.todayTime}"
-        holder.btnPhotoVerify.visibility = if (item.isNewPhotoVerify) View.VISIBLE else View.GONE
-        Log.d("FriendAdapter", "Binding item: ${item.nickname}")
+
+        // ✅ 항상 노출
+        holder.btnPhotoVerify.visibility = View.VISIBLE
+
+        // ✅ 강조(선택): 새 인증 여부에 따라 스타일만 변경
+        if (item.isNewPhotoVerify) {
+            holder.btnPhotoVerify.isEnabled = true
+            holder.btnPhotoVerify.alpha = 1f
+            holder.btnPhotoVerify.setBackgroundResource(R.drawable.rounded_box_lightblue)
+        } else {
+            holder.btnPhotoVerify.isEnabled = false       // 탭 비활성화만 원하면 유지
+            holder.btnPhotoVerify.alpha = 0.6f            // 흐리게
+            holder.btnPhotoVerify.setBackgroundResource(R.drawable.rounded_box_lightblue) // 필요시 다른 회색 배경으로 교체
+        }
     }
 
     override fun getItemCount(): Int = items.size

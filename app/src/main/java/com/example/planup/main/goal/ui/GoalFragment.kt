@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,6 +25,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService
@@ -44,7 +46,7 @@ import com.example.planup.network.RetrofitInstance
 import retrofit2.HttpException
 import java.time.LocalDate
 import com.example.planup.main.goal.adapter.GoalApi
-
+import java.time.LocalDateTime
 
 class GoalFragment : Fragment() {
     private lateinit var prefs : SharedPreferences
@@ -312,6 +314,7 @@ class GoalFragment : Fragment() {
 
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname)
+                putExtra("TO_CHALLENGE_FROM","GoalFragment")
             }
             startActivity(intent)
         }
@@ -358,8 +361,8 @@ class GoalFragment : Fragment() {
         if(!urlOrBase64.isNullOrBlank() && !urlOrBase64.startsWith("data:image")){
             Glide.with(this)
                 .load(urlOrBase64)
-                .placeholder(R.drawable.img_profile_green)
-                .error(R.drawable.img_profile_green)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
                 .circleCrop()
                 .into(binding.userProfileIv)
             return
@@ -371,10 +374,10 @@ class GoalFragment : Fragment() {
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 binding.userProfileIv.setImageBitmap(bmp)
             }.onFailure {
-                binding.userProfileIv.setImageResource(R.drawable.img_profile_green)
+                binding.userProfileIv.setImageResource(R.drawable.ic_profile)
             }
         } else {
-            binding.userProfileIv.setImageResource(R.drawable.img_profile_green)
+            binding.userProfileIv.setImageResource(R.drawable.ic_profile)
         }
     }
 

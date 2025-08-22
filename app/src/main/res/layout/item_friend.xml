@@ -2,8 +2,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:padding="12dp"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
     android:background="@android:color/white">
 
     <!-- 프로필 이미지 -->
@@ -31,7 +31,7 @@
             android:id="@+id/nickname_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="친구 1"
+            android:text="@string/friend_friend_name"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -44,7 +44,7 @@
                 android:id="@+id/goal_count_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="N 개의 목표 진행 중"
+                android:text="@string/friend_goal_count"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -75,8 +75,9 @@
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/today_time_cv"
-            android:layout_width="227dp"
+            android:layout_width="0dp"
             android:layout_height="37dp"
+            android:layout_weight="1"
             app:cardElevation="2dp"
             app:cardCornerRadius="10dp"
             app:cardBackgroundColor="#FFFFFF"
@@ -96,7 +97,7 @@
                     android:id="@+id/today_time_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="##:##:##"/>
+                    android:text="@string/friend_today_time"/>
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -109,7 +110,7 @@
             android:layout_marginStart="8dp"
             android:paddingHorizontal="16dp"
             android:gravity="center"
-            android:text="사진 인증"
+            android:text="@string/friend_photo_verification_btn"
             android:textSize="14sp"
             android:elevation="4dp"
             android:background="@drawable/rounded_box_lightblue"

@@ -45,6 +45,7 @@ class FriendRequestsFragment : Fragment() {
             else -> null
         } ?: return null
 
+        Log.d("Auth", "token? ${!raw.isNullOrBlank()} startsWithBearer=${raw.startsWith("Bearer", true)}")
         return if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
     }
 
@@ -52,7 +53,8 @@ class FriendRequestsFragment : Fragment() {
         lifecycleScope.launch {
             val auth = buildAuthHeader()
             if (auth.isNullOrBlank()) {
-                Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "로그인이 필요합니다(토큰 없음).", Toast.LENGTH_SHORT).show()
+                Log.e("FriendAction", "No Authorization token")
                 return@launch
             }
 
@@ -94,15 +96,15 @@ class FriendRequestsFragment : Fragment() {
         lifecycleScope.launch {
             val auth = buildAuthHeader() ?: return@launch
             try {
-                val resp = RetrofitInstance.friendApi.acceptFriendRequest(
-                    auth,
-                    FriendActionRequestDto(friendId = friend.id) // ⚠️ 필드명 friendId
-                )
+                val resp = RetrofitInstance.friendApi.acceptFriendRequest(auth, friend.id) // ✅ 정수 전달
+                Log.d("FriendAccept", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
                     Toast.makeText(requireContext(), "${friend.nickname} 님을 수락했어요.", Toast.LENGTH_SHORT).show()
                     fetchFriendRequests()
                 } else {
-                    Toast.makeText(requireContext(), "수락에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "수락에 실패했습니다."
+
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
@@ -114,15 +116,14 @@ class FriendRequestsFragment : Fragment() {
         lifecycleScope.launch {
             val auth = buildAuthHeader() ?: return@launch
             try {
-                val resp = RetrofitInstance.friendApi.rejectFriendRequest(
-                    auth,
-                    FriendActionRequestDto(friendId = friend.id) // ⚠️ 필드명 friendId
-                )
+                val resp = RetrofitInstance.friendApi.rejectFriendRequest(auth, friend.id) // ✅ 정수 전달
+                Log.d("FriendReject", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
                     Toast.makeText(requireContext(), "${friend.nickname} 님의 요청을 거절했어요.", Toast.LENGTH_SHORT).show()
                     fetchFriendRequests()
                 } else {
-                    Toast.makeText(requireContext(), "거절에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "거절에 실패했습니다."
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()

@@ -1,6 +1,6 @@
 package com.example.planup.goal.ui
 
-import android.content.Context.MODE_PRIVATE
+import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -24,8 +24,10 @@ class TimerSettingFragment : Fragment() {
     lateinit var minutes: ArrayList<String> // 분
     lateinit var seconds: ArrayList<String> // 초
 
-    lateinit var prefs: SharedPreferences //챌린지 정보 저장을 위한 sharedPreferences
-    lateinit var editor: SharedPreferences.Editor //sharedPreferences editor
+    // SharedPreferences 추가
+    private val PREFS_NAME = "goal_data"
+    private val KEY_GOAL_TIME = "last_goal_time"
+    private val KEY_VERIFICATION_TYPE = "last_verification_type"
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,41 +37,33 @@ class TimerSettingFragment : Fragment() {
         binding = FragmentTimerSettingBinding.inflate(inflater, container, false)
         init()
         clickListener()
-
         updateNextButtonUi(false)
-
         return binding.root
     }
 
     // 프레그먼트 초기화
     private fun init() {
-        hours =
-            resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>()) //시간
-        minutes = resources.getStringArray(R.array.dropdown_minute_second)
-            .toCollection(ArrayList<String>()) //분
-        seconds = resources.getStringArray(R.array.dropdown_minute_second)
-            .toCollection(ArrayList<String>()) //초
-        //챌린지 정보를 저장할 sharedPreferences 생성
-        prefs = (context as GoalActivity).getSharedPreferences("challenge", MODE_PRIVATE)
-        editor = prefs.edit()
+        hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
+        minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
+        seconds = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
     }
 
     private fun clickListener() {
-        //이전 버튼 -> 인증방식 설정 페이지로 이동
+        // 이전 버튼 -> 인증방식 설정 페이지로 이동
         binding.backIv.setOnClickListener {
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, CertificationMethodFragment())
                 .commitAllowingStateLoss()
         }
 
-        //타이머 시간 설정
-        binding.challengeTimerHourTv.setOnClickListener { //시간
+        // 타이머 시간 설정
+        binding.challengeTimerHourTv.setOnClickListener { // 시간
             showDropdown(hours, binding.challengeTimerHourTv, 0)
         }
-        binding.challengeTimerMinuteTv.setOnClickListener { //분
+        binding.challengeTimerMinuteTv.setOnClickListener { // 분
             showDropdown(minutes, binding.challengeTimerMinuteTv, 1)
         }
-        binding.challengeTimerSecondTv.setOnClickListener { //초
+        binding.challengeTimerSecondTv.setOnClickListener { // 초
             showDropdown(seconds, binding.challengeTimerSecondTv, 2)
         }
 
@@ -80,17 +74,19 @@ class TimerSettingFragment : Fragment() {
             }
 
             val activity = requireActivity() as GoalActivity
-            activity.goalTime = totalTime           // 타이머 총 시간 저장(초)
-            activity.verificationType = "TIMER"     // 인증 방식 저장
+            activity.goalTime = totalTime // 타이머 총 시간 저장(초)
+            activity.verificationType = "TIMER" // 인증 방식 저장
 
-            editor.putInt("targetTime", totalTime)
-            editor.putString("verificationType", "TIMER")
-            editor.apply()
+            // SharedPreferences에 저장
+            val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            prefs.edit()
+                .putInt(KEY_GOAL_TIME, totalTime)
+                .putString(KEY_VERIFICATION_TYPE, "TIMER")
+                .apply()
 
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", activity.goalOwnerName)
-                    putString("SELECTED_METHOD", "TIMER")
                 }
             }
 
@@ -98,13 +94,12 @@ class TimerSettingFragment : Fragment() {
         }
     }
 
-    //타이머로 설정한 시간 업데이트
-    //마지막 조건문으로 전체 시간이 30초 이상인지 확인
+    // 타이머로 설정한 시간 업데이트
     private fun timeWatcher(item: Int, position: Int) {
+        // 기존 총 시간에서 해당 부분 시간을 빼고 새로운 시간을 더함
         val hour = (totalTime / 3600) * 3600
-        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
-        val second =
-            totalTime - (totalTime / 3600) * 3600 - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+        val minute = ((totalTime - hour) / 60) * 60
+        val second = totalTime - hour - minute
 
         if (position == 0) {
             totalTime -= hour
@@ -146,7 +141,7 @@ class TimerSettingFragment : Fragment() {
         items: ArrayList<String>,
         view: TextView,
         selected: Int
-    ) { //리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
+    ) { // 리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
         val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
         val popupWindow = PopupWindow(
