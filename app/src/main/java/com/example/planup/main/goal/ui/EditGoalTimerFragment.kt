@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
+import androidx.appcompat.widget.AppCompatSpinner
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
@@ -15,9 +16,9 @@ import com.example.planup.main.goal.item.EditGoalResponse
 class EditGoalTimerFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTimerBinding
 
-    private lateinit var hourSpinner: Spinner
-    private lateinit var minuteSpinner: Spinner
-    private lateinit var secondSpinner: Spinner
+    private lateinit var hourSpinner: AppCompatSpinner
+    private lateinit var minuteSpinner: AppCompatSpinner
+    private lateinit var secondSpinner: AppCompatSpinner
     private lateinit var nextBtn: AppCompatButton
     private lateinit var warningTv: TextView
     private var goalId: Int = 0
@@ -40,10 +41,10 @@ class EditGoalTimerFragment : Fragment() {
         goalName = arguments?.getString("goalName") ?: ""
         goalAmount = arguments?.getString("goalAmount") ?: ""
         goalCategory = arguments?.getString("goalCategory") ?: ""
-        goalType = arguments?.getString("goalType") ?: ""
+        goalType = arguments?.getString("goalType") ?: "FRIEND"
         oneDose = arguments?.getInt("oneDose") ?: 0
         frequency = arguments?.getInt("frequency") ?: 0
-        period = arguments?.getString("period") ?: ""
+        period = arguments?.getString("period") ?: "DAY"
         endDate = arguments?.getString("endDate") ?: ""
         verificationType = arguments?.getString("verificationType") ?: ""
         limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
@@ -74,11 +75,25 @@ class EditGoalTimerFragment : Fragment() {
         val minuteSecondList = (0..59).map { it.toString().padStart(2, '0') }
         val secondList = (0..59).map { it.toString().padStart(2, '0') }
 
-        val hourAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, hourList)
+        val hourAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_edit_goal_spinner_text,
+            hourList
+        )
         hourAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
-        val minuteAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, minuteSecondList)
+
+        val minuteAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_edit_goal_spinner_text,
+            minuteSecondList
+        )
         minuteAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
-        val secondAdapter = ArrayAdapter(requireContext(), R.layout.item_edit_goal_spinner_text, secondList)
+
+        val secondAdapter = ArrayAdapter(
+            requireContext(),
+            R.layout.item_edit_goal_spinner_text,
+            secondList
+        )
         secondAdapter.setDropDownViewResource(R.layout.item_edit_goal_spinner_dropdown_text)
 
         hourSpinner.adapter = hourAdapter

@@ -72,25 +72,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edit_timer_desc_tv">
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/edit_timer_hour_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_alert_spinner"
-            android:layout_marginEnd="4dp" />
+            android:layout_marginEnd="4dp"
+            android:spinnerMode="dropdown"
+            android:popupBackground="@drawable/bg_time_spinner_dropdown"/>
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/edit_timer_minute_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_alert_spinner"
-            android:layout_marginEnd="4dp"/>
+            android:layout_marginEnd="4dp"
+            android:spinnerMode="dropdown"
+            android:popupBackground="@drawable/bg_time_spinner_dropdown"/>
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/edit_timer_second_spinner"
             android:layout_width="70dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_alert_spinner"/>
+            android:background="@drawable/bg_alert_spinner"
+            android:spinnerMode="dropdown"
+            android:popupBackground="@drawable/bg_time_spinner_dropdown"/>
     </LinearLayout>
 
     <LinearLayout
@@ -112,7 +118,7 @@
         <NumberPicker
             android:id="@+id/edit_timer_minute_picker"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginEnd="8dp" />
 
         <NumberPicker

@@ -137,13 +137,23 @@ class TimerFragment : Fragment() {
             val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.editMemo.windowToken, 0)
         }
+
+        binding.achievementStatusMcv.setOnClickListener {
+            val selectedGoalId = selectedSpinnerItem
+
+        }
+
     }
 
     private fun setupSpinner(token: String?, events: List<HomeTimer>) {
         Log.d("setupSpinner","$events")
         val spinner: Spinner = binding.goalListSpinner
         val goalNames = events.map { it.goalName }
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, goalNames)
+        val adapter = ArrayAdapter(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            goalNames
+        )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
@@ -335,6 +345,7 @@ class TimerFragment : Fragment() {
                 val response = RetrofitInstance.verificationApi.getTodayTotalTime(token = "Bearer $token", goalId = goalId)
                 if (response.isSuccess) {
                     val formattedTime = response.result.formattedTime
+                    binding.goalListTextTimerTv.text = formattedTime
                     Log.d("loadTotalTime", "오늘 총 시간: $formattedTime")
                 } else {
                     Log.e("loadTotalTime", "실패: ${response.message}")
@@ -347,6 +358,43 @@ class TimerFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun isVerified(token: String?, goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val goalService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+                val response = goalService.getEditGoal(token = "Bearer token", goalId = goalId)
+                if(response.isSuccess) {
+                    val verificationType = response.result.verificationType
+                    if(verificationType == "PHOTO") {
+                        val photoResponse = goalService.getGoalPhotos(token = "Bearer $token", goalId = goalId)
+                        if(photoResponse.isSuccess) {
+                            val uri = photoResponse.result.firstOrNull()?.photoImg
+                            if(uri != null) {
+                                binding.achievementStatusIv.setImageResource(R.drawable.ic_achievement_status_check)
+                                Toast.makeText(requireContext(), "인증이 확인되었어요.", Toast.LENGTH_SHORT).show()
+                            } else {
+                                binding.achievementStatusIv.setImageResource(R.drawable.ic_achivement_status)
+                                Toast.makeText(requireContext(), "사진을 등록해주세요.", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Log.d("isVerified", "사진 불러오기 실패: ${photoResponse.message}")
+                        }
+                    } else if (verificationType == "TIMER"){
+
+
+                    } else {
+
+                    }
+                } else {
+
+                }
+            } catch (e: Exception) {
+
+            }
+        }
+
     }
 
 
@@ -424,15 +472,16 @@ class TimerFragment : Fragment() {
                 val response = apiService.getEditGoal(token = "Bearer $token", goalId = goalId)
                 if (response.isSuccess) {
                     val goalData = response.result
+                    val frequency = goalData.frequency.toString()
                     binding.timerGoalAmountTv.text = goalData.goalAmount
-                    binding.timerGoalFrequencyTv.text = goalData.frequency.toString()
+                    binding.timerGoalFrequencyTv.text = "${frequency}회 이상"
 
                 } else {
                     Log.d("EditGoalTitleFragment", "API 실패: ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
+                Log.e("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
             }
         }
     }
