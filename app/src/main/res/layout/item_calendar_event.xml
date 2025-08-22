@@ -25,7 +25,7 @@
 
         <!-- 제목 -->
         <TextView
-            android:id="@+id/titleText"
+            android:id="@+id/calendar_event_title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="토익 공부하기"
@@ -34,7 +34,7 @@
 
         <!-- 부제목 -->
         <TextView
-            android:id="@+id/subtitleText"
+            android:id="@+id/calendar_event_subtitle_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="[기준 기간],빈도,이상"

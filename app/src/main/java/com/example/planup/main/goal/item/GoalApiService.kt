@@ -85,4 +85,11 @@ interface GoalApiService {
         @Header("Authorization") token: String,
         @Query("targetDate") targetDate: String
     ): DailyAchievementResponse
+
+    @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
+    suspend fun getFriendGoalAchievement(
+        @Header("Authorization") token: String,
+        @Path("friendId") friendId: Int,
+        @Path("goalId") goalId: Int
+    ): FriendGoalAchievementResponse
 }
