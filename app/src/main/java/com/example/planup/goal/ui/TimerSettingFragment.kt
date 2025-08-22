@@ -139,8 +139,7 @@ class TimerSettingFragment : Fragment() {
         binding.challengeTimerNextBtn.background = bg
     }
 
-    private fun Int.dp(): Int =
-        (this * resources.displayMetrics.density).toInt()
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun showDropdown(
         items: ArrayList<String>,
@@ -149,42 +148,50 @@ class TimerSettingFragment : Fragment() {
     ) {
         val inflater = LayoutInflater.from(context)
         val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
-        val popupWindow = PopupWindow(
-            popupBinding.root,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
 
-        val desiredWidthPx = when (selected) {
-            0 -> 90.dp()  // 시간
-            1 -> 70.dp()  // 분
-            else -> 70.dp() // 초
-        }
-        popupWindow.width = desiredWidthPx
-        popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
-        popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(
-            ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
-        )
-
-        val dropdownAdapter = TimerRVAdapter(items)
-        popupBinding.dropdownRecyclerRv.adapter = dropdownAdapter
-
-        popupWindow.showAsDropDown(view)
-
-        dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
-            override fun setTime(position: Int) {
-                val raw = items[position]
-                val labeled = when (selected) {
-                    0 -> "${raw}시간"
-                    1 -> "${raw}분"
-                    else -> "${raw}초"
-                }
-                view.text = labeled
-                timeWatcher(raw.toInt(), selected)
-                popupWindow.dismiss()
+        view.post {
+            val fallbackWidth = when (selected) {
+                0 -> 90.dp()  // 시
+                1 -> 70.dp()  // 분
+                else -> 70.dp() // 초
             }
-        })
+            val exactWidth = if (view.width > 0) view.width else fallbackWidth
+
+            // 팝업 생성
+            val popupWindow = PopupWindow(
+                popupBinding.root,
+                exactWidth,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+            ).apply {
+                isOutsideTouchable = true
+                setBackgroundDrawable(
+                    ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
+                )
+                elevation = 8f
+            }
+
+            popupBinding.dropdownRecyclerRv.layoutParams =
+                popupBinding.dropdownRecyclerRv.layoutParams.apply {
+                    width = ViewGroup.LayoutParams.MATCH_PARENT
+                }
+            popupBinding.dropdownRecyclerRv.adapter = TimerRVAdapter(items).apply {
+                setDropdownListener(object : TimerRVAdapter.DropdownListener {
+                    override fun setTime(position: Int) {
+                        val raw = items[position]
+                        val labeled = when (selected) {
+                            0 -> "${raw}시간"
+                            1 -> "${raw}분"
+                            else -> "${raw}초"
+                        }
+                        view.text = labeled
+                        timeWatcher(raw.toInt(), selected)
+                        popupWindow.dismiss()
+                    }
+                })
+            }
+
+            popupWindow.showAsDropDown(view, 0, 0)
+        }
     }
 }
