@@ -42,9 +42,9 @@ class PictureSettingFragment : Fragment() {
     }
 
     private fun setupListeners() {
-        // 뒤로가기 버튼 -> CertificationMethodFragment로 이동
+        // 뒤로가기 버튼 -> 이전 화면
         binding.backIv.setOnClickListener {
-            (requireActivity() as GoalActivity).navigateToFragment(CertificationMethodFragment())
+            parentFragmentManager.popBackStack()
         }
 
         binding.dropdownContainer.setOnClickListener {

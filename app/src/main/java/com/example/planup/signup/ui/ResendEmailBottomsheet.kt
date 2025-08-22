@@ -155,9 +155,15 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 
     // [이메일 다시 보내기] 선택
     private fun resendEmail() {
-        if (email.isBlank()) {
+        val targetEmail = email.ifBlank {
+            (activity as? com.example.planup.signup.SignupActivity)?.email.orEmpty()
+        }
+
+        if (targetEmail.isBlank()) {
+            Toast.makeText(requireContext(), "이메일 정보가 없어 재발송할 수 없어요.", Toast.LENGTH_SHORT).show()
             return
         }
+
         isSending = true
         binding.resendEmailOption.isEnabled = false
         binding.kakaoLoginOption.isEnabled = false
@@ -165,42 +171,50 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 when (mode) {
-                    /* 회원가입 메일 재발송 */
+                    // 회원가입 인증 메일 재발송
                     ResendMode.SIGNUP -> {
-                        val res = RetrofitInstance.userApi.resendEmail(
-                            ResendEmailRequest(email)
+                        val res = RetrofitInstance.userApi.sendEmail(
+                            com.example.planup.signup.data.EmailSendRequestDto(targetEmail)
                         )
                         val ok = res.isSuccessful && res.body()?.isSuccess == true
                         if (ok) {
                             dismiss()
                         } else {
-                            binding.resendEmailOption.isEnabled = true
-                            binding.kakaoLoginOption.isEnabled = true
+                            val msg = res.body()?.message ?: res.errorBody()?.string() ?: "재발송 실패"
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                            restoreButtons()
                         }
                     }
 
-                    /* 비밀번호 변경 확인 메일 재발송 */
+                    // 비밀번호 변경 메일 재발송
                     ResendMode.PASSWORD -> {
                         val res = RetrofitInstance.userApi.resendPasswordChangeEmail(
-                            PasswordChangeEmailRequestDto(email)
+                            PasswordChangeEmailRequestDto(targetEmail)
                         )
                         val ok = res.isSuccessful && res.body()?.isSuccess == true
                         if (ok) {
                             dismiss()
                         } else {
-                            binding.resendEmailOption.isEnabled = true
-                            binding.kakaoLoginOption.isEnabled = true
+                            val msg = res.body()?.message ?: res.errorBody()?.string() ?: "재발송 실패"
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                            restoreButtons()
                         }
                     }
                 }
             } catch (e: Exception) {
-                binding.resendEmailOption.isEnabled = true
-                binding.kakaoLoginOption.isEnabled = true
+                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                restoreButtons()
             } finally {
                 isSending = false
             }
         }
     }
+
+    private fun restoreButtons() {
+        binding.resendEmailOption.isEnabled = true
+        binding.kakaoLoginOption.isEnabled = true
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

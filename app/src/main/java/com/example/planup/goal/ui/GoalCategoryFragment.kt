@@ -95,7 +95,7 @@ class GoalCategoryFragment : Fragment() {
                 )?.text.toString()
             }
 
-            val goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "challenge" else "community"
+            val goalType = if (selectedGoalLayout?.id == R.id.challengeGoalLayout) "CHALLENGE" else "COMMUNITY"
 
             // GoalActivity에 값 저장
             val activity = requireActivity() as GoalActivity

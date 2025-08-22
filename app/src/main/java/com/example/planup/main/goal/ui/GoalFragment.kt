@@ -357,8 +357,8 @@ class GoalFragment : Fragment() {
         if(!urlOrBase64.isNullOrBlank() && !urlOrBase64.startsWith("data:image")){
             Glide.with(this)
                 .load(urlOrBase64)
-                .placeholder(R.drawable.img_profile_green)
-                .error(R.drawable.img_profile_green)
+                .placeholder(R.drawable.ic_profile)
+                .error(R.drawable.ic_profile)
                 .circleCrop()
                 .into(binding.userProfileIv)
             return
@@ -370,10 +370,10 @@ class GoalFragment : Fragment() {
                 val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
                 binding.userProfileIv.setImageBitmap(bmp)
             }.onFailure {
-                binding.userProfileIv.setImageResource(R.drawable.img_profile_green)
+                binding.userProfileIv.setImageResource(R.drawable.ic_profile)
             }
         } else {
-            binding.userProfileIv.setImageResource(R.drawable.img_profile_green)
+            binding.userProfileIv.setImageResource(R.drawable.ic_profile)
         }
     }
 

@@ -47,13 +47,11 @@ class GoalActivity : AppCompatActivity() {
             val data = result.data
             val isUnlocked = data?.getBooleanExtra("IS_UNLOCKED", false) ?: false
             if (isUnlocked) {
-                Handler(Looper.getMainLooper()).postDelayed({
-                    val goalDetailFragment =
-                        supportFragmentManager.findFragmentById(R.id.goal_container)
-                    if (goalDetailFragment is GoalDetailFragment) {
-                        goalDetailFragment.updateLockStatus(true)
-                    }
-                }, 2000)
+                val goalDetailFragment =
+                    supportFragmentManager.findFragmentById(R.id.goal_container)
+                if (goalDetailFragment is GoalDetailFragment) {
+                    goalDetailFragment.updateLockStatus(true)
+                }
             }
         }
     }
@@ -80,12 +78,17 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
+                else -> GoalCategoryFragment().apply {
+                    arguments = (arguments ?: Bundle()).apply {
+                        putString("goalOwnerName", goalOwnerName)
+                    }
+                }
+            }
 //                else -> GoalCategoryFragment().apply {
 //                    arguments = (arguments ?: Bundle()).apply {
 //                        putString("goalOwnerName", goalOwnerName)
 //                    }
-                else -> GoalSelectFragment()
-            }
+
 
             // GoalSelectFragment를 GoalCategoryFragment로 가정
 //            val first = GoalCategoryFragment().apply {
