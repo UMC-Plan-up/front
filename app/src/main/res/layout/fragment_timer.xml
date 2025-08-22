@@ -1,366 +1,370 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="20dp"
-    android:focusable="true"
-    android:focusableInTouchMode="true">
+    android:layout_height="match_parent">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="20dp"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
 
-    <!-- 상단 바 -->
-    <LinearLayout
-        android:id="@+id/timer_back_list_ll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="35dp"
-        android:gravity="center">
-        <ImageButton
-            android:id="@+id/goal_list_back_btn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_arrow_back"
+        <!-- 상단 바 -->
+        <LinearLayout
+            android:id="@+id/timer_back_list_ll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="목록"
-            style="@style/Typography_2XL_Semibold"
-            app:layout_constraintStart_toEndOf="@+id/goal_list_back_btn"
-            app:layout_constraintTop_toTopOf="parent" />
-    </LinearLayout>
-
-
-    <!-- 타이머 카드 -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/goal_list_timercard_cv"
-        android:layout_width="0dp"
-        android:layout_height="196dp"
-        android:backgroundTint="@color/blue_300"
-        app:cardCornerRadius="12dp"
-        android:elevation="4dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/timer_back_list_ll"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="15dp"
-        android:clipToPadding="false"
-        android:clipChildren="false">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="196dp"
-            android:paddingStart="25dp"
-            android:paddingEnd="25dp"
-            android:paddingBottom="4dp">
-
-            <!-- 날짜 -->
-            <TextView
-                android:id="@+id/goal_list_text_date_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2025.06.13"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:fontFamily="@font/pretendard_bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:layout_marginTop="16dp"/>
-
-            <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
-            app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="@color/white" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="@id/goal_list_play_btn"
-                app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
-                android:src="@drawable/ic_arrow_back"
-                android:rotation="180"
-                app:tint="@color/white" />
-
-            <!-- 타이머 -->
-            <TextView
-                android:id="@+id/goal_list_text_timer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="9dp"
-                android:fontFamily="@font/pretendard_bold"
-                android:text="00:00:00"
-                android:textColor="@android:color/white"
-                android:textSize="40sp"
-                app:layout_constraintBottom_toTopOf="@id/goal_list_spinner"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/goal_list_text_date_tv"
-                app:layout_constraintVertical_bias="0.2" />
-
-            <!-- 재생 버튼 -->
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="35dp"
+            android:gravity="center">
             <ImageButton
-                android:id="@+id/goal_list_play_btn"
-                android:layout_width="51dp"
-                android:layout_height="51dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/ic_play_circle"
-                app:layout_constraintBottom_toBottomOf="@id/goal_list_text_timer_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/goal_list_text_timer_tv"/>
+                android:id="@+id/goal_list_back_btn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
 
-            <!-- 드롭다운 -->
-            <androidx.appcompat.widget.AppCompatSpinner
-                android:id="@+id/goal_list_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="36dp"
-                android:layout_marginTop="19dp"
-                android:background="@drawable/bg_goal_list_spinner"
-                android:dropDownWidth="wrap_content"
-                android:paddingStart="12dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="12dp"
-                android:paddingBottom="8dp"
-                android:spinnerMode="dropdown"
-                android:popupBackground="@drawable/bg_time_spinner_dropdown"
-                app:layout_constraintEnd_toEndOf="@+id/goal_list_play_btn"
-                app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
-                app:layout_constraintTop_toBottomOf="@+id/goal_list_text_timer_tv" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </com.google.android.material.card.MaterialCardView>
-
-    <View
-        android:id="@+id/view3"
-        android:layout_width="203dp"
-        android:layout_height="1dp"
-        android:layout_marginStart="16dp"
-        android:background="#D0D0D0"
-        app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
-        app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
-        app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:orientation="vertical"
-        android:paddingEnd="4dp"
-        app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
-        app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
-        app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv">
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="세부 기준"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:lineHeight="24dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/timer_goal_amount_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:text="-"
-            app:layout_constraintStart_toEndOf="@+id/textView6"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView9"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="17dp"
-            android:lineHeight="24dp"
-            android:text="빈도"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/textView6"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView6" />
-
-        <TextView
-            android:id="@+id/timer_goal_frequency_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="-"
-            app:layout_constraintStart_toStartOf="@id/timer_goal_amount_tv"
-            app:layout_constraintTop_toTopOf="@id/textView9"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- 카메라 버튼 -->
-
-    <!-- 메모 -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/camera_btn_mcv"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginTop="24dp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="4dp"
-        app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
-        app:layout_constraintTop_toBottomOf="@+id/goal_list_timercard_cv"
-        app:strokeColor="@android:color/transparent">
-
-        <ImageButton
-            android:id="@+id/goal_list_btn_camera_ib"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@null"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_camera_blue" />
-    </com.google.android.material.card.MaterialCardView>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:layout_constraintBottom_toBottomOf="@+id/today_memo_cv"
-        app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
-        app:layout_constraintTop_toTopOf="@+id/today_memo_cv">
-
-        <TextView
-            android:id="@+id/achivement_status_tv"
-            style="@style/Typography_2XS_Medium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="달성 여부"
-            android:textColor="@color/black_400"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/achievement_status_mcv"
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/achivement_status_tv"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp"
-            android:layout_margin="4dp"
-            app:cardBackgroundColor="@color/white"
-            app:strokeColor="@color/transparent">
-
-            <ImageView
-                android:id="@+id/achievement_status_iv"
+            <TextView
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_achivement_status"
-                android:layout_gravity="center" />
+                android:text="목록"
+                style="@style/Typography_2XL_Semibold"
+                app:layout_constraintStart_toEndOf="@+id/goal_list_back_btn"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+
+
+        <!-- 타이머 카드 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/goal_list_timercard_cv"
+            android:layout_width="0dp"
+            android:layout_height="196dp"
+            android:backgroundTint="@color/blue_300"
+            app:cardCornerRadius="12dp"
+            android:elevation="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timer_back_list_ll"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="15dp"
+            android:clipToPadding="false"
+            android:clipChildren="false">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="196dp"
+                android:paddingStart="25dp"
+                android:paddingEnd="25dp"
+                android:paddingBottom="4dp">
+
+                <!-- 날짜 -->
+                <TextView
+                    android:id="@+id/goal_list_text_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025.06.13"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/pretendard_bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="16dp"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
+                    app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
+                    android:src="@drawable/ic_arrow_back"
+                    app:tint="@color/white" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@id/goal_list_play_btn"
+                    app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
+                    android:src="@drawable/ic_arrow_back"
+                    android:rotation="180"
+                    app:tint="@color/white" />
+
+                <!-- 타이머 -->
+                <TextView
+                    android:id="@+id/goal_list_text_timer_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="9dp"
+                    android:fontFamily="@font/pretendard_bold"
+                    android:text="00:00:00"
+                    android:textColor="@android:color/white"
+                    android:textSize="40sp"
+                    app:layout_constraintBottom_toTopOf="@id/goal_list_spinner"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/goal_list_text_date_tv"
+                    app:layout_constraintVertical_bias="0.2" />
+
+                <!-- 재생 버튼 -->
+                <ImageButton
+                    android:id="@+id/goal_list_play_btn"
+                    android:layout_width="51dp"
+                    android:layout_height="51dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_play_circle"
+                    app:layout_constraintBottom_toBottomOf="@id/goal_list_text_timer_tv"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/goal_list_text_timer_tv"/>
+
+                <!-- 드롭다운 -->
+                <androidx.appcompat.widget.AppCompatSpinner
+                    android:id="@+id/goal_list_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="19dp"
+                    android:background="@drawable/bg_goal_list_spinner"
+                    android:dropDownWidth="wrap_content"
+                    android:paddingStart="12dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="12dp"
+                    android:paddingBottom="8dp"
+                    android:spinnerMode="dropdown"
+                    android:popupBackground="@drawable/bg_time_spinner_dropdown"
+                    app:layout_constraintEnd_toEndOf="@+id/goal_list_play_btn"
+                    app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/goal_list_text_timer_tv" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/today_memo_cv"
-        android:layout_width="0dp"
-        android:layout_height="56dp"
-        app:cardCornerRadius="6dp"
-        app:cardElevation="4dp"
-        android:backgroundTint="@color/white"
-        app:strokeColor="@color/transparent"
-        app:layout_constraintEnd_toEndOf="@+id/goal_list_timercard_cv"
-        app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
-        app:layout_constraintTop_toBottomOf="@+id/camera_btn_mcv"
-        android:layout_marginTop="22dp"
-        android:layout_marginStart="12dp">
+        <View
+            android:id="@+id/view3"
+            android:layout_width="203dp"
+            android:layout_height="1dp"
+            android:layout_marginStart="16dp"
+            android:background="#D0D0D0"
+            app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
+            app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
+            app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:backgroundTint="@color/white"
-            android:padding="5dp">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical"
+            android:paddingEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="@+id/camera_btn_mcv"
+            app:layout_constraintStart_toEndOf="@+id/camera_btn_mcv"
+            app:layout_constraintTop_toTopOf="@+id/camera_btn_mcv">
 
-            <EditText
-                android:id="@+id/editMemo"
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:background="@android:color/transparent"
-                android:hint="오늘의 메모"
-                android:imeOptions="actionDone"
-                android:inputType="text"
-                android:maxLength="20"
-                android:maxLines="1"
-                android:padding="0dp"
-                android:textColorHint="@color/black_300"
-                style="@style/Typography_S_Medium"
+                android:text="세부 기준"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:lineHeight="24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textCount"
-                android:layout_width="wrap_content"
+                android:id="@+id/timer_goal_amount_tv"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="/50자"
-                android:textColor="#A0A0A0"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    <!-- 내부 ConstraintLayout 그대로 -->
-</com.google.android.material.card.MaterialCardView>
-
-    <!-- 친구 타이머 현황 -->
-
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/today_memo_cv"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="26dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+                android:layout_marginStart="20dp"
+                android:text="-"
+                app:layout_constraintStart_toEndOf="@+id/textView6"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/goal_list_text_friend_status_tv"
-                style="@style/Typography_SM_Semibold"
+                android:id="@+id/textView9"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="17dp"
+                android:lineHeight="24dp"
+                android:text="빈도"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="@+id/textView6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView6" />
+
+            <TextView
+                android:id="@+id/timer_goal_frequency_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="친구 타이머 현황"
-                android:layout_marginTop="16dp"
-                android:layout_marginStart="20dp"/>
+                android:text="-"
+                app:layout_constraintStart_toStartOf="@id/timer_goal_amount_tv"
+                app:layout_constraintTop_toTopOf="@id/textView9"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/friend_timer_rv"
+        <!-- 카메라 버튼 -->
+
+        <!-- 메모 -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/camera_btn_mcv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="4dp"
+            app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
+            app:layout_constraintTop_toBottomOf="@+id/goal_list_timercard_cv"
+            app:strokeColor="@android:color/transparent">
+
+            <ImageButton
+                android:id="@+id/goal_list_btn_camera_ib"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_camera_blue" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="@+id/today_memo_cv"
+            app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
+            app:layout_constraintTop_toTopOf="@+id/today_memo_cv">
+
+            <TextView
+                android:id="@+id/achivement_status_tv"
+                style="@style/Typography_2XS_Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp"
-                app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="3"
-                android:layout_gravity="center"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:text="달성 여부"
+                android:textColor="@color/black_400"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/achievement_status_mcv"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/achivement_status_tv"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp"
+                android:layout_margin="4dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeColor="@color/transparent">
+
+                <ImageView
+                    android:id="@+id/achievement_status_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_achivement_status"
+                    android:layout_gravity="center" />
+            </com.google.android.material.card.MaterialCardView>
 
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/today_memo_cv"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="4dp"
+            android:backgroundTint="@color/white"
+            app:strokeColor="@color/transparent"
+            app:layout_constraintEnd_toEndOf="@+id/goal_list_timercard_cv"
+            app:layout_constraintStart_toEndOf="@+id/constraintLayout3"
+            app:layout_constraintTop_toBottomOf="@+id/camera_btn_mcv"
+            android:layout_marginTop="22dp"
+            android:layout_marginStart="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/white"
+                android:padding="5dp">
+
+                <EditText
+                    android:id="@+id/editMemo"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@android:color/transparent"
+                    android:hint="오늘의 메모"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:padding="0dp"
+                    android:textColorHint="@color/black_300"
+                    style="@style/Typography_S_Medium"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="/50자"
+                    android:textColor="#A0A0A0"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <!-- 내부 ConstraintLayout 그대로 -->
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- 친구 타이머 현황 -->
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            app:layout_constraintEnd_toEndOf="@+id/goal_list_timercard_cv"
+            app:layout_constraintStart_toStartOf="@+id/goal_list_timercard_cv"
+            app:layout_constraintTop_toBottomOf="@+id/today_memo_cv">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/goal_list_text_friend_status_tv"
+                    style="@style/Typography_SM_Semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="16dp"
+                    android:text="친구 타이머 현황" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/friend_timer_rv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="3" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>
