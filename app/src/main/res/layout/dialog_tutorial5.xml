@@ -55,7 +55,7 @@
                 android:gravity="center"
                 android:padding="8dp"
                 android:text="이제 어플을 사용할 준비가 되었어요!
-__님의 잠재력을 Plan-Up에서
+%1$s님의 잠재력을 Plan-Up에서
 실현해 보시길 바라요!"
                 android:textColor="@color/black_300"
                 app:layout_constraintBottom_toBottomOf="parent"

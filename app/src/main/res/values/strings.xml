@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PlanUP</string>
+    <string name="app_version">1.0.0</string>
 
     <string name="premium_policy">유료 정책</string>
     <string name="benefit_question">어떤 혜택을 누릴 수 있나요?</string>
@@ -800,5 +801,6 @@
     <string name="daily_to_do_list">Daily To-Do List</string>
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
+    <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
 </resources>

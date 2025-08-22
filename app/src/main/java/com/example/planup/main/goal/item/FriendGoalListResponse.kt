@@ -11,6 +11,7 @@ data class FriendGoalListResult(
     val goalId: Int,
     val goalName: String,
     val goalType: String,
+    val goalAmount: String,
     val verificationType: String,
     val goalTime: Int,
     val frequency: Int,

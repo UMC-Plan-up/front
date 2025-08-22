@@ -50,6 +50,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title_tv" />
 
             <TextView
+                android:id="@+id/timer_photo_explain_tv"
                 style="@style/Typography_S_Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,12 +65,12 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/timer_cl"
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
-                android:layout_marginTop="118dp"
+                android:layout_marginTop="46dp"
                 android:background="@drawable/bg_challenge_certification_selector"
-                app:layout_constraintTop_toBottomOf="@id/subtitle_tv">
+                app:layout_constraintTop_toBottomOf="@id/timer_photo_explain_tv">
 
 
                 <ImageView
@@ -77,10 +78,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="25dp"
-                    android:layout_marginTop="21dp"
                     android:src="@drawable/ic_timer"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
 
 
                 <TextView
@@ -89,14 +90,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
-                    android:layout_marginTop="24dp"
                     android:text="@string/challenge_set_timer"
                     android:textColor="@color/black_400"
                     app:layout_constraintStart_toEndOf="@id/challenge_certification_timer_iv"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/challenge_certification_timer_explain_tv"/>
 
 
                 <TextView
+                    android:id="@+id/challenge_certification_timer_explain_tv"
                     style="@style/Typography_XS_Medium"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -107,14 +109,15 @@
                     android:textColor="@color/black_400"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/challenge_certification_timer_iv"
-                    app:layout_constraintTop_toBottomOf="@id/challenge_certification_timer_tv" />
+                    app:layout_constraintTop_toBottomOf="@id/challenge_certification_timer_tv"
+                    app:layout_constraintBottom_toBottomOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_cl"
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginEnd="30dp"
                 android:layout_marginTop="20dp"
@@ -123,31 +126,33 @@
 
                 <ImageView
                     android:id="@+id/challenge_certification_photo_iv"
-                    android:layout_width="82dp"
-                    android:layout_height="82dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:src="@drawable/ic_picture"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:layout_marginStart="25dp"
-                    android:layout_marginTop="21dp"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginStart="25dp"/>
                 <TextView
                     android:id="@+id/challenge_certification_photo_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="사진 인증"
+                    android:text="@string/challenge_set_photo"
                     style="@style/Typography_S_Medium"
                     android:textColor="@color/black_400"
                     app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/challenge_certification_photo_explain_tv"
                     app:layout_constraintStart_toEndOf="@id/challenge_certification_photo_iv"
-                    android:layout_marginTop="16dp"
                     android:layout_marginStart="24dp"/>
                 <TextView
+                    android:id="@+id/challenge_certification_photo_explain_tv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/challenge_set_photo_explain"
                     style="@style/Typography_XS_Medium"
                     android:textColor="@color/black_400"
                     app:layout_constraintTop_toBottomOf="@id/challenge_certification_photo_tv"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/challenge_certification_photo_iv"
                     app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="4dp"
@@ -161,7 +166,7 @@
                 style="@style/Typography_SM_Medium"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="152dp"
+                android:layout_marginTop="153dp"
                 android:layout_marginBottom="24dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"

@@ -5,6 +5,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -39,6 +43,45 @@ class GoalActivity : AppCompatActivity() {
     var alertHour: String = ""
     var alertMinute: String = ""
     var alertDays: MutableSet<String> = mutableSetOf()
+
+
+    /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) { // 현재 포커스가 EditText일 경우만
+                    val outRect = android.graphics.Rect()
+                    view.getGlobalVisibleRect(outRect)
+                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                        view.clearFocus()
+                        hideKeyboard(view) // 키보드 숨김
+                    }
+                }
+            }
+        }
+        return super.dispatchTouchEvent(ev)
+    }
+
+    // 혹시 dispatchTouchEvent에서 놓치는 경우 보완
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            currentFocus?.let { view ->
+                if (view is EditText) {
+                    view.clearFocus()
+                    hideKeyboard(view)
+                }
+            }
+        }
+        return super.onTouchEvent(event)
+    }
+
+    //화면 터치 시 키보드 사라지게
+    private fun hideKeyboard(view: View?) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        view?.let {
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+        }
+    }
 
     private val subscriptionResultLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -78,30 +121,15 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-                else -> GoalCategoryFragment().apply {
-                    arguments = (arguments ?: Bundle()).apply {
-                        putString("goalOwnerName", goalOwnerName)
+                else -> GoalSelectFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("from",intent.getStringExtra("from"))
                     }
                 }
             }
-//                else -> GoalCategoryFragment().apply {
-//                    arguments = (arguments ?: Bundle()).apply {
-//                        putString("goalOwnerName", goalOwnerName)
-//                    }
-
-
-            // GoalSelectFragment를 GoalCategoryFragment로 가정
-//            val first = GoalCategoryFragment().apply {
-//                arguments = (arguments ?: Bundle()).apply {
-//                    putString("goalOwnerName", goalOwnerName)
-//                }
-//            }
-            val first = GoalSelectFragment()
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)
                 .commit()
-//        }
         }
     }
 

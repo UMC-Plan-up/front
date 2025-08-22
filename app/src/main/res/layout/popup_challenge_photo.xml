@@ -6,24 +6,24 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="70dp"
         android:layout_height="87dp"
-        android:background="@drawable/bg_dropdown_photo_nmber"
+        android:background="@drawable/bg_dropdown_photo_number"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/popup_challenge_photo_once_tv"
             style="@style/Typography_SM_Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/challenge_photo_once"
             android:textColor="@color/black_400"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/popup_challenge_photo_twice_tv"
             style="@style/Typography_SM_Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="@string/challenge_photo_twice"
@@ -34,7 +34,7 @@
         <TextView
             android:id="@+id/popup_challenge_photo_three_tv"
             style="@style/Typography_SM_Medium"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:text="@string/challenge_photo_three"

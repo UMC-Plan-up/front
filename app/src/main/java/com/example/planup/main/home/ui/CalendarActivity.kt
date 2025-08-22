@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.databinding.ActivityCalendarBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.CalendarEventAdapter
 import com.example.planup.network.RetrofitInstance
@@ -37,14 +38,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var prefs: SharedPreferences
 
 
-    private val eventList = mutableListOf<CalendarEvent>(
-        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
-        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
-        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
-        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18)),
-        CalendarEvent("영어 단어 외우기", "DAY", 1, LocalDate.of(2025, 8, 20)),
-        CalendarEvent("코틀린 공부", "DAY", 1, LocalDate.of(2025, 8, 21))
-    )
+    private val eventList = mutableListOf<CalendarEvent>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +80,14 @@ class CalendarActivity : AppCompatActivity() {
         calendarView.monthScrollListener = { month ->
             currentMonth = month.yearMonth
             monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        }
+
+        val startDate = currentMonth.atDay(1)
+        val endDate = currentMonth.atEndOfMonth()
+        var currentDate = startDate
+        while (!currentDate.isAfter(endDate)) {
+            loadDailyGoals(token, currentDate) // 날짜 단위 API 호출
+            currentDate = currentDate.plusDays(1)
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -131,6 +133,8 @@ class CalendarActivity : AppCompatActivity() {
         }
     }
 
+
+
     private fun loadDailyGoals(token: String?, date: LocalDate) {
         lifecycleScope.launch {
             try {
@@ -150,13 +154,14 @@ class CalendarActivity : AppCompatActivity() {
                         eventList.add(
                             CalendarEvent(
                                 goalName = goal.goalName,
-                                period = goal.period,
+                                period = goal.period ?: "NULL",
                                 frequency = goal.frequency,
                                 date = date
                             )
                         )
                     }
-
+                    val calendarview = findViewById<CalendarView>(R.id.calendarView)
+                    calendarview.notifyCalendarChanged()
                     // RecyclerView 갱신
                     updateEventList(date)
                 } else {
@@ -171,7 +176,7 @@ class CalendarActivity : AppCompatActivity() {
     }
 
     private fun updateEventList(date: LocalDate) {
-        val events = getEventsForDate(date).map { it.goalName }
+        val events = getEventsForDate(date)
         eventAdapter.submitList(events)
     }
 

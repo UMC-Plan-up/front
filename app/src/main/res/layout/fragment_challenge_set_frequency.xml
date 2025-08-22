@@ -210,6 +210,7 @@
                 app:layout_constraintTop_toBottomOf="@id/photo_fifth_day_cl" />
 
             <TextView
+                android:id="@+id/duration_explain_tv"
                 style="@style/Typography_S_Medium"
                 android:layout_width="297dp"
                 android:layout_height="wrap_content"
@@ -224,10 +225,10 @@
                 android:layout_width="58dp"
                 android:layout_height="28dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="53dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/bg_photo_duration_often"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/duration_tv">
+                app:layout_constraintTop_toBottomOf="@id/duration_explain_tv">
 
                 <TextView
                     android:id="@+id/photo_duration_tv"
@@ -269,6 +270,7 @@
                 app:layout_constraintTop_toBottomOf="@id/photo_duration_cl" />
 
             <TextView
+                android:id="@+id/often_explain_tv"
                 style="@style/Typography_S_Medium"
                 android:layout_width="297dp"
                 android:layout_height="wrap_content"
@@ -280,25 +282,25 @@
 
             <EditText
                 android:id="@+id/photo_often_et"
-                style="@style/Typography_XS_Medium"
+                style="@style/Typography_S_Medium"
                 android:layout_width="58dp"
                 android:layout_height="28dp"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="29dp"
+                android:layout_marginTop="4dp"
                 android:background="@drawable/bg_photo_duration_often"
                 android:inputType="numberDecimal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/photo_often_tv" />
+                app:layout_constraintTop_toBottomOf="@id/often_explain_tv" />
 
             <TextView
                 style="@style/Typography_SM_Medium"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginTop="29dp"
                 android:text="@string/minimum_number"
                 app:layout_constraintStart_toEndOf="@id/photo_often_et"
-                app:layout_constraintTop_toBottomOf="@id/photo_often_tv" />
+                app:layout_constraintTop_toTopOf="@id/photo_often_et"
+                app:layout_constraintBottom_toBottomOf="@id/photo_often_et" />
 
             <TextView
                 android:id="@+id/photo_error_tv"
@@ -329,7 +331,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:layout_marginTop="203dp"
+                android:layout_marginTop="207dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginBottom="24dp"
                 android:background="@drawable/bg_btn_selector"

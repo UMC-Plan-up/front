@@ -97,7 +97,7 @@
                 android:layout_marginEnd="4dp"
                 app:layout_constraintTop_toBottomOf="@id/goal_select_challenge_cl"
                 app:layout_constraintEnd_toEndOf="@id/goal_select_challenge_cl"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <TextView
                     style="@style/Typography_L_Semibold"
@@ -280,10 +280,10 @@
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/goal_category_cl"
+                app:layout_constraintTop_toBottomOf="@id/goal_select_challenge_cl"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="10dp"/>
+                android:layout_marginTop="362dp"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
