@@ -133,9 +133,8 @@ class SignupActivity : AppCompatActivity() {
             return true
         }
 
-        this.email = emailParam.ifBlank {
-            this.email ?: SignUpDraftStore.loadEmail(this)
-        }
+        this.email = emailParam
+        SignUpDraftStore.saveEmail(this, emailParam)
         this.password = this.password ?: SignUpDraftStore.loadPw(this)
 
         openProfileSetup(

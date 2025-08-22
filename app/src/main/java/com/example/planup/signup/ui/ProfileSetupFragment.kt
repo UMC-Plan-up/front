@@ -384,6 +384,7 @@ class ProfileSetupFragment : Fragment() {
                     ?: SignUpDraftStore.loadEmail(requireContext())
                     ?: ""
 
+                Log.d("UploadProfile", "API 요청 직전 이메일: '$email'")
                 if (email.isBlank()) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(requireContext(), "이메일 정보를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
