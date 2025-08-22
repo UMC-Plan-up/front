@@ -13,11 +13,19 @@ object RetrofitInstance {
 
     private val authHeaderAdder = Interceptor { chain ->
         val original = chain.request()
-        val builder = original.newBuilder()
-        val token = App.jwt.token?.trim().orEmpty()
-        if (token.isNotEmpty()) {
-            builder.header("Authorization", token)
+
+        if (original.header("Authorization") != null) {
+            return@Interceptor chain.proceed(original)
         }
+
+        val builder = original.newBuilder()
+
+        val raw = App.jwt.token?.trim().orEmpty()
+        if (raw.isNotEmpty()) {
+            val value = if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
+            builder.header("Authorization", value)
+        }
+
         chain.proceed(builder.build())
     }
 
@@ -43,36 +51,12 @@ object RetrofitInstance {
             .build()
     }
 
-    val termsApi: TermsApi by lazy {
-        retrofit.create(TermsApi::class.java)
-    }
-
-    val profileApi: ProfileApi by lazy {
-        retrofit.create(ProfileApi::class.java)
-    }
-
-    val userApi: UserApi by lazy {
-        retrofit.create(UserApi::class.java)
-    }
-
-    val goalApi: GoalApi by lazy {
-        retrofit.create(GoalApi::class.java)
-    }
-
-    val friendApi: FriendApi by lazy{
-        retrofit.create(FriendApi::class.java)
-    }
-
-    val passwordApi: PasswordApi by lazy {
-        retrofit.create(PasswordApi::class.java)
-    }
-
-    val weeklyReportApi: WeeklyReportApi by lazy{
-        retrofit.create(WeeklyReportApi::class.java)
-    }
-
-    val verificationApi: VerificationApi by lazy{
-        retrofit.create(VerificationApi::class.java)
-    }
-
+    val termsApi: TermsApi by lazy { retrofit.create(TermsApi::class.java) }
+    val profileApi: ProfileApi by lazy { retrofit.create(ProfileApi::class.java) }
+    val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
+    val goalApi: GoalApi by lazy { retrofit.create(GoalApi::class.java) }
+    val friendApi: FriendApi by lazy { retrofit.create(FriendApi::class.java) }
+    val passwordApi: PasswordApi by lazy { retrofit.create(PasswordApi::class.java) }
+    val weeklyReportApi: WeeklyReportApi by lazy { retrofit.create(WeeklyReportApi::class.java) }
+    val verificationApi: VerificationApi by lazy { retrofit.create(VerificationApi::class.java) }
 }

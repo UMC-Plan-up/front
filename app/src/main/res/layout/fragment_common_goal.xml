@@ -96,11 +96,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- 이 부분에 divider 속성을 추가합니다. -->
             <LinearLayout
                 android:id="@+id/goalCardContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical"
+                android:showDividers="middle"
+                android:divider="@drawable/divider_line" />
 
             <LinearLayout
                 android:id="@+id/moreButton"

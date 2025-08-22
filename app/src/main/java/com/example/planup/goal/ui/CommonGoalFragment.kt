@@ -33,6 +33,16 @@ class CommonGoalFragment : Fragment() {
 
     private var currentFilteredGoals: List<GoalDto> = emptyList()
 
+    private fun toServerCategory(display: String): String = when (display.trim()) {
+        "공부하기" -> "STUDYING"
+        "운동하기" -> "EXERCISING"
+        "독서하기" -> "READING"
+        "저축하기" -> "SAVING"
+        "생활습관" -> "LIFESTYLE"
+        "취미하기" -> "HOBBY"
+        else -> display.uppercase()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -106,16 +116,25 @@ class CommonGoalFragment : Fragment() {
 
     /* 서버에서 목표 리스트 받아오는 함수 */
     private fun fetchGoalsFromServer(goalType: String) {
+        val serverCategory = toServerCategory(goalCategory)
+
         lifecycleScope.launch {
             try {
                 val res = if (goalType.equals("FRIEND", ignoreCase = true)) {
-                    RetrofitInstance.goalApi.getFriendGoalsByCategory(goalCategory)
+                    RetrofitInstance.goalApi.getFriendGoalsByCategory(serverCategory)
                 } else {
-                    RetrofitInstance.goalApi.getCommunityGoalsByCategory(goalCategory)
+                    RetrofitInstance.goalApi.getCommunityGoalsByCategory(serverCategory)
                 }
 
                 if (res.isSuccessful) {
                     val list = res.body()?.result.orEmpty()
+
+                    list.forEachIndexed { index, goal ->
+                        Log.d("GoalData", "Goal #${index}: goalId=${goal.goalId}, " +
+                                "verificationType=${goal.verificationType}, " +
+                                "goalTime=${goal.goalTime}")
+                    }
+
                     currentFilteredGoals = list
                     renderFirstThree(list)
                 } else {
@@ -152,30 +171,39 @@ class CommonGoalFragment : Fragment() {
         val inflater = LayoutInflater.from(requireContext())
         list.forEach { goal ->
             val card = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
+            val imageUrl = goal.creatorProfileImg?.takeIf { it.isNotBlank() }
 
             Glide.with(this)
-                .load(goal.creatorProfileImg.takeIf { it.isNotBlank() })
-                .placeholder(R.drawable.ic_profile_green)
+                .load(imageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile)
                 .into(card.profileImage)
 
             card.goalOwner.text = goal.creatorNickname
             card.memberCount.text = getString(R.string.goal_member_count, goal.participantCount)
 
-            val isTimer = goal.verificationType.equals("TIMER", ignoreCase = true) && goal.goalTime > 0
+            val isTimer = goal.verificationType.equals("TIMER", ignoreCase = true)
             if (isTimer) {
                 card.certCamera.visibility = View.GONE
                 card.goalTime.visibility = View.VISIBLE
-                card.goalTime.text = formatSecondsToHhMmSs(goal.goalTime)
+
+                val timeInSeconds = goal.goalTime
+                if (timeInSeconds != null && timeInSeconds > 0) {
+                    card.goalTime.text = formatSecondsToHhMmSs(timeInSeconds)
+                } else {
+                    card.goalTime.text = "목표 투자 시간"
+                }
+
             } else {
                 card.goalTime.visibility = View.GONE
                 card.certCamera.visibility = View.VISIBLE
             }
-
             card.goalTitle.text = goal.goalName
 
             val period = periodKoFromGoalType(goal.goalType)
             card.goalFrequency.text = "$period ${goal.frequency}번 이상"
-            card.goalDescription.text = getString(R.string.goal_one_dose, goal.oneDose)
+            card.goalDescription.text = goal.oneDose.toString()
+
 
             binding.goalCardContainer.addView(card.root)
         }

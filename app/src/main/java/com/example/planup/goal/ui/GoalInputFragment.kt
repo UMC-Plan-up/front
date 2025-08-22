@@ -57,11 +57,6 @@ class GoalInputFragment : Fragment() {
         binding.goalVolumeMinLengthHint.visibility = View.GONE
         binding.goalVolumeMaxLengthHint.visibility = View.GONE
 
-        val savedName = prefs.getString(KEY_GOAL_NAME, "") ?: ""
-        val savedAmount = prefs.getString(KEY_GOAL_AMOUNT, "") ?: ""
-        if (savedName.isNotBlank()) binding.nicknameEditText.setText(savedName)
-        if (savedAmount.isNotBlank()) binding.goalVolumeEditText.setText(savedAmount)
-
         // 처음엔 다음 버튼 비활성화
         setNextButtonEnabled(isGoalNameValid() && isGoalVolumeValid())
 
