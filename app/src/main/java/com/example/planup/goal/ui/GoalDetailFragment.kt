@@ -85,7 +85,6 @@ class GoalDetailFragment : Fragment() {
         setupEndOptionButtons()
         setupNextButton()
         setupDirectSetSection()
-
         setupKeyboardHiding()
     }
 
@@ -116,26 +115,30 @@ class GoalDetailFragment : Fragment() {
 
     private fun setupBackButton() {
         binding.backIcon.setOnClickListener {
-            when (selectedMethod) {
-                "TIMER" -> {
-                    val timerFragment = TimerSettingFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("goalOwnerName", goalOwnerName)
+            val previousFragment = arguments?.getString("PREVIOUS_FRAGMENT")
+
+            if (previousFragment == "ParticipantLimitFragment") {
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            } else {
+                when (selectedMethod) {
+                    "TIMER" -> {
+                        val timerFragment = TimerSettingFragment().apply {
+                            arguments = Bundle().apply {
+                                putString("goalOwnerName", goalOwnerName)
+                            }
                         }
+                        (activity as? GoalActivity)?.navigateToFragment(timerFragment)
                     }
-                    (activity as? GoalActivity)?.navigateToFragment(timerFragment)
-                        ?: requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
-                "PICTURE" -> {
-                    val certFragment = CertificationMethodFragment().apply {
-                        arguments = Bundle().apply {
-                            putString("goalOwnerName", goalOwnerName)
+                    "PICTURE" -> {
+                        val certFragment = CertificationMethodFragment().apply {
+                            arguments = Bundle().apply {
+                                putString("goalOwnerName", goalOwnerName)
+                            }
                         }
+                        (activity as? GoalActivity)?.navigateToFragment(certFragment)
                     }
-                    (activity as? GoalActivity)?.navigateToFragment(certFragment)
-                        ?: requireActivity().onBackPressedDispatcher.onBackPressed()
+                    else -> requireActivity().onBackPressedDispatcher.onBackPressed()
                 }
-                else -> requireActivity().onBackPressedDispatcher.onBackPressed()
             }
         }
     }
@@ -196,22 +199,28 @@ class GoalDetailFragment : Fragment() {
         val days = buildDayItems()
 
         binding.dropdownContainer1.setOnClickListener {
-            showDropdown(years, binding.dropdownContainer1, binding.challengeYearTv) {
-                selectedYear = it
+            showDropdown(years, binding.dropdownContainer1, binding.challengeYearTv) { selected ->
+                selectedYear = selected
+                binding.challengeYearTv.text = getString(R.string.year_unit, selected)
+                updateNextButtonState()
             }
         }
         binding.dropdownYearIv.setOnClickListener { binding.dropdownContainer1.performClick() }
 
         binding.dropdownContainer2.setOnClickListener {
-            showDropdown(months, binding.dropdownContainer2, binding.challengeMonthTv) {
-                selectedMonth = it
+            showDropdown(months, binding.dropdownContainer2, binding.challengeMonthTv) { selected ->
+                selectedMonth = selected
+                binding.challengeMonthTv.text = getString(R.string.month_unit, selected)
+                updateNextButtonState()
             }
         }
         binding.dropdownMonthIv.setOnClickListener { binding.dropdownContainer2.performClick() }
 
         binding.dropdownContainer3.setOnClickListener {
-            showDropdown(days, binding.dropdownContainer3, binding.challengeDayTv) {
-                selectedDay = it
+            showDropdown(days, binding.dropdownContainer3, binding.challengeDayTv) { selected ->
+                selectedDay = selected
+                binding.challengeDayTv.text = getString(R.string.day_unit, selected)
+                updateNextButtonState()
             }
         }
         binding.dropdownDayIv.setOnClickListener { binding.dropdownContainer3.performClick() }
@@ -262,7 +271,6 @@ class GoalDetailFragment : Fragment() {
                         binding.challengeDayTv.text = getString(R.string.day)
                     }
                 }
-
                 updateNextButtonState()
             }
         }
@@ -280,6 +288,9 @@ class GoalDetailFragment : Fragment() {
         return (1..31).map { String.format("%02d", it) }.toCollection(ArrayList())
     }
 
+    // 추가: dp -> px 변환
+    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+
     private fun showDropdown(
         items: ArrayList<String>,
         anchor: View,
@@ -294,12 +305,20 @@ class GoalDetailFragment : Fragment() {
             true
         )
 
+        val desiredWidthPx = when (anchor.id) {
+            R.id.dropdown_container1 -> 100.dp()
+            R.id.dropdown_container2 -> 80.dp()
+            R.id.dropdown_container3 -> 80.dp()
+            else -> anchor.width
+        }
+        popupWindow.width = desiredWidthPx
+        popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
         popupWindow.isOutsideTouchable = true
         popupWindow.setBackgroundDrawable(
             ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
         )
         popupWindow.elevation = 8f
-        popupWindow.width = ViewGroup.LayoutParams.WRAP_CONTENT
 
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).apply {
             val adapter = TimerRVAdapter(items)
@@ -307,9 +326,7 @@ class GoalDetailFragment : Fragment() {
             adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
                 override fun setTime(position: Int) {
                     val selectedText = items[position]
-                    label.text = selectedText
                     onPicked(selectedText)
-                    updateNextButtonState()
                     popupWindow.dismiss()
                 }
             })
@@ -318,37 +335,70 @@ class GoalDetailFragment : Fragment() {
         popupWindow.showAsDropDown(anchor, 0, 0)
     }
 
+
     private fun updateNextButtonState() {
         val isPeriodSelected = selectedPeriodButton != null
-        val isReady = isPeriodSelected && isFrequencyValid
+        val isFrequencyInputValid = isFrequencyValid
+        val isReady = isPeriodSelected && isFrequencyInputValid
 
         binding.nextButton.isEnabled = isReady
-
-        if (binding.nextButton.isEnabled) {
-            binding.nextButton.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
-        } else {
-            binding.nextButton.background =
-                ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
-        }
+        binding.nextButton.background =
+            ContextCompat.getDrawable(
+                requireContext(),
+                if (isReady) R.drawable.btn_next_background else R.drawable.btn_next_background_gray
+            )
     }
 
+
+    // "다음" 버튼 클릭
     private fun setupNextButton() {
         binding.nextButton.setOnClickListener {
-            if (binding.nextButton.isEnabled) {
+            if (selectedEndButton == binding.directSetButton &&
+                (selectedYear == null || selectedMonth == null || selectedDay == null)
+            ) {
+                showEndDateBottomSheet()
+            } else {
                 goToParticipantAlways()
             }
         }
+    }
+
+    private fun showEndDateBottomSheet() {
+        val bottomSheet = EndDateBottomSheet()
+
+        // '아니오' 버튼 클릭
+        bottomSheet.onNoClicked = {
+            goToParticipantAlways()
+        }
+
+        bottomSheet.show(parentFragmentManager, "EndDateBottomSheet")
     }
 
     private fun goToParticipantAlways() {
         val period = selectedPeriodButton?.text?.toString().orEmpty()
         val frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
 
+        val endDateString: String? = when (selectedEndButton) {
+            binding.endOption1WeekButton -> "1Week"
+            binding.endOption1MonthButton -> "1Month"
+            binding.endOption3MonthButton -> "3Months"
+            binding.endOption6MonthButton -> "6Months"
+            binding.endOption1YearButton -> "1Year"
+            binding.directSetButton -> {
+                if (selectedYear != null && selectedMonth != null && selectedDay != null) {
+                    "$selectedYear-$selectedMonth-$selectedDay"
+                } else {
+                    null
+                }
+            }
+            else -> null
+        }
+
         val goalActivity = activity as? GoalActivity
         if (goalActivity != null) {
             goalActivity.period = period
             goalActivity.frequency = frequency
+            goalActivity.endDate = endDateString
 
             // 다음 프래그먼트로 이동
             val participantFragment = ParticipantLimitFragment().apply {
@@ -361,6 +411,7 @@ class GoalDetailFragment : Fragment() {
                     putString("verificationType", goalActivity.verificationType)
                     putString("period", goalActivity.period)
                     putInt("frequency", goalActivity.frequency)
+                    putString("endDate", goalActivity.endDate)
                 }
             }
 
@@ -374,6 +425,7 @@ class GoalDetailFragment : Fragment() {
                 putString("verificationType", selectedMethod.orEmpty())
                 putString("period", period)
                 putInt("frequency", frequency)
+                putString("endDate", endDateString)
             }
         }
 

@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.goal.data.GoalViewModel
-import com.example.planup.goal.ui.GoalCategoryFragment
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
@@ -35,7 +34,7 @@ class GoalActivity : AppCompatActivity() {
     var oneDose: String = ""
     var frequency: Int = 0
     var period: String = ""
-    var endDate: String = ""
+    var endDate: String? = null
     var verificationType: String = ""
     var limitFriendCount: Int = 0
     var goalTime: Int = 0

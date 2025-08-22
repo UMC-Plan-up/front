@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/goal_select_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -243,9 +243,7 @@
                     android:layout_height="40dp"
                     android:layout_marginTop="16dp"
                     android:background="@drawable/bg_edittext_background1"
-                    android:hint="@string/category_cooking"
                     android:textColor="@color/black_400"
-                    android:textColorHint="@color/black_300"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/category_custom_tv"
                     android:visibility="gone"/>

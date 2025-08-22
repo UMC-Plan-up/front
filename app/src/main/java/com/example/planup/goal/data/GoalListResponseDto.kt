@@ -18,5 +18,5 @@ data class GoalDto(
     val oneDose: Int,
     val creatorNickname: String,
     val creatorProfileImg: String,
-    val participantCount: Int
+    val participantCount: Int,
 )
