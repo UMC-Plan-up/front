@@ -3,14 +3,17 @@ package com.example.planup.main.goal.adapter
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.ItemGoalListRecyclerviewBinding
+import com.example.planup.goal.GoalActivity
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.ui.EditFriendGoalActivity
 import com.github.mikephil.charting.charts.PieChart
@@ -28,6 +31,10 @@ class GoalAdapter(
     RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
     private var isEditMode: Boolean = false
+
+    interface dialogShower{
+        fun showDialog()
+    }
 
     class GoalViewHolder(val binding: ItemGoalListRecyclerviewBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -154,69 +161,130 @@ class GoalAdapter(
     }
 
     private fun showInactivateDialog(anchorView: View, item: GoalItem, position: Int) {
+//        val dialog = Dialog(anchorView.context)
+//        dialog.setContentView(R.layout.dialog_inactivate_goal)
+//        dialog.setCancelable(true)
+//
+//        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
+//        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
+//
+//        noBtn.setOnClickListener {
+//            dialog.dismiss() // 아무것도 하지 않음
+//        }
+//
+//        yesBtn.setOnClickListener {
+//            item.isActive = !item.isActive // 상태 전환
+////            notifyItemChanged(position)
+//            // onDeactivateConfirmed(item.goalId)
+//            dialog.dismiss()
+//        }
+//
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+//        dialog.show()
         val dialog = Dialog(anchorView.context)
         dialog.setContentView(R.layout.dialog_inactivate_goal)
-        dialog.setCancelable(true)
-
-        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
-        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
-
-        noBtn.setOnClickListener {
-            dialog.dismiss() // 아무것도 하지 않음
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                )
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         }
-
-        yesBtn.setOnClickListener {
-            item.isActive = !item.isActive // 상태 전환
-            notifyItemChanged(position)
-            // onDeactivateConfirmed(item.goalId)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.findViewById<TextView>(R.id.popup_inactivate_goal_no_btn).setOnClickListener{
             dialog.dismiss()
         }
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.findViewById<TextView>(R.id.popup_inactivate_goal_yes_btn).setOnClickListener{
+            item.isActive = !item.isActive // 상태 전환
+            notifyItemChanged(position)
+            dialog.dismiss()
+        }
         dialog.show()
     }
 
     private fun showActivateDialog(anchorView: View, item: GoalItem, position: Int) {
+//        val dialog = Dialog(anchorView.context)
+//        dialog.setContentView(R.layout.dialog_activate_goal)
+//        dialog.setCancelable(true)
+//
+//        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
+//        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
+//
+//        noBtn.setOnClickListener {
+//            dialog.dismiss() // 아무것도 하지 않음
+//        }
+//
+//        yesBtn.setOnClickListener {
+//            item.isActive = !item.isActive // 상태 전환
+//            notifyItemChanged(position)
+//            // onActivateConfirmed(item.goalId)
+//            dialog.dismiss()
+//        }
+//
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+//        dialog.show()
+
         val dialog = Dialog(anchorView.context)
         dialog.setContentView(R.layout.dialog_activate_goal)
-        dialog.setCancelable(true)
-
-        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
-        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
-
-        noBtn.setOnClickListener {
-            dialog.dismiss() // 아무것도 하지 않음
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         }
-
-        yesBtn.setOnClickListener {
-            item.isActive = !item.isActive // 상태 전환
-            notifyItemChanged(position)
-            // onActivateConfirmed(item.goalId)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.findViewById<TextView>(R.id.popup_activate_goal_no_btn).setOnClickListener{
             dialog.dismiss()
         }
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.findViewById<TextView>(R.id.popup_activate_goal_yes_btn).setOnClickListener{
+            item.isActive = !item.isActive // 상태 전환
+            notifyItemChanged(position)
+            dialog.dismiss()
+        }
         dialog.show()
     }
 
     private fun showDeleteDialog(anchorView: View, item: GoalItem, position: Int) {
+//        val dialog = Dialog(anchorView.context)
+//        dialog.setContentView(R.layout.dialog_delete_goal)
+//        dialog.setCancelable(true)
+//
+//        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
+//        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
+//
+//        noBtn.setOnClickListener {
+//            dialog.dismiss() // 아무것도 하지 않음
+//        }
+//
+//        yesBtn.setOnClickListener {
+//            onDeleteConfirmed(item.goalId)
+//            dialog.dismiss()
+//        }
+//
+//        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+//        dialog.show()
         val dialog = Dialog(anchorView.context)
         dialog.setContentView(R.layout.dialog_delete_goal)
-        dialog.setCancelable(true)
-
-        val noBtn = dialog.findViewById<ImageView>(R.id.popup_block_no_iv)
-        val yesBtn = dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)
-
-        noBtn.setOnClickListener {
-            dialog.dismiss() // 아무것도 하지 않음
+        dialog.window?.apply {
+            setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+            )
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         }
-
-        yesBtn.setOnClickListener {
-            onDeleteConfirmed(item.goalId)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.findViewById<TextView>(R.id.popup_delete_goal_no_btn).setOnClickListener{
             dialog.dismiss()
         }
-
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.findViewById<TextView>(R.id.popup_delete_goal_yes_btn).setOnClickListener{
+            item.isActive = !item.isActive // 상태 전환
+            notifyItemChanged(position)
+            dialog.dismiss()
+        }
         dialog.show()
     }
 

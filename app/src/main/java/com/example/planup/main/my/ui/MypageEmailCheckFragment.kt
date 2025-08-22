@@ -257,7 +257,7 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
+        toast.setGravity(Gravity.BOTTOM, 0, 969)
         toast.show()
     }
 

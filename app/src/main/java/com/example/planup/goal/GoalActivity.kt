@@ -124,24 +124,15 @@ class GoalActivity : AppCompatActivity() {
                         putString("goalOwnerName", goalOwnerName)
                     }
                 }
-//                else -> GoalCategoryFragment().apply {
-//                    arguments = (arguments ?: Bundle()).apply {
-//                        putString("goalOwnerName", goalOwnerName)
-//                    }
-                else -> GoalSelectFragment()
+                else -> GoalSelectFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("from",intent.getStringExtra("from"))
+                    }
+                }
             }
-            // GoalSelectFragment를 GoalCategoryFragment로 가정
-//            val first = GoalCategoryFragment().apply {
-//                arguments = (arguments ?: Bundle()).apply {
-//                    putString("goalOwnerName", goalOwnerName)
-//                }
-//            }
-            val first = GoalSelectFragment()
-
             supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, startFragment)
                 .commit()
-//        }
         }
     }
 

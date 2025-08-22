@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,6 +17,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalSelectBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.main.MainActivity
 
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
@@ -23,6 +25,8 @@ class GoalSelectFragment : Fragment() {
     private var isCategory = false //카테고리 선택 처음 클릭했을 때
     private var sleepChallenge: Int = 2 //비활성화된 챌린지 목표 개수
     lateinit var nickname: String //사용자 닉네임
+
+    private lateinit var fromWhere: String
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -36,6 +40,7 @@ class GoalSelectFragment : Fragment() {
 
     //초기화 내용
     private fun init() {
+        fromWhere = arguments?.getString("from")!!
         category = binding.categoryStudyTv
         nickname = arguments?.getString("GoalOwnerName", "사용자").toString()
         binding.goalSelectCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
@@ -55,6 +60,27 @@ class GoalSelectFragment : Fragment() {
 
         //뒤로가기
         binding.goalSelectBackIv.setOnClickListener {
+            when(fromWhere){
+                "CommunityIntroFragment" -> {
+                    val inflater = LayoutInflater.from(context)
+                    val layout = inflater.inflate(R.layout.toast_grey_template,null)
+                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = "임시 토스트"
+
+                    val toast = Toast(context)
+                    toast.view = layout
+                    toast.duration = LENGTH_SHORT
+                    toast.setGravity(Gravity.BOTTOM,0,400)
+                    toast.show()
+                }
+                "GoalFragment" -> {
+                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+                    startActivity(intent)
+                }
+                "ChallengeCompleteFragment" -> {
+                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+                    startActivity(intent)
+                }
+            }
         }
         //함께 목표 설정하기 클릭
         binding.goalSelectTogetherTv.setOnClickListener {
@@ -159,7 +185,7 @@ class GoalSelectFragment : Fragment() {
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 141)
+        toast.setGravity(Gravity.BOTTOM, 0, 330)
         toast.show()
     }
 
