@@ -162,9 +162,9 @@ class MypagePasswordEmailFragment : Fragment(), PasswordLinkAdapter {
         val emailInput = binding.emailEt.text.toString()
         val atIndex = emailInput.indexOf('@')
         return if (atIndex != -1) {
-            "${emailInput.substring(0, atIndex-1)}@$domain"
+            "${emailInput.substring(0, atIndex-1)}$domain"
         } else {
-            "$emailInput@$domain"
+            "$emailInput${domain.removeSurrounding("@")}"
         }
     }
 

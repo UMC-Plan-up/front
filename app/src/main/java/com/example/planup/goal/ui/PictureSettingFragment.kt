@@ -20,7 +20,7 @@ class PictureSettingFragment : Fragment() {
 
     private var _binding: FragmentPictureSettingBinding? = null
     private val binding get() = _binding!!
-    private var selectedFrequency: Int? = null
+    private var selectedFrequency: Int = 1
 
     // SharedPreferences 추가
     private val PREFS_NAME = "goal_data"
@@ -38,7 +38,7 @@ class PictureSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupListeners()
-        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
+//        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
     }
 
     private fun setupListeners() {
@@ -47,24 +47,22 @@ class PictureSettingFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-        binding.dropdownContainer.setOnClickListener {
+        binding.challengePhotoNumberTv.setOnClickListener {
             val items = arrayListOf("1", "2", "3")
-            showDropdown(items, binding.dropdownContainer, binding.challengeTimerHourTv)
+            showDropdown(items, binding.challengePhotoNumberTv)
         }
 
         // 다음 버튼 -> GoalDetailFragment로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
-            if (selectedFrequency != null) {
                 val activity = requireActivity() as GoalActivity
-
                 // GoalActivity에 인증 횟수와 인증 방식 저장
-                activity.frequency = selectedFrequency!!
+                activity.frequency = selectedFrequency
                 activity.verificationType = "PICTURE"
 
                 // SharedPreferences에 저장
                 val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 prefs.edit()
-                    .putInt(KEY_FREQUENCY, selectedFrequency!!)
+                    .putInt(KEY_FREQUENCY, selectedFrequency)
                     .putString(KEY_VERIFICATION_TYPE, "PICTURE")
                     .apply()
 
@@ -74,46 +72,40 @@ class PictureSettingFragment : Fragment() {
                     }
                 }
                 activity.navigateToFragment(goalDetailFragment)
-            }
         }
     }
 
     // 드롭다운 표시
     private fun showDropdown(
         items: ArrayList<String>,
-        anchor: View,
-        label: TextView
+        anchor: View
     ) {
-        val popupView = layoutInflater.inflate(R.layout.item_recycler_dropdown_time, null)
+        val inflater = LayoutInflater.from(context)
+        val popupView = inflater.inflate(R.layout.popup_challenge_photo,null)
         val popupWindow = PopupWindow(
             popupView,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             true
         )
-
         popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(
-            ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
-        )
-        popupWindow.elevation = 8f
-        popupWindow.width = anchor.width
-
-        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).apply {
-            val adapter = TimerRVAdapter(items)
-            this.adapter = adapter
-            adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
-                override fun setTime(position: Int) {
-                    val selectedText = items[position]
-                    label.text = "${selectedText}번"
-                    selectedFrequency = selectedText.toIntOrNull()
-                    updateNextButtonUi(true)
-                    popupWindow.dismiss()
-                }
-            })
+        popupWindow.showAsDropDown(anchor)
+        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
+        popupView.findViewById<TextView>(R.id.popup_challenge_photo_once_tv).setOnClickListener {
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_once)
+            selectedFrequency = 1
+            popupWindow.dismiss()
         }
-
-        popupWindow.showAsDropDown(anchor, 0, 0)
+        popupView.findViewById<TextView>(R.id.popup_challenge_photo_twice_tv).setOnClickListener {
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_twice)
+            selectedFrequency = 2
+            popupWindow.dismiss()
+        }
+        popupView.findViewById<TextView>(R.id.popup_challenge_photo_three_tv).setOnClickListener {
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_three)
+            selectedFrequency = 3
+            popupWindow.dismiss()
+        }
     }
 
     private fun updateNextButtonUi(enabled: Boolean) {

@@ -27,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_marginEnd="20dp"
-            android:layout_marginTop="50dp">
+            android:layout_marginTop="15dp">
 
             <ImageView
                 android:id="@+id/home_alarm_none_iv"
@@ -49,10 +49,11 @@
 
         <LinearLayout
             android:id="@+id/linearLayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="82dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="47dp"
             android:orientation="vertical"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -61,7 +62,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_marginBottom="14dp">
 
                 <ImageView
                     android:id="@+id/home_main_profile_iv"
@@ -74,10 +76,9 @@
 
                 <TextView
                     android:id="@+id/home_main_tv"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="40dp"
                     android:text="@string/home_main_text"
                     style="@style/Typography_XL_Semibold"
                     android:textColor="@color/black" />

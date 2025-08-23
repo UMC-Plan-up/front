@@ -3,6 +3,7 @@ package com.example.planup.goal.ui
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -95,22 +96,24 @@ class PushAlertFragment : Fragment() {
 
         //저장 버튼 클릭 (GoalActivity를 통해서만 이동)
         binding.nextButton.setOnClickListener {
+            Log.d("okhttppppppppp","1")
             val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
-
+            Log.d("okhttppppppppp","2")
             val isAlertsEnabled = binding.alertReceiveOnIv.visibility == View.VISIBLE
             editor.putBoolean("receive_alerts", isAlertsEnabled)
             editor.putBoolean("regular_alerts", binding.alertRegularOnIv.visibility == View.VISIBLE)
             editor.putString("alert_time_of_day", binding.alertTimeTv.text.toString())
             editor.putString("alert_hour", binding.alertHourTv.text.toString())
             editor.putString("alert_minute", binding.alertMinuteTv.text.toString())
-
+            Log.d("okhttppppppppp","3")
             val selectedDays = mutableSetOf<String>()
             val dayViews = listOf(
                 binding.alertEverydayTv, binding.alertMondayTv, binding.alertTuesdayTv,
                 binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
                 binding.alertSaturdayTv, binding.alertSundayTv
             )
+            Log.d("okhttppppppppp","4")
             val dayNames = listOf(
                 "everyday", "monday", "tuesday", "wednesday",
                 "thursday", "friday", "saturday", "sunday"
@@ -120,14 +123,16 @@ class PushAlertFragment : Fragment() {
                     selectedDays.add(dayNames[index])
                 }
             }
+            Log.d("okhttppppppppp","5")
             editor.putStringSet("alert_days", selectedDays)
             editor.apply()
 
+            Log.d("okhttppppppppp","6")
             // 알림 설정 완료 후 팝업을 다시 보지 않도록 상태 변경
             val appPrefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
             appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
 
-
+            Log.d("okhttppppppppp","7")
             // GoalActivity에 알림 설정 정보 저장
             val activity = requireActivity() as GoalActivity
             activity.notificationEnabled = isAlertsEnabled
@@ -137,6 +142,7 @@ class PushAlertFragment : Fragment() {
             activity.alertMinute = binding.alertMinuteTv.text.toString()
             activity.alertDays = selectedDays
 
+            Log.d("okhttppppppppp","8")
             val goalCompleteFragment = GoalCompleteFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", activity.goalOwnerName)
@@ -159,8 +165,11 @@ class PushAlertFragment : Fragment() {
                     putStringArrayList("alertDays", ArrayList(selectedDays))
                 }
             }
+            Log.d("okhttppppppppp","9")
             activity.navigateToFragment(goalCompleteFragment)
-            showSizedToast(binding.nextButton, getString(R.string.toast_alert_setting))
+            Log.d("okhttppppppppp","10")
+//            showSizedToast(binding.nextButton, getString(R.string.toast_alert_setting))
+
         }
 
         //정기 알림 시간 설정
@@ -315,7 +324,7 @@ class PushAlertFragment : Fragment() {
 
     private fun showSizedToast(matchTo: View, text: CharSequence) {
         val doShow: () -> Unit = {
-            val layout = layoutInflater.inflate(R.layout.toast_grey_template, null) as android.widget.LinearLayout
+            val layout = layoutInflater.inflate(R.layout.toast_grey_template, null)
             val tv = layout.findViewById<TextView>(R.id.toast_grey_template_tv)
 
             val lp = matchTo.layoutParams as ViewGroup.MarginLayoutParams

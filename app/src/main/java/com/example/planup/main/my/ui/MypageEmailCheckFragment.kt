@@ -215,9 +215,9 @@ class MypageEmailCheckFragment : Fragment(), EmailLinkAdapter {
         val emailInput = binding.emailEt.text.toString()
         val atIndex = emailInput.indexOf('@')
         return if (atIndex != -1) {
-            "${emailInput.substring(0, atIndex)}@$domain"
+            "${emailInput.substring(0, atIndex)}$domain"
         } else {
-            "$emailInput@$domain"
+            "$emailInput${domain.removeSurrounding("@")}"
         }
     }
 

@@ -104,7 +104,7 @@
                 android:textColor="@color/white"
                 android:gravity="center"
                 android:textAlignment="center"
-                android:background="@drawable/bg_btn_blue"
+                android:background="@drawable/bg_btn_selector"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

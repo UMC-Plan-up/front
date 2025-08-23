@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
@@ -37,7 +38,6 @@ class TimerSettingFragment : Fragment() {
         binding = FragmentTimerSettingBinding.inflate(inflater, container, false)
         init()
         clickListener()
-        updateNextButtonUi(false)
         return binding.root
     }
 
@@ -71,7 +71,7 @@ class TimerSettingFragment : Fragment() {
 
         // 다음 버튼 -> GoalDetailFragment로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
-            if (!binding.challengeTimerNextBtn.isActivated && !binding.challengeTimerNextBtn.isEnabled) {
+            if (!binding.challengeTimerNextBtn.isActivated) {
                 return@setOnClickListener
             }
 
@@ -100,8 +100,9 @@ class TimerSettingFragment : Fragment() {
     private fun timeWatcher(item: Int, position: Int) {
         // 기존 총 시간에서 해당 부분 시간을 빼고 새로운 시간을 더함
         val hour = (totalTime / 3600) * 3600
-        val minute = ((totalTime - hour) / 60) * 60
-        val second = totalTime - hour - minute
+        val minute = ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
+        val second =
+            totalTime - (totalTime / 3600) * 3600 - ((totalTime - (totalTime / 3600) * 3600) / 60) * 60
 
         if (position == 0) {
             totalTime -= hour
@@ -115,15 +116,13 @@ class TimerSettingFragment : Fragment() {
         }
 
         /* 다음 버튼 활성화 조건 */
-        val secondsPart = totalTime % 60
-        val enabled = (totalTime >= 60) || (secondsPart >= 30)
-
-        if (!enabled) {
+        if (totalTime < 30) {
             binding.errorTv.visibility = View.VISIBLE
+            binding.challengeTimerNextBtn.isActivated = false
         } else {
             binding.errorTv.visibility = View.GONE
+            binding.challengeTimerNextBtn.isActivated = true
         }
-        updateNextButtonUi(enabled)
     }
 
     // 버튼 활성/비활성
@@ -139,59 +138,94 @@ class TimerSettingFragment : Fragment() {
         binding.challengeTimerNextBtn.background = bg
     }
 
-    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
-
+//    private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
+    //시간, 분, 초 드롭다운
     private fun showDropdown(
-        items: ArrayList<String>,
-        view: TextView,
-        selected: Int
-    ) {
+        items: ArrayList<String>, //시간
+        view: TextView, //앵커뷰
+        selected: Int //시, 분, 초 중 어느 드롭다운인지 표시
+    ) {//리사이클러 뷰 아이템, 앵커 뷰, 시/분/초
         val inflater = LayoutInflater.from(context)
-        val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
+        val popupView = inflater.inflate(R.layout.item_recycler_dropdown_time, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        val dropdownAdapter = TimerRVAdapter(items)
+        popupWindow.showAsDropDown(view) //선택된 뷰 하단에 드롭다운 표시
+        popupWindow.isOutsideTouchable = true //바깥 터치 허용
+        popupWindow.setBackgroundDrawable(
+            resources.getColor(R.color.transparent).toDrawable()
+        )//투명 배경 설정
 
-        view.post {
-            val fallbackWidth = when (selected) {
-                0 -> 90.dp()  // 시
-                1 -> 70.dp()  // 분
-                else -> 70.dp() // 초
-            }
-            val exactWidth = if (view.width > 0) view.width else fallbackWidth
-
-            // 팝업 생성
-            val popupWindow = PopupWindow(
-                popupBinding.root,
-                exactWidth,
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                true
-            ).apply {
-                isOutsideTouchable = true
-                setBackgroundDrawable(
-                    ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
-                )
-                elevation = 8f
-            }
-
-            popupBinding.dropdownRecyclerRv.layoutParams =
-                popupBinding.dropdownRecyclerRv.layoutParams.apply {
-                    width = ViewGroup.LayoutParams.MATCH_PARENT
+        //드롭다운 터치 이벤트 관리하는 어댑터
+        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = dropdownAdapter
+        dropdownAdapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
+            override fun setTime(position: Int) {
+                when(selected){
+                    0 -> view.text = getString(R.string.timer_hour, items[position])
+                    1 -> view.text = getString(R.string.timer_minute,items[position])
+                    2 -> view.text = getString(R.string.timer_second,items[position])
                 }
-            popupBinding.dropdownRecyclerRv.adapter = TimerRVAdapter(items).apply {
-                setDropdownListener(object : TimerRVAdapter.DropdownListener {
-                    override fun setTime(position: Int) {
-                        val raw = items[position]
-                        val labeled = when (selected) {
-                            0 -> "${raw}시간"
-                            1 -> "${raw}분"
-                            else -> "${raw}초"
-                        }
-                        view.text = labeled
-                        timeWatcher(raw.toInt(), selected)
-                        popupWindow.dismiss()
-                    }
-                })
+                timeWatcher(items[position].toInt(), selected)
+                popupWindow.dismiss()
             }
-
-            popupWindow.showAsDropDown(view, 0, 0)
-        }
+        })
     }
+
+//    private fun showDropdown(
+//        items: ArrayList<String>,
+//        view: TextView,
+//        selected: Int
+//    ) {
+//        val inflater = LayoutInflater.from(context)
+//        val popupBinding = ItemRecyclerDropdownTimeBinding.inflate(inflater)
+//
+//        view.post {
+//            val fallbackWidth = when (selected) {
+//                0 -> 90.dp()  // 시
+//                1 -> 70.dp()  // 분
+//                else -> 70.dp() // 초
+//            }
+//            val exactWidth = if (view.width > 0) view.width else fallbackWidth
+//
+//            // 팝업 생성
+//            val popupWindow = PopupWindow(
+//                popupBinding.root,
+//                exactWidth,
+//                ViewGroup.LayoutParams.WRAP_CONTENT,
+//                true
+//            ).apply {
+//                isOutsideTouchable = true
+//                setBackgroundDrawable(
+//                    ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
+//                )
+//                elevation = 8f
+//            }
+//
+//            popupBinding.dropdownRecyclerRv.layoutParams =
+//                popupBinding.dropdownRecyclerRv.layoutParams.apply {
+//                    width = ViewGroup.LayoutParams.MATCH_PARENT
+//                }
+//            popupBinding.dropdownRecyclerRv.adapter = TimerRVAdapter(items).apply {
+//                setDropdownListener(object : TimerRVAdapter.DropdownListener {
+//                    override fun setTime(position: Int) {
+//                        val raw = items[position]
+//                        val labeled = when (selected) {
+//                            0 -> "${raw}시간"
+//                            1 -> "${raw}분"
+//                            else -> "${raw}초"
+//                        }
+//                        view.text = labeled
+//                        timeWatcher(raw.toInt(), selected)
+//                        popupWindow.dismiss()
+//                    }
+//                })
+//            }
+//
+//            popupWindow.showAsDropDown(view, 0, 0)
+//        }
+//    }
 }

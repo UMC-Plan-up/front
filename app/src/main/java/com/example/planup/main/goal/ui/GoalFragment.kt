@@ -58,6 +58,19 @@ class GoalFragment : Fragment() {
     private val goalController = GoalController()
     private var isEditMode: Boolean = false
 
+    // GoalFragment.kt
+    companion object {
+        private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
+        private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
+
+        fun newInstance(targetUserId: Int, targetNickname: String) = GoalFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_TARGET_USER_ID, targetUserId)
+                putString(ARG_TARGET_NICKNAME, targetNickname)
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -68,8 +81,17 @@ class GoalFragment : Fragment() {
         // 사용자 정보 콜백 연결
         userController.setUserInfoAdapter(object : UserInfoAdapter {
             override fun successUserInfo(user: UserInfo){
-                binding.userGoalListTv.text = "${user.nickname}의 목표 리스트"
-                loadProfileInto(user.profileImage)
+                // onCreateView() 또는 onViewCreated() 초반
+                val targetUserId = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
+                val targetNickname = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
+
+                if (targetUserId > 0) {
+                    // ✅ 친구 보기 모드: 타이틀만 우선 변경
+                    binding.userGoalListTv.text = "${targetNickname}의 목표 리스트"
+                    // (추가 계획) 친구 목표 조회 API 연동 시 여기서 targetUserId 사용
+                } else {
+                    userController.userInfoService() // 기존 내 정보 로딩
+                }
             }
             override fun failUserInfo(message: String){
                 binding.userGoalListTv.text = "내 목표 리스트"
@@ -208,12 +230,12 @@ class GoalFragment : Fragment() {
     private fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
         map { dto ->
             val typeLabel = when (dto.goalType) {
-                GoalType.FRIEND -> "친구"
-                GoalType.COMMUNITY -> "커뮤니티"
-                GoalType.CHALLENGE_PHOTO -> "사진 인증"
-                GoalType.CHALLENGE_TIME -> "시간 인증"
+                GoalType.FRIEND -> "매일"
+                GoalType.COMMUNITY -> "매주"
+                GoalType.CHALLENGE_PHOTO -> "매일"
+                GoalType.CHALLENGE_TIME -> "매주"
             }
-            val criteria = "$typeLabel · 빈도 ${dto.frequency}회 · 1회 기준 ${dto.oneDose}"
+            val criteria = "$typeLabel ${dto.frequency}번 이상"
 
             GoalItem(
                 goalId     = dto.goalId,

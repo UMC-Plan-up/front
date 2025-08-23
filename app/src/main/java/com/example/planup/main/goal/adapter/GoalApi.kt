@@ -3,6 +3,7 @@ package com.example.planup.main.goal.adapter
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
+import com.example.planup.main.friend.data.ApiResponseListFriendGoalListDto
 import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.data.GoalEditResponse
 import com.example.planup.main.goal.item.CreateCommentRequest
@@ -76,6 +77,13 @@ interface GoalApi {
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
     ): TotalAchievementResponse
+
+    // 친구 목표 조회 리스트 API
+    @GET("/goals/friendgoal/list")
+    suspend fun getFriendGoalList(
+        @Header("Authorization") token: String,
+        @Query("friendId") friendId: Int
+    ): ApiResponseListFriendGoalListDto
 
     @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
     suspend fun getFriendPhotos(
