@@ -55,7 +55,6 @@ class ChallengeSetPhotoFragment:Fragment() {
             dropdown(binding.challengePhotoNumberTv)
         }
         binding.challengePhotoNextBtn.setOnClickListener {
-            if (!binding.challengePhotoNextBtn.isActivated) return@setOnClickListener
             editor.apply()
             (context as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container,ChallengeSetFrequencyFragment())
@@ -78,19 +77,16 @@ class ChallengeSetPhotoFragment:Fragment() {
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_once_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_once)
             editor.putInt("oneDoes",1)
-            binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_twice_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_twice)
             editor.putInt("oneDoes",2)
-            binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_three_tv).setOnClickListener {
             binding.challengePhotoNumberTv.setText(R.string.challenge_photo_three)
             editor.putInt("oneDoes",3)
-            binding.challengePhotoNextBtn.isActivated = true
             popupWindow.dismiss()
         }
     }
