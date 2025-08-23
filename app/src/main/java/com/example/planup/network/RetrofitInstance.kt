@@ -59,4 +59,7 @@ object RetrofitInstance {
     val passwordApi: PasswordApi by lazy { retrofit.create(PasswordApi::class.java) }
     val weeklyReportApi: WeeklyReportApi by lazy { retrofit.create(WeeklyReportApi::class.java) }
     val verificationApi: VerificationApi by lazy { retrofit.create(VerificationApi::class.java) }
+    val encourageMessageApi: EncourageMessageApi by lazy {
+        getRetrofit().create(EncourageMessageApi::class.java)
+    }
 }

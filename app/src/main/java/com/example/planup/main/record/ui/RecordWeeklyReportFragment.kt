@@ -71,6 +71,9 @@ class RecordWeeklyReportFragment : Fragment() {
         updateTitle()
         loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
 
+        // ★ 서버 응원 메시지 최신화
+        fetchEncourageMessage()
+
         return binding.root
     }
 
@@ -867,5 +870,20 @@ class RecordWeeklyReportFragment : Fragment() {
             .replace(R.id.main_container, to)
             .addToBackStack(null)
             .commitAllowingStateLoss()
+    }
+
+    // RecordWeeklyReportFragment.kt 내부에 추가
+    private fun fetchEncourageMessage() {
+        val tokenHeader = buildAuthHeader() ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching { RetrofitInstance.encourageMessageApi.getEncourageMessage(tokenHeader) }
+                .onSuccess { resp ->
+                    val body = resp.body()
+                    if (resp.isSuccessful && body != null && body.message.isNotBlank()) {
+                        binding.balloonText.text = body.message
+                    }
+                }
+                .onFailure { /* 네트워크 에러는 무시(기존 문구 유지) */ }
+        }
     }
 }
