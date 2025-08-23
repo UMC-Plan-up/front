@@ -42,6 +42,8 @@ class GoalDescriptionFragment : Fragment() {
     ): View {
         binding = FragmentGoalDescriptionBinding.inflate(inflater, container, false)
 
+        applyToggleUI(isPublic)
+
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
         binding.btnPublic.setOnClickListener {
             if (!isPublic) { isPublic = true; applyToggleUI(isPublic) }
