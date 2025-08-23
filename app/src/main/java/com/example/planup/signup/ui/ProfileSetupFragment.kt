@@ -30,6 +30,7 @@ import java.io.File
 import com.bumptech.glide.Glide
 import com.example.planup.network.App
 import com.example.planup.signup.data.*
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class ProfileSetupFragment : Fragment() {
 
@@ -380,8 +381,9 @@ class ProfileSetupFragment : Fragment() {
                     return@launch
                 }
 
-                val email = (requireActivity() as SignupActivity).email
-                    ?: SignUpDraftStore.loadEmail(requireContext())
+                val email = SignUpDraftStore.loadEmail(requireContext())
+                    ?: (requireActivity() as SignupActivity).email
+                    ?: arguments?.getString("email")
                     ?: ""
 
                 Log.d("UploadProfile", "API 요청 직전 이메일: '$email'")
@@ -392,9 +394,11 @@ class ProfileSetupFragment : Fragment() {
                     return@launch
                 }
 
+                val emailRequestBody = email.toRequestBody("text/plain".toMediaTypeOrNull())
+
                 Log.d("프로필 업로드", "API 요청 시작. 토큰: ${token.take(10)}..., email=$email")
 
-                val response = RetrofitInstance.profileApi.uploadProfileImage(email, body)
+                val response = RetrofitInstance.profileApi.uploadProfileImage(emailRequestBody, body)
 
                 if (response.isSuccessful) {
                     val imageUrl = response.body()?.result?.imageUrl

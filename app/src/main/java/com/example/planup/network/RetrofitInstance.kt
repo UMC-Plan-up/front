@@ -12,21 +12,15 @@ object RetrofitInstance {
     private const val BASE_URL = "http://54.180.207.84:8080/"
 
     private val authHeaderAdder = Interceptor { chain ->
-        val original = chain.request()
+        val requestBuilder = chain.request().newBuilder()
+        val token = App.jwt.token?.trim().orEmpty()
 
-        if (original.header("Authorization") != null) {
-            return@Interceptor chain.proceed(original)
+        if (token.isNotEmpty()) {
+            val value = if (token.startsWith("Bearer ", ignoreCase = true)) token else "Bearer $token"
+            requestBuilder.header("Authorization", value)
         }
 
-        val builder = original.newBuilder()
-
-        val raw = App.jwt.token?.trim().orEmpty()
-        if (raw.isNotEmpty()) {
-            val value = if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
-            builder.header("Authorization", value)
-        }
-
-        chain.proceed(builder.build())
+        chain.proceed(requestBuilder.build())
     }
 
     private val httpLogging = HttpLoggingInterceptor().apply {
