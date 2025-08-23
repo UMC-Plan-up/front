@@ -17,7 +17,8 @@ data class FriendInfo(
     val nickname: String,
     val goalCnt: Int,
     val todayTime: String?,
-    val isNewPhotoVerify: Boolean
+    val isNewPhotoVerify: Boolean,
+    val profileImage: String
 )
 
 data class FriendReportRequestDto(

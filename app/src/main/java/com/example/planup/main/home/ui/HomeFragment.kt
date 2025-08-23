@@ -58,10 +58,10 @@ class HomeFragment : Fragment() {
     private var selectedDate = today
     private var eventList = mutableListOf<CalendarEvent>(
         // 더미 데이터
-        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
-        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
-        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
-        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18))
+//        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
+//        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
+//        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
+//        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18))
     )
     private var dailyToDos = mutableListOf(
         DailyToDo("공부", 75, 5),
@@ -69,8 +69,8 @@ class HomeFragment : Fragment() {
         DailyToDo("운동", 50, 3)
     )
     private var friendChallengingList = mutableListOf(
-        FriendChallengeItem(1,"블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(30f, 50f, 70f)),
-        FriendChallengeItem(2,"블루", "평균 목표 달성률 : 70%", R.drawable.ic_launcher_background, listOf(35f, 45f, 65f))
+        FriendChallengeItem(1,"블루", "평균 목표 달성률 : 70%", R.drawable.profile_example_2, listOf(30f, 50f, 70f)),
+        FriendChallengeItem(2,"블루", "평균 목표 달성률 : 70%", R.drawable.profile_example_2, listOf(35f, 45f, 65f))
     )
 
     private lateinit var binding: FragmentHomeBinding
@@ -109,7 +109,7 @@ class HomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             val summaries = loadFriendGoalSummaries(token)
             Log.d("FriendGoalSummary","summaries: $summaries")
-             friendChallengingList.clear()
+            // friendChallengingList.clear()
             for (summary in summaries) friendChallengingList.add(summary)
             Log.d("FriendGoalSummary", "최종 summaries: $friendChallengingList")
 
@@ -330,6 +330,7 @@ class HomeFragment : Fragment() {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
                 val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
+                    Log.d("dailytodos update","loadMyGoalList 성공 : ${response.message}")
                     val goals = response.result
                     dailyToDos.clear() // 기존 데이터 초기화
                     for (goal in goals) {
@@ -339,10 +340,12 @@ class HomeFragment : Fragment() {
                     dailyAdapter = DailyToDoAdapter(dailyToDos)
                     dailyRecyclerVIew.adapter = dailyAdapter
                 } else {
-                    Log.d("HomeFragmentApi","loadMyGoalList 실패 : ${response.message}")
+                    Log.d("dailytodos update","loadMyGoalList 실패 : ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                if(e is HttpException) Log.e("dailytodos update","HttpException : ${e.code()}, ${e.response()?.errorBody()?.string()}")
+                else Log.e("dailytodos update","Exception : ${e.message}")
             }
         }
     }
@@ -429,6 +432,7 @@ class HomeFragment : Fragment() {
                 for (friend in friendInfo) {
                     val friendId = friend.id
                     val nickname = friend.nickname
+                    val friendImg = friend.profileImage
                     Log.d("FriendGoalSummary", "친구 처리 중: id=$friendId, nickname=$nickname")
 
                     // 2. 친구의 목표 리스트 불러오기

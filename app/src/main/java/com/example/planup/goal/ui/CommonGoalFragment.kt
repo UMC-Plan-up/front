@@ -54,9 +54,8 @@ class CommonGoalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val activity = requireActivity() as GoalActivity
         goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
-        goalCategory = activity.goalCategory ?: "STUDYING"
+        goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
 
         Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
 

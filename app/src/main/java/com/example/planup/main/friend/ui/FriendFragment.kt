@@ -15,6 +15,7 @@ import com.example.planup.databinding.FragmentFriendBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.goal.ui.GoalFragment
+import com.example.planup.main.home.ui.FriendGoalListFragment
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 

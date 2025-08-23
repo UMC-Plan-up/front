@@ -81,6 +81,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //        userController = UserController()
         goalController = GoalController()
         // 사용자 정보 콜백 연결
+
 //        userController.setUserInfoAdapter(object : UserInfoAdapter {
 //            override fun successUserInfo(user: UserInfo){
 //                // onCreateView() 또는 onViewCreated() 초반
@@ -100,7 +101,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //                loadProfileInto(null)
 //            }
 //        })
-//        userController.userInfoService()
+//        userController.userInfoService()99063f
 
         // 나의 목표 리스트 콜백 연결
         goalController.setMyGoalListAdapter(this)
