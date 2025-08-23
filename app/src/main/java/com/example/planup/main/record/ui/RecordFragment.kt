@@ -109,9 +109,9 @@ class RecordFragment : Fragment() {
                     updateBadges(result.badgeDTOList.take(3))
                     notificationAdapter.submitList(result.notificationDTOList)
                 }
-            } catch (_: Exception) {
-                // 네트워크/파싱 예외 무시
-            }
+            } catch (_: Exception) { /* 무시 */ }
+            // ★ 서버의 전용 응원 메시지가 있다면 최종 덮어쓰기
+            fetchEncourageMessage()
         }
     }
 
@@ -255,6 +255,22 @@ class RecordFragment : Fragment() {
                 .replace(R.id.main_container, fragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss()
+        }
+    }
+
+    // RecordFragment.kt 내부에 추가
+    private fun fetchEncourageMessage() {
+        val auth = buildAuthHeader() ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching { RetrofitInstance.encourageMessageApi.getEncourageMessage(auth) }
+                .onSuccess { resp ->
+                    val body = resp.body()
+                    if (resp.isSuccessful && body != null && body.message.isNotBlank()) {
+                        // 주간 리포트의 말풍선 본문 텍스트뷰
+                        binding.balloonText.text = body.message
+                    }
+                }
+                .onFailure { /* 네트워크 에러는 무시(기존 문구 유지) */ }
         }
     }
 }
