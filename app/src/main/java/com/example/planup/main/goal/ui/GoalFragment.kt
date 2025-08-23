@@ -123,7 +123,8 @@ class GoalFragment : Fragment() {
             onEditClick = { goalId ->
                 val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
                 intent.putExtra("goalId",goalId)
-                editGoalLauncher.launch(intent)
+                startActivity(intent)
+                //editGoalLauncher.launch(intent)
             },
             onDeactivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = false) },
             onActivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = true) },

@@ -69,11 +69,11 @@ class EditGoalDetailFragment : Fragment(){
                 if (button == selectedBtn) {
                     // 선택된 버튼 스타일
                     button.setBackgroundResource(R.drawable.btn_yes)
-                    ContextCompat.getColor(button.context, R.color.blue_200)
+                    button.setTextColor(ContextCompat.getColor(button.context, R.color.blue_200))
                 } else {
                     // 나머지 버튼은 비활성화 스타일
                     button.setBackgroundResource(R.drawable.btn_no)
-                    ContextCompat.getColor(button.context, R.color.black_300)
+                    button.setTextColor(ContextCompat.getColor(button.context, R.color.black_300))
                 }
             }
             duration = when (selectedBtn) {
