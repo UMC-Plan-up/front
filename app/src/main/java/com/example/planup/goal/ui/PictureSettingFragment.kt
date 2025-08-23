@@ -38,7 +38,7 @@ class PictureSettingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupListeners()
-        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
+//        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
     }
 
     private fun setupListeners() {
@@ -47,9 +47,9 @@ class PictureSettingFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-        binding.dropdownContainer.setOnClickListener {
+        binding.challengePhotoNumberTv.setOnClickListener {
             val items = arrayListOf("1", "2", "3")
-            showDropdown(items, binding.dropdownContainer, binding.challengeTimerHourTv)
+            showDropdown(items, binding.challengePhotoNumberTv)
         }
 
         // 다음 버튼 -> GoalDetailFragment로 이동
@@ -78,8 +78,7 @@ class PictureSettingFragment : Fragment() {
     // 드롭다운 표시
     private fun showDropdown(
         items: ArrayList<String>,
-        anchor: View,
-        label: TextView
+        anchor: View
     ) {
         val inflater = LayoutInflater.from(context)
         val popupView = inflater.inflate(R.layout.popup_challenge_photo,null)
@@ -90,20 +89,20 @@ class PictureSettingFragment : Fragment() {
             true
         )
         popupWindow.isOutsideTouchable = true
-        popupWindow.showAsDropDown(view)
+        popupWindow.showAsDropDown(anchor)
         popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_once_tv).setOnClickListener {
-            binding.challengeTimerHourTv.setText(R.string.challenge_photo_once)
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_once)
             selectedFrequency = 1
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_twice_tv).setOnClickListener {
-            binding.challengeTimerHourTv.setText(R.string.challenge_photo_twice)
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_twice)
             selectedFrequency = 2
             popupWindow.dismiss()
         }
         popupView.findViewById<TextView>(R.id.popup_challenge_photo_three_tv).setOnClickListener {
-            binding.challengeTimerHourTv.setText(R.string.challenge_photo_three)
+            binding.challengePhotoNumberTv.setText(R.string.challenge_photo_three)
             selectedFrequency = 3
             popupWindow.dismiss()
         }
