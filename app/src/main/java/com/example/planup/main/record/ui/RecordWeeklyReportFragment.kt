@@ -264,7 +264,7 @@ class RecordWeeklyReportFragment : Fragment() {
             // 1) 주간 리포트(내 목표/일일기록/배지) 조회
             runCatching {
                 RetrofitInstance.weeklyReportApi.getWeeklyReports(
-                    token = tokenHeader, year = year, month = month, week = week, userId = userId
+                    token = tokenHeader, year = year, month = month, week = week
                 )
             }.onSuccess { response ->
                 if (!response.isSuccessful) {

@@ -44,6 +44,7 @@ class ChallengeSetPhotoFragment:Fragment() {
         })
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
+        editor.putInt("oneDose",1)
     }
     private fun clickListener(){
         binding.challengePhotoBackIv.setOnClickListener {

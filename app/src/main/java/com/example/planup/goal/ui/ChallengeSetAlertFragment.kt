@@ -1,7 +1,10 @@
 package com.example.planup.goal.ui
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -21,15 +24,20 @@ import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
+import androidx.lifecycle.ViewModelProvider
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalViewModel
 
 class ChallengeSetAlertFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetAlertBinding
-    private var isFirst = true //해당 페이지 처음 들어온 경우 알림설정에 대한 팝업을 보여줘야 함
+    private var setAlert = true //해당 페이지 처음 들어온 경우 알림설정에 대한 팝업을 보여줘야 함
 
     private lateinit var hours: ArrayList<String> //시간
     private lateinit var minutes: ArrayList<String> //분
     private lateinit var times: ArrayList<String>
+
+    private lateinit var prefs: SharedPreferences
+    private lateinit var editor: Editor
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,7 +64,8 @@ class ChallengeSetAlertFragment : Fragment() {
         hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
         minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList<String>())
         times = resources.getStringArray((R.array.dropdown_morning_afternoon)).toCollection(ArrayList<String>())
-        if (isFirst) showPopup()
+        prefs = (context as GoalActivity).getSharedPreferences("app_settings", Context.MODE_PRIVATE)
+        if (prefs.getBoolean("show_push_alert_popup",true)) showPopup()
     }
     //클릭 이벤트
     private fun clickListener() {
@@ -83,8 +92,8 @@ class ChallengeSetAlertFragment : Fragment() {
         //저장 버튼 클릭
         binding.alertSaveBtn.setOnClickListener {
             makeToast()
-            if (isFirst) {//첫 방문인 경우 온보딩 페이지로 이동
-                isFirst = false
+            val goalViewModel = ViewModelProvider(requireActivity()).get(GoalViewModel::class.java)
+            if (goalViewModel.fromWhere.value == "CommunityIntroFragment") {//첫 방문인 경우 온보딩 페이지로 이동
                 val intent = Intent((context as GoalActivity), MainActivity::class.java)
                 startActivity(intent)
             } else {//첫 방문이 아닌 경우 홈 페이지로 이동
@@ -187,7 +196,7 @@ class ChallengeSetAlertFragment : Fragment() {
         }
         //아니오 클릭
         dialog.findViewById<TextView>(R.id.popup_push_no_btn).setOnClickListener {
-            isFirst = false
+            setAlert = false
             dialog.dismiss()
             //경우에 따라 홈 또는 온보딩으로 이동
             (context as GoalActivity).supportFragmentManager.beginTransaction()
@@ -220,20 +229,18 @@ class ChallengeSetAlertFragment : Fragment() {
         popupWindow.setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())//배경 투명하게 설정
         popupWindow.isOutsideTouchable = true //외부 터치 시 사라짐
 
-        //앵커뷰 위에 드롭다운 표시
-        //팝업 뷰 높이 측정
-        popupView.measure(
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-        )
-        val popupHeight = popupView.measuredHeight
-        popupWindow.showAsDropDown(view, 0, -(popupHeight + view.height))
+        //앵커뷰 설정
+        popupWindow.showAsDropDown(view)
 
         //드롭다운 뷰에 사용되는 어댑터 생성 및 설정
         val adapter = TimerRVAdapter(items)
         adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener{
             override fun setTime(position: Int) {
-                view.text = items[position]
+                when(view){
+                    binding.alertTimeTv -> view.text = items[position]
+                    binding.alertHourTv -> view.text = getString(R.string.timer_hour,items[position])
+                    binding.alertMinuteTv -> view.text = getString(R.string.timer_minute,items[position])
+                }
                 popupWindow.dismiss()
             }
         })

@@ -91,7 +91,7 @@ class HomeFragment : Fragment() {
         val token = prefs.getString("accessToken", null)
         val nickname = prefs.getString("nickname","")
         val profileImage = prefs.getString("profileImage","")
-        binding.homeMainTv.text = "${nickname} 님, 벌써 이만큼이나 왔어요!"
+        binding.homeMainTv.text = getString(R.string.home_main_text,nickname?.removeSurrounding("\""))
         Glide.with(this)
             .load(profileImage)
             .circleCrop()

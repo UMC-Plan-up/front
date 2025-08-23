@@ -13,6 +13,7 @@ import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
@@ -89,6 +90,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             dialog.findViewById<TextView>(R.id.popup_unblock_title_tv).text = getString(R.string.popup_unblock_title,friend.name)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
         }
         //차단 유지
         dialog.findViewById<View>(R.id.popup_unblock_no_btn).setOnClickListener {

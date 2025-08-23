@@ -1,8 +1,10 @@
 package com.example.planup.network.port
 
+import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
+import com.example.planup.network.data.KakaoLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.MyInviteCode
@@ -16,6 +18,7 @@ import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.EmailForPassword
+import com.example.planup.network.dto.user.KakaoLinkCode
 import com.example.planup.network.dto.user.SignupDto
 import okhttp3.MultipartBody
 import retrofit2.Call
@@ -89,4 +92,7 @@ interface UserPort {
 
     @POST("users/auth/kakao")
     fun syncKakao(@Body code: String): Call<SyncKakao>
+
+    @POST("mypage/kakao-account/link")
+    fun linkKakao(@Body code: KakaoLinkCode): Call<UserResponse<KakaoLink>>
 }

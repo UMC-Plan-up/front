@@ -13,8 +13,9 @@ import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
 import com.example.planup.main.my.adapter.ProfileImageAdapter
-import com.example.planup.network.adapter.KakaoSyncAdapter
+import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.KakaoLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.Login
@@ -27,6 +28,7 @@ import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.EmailForPassword
+import com.example.planup.network.dto.user.KakaoLinkCode
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserPort
 import okhttp3.MultipartBody
@@ -111,9 +113,9 @@ class UserController {
         profileImageAdapter = adapter
     }
 
-    private lateinit var kakaoSyncAdapter: KakaoSyncAdapter
-    fun setKakaoSyncAdapter(adapter: KakaoSyncAdapter) {
-        this.kakaoSyncAdapter = adapter
+    private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
+    fun setKakaoLinkAdapter(adapter: KakaoLinkAdapter) {
+        this.kakaoLinkAdapter = adapter
     }
 
     //유저 정보 조회
@@ -480,27 +482,54 @@ class UserController {
         })
     }
 
-    //카카오 소셜 로그인
-    fun kakaoSyncronizeService(code: String) {
+
+    fun kakaoLinkService(code: String){
         val service = getRetrofit().create(UserPort::class.java)
-        service.syncKakao(code).enqueue(object : Callback<SyncKakao> {
-            override fun onResponse(call: Call<SyncKakao>, response: Response<SyncKakao>) {
+        service.linkKakao(KakaoLinkCode(code)).enqueue(object : Callback<UserResponse<KakaoLink>>{
+            override fun onResponse(
+                call: Call<UserResponse<KakaoLink>>,
+                response: Response<UserResponse<KakaoLink>>
+            ) {
                 if (response.isSuccessful && response.body() != null) {
-                    kakaoSyncAdapter.successKakaoSync(response.body()!!.result.userInfo.email)
+                    kakaoLinkAdapter.successKakaoLink(response.body()!!.result.kakaoEmail)
                 } else if (!response.isSuccessful && response.body() != null) {
                     when (response.body()!!.code) {
-                        "S001" -> kakaoSyncAdapter.failKakaoSync("잘못된 입력값입니다.")
-                        "S002" -> kakaoSyncAdapter.failKakaoSync("서버 에러가 발생했습니다")
-                        "U001" -> kakaoSyncAdapter.failKakaoSync("존재하지 않는 사용자입니다.")
-                        else -> kakaoSyncAdapter.failKakaoSync(response.body()!!.code)
+                        "S001" -> kakaoLinkAdapter.failKakaoLink("잘못된 입력값입니다.")
+                        "S002" -> kakaoLinkAdapter.failKakaoLink("서버 에러가 발생했습니다")
+                        "U001" -> kakaoLinkAdapter.failKakaoLink("존재하지 않는 사용자입니다.")
+                        else -> kakaoLinkAdapter.failKakaoLink(response.body()!!.code)
                     }
-                } else kakaoSyncAdapter.failKakaoSync("서버로부터 응답이 없습니다.")
+                } else {
+                    kakaoLinkAdapter.failKakaoLink("null")
+                }
             }
-
-            override fun onFailure(call: Call<SyncKakao>, t: Throwable) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<UserResponse<KakaoLink>>, t: Throwable) {
+                kakaoLinkAdapter.failKakaoLink(t.toString())
             }
 
         })
     }
+//    //카카오 소셜 로그인
+//    fun kakaoSyncronizeService(code: String) {
+//        val service = getRetrofit().create(UserPort::class.java)
+//        service.syncKakao(code).enqueue(object : Callback<SyncKakao> {
+//            override fun onResponse(call: Call<SyncKakao>, response: Response<SyncKakao>) {
+//                if (response.isSuccessful && response.body() != null) {
+//                    kakaoSyncAdapter.successKakaoSync(response.body()!!.result.userInfo.email)
+//                } else if (!response.isSuccessful && response.body() != null) {
+//                    when (response.body()!!.code) {
+//                        "S001" -> kakaoSyncAdapter.failKakaoSync("잘못된 입력값입니다.")
+//                        "S002" -> kakaoSyncAdapter.failKakaoSync("서버 에러가 발생했습니다")
+//                        "U001" -> kakaoSyncAdapter.failKakaoSync("존재하지 않는 사용자입니다.")
+//                        else -> kakaoSyncAdapter.failKakaoSync(response.body()!!.code)
+//                    }
+//                } else kakaoSyncAdapter.failKakaoSync("서버로부터 응답이 없습니다.")
+//            }
+//
+//            override fun onFailure(call: Call<SyncKakao>, t: Throwable) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        })
+//    }
 }

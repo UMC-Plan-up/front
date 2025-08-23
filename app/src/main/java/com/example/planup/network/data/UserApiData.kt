@@ -94,3 +94,15 @@ data class KakaoAccount(
     @SerializedName("accessToken") val accessToken: String,
     @SerializedName("userInfo") val userInfo: UserInfo
 )
+data class KakaoLink(
+    @SerializedName("success") val success: Boolean,
+    @SerializedName("message") val message: String,
+    @SerializedName("kakaoEmail") val kakaoEmail: String,
+    @SerializedName("userInfo") val userInfo: KakaoUser
+)
+data class KakaoUser(
+    @SerializedName("id") val id: Int,
+    @SerializedName("email") val email: String,
+    @SerializedName("nickname") val nickname: String,
+    @SerializedName("profileImg") val profileImg: String
+)

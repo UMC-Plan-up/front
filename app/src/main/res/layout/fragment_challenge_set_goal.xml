@@ -72,7 +72,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/bg_edit_challenge_goal"
-                android:hint="목표명을 입력하세요"
+                android:hint="토익 공부"
                 android:inputType="text"
                 android:textColor="@color/black_300"
                 app:layout_constraintStart_toStartOf="parent"
@@ -86,7 +86,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
                 android:text=""
-                android:textColor="@color/black_300"
+                android:textColor="@color/red_300"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/goal_name_et" />
 
@@ -108,7 +108,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="51dp"
                 android:background="@drawable/bg_edit_challenge_goal"
-                android:hint="1회 분량을 입력하세요"
+                android:hint="토익 교재 1챕터씩 공부하기"
                 android:inputType="text"
                 android:textColor="@color/black_300"
                 app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +122,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="8dp"
                 android:text=""
-                android:textColor="@color/black_300"
+                android:textColor="@color/red_300"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/goal_amount_et" />
 

@@ -83,7 +83,6 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
         val adapter = FriendRVAdapter(friends)
         adapter.setMyFriendListener(object : FriendRVAdapter.FriendListener{
             override fun selectFriend(position: Int) {
-                Toast.makeText(context,friends[position].nickname,LENGTH_SHORT).show()
                 binding.challengeSendCompleteBtn.isActivated = true
                 friend = friends[position]
             }

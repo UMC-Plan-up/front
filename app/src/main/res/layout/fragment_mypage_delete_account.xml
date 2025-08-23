@@ -99,7 +99,7 @@
 
                 <TextView
                     android:id="@+id/delete_account_noti_first_tv"
-                    style="@style/TextAppearance.Pretendard.Medium.S"
+                    style="@style/Typography_S_Medium"
                     android:layout_width="266dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -119,7 +119,7 @@
 
                 <TextView
                     android:id="@+id/delete_account_noti_second_tv"
-                    style="@style/Typography_SM_Medium"
+                    style="@style/Typography_S_Medium"
                     android:layout_width="266dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
