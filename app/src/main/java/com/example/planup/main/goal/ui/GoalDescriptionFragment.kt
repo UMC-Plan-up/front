@@ -1,14 +1,18 @@
 package com.example.planup.main.goal.ui
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -50,7 +54,25 @@ class GoalDescriptionFragment : Fragment() {
             loadGoalDetail(goalId)   // ✅ 주석 해제해서 실제 호출
         }
 
+        binding.goalDescEditIv.setOnClickListener {
+            val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
+            intent.putExtra("goalId",goalId)
+            editGoalLauncher.launch(intent)
+        }
+
         return binding.root
+    }
+
+    private val editGoalLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        Log.d("GoalFragment", "resultCode: ${result.resultCode}")
+        if (result.resultCode == Activity.RESULT_OK) {
+            val showDialog = result.data?.getBooleanExtra("SHOW_DIALOG", false) ?: false
+            if (showDialog) {
+                GoalUpdateDialog().show(parentFragmentManager, "GoalUpdateDialog")
+            }
+        }
     }
 
     private fun loadGoalDetail(goalId: Int) {

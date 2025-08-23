@@ -60,6 +60,7 @@
                     android:layout_height="wrap_content" />
 
                 <ImageView
+                    android:id="@+id/goal_desc_edit_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/img_edit_goal_namepng"
