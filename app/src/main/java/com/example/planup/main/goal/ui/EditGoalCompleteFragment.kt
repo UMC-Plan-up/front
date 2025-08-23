@@ -16,19 +16,17 @@ class EditGoalCompleteFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // 레이아웃 연결
+    ): View {
         binding = FragmentEditGoalCompleteBinding.inflate(inflater, container, false)
-        val view = inflater.inflate(R.layout.fragment_edit_goal_complete, container, false)
 
         val goalId = arguments?.getString("goalId")
         Log.d("FragmentEditGoalComplete", "goalId: $goalId")
-        // 완료 버튼 클릭 시 Activity 종료
-        val completeButton = binding.editCompleteStartBtn
-        completeButton.setOnClickListener {
+
+        binding.editCompleteStartBtn.setOnClickListener {
             requireActivity().finish()
         }
 
-        return view
+        return binding.root
     }
+
 }

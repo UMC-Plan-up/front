@@ -187,11 +187,11 @@ class FriendGoalDetailFragment : Fragment() {
                         .into(binding.friendGoalOtherProfileIv)
                 } else {
                     Log.d("FriendGoalDetailFragment", "loadComment 실패: ${response.message}")
-                    binding.friendGoalOtherCommentLl.visibility = View.GONE
+                    //binding.friendGoalOtherCommentLl.visibility = View.GONE
                 }
             } catch(e: Exception) {
                 Log.d("FriendGoalDetailFragment", "loadComment 오류: ${e.message}")
-                binding.friendGoalOtherCommentLl.visibility = View.GONE
+                //binding.friendGoalOtherCommentLl.visibility = View.GONE
             }
         }
     }
