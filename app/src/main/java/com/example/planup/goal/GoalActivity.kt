@@ -104,8 +104,10 @@ class GoalActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
-        goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
-        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
+        goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM") ?: "false"
+        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value!!)
+//        goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
+//        Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
