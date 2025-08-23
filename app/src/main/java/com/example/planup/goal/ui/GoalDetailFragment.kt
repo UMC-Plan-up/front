@@ -50,7 +50,8 @@ class GoalDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         selectedMethod = arguments?.getString("SELECTED_METHOD")
-        goalOwnerName = arguments?.getString("goalOwnerName")
+        val name = arguments?.getString("goalOwnerName")
+        goalOwnerName = name?.removeSurrounding("\"")
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
