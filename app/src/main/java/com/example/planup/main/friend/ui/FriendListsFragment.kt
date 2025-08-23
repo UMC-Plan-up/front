@@ -13,7 +13,9 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -82,8 +84,8 @@ class FriendListsFragment : Fragment() {
 
                     binding.friendListsRecyclerView.adapter = FriendListsAdapter(
                         items = list,
-                        onDeleteClick = { friend -> deleteFriend(friend) },
-                        onBlockClick = { friend -> blockFriend(friend) },
+                        onDeleteClick = { friend -> deleteDialog(friend) },
+                        onBlockClick = { friend -> blockDialog(friend) },
                         onReportClick = { friend -> showReportDialog(friend) }
                     )
                 } else {
@@ -116,7 +118,7 @@ class FriendListsFragment : Fragment() {
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
                     Toast.makeText(
                         requireContext(),
-                        "${friend.nickname} 님을 차단했어요.",
+                        "${friend.nickname} 님을 삭제했어요.",
                         Toast.LENGTH_SHORT
                     ).show()
                     fetchFriends() // 갱신
@@ -142,7 +144,7 @@ class FriendListsFragment : Fragment() {
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
                     Toast.makeText(
                         requireContext(),
-                        "${friend.nickname} 님을 삭제했어요.",
+                        "${friend.nickname} 님을 차단했어요.",
                         Toast.LENGTH_SHORT
                     ).show()
                     fetchFriends() // 갱신
@@ -281,5 +283,95 @@ class FriendListsFragment : Fragment() {
                 .replace(R.id.main_container, FriendFragment())
                 .commitAllowingStateLoss()
         }
+    }
+
+    private fun blockDialog(friend: FriendInfo){
+        val dialog = Dialog(context as MainActivity)
+        dialog.setContentView(R.layout.dialog_ban_friend)
+        dialog.window?.apply {
+            setGravity(Gravity.CENTER)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
+            dialog.setCanceledOnTouchOutside(true)
+        }
+        dialog.findViewById<TextView>(R.id.popup_block_title_tv).text = getString(R.string.popup_block_friend_title,friend.nickname)
+        dialog.findViewById<TextView>(R.id.popup_friend_no_btn).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.findViewById<TextView>(R.id.popup_friend_yes_btn).setOnClickListener {
+            lifecycleScope.launch {
+                val auth = buildAuthHeader() ?: return@launch
+                try {
+                    val resp = RetrofitInstance.friendApi.blockFriend(
+                        token = auth,
+                        request = friend.id
+                    )
+                    if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+                        fetchFriends() // 갱신
+
+                        val inflater = LayoutInflater.from(context)
+                        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = getString(R.string.toast_block,friend.nickname)
+
+                        val toast = Toast(context)
+                        toast.view = layout
+                        toast.duration = LENGTH_SHORT
+                        toast.setGravity(Gravity.BOTTOM,0,300)
+                        toast.show()
+                    } else {
+                        Toast.makeText(requireContext(), "차단에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                }
+            }
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+    private fun deleteDialog(friend: FriendInfo){
+        val dialog = Dialog(context as MainActivity)
+        dialog.setContentView(R.layout.dialog_delete_friend)
+        dialog.window?.apply {
+            setGravity(Gravity.CENTER)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
+            dialog.setCanceledOnTouchOutside(true)
+        }
+        dialog.findViewById<TextView>(R.id.popup_delete_title_tv).text = getString(R.string.popup_delete_friend,friend.nickname)
+        dialog.findViewById<TextView>(R.id.popup_friend_no_btn).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.findViewById<TextView>(R.id.popup_friend_yes_btn).setOnClickListener {
+            lifecycleScope.launch {
+                val auth = buildAuthHeader() ?: return@launch
+                try {
+                    val resp = RetrofitInstance.friendApi.deleteFriend(
+                        token = auth,
+                        request = friend.id
+                    )
+                    if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+                        fetchFriends() // 갱신
+
+                        val inflater = LayoutInflater.from(context)
+                        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = getString(R.string.toast_delete,friend.nickname)
+
+                        val toast = Toast(context)
+                        toast.view = layout
+                        toast.duration = LENGTH_SHORT
+                        toast.setGravity(Gravity.BOTTOM,0,300)
+                        toast.show()
+                    } else {
+                        Toast.makeText(requireContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
+                }
+            }
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 }

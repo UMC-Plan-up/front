@@ -113,6 +113,7 @@ class ChallengeSetTimerFragment : Fragment() {
         }
         if (totalTime < 30) {
             binding.errorTv.visibility = View.VISIBLE
+            binding.challengeTimerNextBtn.isActivated = false
         } else {
             binding.errorTv.visibility = View.GONE
             editor.putInt("oneDoes",totalTime)

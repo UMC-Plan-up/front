@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeAlertBinding
+import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.AlertVPAdapter
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -21,11 +22,19 @@ class HomeAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeAlertBinding.inflate(inflater, container, false)
+        clickListener()
         setTabLayout() //탭 레이아웃
 
         return binding.root
     }
 
+    private fun clickListener(){
+        binding.homeAlertBackIv.setOnClickListener {
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,HomeFragment())
+                .commitAllowingStateLoss()
+        }
+    }
     /*탭 레이아웃 설정*/
     private fun setTabLayout(){
         val category: Array<String> = resources.getStringArray(R.array.challenge) //탭 메뉴 텍스트
