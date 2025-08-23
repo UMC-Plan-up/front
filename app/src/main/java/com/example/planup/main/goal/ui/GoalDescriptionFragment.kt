@@ -44,7 +44,8 @@ class GoalDescriptionFragment : Fragment() {
 
         applyToggleUI(isPublic)
 
-        binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
+        binding.btnBack.setOnClickListener { (context as MainActivity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, GoalFragment()).commitAllowingStateLoss()}
         binding.btnPublic.setOnClickListener {
             if (!isPublic) { isPublic = true; applyToggleUI(isPublic) }
         }
