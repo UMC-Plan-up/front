@@ -61,7 +61,9 @@ class ParticipantLimitFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.backIcon.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            val goalDetailFragment = GoalDetailFragment()
+            (activity as? GoalActivity)?.navigateToFragment(goalDetailFragment)
+                ?: parentFragmentManager.popBackStack()
         }
 
         binding.nextButton.setOnClickListener {

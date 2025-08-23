@@ -288,7 +288,6 @@ class GoalDetailFragment : Fragment() {
         return (1..31).map { String.format("%02d", it) }.toCollection(ArrayList())
     }
 
-    // 추가: dp -> px 변환
     private fun Int.dp(): Int = (this * resources.displayMetrics.density).toInt()
 
     private fun showDropdown(
@@ -298,42 +297,46 @@ class GoalDetailFragment : Fragment() {
         onPicked: (String) -> Unit
     ) {
         val popupView = layoutInflater.inflate(R.layout.item_recycler_dropdown_time, null)
-        val popupWindow = android.widget.PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        )
 
-        val desiredWidthPx = when (anchor.id) {
-            R.id.dropdown_container1 -> 100.dp()
-            R.id.dropdown_container2 -> 80.dp()
-            R.id.dropdown_container3 -> 80.dp()
-            else -> anchor.width
+        val fallbackWidth = when (anchor.id) {
+            R.id.dropdown_container1 -> 100.dp() // 연도 박스
+            R.id.dropdown_container2 ->  80.dp() // 월 박스
+            R.id.dropdown_container3 ->  80.dp() // 일 박스
+            else -> ViewGroup.LayoutParams.WRAP_CONTENT
         }
-        popupWindow.width = desiredWidthPx
-        popupWindow.height = ViewGroup.LayoutParams.WRAP_CONTENT
 
-        popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(
-            ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
-        )
-        popupWindow.elevation = 8f
+        anchor.post {
+            val exactWidth = if (anchor.width > 0) anchor.width else fallbackWidth
 
-        popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).apply {
-            val adapter = TimerRVAdapter(items)
-            this.adapter = adapter
-            adapter.setDropdownListener(object : TimerRVAdapter.DropdownListener {
-                override fun setTime(position: Int) {
-                    val selectedText = items[position]
-                    onPicked(selectedText)
-                    popupWindow.dismiss()
+            val popupWindow = android.widget.PopupWindow(
+                popupView,
+                exactWidth,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                true
+            ).apply {
+                isOutsideTouchable = true
+                setBackgroundDrawable(
+                    ContextCompat.getColor(requireContext(), R.color.transparent).toDrawable()
+                )
+                elevation = 8f
+            }
+
+            popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).apply {
+                adapter = TimerRVAdapter(items).apply {
+                    setDropdownListener(object : TimerRVAdapter.DropdownListener {
+                        override fun setTime(position: Int) {
+                            val selectedText = items[position]
+                            onPicked(selectedText)
+                            popupWindow.dismiss()
+                        }
+                    })
                 }
-            })
-        }
+            }
 
-        popupWindow.showAsDropDown(anchor, 0, 0)
+            popupWindow.showAsDropDown(anchor, 0, 0)
+        }
     }
+
 
 
     private fun updateNextButtonState() {
