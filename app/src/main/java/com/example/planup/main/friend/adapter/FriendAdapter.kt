@@ -4,12 +4,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.main.friend.data.FriendInfo
 
-class FriendAdapter(private val items: List<FriendInfo>) :
+class FriendAdapter(
+    private val items: List<FriendInfo>,
+    private val onArrowClick: (FriendInfo) -> Unit ) :
     RecyclerView.Adapter<FriendAdapter.FriendViewHolder>(){
 
     class FriendViewHolder(view: View) : RecyclerView.ViewHolder(view){
@@ -17,10 +20,12 @@ class FriendAdapter(private val items: List<FriendInfo>) :
         val tvGoalCount: TextView = view.findViewById(R.id.goal_count_tv)
         val tvTodayTime: TextView = view.findViewById(R.id.today_time_tv)
         val btnPhotoVerify: TextView = view.findViewById(R.id.photo_verify_btn)
+        val arrow = view.findViewById<ImageView>(R.id.arrow_right_ic)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendViewHolder{
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_friend, parent, false)
+
         return FriendViewHolder(view)
     }
 
@@ -32,6 +37,9 @@ class FriendAdapter(private val items: List<FriendInfo>) :
 
         // ✅ 항상 노출
         holder.btnPhotoVerify.visibility = View.VISIBLE
+
+        holder.arrow.isClickable = true
+        holder.arrow.setOnClickListener { onArrowClick(item) }
 
         // ✅ 강조(선택): 새 인증 여부에 따라 스타일만 변경
         if (item.isNewPhotoVerify) {

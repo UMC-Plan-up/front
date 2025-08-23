@@ -71,6 +71,9 @@ class RecordWeeklyReportFragment : Fragment() {
         updateTitle()
         loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
 
+        // ★ 서버 응원 메시지 최신화
+        fetchEncourageMessage()
+
         return binding.root
     }
 
@@ -137,18 +140,14 @@ class RecordWeeklyReportFragment : Fragment() {
 
     private fun bindChallengeCard(data: ChallengeCardData) = with(binding) {
         tvResultValue.text = data.resultText
-        tvOpponentValue.text = data.opponentName
+        tvOpponentValue.text = stripQuotes(data.opponentName)
         tvPenaltyValue.text = data.penaltyText
-        tvFriend1Name.text = data.friend1Name
+        tvFriend1Name.text = stripQuotes(data.friend1Name)
         pbFriend1.progress = data.friend1Progress
         data.friend1ProfileRes?.let { ivFriend1.setImageResource(it) }
-        tvFriend2Name.text = data.friend2Name
+        tvFriend2Name.text = stripQuotes(data.friend2Name)
         pbFriend2.progress = data.friend2Progress
         data.friend2ProfileRes?.let { ivFriend2.setImageResource(it) }
-
-        tvOpponentValue.text = stripQuotes(data.opponentName)
-        tvFriend1Name.text   = stripQuotes(data.friend1Name)
-        tvFriend2Name.text   = stripQuotes(data.friend2Name)
     }
 
     private fun moveToPreviousWeek() {
@@ -199,18 +198,10 @@ class RecordWeeklyReportFragment : Fragment() {
 
     // ====== API 연동 ======
 
-    // 서버 응답이 비어있을 때 임시로 보여줄 "목표별 기록" 더미
+    // 서버 응답이 비어있을 때 임시로 보여줄 "목표별 기록" 더미 (목록 기반 더미 UI)
     private fun buildDummyGoals(): List<GoalReport> = listOf(
         GoalReport(
             id = -1,
-            goalTitle = "목표명",
-            goalCriteria = "[기준 기간]&[빈도]&\"이상\"",
-            achievementRate = 85,
-            goalType = "PERSONAL",
-            isCommunity = false
-        ),
-        GoalReport(
-            id = -2,
             goalTitle = "토익 공부하기",
             goalCriteria = "매주 5번 이상",
             achievementRate = 85,
@@ -218,13 +209,26 @@ class RecordWeeklyReportFragment : Fragment() {
             isCommunity = false
         ),
         GoalReport(
-            id = -3,
+            id = -2,
             goalTitle = "헬스장 가기",
             goalCriteria = "매일 30분 이상",
-            achievementRate = 85,
+            achievementRate = 72,
             goalType = "PERSONAL",
             isCommunity = false
         )
+    )
+
+    // ★ Dummy: 친구 챌린지 카드 기본값
+    private fun buildDummyChallenge(): ChallengeCardData = ChallengeCardData(
+        resultText = "승리",
+        opponentName = "홍길동",
+        penaltyText = "커피 사기",
+        friend1Name = "나",
+        friend1Progress = 85,
+        friend1ProfileRes = R.drawable.img_friend_profile_sample1,
+        friend2Name = "홍길동",
+        friend2Progress = 70,
+        friend2ProfileRes = R.drawable.img_friend_profile_sample2
     )
 
     private fun loadWeeklyReport(year: Int, month: Int, week: Int) {
@@ -233,34 +237,57 @@ class RecordWeeklyReportFragment : Fragment() {
             val tokenHeader = buildAuthHeader()
             if (tokenHeader.isNullOrBlank()) {
                 Toast.makeText(requireContext(), "로그인이 필요합니다. (토큰 없음)", Toast.LENGTH_SHORT).show()
+                // ★ Dummy: 로그인 전이라도 화면이 허전하지 않게 기본 더미를 그려줌
+                binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                renderGoalReports(buildDummyGoals())
+                renderDailyRecords(emptyList()) // 내부에서 더미 UI 그림
+                renderBadges(emptyList())       // 내부에서 더미 UI 그림
+                setupBarChartWithDummy()        // 막대그래프 더미
+                currentChallenge = buildDummyChallenge()
+                bindChallengeCard(currentChallenge!!)
                 return@launch
             }
             val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
             val userId = prefs.getInt("userId", -1).takeIf { it > 0 } ?: run {
                 Toast.makeText(requireContext(), "유효한 사용자 정보가 없습니다. 다시 로그인해 주세요.", Toast.LENGTH_SHORT).show()
+                // ★ Dummy: 사용자 정보 없을 때도 더미로 채움
+                binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                renderGoalReports(buildDummyGoals())
+                renderDailyRecords(emptyList())
+                renderBadges(emptyList())
+                setupBarChartWithDummy()
+                currentChallenge = buildDummyChallenge()
+                bindChallengeCard(currentChallenge!!)
                 return@launch
             }
 
             // 1) 주간 리포트(내 목표/일일기록/배지) 조회
             runCatching {
-                // Retrofit 인터페이스 호출 예: 서버에서 주간 리포트 조회
                 RetrofitInstance.weeklyReportApi.getWeeklyReports(
                     token = tokenHeader, year = year, month = month, week = week
                 )
             }.onSuccess { response ->
                 if (!response.isSuccessful) {
                     Toast.makeText(requireContext(), "조회 실패(${response.code()})", Toast.LENGTH_SHORT).show()
+                    // ★ Dummy Fallback
+                    binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                    renderGoalReports(buildDummyGoals())
+                    renderDailyRecords(emptyList())
+                    renderBadges(emptyList())
+                    setupBarChartWithDummy()
                     return@onSuccess
                 }
                 val body = response.body()
                 if (body?.isSuccess == true) {
                     val r = body.result
-                    val nextMsg = r?.nextGoalMessage.orEmpty()
+                    val nextMsg = r?.nextGoalMessage?.ifBlank {
+                        "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                    } ?: "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
 
                     val rawGoals = r?.goalReports.orEmpty()
-                    val goals = if (rawGoals.isEmpty()) buildDummyGoals() else rawGoals   // ★ 여기
+                    val goals = if (rawGoals.isEmpty()) buildDummyGoals() else rawGoals
 
-                    val daily = r?.dailyRecordList.orEmpty()
+                    val dailyList = r?.dailyRecordList.orEmpty()
                     val badges = r?.badgeList.orEmpty()
 
                     // 평균 달성률(더미 포함 계산)
@@ -269,16 +296,33 @@ class RecordWeeklyReportFragment : Fragment() {
                     } else 0
 
                     binding.balloonText.text = nextMsg
-                    renderGoalReports(goals)          // ★ 더미든 실제든 동일 렌더
-                    renderDailyRecords(daily)
-                    renderBadges(badges)
-                    setupBarChartWithData(daily)
+                    renderGoalReports(goals)
+                    if (dailyList.isEmpty()) {
+                        renderDailyRecords(emptyList()) // 내부에서 더미 UI 렌더
+                        setupBarChartWithDummy()
+                    } else {
+                        renderDailyRecords(dailyList)
+                        setupBarChartWithData(dailyList)
+                    }
+                    if (badges.isEmpty()) renderBadges(emptyList()) else renderBadges(badges)
                 } else {
                     Toast.makeText(requireContext(), body?.message ?: "조회 실패(isSuccess=false)", Toast.LENGTH_SHORT).show()
+                    // ★ Dummy Fallback
+                    binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                    renderGoalReports(buildDummyGoals())
+                    renderDailyRecords(emptyList())
+                    renderBadges(emptyList())
+                    setupBarChartWithDummy()
                 }
             }.onFailure {
                 it.printStackTrace()
                 Toast.makeText(requireContext(), "네트워크 오류: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
+                // ★ Dummy Fallback
+                binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                renderGoalReports(buildDummyGoals())
+                renderDailyRecords(emptyList())
+                renderBadges(emptyList())
+                setupBarChartWithDummy()
             }
 
             // 2) ChallengePort 예시 호출 (상대 닉네임만 대략 표시)
@@ -290,9 +334,15 @@ class RecordWeeklyReportFragment : Fragment() {
                     response: retrofit2.Response<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>
                 ) {
                     val friends = response.body()?.result.orEmpty()
+                    if (friends.isEmpty()) {
+                        // ★ Dummy: 친구 없음 → 더미 챌린지
+                        currentChallenge = buildDummyChallenge()
+                        bindChallengeCard(currentChallenge!!)
+                        return
+                    }
                     val opponentName = friends.firstOrNull()?.nickname ?: "상대"
 
-                    // 현재 API로 penalty, friendPercent는 없음 → 임시값
+                    // 현재 API로 penalty, friendPercent는 없음 → 임시값(더미와 동일 로직)
                     val penaltyText = ""
                     val myPercent   = myAvgAchievementPercent
                     val friendPct   = 0
@@ -323,7 +373,9 @@ class RecordWeeklyReportFragment : Fragment() {
                     call: retrofit2.Call<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>,
                     t: Throwable
                 ) {
-                    currentChallenge = null
+                    // ★ Dummy: 실패 시 더미 챌린지
+                    currentChallenge = buildDummyChallenge()
+                    bindChallengeCard(currentChallenge!!)
                 }
             })
         }
@@ -340,12 +392,50 @@ class RecordWeeklyReportFragment : Fragment() {
         container.removeAllViews()
 
         if (goals.isEmpty()) {
-            container.addView(TextView(requireContext()).apply {
-                text = "표시할 목표가 없습니다."
-                setTextColor(Color.parseColor("#666666"))
-                textSize = 14f
-                setPadding(dp(16), dp(12), dp(16), dp(12))
-            })
+            // ★ Dummy: 목표 3개 카드 UI를 직접 그림
+            listOf(
+                Triple("토익 공부하기", "매주 5번 이상", 85),
+                Triple("헬스장 가기", "매일 30분 이상", 72),
+            ).forEachIndexed { idx, triple ->
+                val (titleStr, criteriaStr, rate) = triple
+
+                val item = layoutInflater.inflate(R.layout.item_goal_report, container, false)
+                val cpi = item.findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.cpi)
+                val tvPercent = item.findViewById<TextView>(R.id.tv_percent)
+                val tvTitle = item.findViewById<TextView>(R.id.tv_title)
+                val tvCriteria = item.findViewById<TextView>(R.id.tv_criteria)
+
+                cpi.isIndeterminate = false
+                cpi.max = 100
+                cpi.setProgressCompat(rate, true)
+                cpi.setIndicatorColor(Color.parseColor("#FF6F61"))
+                cpi.trackColor = Color.parseColor("#FFEFEFEF")
+                tvPercent.text = "$rate%"
+                tvTitle.text = titleStr
+                tvCriteria.text = criteriaStr
+
+                val card = CardView(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(73)
+                    ).apply { if (idx > 0) topMargin = dp(4) }
+                    radius = dp(6).toFloat()
+                    cardElevation = 0f
+                    isClickable = true
+                    isFocusable = true
+                    foreground = requireContext().getDrawable(android.R.drawable.list_selector_background)
+                    setOnClickListener {
+                        Toast.makeText(requireContext(), "더미 데이터입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                card.addView(item)
+                container.addView(card)
+                container.addView(View(requireContext()).apply {
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
+                    ).apply { topMargin = dp(4) }
+                    setBackgroundColor(Color.parseColor("#FFEFEFEF"))
+                })
+            }
             return
         }
 
@@ -354,28 +444,23 @@ class RecordWeeklyReportFragment : Fragment() {
             val titleStr = g.goalTitle ?: "무제 목표"
             val criteriaStr = g.goalCriteria ?: "기준 정보 없음"
 
-            // 1) 링 + 텍스트가 들어있는 item_goal_report.xml 인플레이트
             val item = layoutInflater.inflate(R.layout.item_goal_report, container, false)
 
-            // 2) 뷰 바인딩
             val cpi = item.findViewById<com.google.android.material.progressindicator.CircularProgressIndicator>(R.id.cpi)
             val tvPercent = item.findViewById<TextView>(R.id.tv_percent)
             val tvTitle = item.findViewById<TextView>(R.id.tv_title)
             val tvCriteria = item.findViewById<TextView>(R.id.tv_criteria)
 
-            // 3) CPI 값/색 설정 (결정형으로, 진행도 반영)
             cpi.isIndeterminate = false
             cpi.max = 100
             cpi.setProgressCompat(rate, /*animated=*/true)
-            // 색이 안 보이는 경우를 방지: 트랙은 연회색, 진행색은 진하게
-            cpi.setIndicatorColor(Color.parseColor("#FF6F61")) // 예: 살구색
+            cpi.setIndicatorColor(Color.parseColor("#FF6F61"))
             cpi.trackColor = Color.parseColor("#FFEFEFEF")
 
             tvPercent.text = "$rate%"
             tvTitle.text = titleStr
             tvCriteria.text = criteriaStr
 
-            // 4) 카드로 감싸 클릭 리플/네비게이션 유지
             val card = CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, dp(73)
@@ -396,7 +481,6 @@ class RecordWeeklyReportFragment : Fragment() {
             card.addView(item)
             container.addView(card)
 
-            // divider
             container.addView(View(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
@@ -408,21 +492,17 @@ class RecordWeeklyReportFragment : Fragment() {
 
     // 목표 성격 판별 로직
     private fun isFriendGoal(g: GoalReport): Boolean {
-        // 1) goalType이 텍스트로 올 경우
         g.goalType?.trim()?.uppercase(Locale.ROOT)?.let { t ->
             if (t == "FRIEND" || t == "1:1" || t == "DUO") return true
         }
-        // 2) 불리언 isCommunity가 false면 친구로 볼 수도 있음(백엔드 스펙에 맞게 조정)
         if (g.isCommunity == false) return true
         return false
     }
 
     private fun isCommunityGoal(g: GoalReport): Boolean {
-        // 1) goalType 기반
         g.goalType?.trim()?.uppercase(Locale.ROOT)?.let { t ->
             if (t == "COMMUNITY" || t == "GROUP") return true
         }
-        // 2) 불리언 기반
         if (g.isCommunity == true) return true
         return false
     }
@@ -433,13 +513,107 @@ class RecordWeeklyReportFragment : Fragment() {
         container.removeAllViews()
 
         if (records.isEmpty()) {
-            val tv = TextView(requireContext()).apply {
-                text = "일자별 기록이 없습니다."
-                setTextColor(Color.parseColor("#666666"))
-                textSize = 14f
-                setPadding(dp(16), dp(12), dp(16), dp(12))
+            // ★ Dummy: 일자별 기록 3건 UI 생성 (오늘 기준 역순 예시)
+            val today = LocalDate.now()
+            val dayFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd (E)", Locale.KOREA)
+
+            val dummyTriples = listOf(
+                Triple(today.minusDays(2), 60, "영어 단어 외움"),
+            )
+
+            dummyTriples.forEach { (date, minutesTotal, memo) ->
+                TextView(requireContext()).apply {
+                    text = date.format(dayFormatter)
+                    textSize = 14f
+                }.also(container::addView)
+
+                // 행 컨테이너: 높이 고정(예: 88dp)로 두 카드 비율 안정화
+                val row = LinearLayout(requireContext()).apply {
+                    orientation = LinearLayout.HORIZONTAL
+                    layoutParams = LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT, dp(88)   // ← 고정 높이
+                    )
+                }
+
+// --- 사진 카드 (정사각형) ---
+                val photoSize = dp(72) // row 높이(88dp)에서 여백 고려해 적당한 정사각 크기
+                val photoLp = LinearLayout.LayoutParams(photoSize, photoSize).apply {
+                    setMargins(dp(8), dp(8), dp(8), dp(8))
+                }
+                val photoCard = androidx.cardview.widget.CardView(requireContext()).apply {
+                    layoutParams = photoLp
+                    radius = dp(6).toFloat()
+                    cardElevation = dp(4).toFloat()
+                    preventCornerOverlap = false
+                    useCompatPadding = true
+                }
+                val iv = ImageView(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    scaleType = ImageView.ScaleType.CENTER_CROP
+                    // ▼ 임의 이미지(없으면 갤러리 아이콘)
+                    setImageResource(android.R.drawable.ic_menu_gallery)
+                }
+                photoCard.addView(iv)
+                row.addView(photoCard)
+
+// --- 시간 카드 (남는 영역 전부 차지) ---
+                val timeLp = LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1f).apply {
+                    setMargins(0, dp(8), dp(8), dp(8))  // 사진 카드와의 간격은 좌측 0, 우측 8
+                }
+                val timeCard = androidx.cardview.widget.CardView(requireContext()).apply {
+                    layoutParams = timeLp
+                    radius = dp(6).toFloat()
+                    cardElevation = dp(4).toFloat()
+                    preventCornerOverlap = false
+                    useCompatPadding = true
+                }
+                val timeBox = LinearLayout(requireContext()).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
+                    orientation = LinearLayout.VERTICAL
+                    gravity = Gravity.CENTER_VERTICAL or Gravity.START  // ← 왼쪽 정렬 + 수직 중앙
+                    setPadding(dp(16), 0, dp(16), 0)                    // ← 좌우 패딩
+                }
+                val hours = minutesTotal / 60
+                val minutes = minutesTotal % 60
+                val timeTv = TextView(requireContext()).apply {
+                    text = String.format("%02d:%02d:00", hours, minutes)
+                    textSize = 35f
+                    setTextColor(Color.parseColor("#333333"))
+                }
+                timeBox.addView(timeTv)
+                timeCard.addView(timeBox)
+                row.addView(timeCard)
+
+                container.addView(row)
+
+// 메모 카드 (행과 같은 좌우 여백, 위로 8dp)
+                if (memo.isNotBlank()) {
+                    val memoCard = androidx.cardview.widget.CardView(requireContext()).apply {
+                        layoutParams = LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, dp(74)
+                        ).apply { setMargins(dp(8), dp(8), dp(8), dp(8)) } // ← top 8로 맞춤
+                        radius = dp(6).toFloat()
+                        cardElevation = dp(4).toFloat()
+                        preventCornerOverlap = false
+                        useCompatPadding = true
+                    }
+                    val memoTv = TextView(requireContext()).apply {
+                        text = memo
+                        textSize = 12f
+                        setTextColor(Color.parseColor("#333333"))
+                        setPadding(dp(10), 0, dp(10), dp(5))
+                        gravity = Gravity.CENTER_VERTICAL or Gravity.START
+                    }
+                    memoCard.addView(memoTv)
+                    container.addView(memoCard)
+                }
             }
-            container.addView(tv)
             return
         }
 
@@ -461,7 +635,7 @@ class RecordWeeklyReportFragment : Fragment() {
                 )
             }
 
-            // 사진 영역: Base64 Data URI → 비트맵 디코딩
+            // 사진 영역
             val photoCard = androidx.cardview.widget.CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(dp(80), dp(80)).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
@@ -538,6 +712,7 @@ class RecordWeeklyReportFragment : Fragment() {
     }
 
     // ====== 배지 렌더링 ======
+    // ====== 배지 렌더링 (이전 방식으로 복구) ======
     private fun renderBadges(badges: List<Badge>) {
         val container = binding.badgeContainer
         container.removeAllViews()
@@ -578,6 +753,42 @@ class RecordWeeklyReportFragment : Fragment() {
             col.addView(iv)
             col.addView(tv)
             container.addView(col)
+        }
+    }
+
+    // ====== MPAndroidChart: 데이터 없을 때 더미 막대 ======
+    private fun setupBarChartWithDummy() {
+        // 월~일 더미 분(min): 60,30,45,80,20,0,100 + 평균
+        val vals = floatArrayOf(60f, 30f, 45f, 80f, 20f, 0f, 100f)
+        val entries = mutableListOf<BarEntry>()
+        for (i in 0..6) entries.add(BarEntry(i.toFloat(), vals[i]))
+        val avg = vals.sum() / 7f
+        entries.add(BarEntry(7f, avg))
+
+        val dataSet = BarDataSet(entries, "요일별 기록(분)").apply {
+            color = Color.parseColor("#508CFF")
+            valueTextColor = Color.TRANSPARENT
+        }
+        val barData = BarData(dataSet).apply { barWidth = 0.5f }
+
+        binding.barChart.apply {
+            data = barData
+            description.isEnabled = false
+            setDrawGridBackground(false)
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = IndexAxisValueFormatter(listOf("월","화","수","목","금","토","일","평균"))
+                setDrawGridLines(false)
+                granularity = 1f
+                textColor = Color.parseColor("#4B4B4B")
+                textSize = 12f
+            }
+            legend.isEnabled = false
+            setScaleEnabled(false)
+            setPinchZoom(false)
+            invalidate()
         }
     }
 
@@ -635,14 +846,12 @@ class RecordWeeklyReportFragment : Fragment() {
 
     // ====== 유틸 ======
 
-    // 문자열(ISO/DateOnly 혼재 가능) → LocalDate 안전 파싱
     private fun safeParseLocalDate(dateStr: String?): LocalDate =
         try { if (dateStr != null) OffsetDateTime.parse(dateStr).toLocalDate() else LocalDate.now() }
         catch (_: Exception) {
             try { LocalDate.parse(dateStr ?: "") } catch (_: Exception) { LocalDate.now() }
         }
 
-    // "data:image/...;base64,......" → Bitmap
     private fun decodeBase64DataUri(dataUri: String?): Bitmap? {
         if (dataUri.isNullOrBlank() || !dataUri.startsWith("data:image")) return null
         val base64 = dataUri.substringAfter("base64,", "")
@@ -656,11 +865,25 @@ class RecordWeeklyReportFragment : Fragment() {
         return (value * density).toInt()
     }
 
-    // 단일 목적 네비게이션 헬퍼
     private fun navigate(to: Fragment) {
         (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, to)
             .addToBackStack(null)
             .commitAllowingStateLoss()
+    }
+
+    // RecordWeeklyReportFragment.kt 내부에 추가
+    private fun fetchEncourageMessage() {
+        val tokenHeader = buildAuthHeader() ?: return
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching { RetrofitInstance.encourageMessageApi.getEncourageMessage(tokenHeader) }
+                .onSuccess { resp ->
+                    val body = resp.body()
+                    if (resp.isSuccessful && body != null && body.message.isNotBlank()) {
+                        binding.balloonText.text = body.message
+                    }
+                }
+                .onFailure { /* 네트워크 에러는 무시(기존 문구 유지) */ }
+        }
     }
 }
