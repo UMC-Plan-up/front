@@ -58,18 +58,21 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var goalController: GoalController
     private var isEditMode: Boolean = false
 
-    // GoalFragment.kt
-//    companion object {
-//        private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
-//        private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
-//
-//        fun newInstance(targetUserId: Int, targetNickname: String) = GoalFragment().apply {
-//            arguments = Bundle().apply {
-//                putInt(ARG_TARGET_USER_ID, targetUserId)
-//                putString(ARG_TARGET_NICKNAME, targetNickname)
-//            }
-//        }
-//    }
+    companion object {
+        private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
+        private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
+
+        fun newInstance(targetUserId: Int, targetNickname: String) = GoalFragment().apply {
+            arguments = Bundle().apply {
+                putInt(ARG_TARGET_USER_ID, targetUserId)
+                putString(ARG_TARGET_NICKNAME, targetNickname)
+            }
+        }
+    }
+
+
+    private var targetUserIdArg: Int = -1
+    private var targetNicknameArg: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,7 +108,10 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         // 나의 목표 리스트 콜백 연결
         goalController.setMyGoalListAdapter(this)
         // 최초 진입 시 1회 로드
-        goalController.fetchMyGoals()
+        // goalController.fetchMyGoals()
+        targetUserIdArg = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
+        targetNicknameArg = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
+
 
         clickListener()
         return binding.root
@@ -114,7 +120,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
-        val nickname = prefs.getString("nickname","사용자")
+        val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
         Log.d("GoalFragment","token: $token")
         loadMyGoalList(token)
 
@@ -151,7 +157,85 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         )
         recyclerView.adapter = adapter
 
+        if (targetUserIdArg > 0) {
+            // ✅ 친구 모드
+            binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+
+            // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
+            binding.manageButton.visibility = View.GONE
+            // (친구 달성률 UI도 없다면 숨겨도 됨)
+            // binding.dailyGoalCompleteGroup.isVisible = false  // 레이아웃 구조에 맞춰 선택
+
+            loadFriendGoalList(token, targetUserIdArg)
+        } else {
+            // ✅ 내 모드
+            binding.userGoalListTv.text = "${nickname}의 목표 리스트"
+            loadMyGoalList(token)
+            loadTodayAchievement(token)
+        }
+
     }
+    // ⬇️ 새로 추가
+    private fun loadFriendGoalList(token: String?, friendUserId: Int) {
+        if (token.isNullOrBlank()) {
+            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
+        lifecycleScope.launch {
+            try {
+                // GoalApi 는 네가 준 인터페이스(아래에 있음). 이미 RetrofitInstance.goalApi 쓰고 있으니 동일 사용.
+                val res = RetrofitInstance.goalApi.getFriendGoalList(
+                    token = "Bearer $token",
+                    friendId = friendUserId
+                )
+
+                // ⚠️ 서버 응답 데이터 클래스에 오타: 'reuslt'
+                if (res.isSuccess) {
+                    val friendGoals = res.result
+                    val items = friendGoals.toGoalItemsForFriend()
+                    setGoals(items)
+                } else {
+                    Toast.makeText(requireContext(), res.message, Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("GoalFragment", "loadFriendGoalList error", e)
+                Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // 파일 상단 import에 추가
+// import com.example.planup.main.friend.data.FriendGoalListDto
+// import com.example.planup.main.friend.data.VerificationType
+// import com.example.planup.main.friend.data.GoalType as FriendGoalType
+
+    // ⬇️ 새로 추가: 친구 리스트 변환
+    private fun List<com.example.planup.main.friend.data.FriendGoalListDto>.toGoalItemsForFriend(): List<GoalItem> =
+        map { dto ->
+            val typeLabel = when (dto.goalType) {
+                com.example.planup.main.friend.data.GoalType.FRIEND -> "매일"
+                com.example.planup.main.friend.data.GoalType.COMMUNITY -> "매주"
+                com.example.planup.main.friend.data.GoalType.CHALLENGE_PHOTO -> "매일"
+                com.example.planup.main.friend.data.GoalType.CHALLENGE_TIME -> "매주"
+            }
+            val criteria = "$typeLabel ${dto.frequency}번 이상"
+            val auth = when (dto.verificationType) {
+                com.example.planup.main.friend.data.VerificationType.PHOTO -> "camera"
+                com.example.planup.main.friend.data.VerificationType.TIMER -> "timer"
+            }
+
+            GoalItem(
+                goalId      = dto.goalId,
+                title       = dto.goalName,
+                description = criteria,
+                percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
+                authType    = auth,
+                isEditMode  = false,
+                isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
+                criteria    = criteria,
+                progress    = 0            // 필요 시 서버 값 매핑
+            )
+        }
 
     private val goalEditApi by lazy{
         GoalRetrofitInstance.api.create(GoalApi::class.java)
