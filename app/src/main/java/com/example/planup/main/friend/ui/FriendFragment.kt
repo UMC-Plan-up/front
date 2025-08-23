@@ -15,6 +15,7 @@ import com.example.planup.databinding.FragmentFriendBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.goal.ui.GoalFragment
+import com.example.planup.main.home.ui.FriendGoalListFragment
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
@@ -76,10 +77,14 @@ class FriendFragment : Fragment() {
                             layoutManager = LinearLayoutManager(requireContext())
                             adapter = FriendAdapter(friendList) { friend ->
                                 // ▶ 친구 목표 보기로 이동
-                                val frag = GoalFragment.newInstance(
-                                    targetUserId = friend.id,
-                                    targetNickname = friend.nickname
-                                )
+                                val frag = FriendGoalListFragment()
+                                val bundle = Bundle().apply {
+                                    putInt("friendId", friend.id)
+                                    putString("friendName", friend.nickname)
+                                    putString("friendResId", friend.profileImage)
+                                }
+                                bundle.putInt("friendId", friend.id)
+                                frag.arguments = bundle
                                 (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                                     .replace(R.id.main_container, frag)
                                     .addToBackStack(null)

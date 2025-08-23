@@ -429,6 +429,7 @@ class HomeFragment : Fragment() {
                 for (friend in friendInfo) {
                     val friendId = friend.id
                     val nickname = friend.nickname
+                    val friendImg = friend.profileImage
                     Log.d("FriendGoalSummary", "친구 처리 중: id=$friendId, nickname=$nickname")
 
                     // 2. 친구의 목표 리스트 불러오기
