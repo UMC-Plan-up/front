@@ -77,14 +77,11 @@ class FriendFragment : Fragment() {
                             layoutManager = LinearLayoutManager(requireContext())
                             adapter = FriendAdapter(friendList) { friend ->
                                 // ▶ 친구 목표 보기로 이동
-                                val frag = FriendGoalListFragment()
-                                val bundle = Bundle().apply {
-                                    putInt("friendId", friend.id)
-                                    putString("friendName", friend.nickname)
-                                    putString("friendResId", friend.profileImage)
-                                }
-                                bundle.putInt("friendId", friend.id)
-                                frag.arguments = bundle
+//                                val frag = GoalFragment.newInstance(
+//                                    targetUserId = friend.id,
+//                                    targetNickname = friend.nickname
+//                                )
+                                val frag = GoalFragment()
                                 (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                                     .replace(R.id.main_container, frag)
                                     .addToBackStack(null)

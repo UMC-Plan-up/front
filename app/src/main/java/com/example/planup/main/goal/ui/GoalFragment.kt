@@ -48,28 +48,28 @@ import java.time.LocalDate
 import com.example.planup.main.goal.adapter.GoalApi
 import java.time.LocalDateTime
 
-class GoalFragment : Fragment() {
+class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var prefs : SharedPreferences
     lateinit var binding: FragmentGoalBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GoalAdapter
     private lateinit var dailyPieChart: PieChart
-    private val userController = UserController()
-    private val goalController = GoalController()
+//    private lateinit var userController: UserController
+    private lateinit var goalController: GoalController
     private var isEditMode: Boolean = false
 
     // GoalFragment.kt
-    companion object {
-        private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
-        private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
-
-        fun newInstance(targetUserId: Int, targetNickname: String) = GoalFragment().apply {
-            arguments = Bundle().apply {
-                putInt(ARG_TARGET_USER_ID, targetUserId)
-                putString(ARG_TARGET_NICKNAME, targetNickname)
-            }
-        }
-    }
+//    companion object {
+//        private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
+//        private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
+//
+//        fun newInstance(targetUserId: Int, targetNickname: String) = GoalFragment().apply {
+//            arguments = Bundle().apply {
+//                putInt(ARG_TARGET_USER_ID, targetUserId)
+//                putString(ARG_TARGET_NICKNAME, targetNickname)
+//            }
+//        }
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -78,38 +78,33 @@ class GoalFragment : Fragment() {
     ): View {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
 
+//        userController = UserController()
+        goalController = GoalController()
         // 사용자 정보 콜백 연결
-        userController.setUserInfoAdapter(object : UserInfoAdapter {
-            override fun successUserInfo(user: UserInfo){
-                // onCreateView() 또는 onViewCreated() 초반
-                val targetUserId = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
-                val targetNickname = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
 
-                if (targetUserId > 0) {
-                    // ✅ 친구 보기 모드: 타이틀만 우선 변경
-                    binding.userGoalListTv.text = "${targetNickname}의 목표 리스트"
-                    // (추가 계획) 친구 목표 조회 API 연동 시 여기서 targetUserId 사용
-                } else {
-                    //userController.userInfoService() // 기존 내 정보 로딩
-                }
-            }
-            override fun failUserInfo(message: String){
-                binding.userGoalListTv.text = "내 목표 리스트"
-                loadProfileInto(null)
-            }
-        })
-        userController.userInfoService()
+//        userController.setUserInfoAdapter(object : UserInfoAdapter {
+//            override fun successUserInfo(user: UserInfo){
+//                // onCreateView() 또는 onViewCreated() 초반
+//                val targetUserId = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
+//                val targetNickname = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
+//
+//                if (targetUserId > 0) {
+//                    // ✅ 친구 보기 모드: 타이틀만 우선 변경
+//                    binding.userGoalListTv.text = "${targetNickname}의 목표 리스트"
+//                    // (추가 계획) 친구 목표 조회 API 연동 시 여기서 targetUserId 사용
+//                } else {
+//                    userController.userInfoService() // 기존 내 정보 로딩
+//                }
+//            }
+//            override fun failUserInfo(message: String){
+//                binding.userGoalListTv.text = "내 목표 리스트"
+//                loadProfileInto(null)
+//            }
+//        })
+//        userController.userInfoService()99063f
 
         // 나의 목표 리스트 콜백 연결
-        goalController.setMyGoalListAdapter(object : MyGoalListDtoAdapter {
-            override fun successMyGoals(goals: List<MyGoalListDto>) {
-                val items = goals.toGoalItems()
-                setGoals(items)
-            }
-            override fun failMyGoals(message: String) {
-                Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
-            }
-        })
+        goalController.setMyGoalListAdapter(this)
         // 최초 진입 시 1회 로드
         goalController.fetchMyGoals()
 
@@ -120,8 +115,11 @@ class GoalFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         val token = prefs.getString("accessToken", null)
+        val nickname = prefs.getString("nickname","사용자")
         Log.d("GoalFragment","token: $token")
         loadMyGoalList(token)
+
+        binding.userGoalListTv.text = nickname?.removeSurrounding("\"") + "의 목표 리스트"
 
         dailyPieChart = binding.dailyGoalCompletePc
         loadTodayAchievement(token)
@@ -437,5 +435,14 @@ class GoalFragment : Fragment() {
                 }
             }
         }
+    }
+
+    override fun successMyGoals(goals: List<MyGoalListDto>) {
+        val items = goals.toGoalItems()
+        setGoals(items)
+    }
+
+    override fun failMyGoals(message: String) {
+        Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
     }
 }
