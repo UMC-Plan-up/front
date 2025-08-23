@@ -330,6 +330,7 @@ class HomeFragment : Fragment() {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
                 val response = apiService.getMyGoalList(token = "Bearer $token")
                 if (response.isSuccess) {
+                    Log.d("dailytodos update","loadMyGoalList 성공 : ${response.message}")
                     val goals = response.result
                     dailyToDos.clear() // 기존 데이터 초기화
                     for (goal in goals) {
@@ -339,10 +340,12 @@ class HomeFragment : Fragment() {
                     dailyAdapter = DailyToDoAdapter(dailyToDos)
                     dailyRecyclerVIew.adapter = dailyAdapter
                 } else {
-                    Log.d("HomeFragmentApi","loadMyGoalList 실패 : ${response.message}")
+                    Log.d("dailytodos update","loadMyGoalList 실패 : ${response.message}")
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                if(e is HttpException) Log.e("dailytodos update","HttpException : ${e.code()}, ${e.response()?.errorBody()?.string()}")
+                else Log.e("dailytodos update","Exception : ${e.message}")
             }
         }
     }

@@ -230,6 +230,7 @@ class GoalSelectFragment : Fragment() {
         category = selected
         category.isSelected = true
         category.setTextColor(select)
+        Log.d("goalselectFragment", "선택된 카테고리: ${category.text}")
         //선택된 카테고리가 직접 설정인 경우
         textListener()
     }

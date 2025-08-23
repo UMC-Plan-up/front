@@ -2,6 +2,7 @@ package com.example.planup.main.goal.ui
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,7 @@ import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.goal.item.GoalApiService
 import kotlinx.coroutines.launch
+import android.text.TextWatcher
 
 class EditGoalTitleFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTitleBinding
@@ -52,6 +54,56 @@ class EditGoalTitleFragment : Fragment() {
             if(isSolo) parentFragmentManager.popBackStack()
             else requireActivity().finish()
         }
+
+        binding.editFriendGoalNameEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val input = s?.toString() ?: ""
+                val length = input.length
+
+                when {
+                    length == 0 -> {
+                        binding.editFriendGoalDescriptionTv.text = "1글자 이상 작성해 주세요."
+                        binding.editFriendGoalDescriptionTv.visibility = View.VISIBLE
+                    }
+                    length > 20 -> {
+                        binding.editFriendGoalDescriptionTv.text = "20자 이내로 작성해 주세요."
+                        binding.editFriendGoalDescriptionTv.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.editFriendGoalDescriptionTv.visibility = View.GONE
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        binding.editFriendGoalPeriodEt.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val input = s?.toString() ?: ""
+                val length = input.length
+
+                when {
+                    length == 0 -> {
+                        binding.editFriendGoalPeriodDescriptionTv.text = "1글자 이상 작성해 주세요."
+                        binding.editFriendGoalPeriodDescriptionTv.visibility = View.VISIBLE
+                    }
+                    length > 30 -> {
+                        binding.editFriendGoalPeriodDescriptionTv.text = "30자 이내로 작성해 주세요."
+                        binding.editFriendGoalPeriodDescriptionTv.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.editFriendGoalPeriodDescriptionTv.visibility = View.GONE
+                    }
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         nextBtn.setOnClickListener {
             //테스트

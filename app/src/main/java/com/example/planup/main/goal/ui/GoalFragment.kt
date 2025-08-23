@@ -90,7 +90,7 @@ class GoalFragment : Fragment() {
                     binding.userGoalListTv.text = "${targetNickname}의 목표 리스트"
                     // (추가 계획) 친구 목표 조회 API 연동 시 여기서 targetUserId 사용
                 } else {
-                    userController.userInfoService() // 기존 내 정보 로딩
+                    //userController.userInfoService() // 기존 내 정보 로딩
                 }
             }
             override fun failUserInfo(message: String){
