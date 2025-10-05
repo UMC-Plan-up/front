@@ -2,8 +2,10 @@ package com.example.planup.network
 
 import android.app.Application
 import com.example.planup.R
+import dagger.hilt.android.HiltAndroidApp
 
-class App:Application() {
+@HiltAndroidApp
+class App : Application() {
     companion object {
         lateinit var jwt: TokenManager
     }
