@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
     id ("kotlin-parcelize")
 }
 
@@ -83,8 +84,11 @@ dependencies {
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    ksp("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("com.android.billingclient:billing-ktx:6.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
 }
