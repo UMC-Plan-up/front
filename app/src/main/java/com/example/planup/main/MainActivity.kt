@@ -21,9 +21,10 @@ import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.MypagePasswordChangeFragment
-import com.example.planup.main.my.ui.MypagePasswordLinkFragment
 import com.example.planup.main.record.ui.RecordFragment
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
