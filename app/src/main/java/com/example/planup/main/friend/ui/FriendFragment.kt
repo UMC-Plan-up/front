@@ -8,19 +8,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
+import com.example.planup.main.friend.ui.viewmodel.FriedViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.home.ui.FriendGoalListFragment
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
+import kotlin.getValue
 
 class FriendFragment : Fragment() {
     private lateinit var binding: FragmentFriendBinding
+
+    /**
+     * Hilt를 통해 [FriedViewModel]이 사용됨
+     */
+    private val friendViewModel: FriedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,13 +74,16 @@ class FriendFragment : Fragment() {
             }
 
             // 1) 친구 요약 불러오기
-            runCatching { RetrofitInstance.friendApi.getFriendSummary(auth) }
-                .onSuccess { resp ->
-                    Log.d("FriendFragment", "summary HTTP ${resp.code()}")
-                    if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                        val resultList = resp.body()!!.result
-                        val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
-
+            friendViewModel.getFriendList(
+                onSuccess = { friendList ->
+                    if (friendList == null) {
+                        Toast.makeText(
+                            requireContext(),
+//                            resp.body()?.message ?:
+                            "데이터를 불러오지 못했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
                         binding.tvFriendCount.text = "목록 (${friendList.size}명)"
                         binding.rvFriendList.apply {
                             layoutManager = LinearLayoutManager(requireContext())
@@ -89,18 +101,13 @@ class FriendFragment : Fragment() {
                                     .commitAllowingStateLoss()
                             }
                         }
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            resp.body()?.message ?: "데이터를 불러오지 못했습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                }
-                .onFailure {
+                },
+                onError = {
                     Log.e("FriendFragment", "summary error", it)
                     Toast.makeText(requireContext(), "서버 오류", Toast.LENGTH_SHORT).show()
                 }
+            )
 
             // 2) 대기중 친구요청 수로 배지 갱신
             runCatching { RetrofitInstance.friendApi.getFriendRequests(auth) }
