@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
     id ("kotlin-parcelize")
 }
 
@@ -83,8 +85,32 @@ dependencies {
     implementation("com.getkeepsafe.taptargetview:taptargetview:1.15.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
-    kapt("com.github.bumptech.glide:compiler:4.16.0")
+    ksp("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("com.android.billingclient:billing-ktx:6.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
+
+    val composeBom = platform("androidx.compose:compose-bom:2025.09.01")
+    implementation(composeBom)
+    androidTestImplementation(composeBom)
+
+    // Material Design 3
+    implementation("androidx.compose.material3:material3")
+
+    // Android Studio Preview support
+    implementation("androidx.compose.ui:ui-tooling-preview")
+    debugImplementation("androidx.compose.ui:ui-tooling")
+
+    // UI Tests
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Optional - Integration with activities
+    implementation("androidx.activity:activity-compose:1.11.0")
+    // Optional - Integration with ViewModels
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+
 }
