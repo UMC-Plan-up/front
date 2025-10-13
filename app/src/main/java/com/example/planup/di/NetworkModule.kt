@@ -1,5 +1,6 @@
 package com.example.planup.di
 
+import com.example.planup.network.FriendApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,4 +41,13 @@ class NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    @Provides
+    @Singleton
+    fun provideFriendApi(
+        retrofit: Retrofit
+    ) : FriendApi {
+        return retrofit.create(FriendApi::class.java)
+    }
+
 }
