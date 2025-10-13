@@ -1,8 +1,6 @@
 package com.example.planup.main.friend.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +17,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
+import com.example.planup.network.ApiResult
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import kotlin.getValue
@@ -78,21 +77,14 @@ class FriendFragment : Fragment() {
                 }
             }
         }
-    }
 
-    /** Authorization 헤더 생성: userInfo prefs 우선, 없으면 App.jwt.token 폴백 */
-    private fun buildAuthHeader(): String? {
-        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val prefsToken = prefs.getString("accessToken", null)
-        val appToken = com.example.planup.network.App.jwt.token
-
-        val raw = when {
-            !prefsToken.isNullOrBlank() -> prefsToken
-            !appToken.isNullOrBlank() -> appToken
-            else -> null
-        } ?: return null
-
-        return if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                friendViewModel.friendRequestList.collect { friendList ->
+                    updateNotificationBadge(friendList.size)
+                }
+            }
+        }
     }
 
     /** 알림 배지 표시/숨김 */
@@ -105,43 +97,46 @@ class FriendFragment : Fragment() {
     /** 친구 요약 + 대기중 초대요청 수 모두 로드 */
     private fun fetchAll() {
         lifecycleScope.launch {
-            val auth = buildAuthHeader()
-            if (auth.isNullOrBlank()) {
-                Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
 
             // 1) 친구 요약 불러오기
             friendViewModel.fetchFriendList(
-                onSuccess = { friendList ->
-                    if (friendList == null) {
-                        Toast.makeText(
-                            requireContext(),
-//                            resp.body()?.message ?:
-                            "데이터를 불러오지 못했습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                onCallBack = { friendResult ->
+                    when (friendResult) {
+                        is ApiResult.Error -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "데이터를 불러오지 못했습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        is ApiResult.Exception -> {
+                            Toast.makeText(
+                                requireContext(),
+                                "데이터를 불러오지 못했습니다.",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        is ApiResult.Fail -> {
+                            Toast.makeText(
+                                requireContext(),
+                                friendResult.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+
+                        else -> {}
                     }
-                },
-                onError = {
-                    Log.e("FriendFragment", "summary error", it)
-                    Toast.makeText(requireContext(), "서버 오류", Toast.LENGTH_SHORT).show()
                 }
             )
 
             // 2) 대기중 친구요청 수로 배지 갱신
-            runCatching { RetrofitInstance.friendApi.getFriendRequests(auth) }
-                .onSuccess { resp ->
-                    if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                        val pendingCount = resp.body()!!.result.size
-                        updateNotificationBadge(pendingCount)
-                    } else {
-                        updateNotificationBadge(0)
-                    }
+            friendViewModel.fetchFriendRequest(
+                onCallBack = {
+
                 }
-                .onFailure {
-                    updateNotificationBadge(0)
-                }
+            )
         }
     }
 
@@ -149,16 +144,19 @@ class FriendFragment : Fragment() {
         binding.ivSetting.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, FriendListsFragment())
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
         binding.ivNotification.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, FriendRequestsFragment())
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
         binding.btnAddFriend.setOnClickListener {
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, FriendInviteFragment())
+                .addToBackStack(null)
                 .commitAllowingStateLoss()
         }
     }
