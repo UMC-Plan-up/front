@@ -9,27 +9,32 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
-import com.example.planup.main.friend.ui.viewmodel.FriedViewModel
+import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
-import com.example.planup.main.home.ui.FriendGoalListFragment
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import kotlin.getValue
 
+/**
+ * 친구 탭 메인
+ */
 class FriendFragment : Fragment() {
     private lateinit var binding: FragmentFriendBinding
 
     /**
-     * Hilt를 통해 [FriedViewModel]이 사용됨
+     * Hilt를 통해 [FriendViewModel]이 사용됨
      */
-    private val friendViewModel: FriedViewModel by activityViewModels()
+    private val friendViewModel: FriendViewModel by activityViewModels()
+
+    private lateinit var friedLAdapter: FriendAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +42,42 @@ class FriendFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentFriendBinding.inflate(inflater, container, false)
+
+        friedLAdapter = FriendAdapter() { friend ->
+            // ▶ 친구 목표 보기로 이동
+            val gaolFragment = GoalFragment.newInstance(
+                targetUserId = friend.id,
+                targetNickname = friend.nickname
+            )
+
+            // val frag = GoalFragment()
+            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container, gaolFragment)
+                .addToBackStack(null)
+                .commitAllowingStateLoss()
+        }
+
         setupClicks()
         fetchAll()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.rvFriendList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = friedLAdapter
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                friendViewModel.friendList.collect { friendList ->
+                    binding.tvFriendCount.text = "목록 (${friendList.size}명)"
+                    friedLAdapter.setItems(friendList)
+                }
+            }
+        }
     }
 
     /** Authorization 헤더 생성: userInfo prefs 우선, 없으면 App.jwt.token 폴백 */
@@ -74,7 +112,7 @@ class FriendFragment : Fragment() {
             }
 
             // 1) 친구 요약 불러오기
-            friendViewModel.getFriendList(
+            friendViewModel.fetchFriendList(
                 onSuccess = { friendList ->
                     if (friendList == null) {
                         Toast.makeText(
@@ -83,24 +121,6 @@ class FriendFragment : Fragment() {
                             "데이터를 불러오지 못했습니다.",
                             Toast.LENGTH_SHORT
                         ).show()
-                    } else {
-                        binding.tvFriendCount.text = "목록 (${friendList.size}명)"
-                        binding.rvFriendList.apply {
-                            layoutManager = LinearLayoutManager(requireContext())
-                            adapter = FriendAdapter(friendList) { friend ->
-                                // ▶ 친구 목표 보기로 이동
-                                val frag = GoalFragment.newInstance(
-                                    targetUserId = friend.id,
-                                    targetNickname = friend.nickname
-                                )
-
-                                // val frag = GoalFragment()
-                                (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                                    .replace(R.id.main_container, frag)
-                                    .addToBackStack(null)
-                                    .commitAllowingStateLoss()
-                            }
-                        }
                     }
                 },
                 onError = {

@@ -7,21 +7,25 @@ import com.example.planup.main.friend.domain.FriendRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class FriedViewModel @Inject constructor(
+class FriendViewModel @Inject constructor(
     private val friendRepository: FriendRepository
 ) : ViewModel() {
 
+    private var _friendList = MutableStateFlow(listOf<FriendInfo>())
+    val friendList = _friendList.asStateFlow()
 
     /**
      * 요청한다.
      * 보통 해당 방식 보다는.. sealedClass를 통해 통신을 하면 더 좋음..
      */
-    fun getFriendList(
+    fun fetchFriendList(
         onSuccess: (data: List<FriendInfo>?) -> Unit,
         onError: (error: Throwable) -> Unit
     ) {
@@ -29,6 +33,9 @@ class FriedViewModel @Inject constructor(
             try {
                 val friendList = withContext(Dispatchers.IO) {
                     friendRepository.getFriendList()
+                }
+                if (friendList != null) {
+                    _friendList.value = friendList
                 }
                 onSuccess(friendList)
             } catch (e: CancellationException) {
