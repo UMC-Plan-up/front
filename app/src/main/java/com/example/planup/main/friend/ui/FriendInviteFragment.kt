@@ -17,7 +17,9 @@ import com.example.planup.R
 import com.example.planup.databinding.BottomShareDialogBinding
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
+import com.example.planup.databinding.ToastCompleteAddFriendBinding
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
+import com.example.planup.network.ApiResult
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 
@@ -67,7 +69,34 @@ class FriendInviteFragment : Fragment() {
             }
 
             btnSubmitInviteCode.setOnClickListener {
-                showCompleteAddFriendToast()
+                userInviteCodeViewModel.fetchInvalidateInviteCode(
+                    code = etInviteCodeInput.text.toString()
+                ) { result ->
+                    when (result) {
+                        is ApiResult.Success -> {
+                            val data = result.data
+                            if (data.valid) {
+                                val nickName = data.targetUserNickname
+                                showCompleteAddFriendToast(nickName)
+                                etInviteCodeInput.setText("")
+                            } else {
+                                showSimpleToast(data.message)
+                            }
+                        }
+
+                        is ApiResult.Error -> {
+                            showSimpleToast(result.message)
+                        }
+
+                        is ApiResult.Exception -> {
+                            showSimpleToast("알 수 없는 오류 입니다.")
+                        }
+
+                        is ApiResult.Fail -> {
+                            showSimpleToast(result.message)
+                        }
+                    }
+                }
             }
 
             etInviteCodeInput.addTextChangedListener {
@@ -82,14 +111,26 @@ class FriendInviteFragment : Fragment() {
     }
 
 
-    private fun showCompleteAddFriendToast() {
-        val inflater = layoutInflater
-        val layout = inflater.inflate(R.layout.toast_complete_add_friend, binding.root, false)
+    private fun showCompleteAddFriendToast(
+        nickName: String
+    ) {
+        val completeAddToastBinding =
+            ToastCompleteAddFriendBinding.inflate(layoutInflater, binding.root, false)
+        completeAddToastBinding.toastChallengeAcceptTv.text =
+            getString(R.string.toast_complete_add_friend, nickName)
         val toast = Toast(requireContext())
-        toast.view = layout
+        toast.view = completeAddToastBinding.root
         toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
         toast.show()
+    }
+
+    private fun showSimpleToast(message: String) {
+        Toast.makeText(
+            requireContext(),
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */
