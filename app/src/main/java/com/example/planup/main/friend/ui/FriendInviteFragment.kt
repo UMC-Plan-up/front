@@ -100,7 +100,18 @@ class FriendInviteFragment : Fragment() {
             setBackgroundDrawable(ColorDrawable())
         }
 
-        popupWindow.showAsDropDown(anchor)
+        // anchor의 오른쪽 끝에 맞추기
+        menuBinding.root.measure(
+            View.MeasureSpec.UNSPECIFIED,
+            View.MeasureSpec.UNSPECIFIED
+        )
+        val popupWidth = menuBinding.root.measuredWidth
+        val anchorWidth = anchor.width
+
+        // x 오프셋 = anchor의 width - popup의 width
+        val xOffset = anchorWidth - popupWidth
+
+        popupWindow.showAsDropDown(anchor, xOffset, 0)
 
         menuBinding.shareKakaoCl.setOnClickListener {
             // TODO: 카카오 공유 로직
