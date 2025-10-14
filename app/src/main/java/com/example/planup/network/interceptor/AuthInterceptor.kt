@@ -19,10 +19,9 @@ class AuthInterceptor(
 
         val builder = original.newBuilder()
 
-        val token = tokenSaver.getToken()
+        val token = tokenSaver.safeToken()
         if (!token.isNullOrEmpty()) {
-            val value = if (token.startsWith("Bearer ", ignoreCase = true)) token else "Bearer $token"
-            builder.header("Authorization", value)
+            builder.header("Authorization", token)
         }
 
         return chain.proceed(builder.build())

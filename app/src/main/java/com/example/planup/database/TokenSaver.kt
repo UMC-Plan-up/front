@@ -23,4 +23,13 @@ class TokenSaver(
     fun getToken() : String? {
         return prefs.getString(TOKEN_KEY,null)
     }
+
+    /**
+     * Token 값이 존재할 경우 Bearer 여부를 판단해 추가로 반환한다.
+     */
+    fun safeToken() : String? {
+        return getToken()?.let {token ->
+            if (token.startsWith("Bearer ", ignoreCase = true)) token else "Bearer $token"
+        }
+    }
 }

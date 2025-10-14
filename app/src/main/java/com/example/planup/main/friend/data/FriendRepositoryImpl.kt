@@ -25,7 +25,7 @@ class FriendRepositoryImpl @Inject constructor(
     private inline fun <T> checkToken(
         onToken: (String) -> ApiResult<T>
     ): ApiResult<T> {
-        val savedToken = tokenSaver.getToken()
+        val savedToken = tokenSaver.safeToken()
         if (savedToken.isNullOrBlank()) {
             //TODO Error When Token is null or blank
             return ApiResult.Error("invalid Token")
