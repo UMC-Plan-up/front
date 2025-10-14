@@ -3,6 +3,7 @@ package com.example.planup.database
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
+import com.example.planup.network.ApiResult
 
 class TokenSaver(
     context: Context
@@ -32,4 +33,16 @@ class TokenSaver(
             if (token.startsWith("Bearer ", ignoreCase = true)) token else "Bearer $token"
         }
     }
+}
+
+inline fun <T> TokenSaver.checkToken(
+    onToken: (String) -> ApiResult<T>
+): ApiResult<T> {
+    val savedToken = safeToken()
+    if (savedToken.isNullOrBlank()) {
+        //TODO Error When Token is null or blank
+        return ApiResult.Error("invalid Token")
+    }
+
+    return onToken(savedToken)
 }
