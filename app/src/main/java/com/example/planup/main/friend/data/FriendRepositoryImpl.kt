@@ -31,7 +31,7 @@ class FriendRepositoryImpl @Inject constructor(
             return ApiResult.Error("invalid Token")
         }
 
-        return onToken("Bearer $savedToken")
+        return onToken(savedToken)
     }
 
 
