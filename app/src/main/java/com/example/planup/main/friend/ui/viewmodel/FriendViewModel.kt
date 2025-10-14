@@ -32,13 +32,11 @@ class FriendViewModel @Inject constructor(
      * 보통 해당 방식 보다는.. sealedClass를 통해 통신을 하면 더 좋음..
      */
     fun fetchFriendList(
-        onCallBack: (result : ApiResult<List<FriendInfo>>) -> Unit,
+        onCallBack: (result: ApiResult<List<FriendInfo>>) -> Unit,
     ) {
         viewModelScope.launch {
             try {
-                val friendListResult = withContext(Dispatchers.IO) {
-                    friendRepository.getFriendList()
-                }
+                val friendListResult = friendRepository.getFriendList()
                 if (friendListResult is ApiResult.Success) {
                     _friendList.value = friendListResult.data
                 }
@@ -55,13 +53,12 @@ class FriendViewModel @Inject constructor(
     }
 
     fun fetchFriendRequest(
-        onCallBack: (result : ApiResult<List<FriendRequestsResult>>) -> Unit
+        onCallBack: (result: ApiResult<List<FriendRequestsResult>>) -> Unit
     ) {
         viewModelScope.launch {
             try {
-                val friendRequestResult = withContext(Dispatchers.IO) {
-                    friendRepository.getFriendRequestList()
-                }
+                val friendRequestResult = friendRepository.getFriendRequestList()
+
                 if (friendRequestResult is ApiResult.Success) {
                     _friendRequestList.value = friendRequestResult.data
                 } else {
