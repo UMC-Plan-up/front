@@ -1,6 +1,7 @@
 package com.example.planup.main.friend.data
 
 import com.example.planup.database.TokenSaver
+import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
@@ -21,26 +22,12 @@ class FriendRepositoryImpl @Inject constructor(
     private val tokenSaver: TokenSaver
 ) : FriendRepository {
 
-
-    private inline fun <T> checkToken(
-        onToken: (String) -> ApiResult<T>
-    ): ApiResult<T> {
-        val savedToken = tokenSaver.safeToken()
-        if (savedToken.isNullOrBlank()) {
-            //TODO Error When Token is null or blank
-            return ApiResult.Error("invalid Token")
-        }
-
-        return onToken(savedToken)
-    }
-
-
     /**
      * 친구 목록을 호출합니다.
      */
     override suspend fun getFriendList(): ApiResult<List<FriendInfo>> =
         withContext(Dispatchers.IO) {
-            checkToken(
+            tokenSaver.checkToken(
                 onToken = { token ->
                     try {
                         val response = friendApi.getFriendSummary(token)
@@ -71,7 +58,7 @@ class FriendRepositoryImpl @Inject constructor(
 
     override suspend fun getFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
         withContext(Dispatchers.IO) {
-            checkToken(
+            tokenSaver.checkToken(
                 onToken = { token ->
                     try {
                         val response = friendApi.getFriendRequests(token)
