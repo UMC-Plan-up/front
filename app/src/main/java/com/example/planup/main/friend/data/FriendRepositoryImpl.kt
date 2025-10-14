@@ -5,6 +5,7 @@ import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
+import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -27,61 +28,42 @@ class FriendRepositoryImpl @Inject constructor(
      */
     override suspend fun getFriendList(): ApiResult<List<FriendInfo>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken(
-                onToken = { token ->
-                    try {
-                        val response = friendApi.getFriendSummary(token)
-                        if (response.isSuccessful) {
-                            val friendDto: FriendResponseDto? = response.body()
-                            if (friendDto != null) {
-                                if (friendDto.isSuccess) {
-                                    val resultList = friendDto.result
-                                    val friendList =
-                                        resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
-                                    ApiResult.Success(friendList)
-                                } else {
-                                    ApiResult.Fail(friendDto.message)
-                                }
-                            } else {
-                                ApiResult.Error("fail response by body is null")
-                            }
+            tokenSaver.checkToken { token ->
+                safeResult(
+                    response = {
+                        friendApi.getFriendSummary(token)
+                    },
+                    onResponse = { friendDto ->
+                        if (friendDto.isSuccess) {
+                            val resultList = friendDto.result
+                            val friendList =
+                                resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                            ApiResult.Success(friendList)
                         } else {
-                            ApiResult.Error("fail response by response empty")
+                            ApiResult.Fail(friendDto.message)
                         }
-                    } catch (e: Exception) {
-                        ApiResult.Exception(e)
                     }
-
-                }
-            )
+                )
+            }
         }
 
     override suspend fun getFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken(
-                onToken = { token ->
-                    try {
-                        val response = friendApi.getFriendRequests(token)
-                        if (response.isSuccessful) {
-                            val friendRequests: FriendRequestsResponse? = response.body()
-                            if (friendRequests != null) {
-                                if (friendRequests.isSuccess) {
-                                    val resultList = friendRequests.result
-                                    ApiResult.Success(resultList)
-                                } else {
-                                    ApiResult.Fail(friendRequests.message)
-                                }
-                            } else {
-                                ApiResult.Error("fail response by body is null")
-                            }
+            tokenSaver.checkToken { token ->
+                safeResult(
+                    response = {
+                        friendApi.getFriendRequests(token)
+                    },
+                    onResponse = { friendRequests ->
+                        if (friendRequests.isSuccess) {
+                            val resultList = friendRequests.result
+                            ApiResult.Success(resultList)
                         } else {
-                            ApiResult.Error("fail response by response empty")
+                            ApiResult.Fail(friendRequests.message)
                         }
-                    } catch (e: Exception) {
-                        ApiResult.Exception(e)
                     }
-                }
-            )
+                )
+            }
         }
 
 }

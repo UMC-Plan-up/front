@@ -35,8 +35,8 @@ class TokenSaver(
     }
 }
 
-inline fun <T> TokenSaver.checkToken(
-    onToken: (String) -> ApiResult<T>
+suspend inline fun <T> TokenSaver.checkToken(
+    onToken: suspend (String) -> ApiResult<T>
 ): ApiResult<T> {
     val savedToken = safeToken()
     if (savedToken.isNullOrBlank()) {
