@@ -2,6 +2,8 @@ package com.example.planup.di
 
 import com.example.planup.main.friend.data.FriendRepositoryImpl
 import com.example.planup.main.friend.domain.FriendRepository
+import com.example.planup.main.user.data.UserRepositoryImpl
+import com.example.planup.main.user.domain.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,5 +20,10 @@ abstract class RepositoryModule {
     abstract fun bindFriendRepository(
         impl: FriendRepositoryImpl
     ): FriendRepository
+
+    @Binds
+    abstract fun bindUserRepository(
+        impl: UserRepositoryImpl
+    ): UserRepository
 
 }

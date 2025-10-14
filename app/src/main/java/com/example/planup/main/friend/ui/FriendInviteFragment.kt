@@ -9,55 +9,55 @@ import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.BottomShareDialogBinding
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
 import com.example.planup.main.MainActivity
+import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
 import com.example.planup.network.RetrofitInstance
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 
 class FriendInviteFragment : Fragment() {
-    lateinit var binding: FragmentFriendInviteBinding
+    private var _binding: FragmentFriendInviteBinding? = null
+    private val binding: FragmentFriendInviteBinding
+        get() = _binding!!
+
+    private val userInviteCodeViewModel : UserInviteCodeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
+        _binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
         clickListener()
-        fetchMyInviteCode()   // ⬅️ 여기서 내 초대코드 자동 로드
         return binding.root
     }
 
-    /** userInfo SharedPreferences 에서 액세스 토큰 읽기 */
-    private fun getAccessToken(): String? {
-        val prefs = requireActivity().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        return prefs.getString("accessToken", null)
-    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-    /** 서버에서 내 초대코드를 받아 EditText 에 채우기 */
-    private fun fetchMyInviteCode() {
-        val token = getAccessToken() ?: return
-        val auth = if (token.startsWith("Bearer ", true)) token else "Bearer $token"
-
-        lifecycleScope.launch {
-            try {
-                val resp = RetrofitInstance.userApi.getInviteCode(auth)
-                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                    val inviteCode = resp.body()?.result?.inviteCode.orEmpty()
-                    // ▼ EditText id 를 실제 레이아웃 id 로 교체하세요
-                    binding.inviteFriendEt.setText(inviteCode)
-                } else {
-                    // 필요 시 토스트/로그
+        userInviteCodeViewModel.fetchMyInviteCode { inviteCodeResult ->
+            // 필요 시 토스트/로그
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                userInviteCodeViewModel.inviteCode.collect {
+                    binding.inviteFriendEt.setText(it)
                 }
-            } catch (e: Exception) {
-                // 필요 시 토스트/로그
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private fun clickListener() {
