@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.signup.data.InviteCodeResult
+import com.example.planup.signup.data.InviteCodeValidateResponse
 import com.example.planup.util.ShareTool
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,6 +37,16 @@ class UserInviteCodeViewModel @Inject constructor(
                 }
                 onCallBack(result)
             }
+        }
+    }
+
+    fun fetchInvalidateInviteCode(
+        code : String,
+        onCallBack: (ApiResult<InviteCodeValidateResponse.Result>) -> Unit
+    ) {
+        viewModelScope.launch {
+            val result = userRepository.validateInviteCode(code)
+            onCallBack(result)
         }
     }
 
