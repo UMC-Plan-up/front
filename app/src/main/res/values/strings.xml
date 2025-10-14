@@ -744,7 +744,7 @@
     <string name="toast_goal_activate">목표가 활성화되었어요.</string>
     <string name="toast_goal_delete">목표가 삭제되었어요.</string>
 
-    <string name="toast_complete_add_friend">[닉네임] 님과 친구가 되었어요!</string>
+    <string name="toast_complete_add_friend">[%s] 님과 친구가 되었어요!</string>
 
     <string name="goal_description_goal_title">달리기</string>
     <string name="goal_description_one_dose">1KM 이상</string>
