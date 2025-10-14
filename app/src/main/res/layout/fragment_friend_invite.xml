@@ -105,6 +105,7 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="1"
+                        android:editable="false"
                         android:background="@drawable/bg_edittext"
                         android:hint="나의초대코드"
                         android:paddingHorizontal="12dp" />
@@ -174,6 +175,8 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:maxLength="6"
+                    android:inputType="number"
                     android:background="@drawable/bg_edittext"
                     android:hint="코드를 입력하세요"
                     android:paddingHorizontal="12dp"

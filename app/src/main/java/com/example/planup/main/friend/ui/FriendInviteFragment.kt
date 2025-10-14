@@ -7,6 +7,7 @@ import android.view.*
 import android.widget.FrameLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -33,7 +34,6 @@ class FriendInviteFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
-        clickListener()
         return binding.root
     }
 
@@ -52,14 +52,7 @@ class FriendInviteFragment : Fragment() {
                 }
             }
         }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-    private fun clickListener() {
         with(binding) {
             btnBack.setOnClickListener {
                 parentFragmentManager.popBackStack()
@@ -76,8 +69,18 @@ class FriendInviteFragment : Fragment() {
             btnSubmitInviteCode.setOnClickListener {
                 showCompleteAddFriendToast()
             }
+
+            etInviteCodeInput.addTextChangedListener {
+                btnSubmitInviteCode.isEnabled = it.toString().length == 6
+            }
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 
     private fun showCompleteAddFriendToast() {
         val inflater = layoutInflater
