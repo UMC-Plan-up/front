@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.signup.data.InviteCodeResult
+import com.example.planup.util.ShareTool
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserInviteCodeViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val shareTool: ShareTool
 ) : ViewModel() {
 
     private var _inviteCode = MutableStateFlow("")
@@ -35,5 +37,17 @@ class UserInviteCodeViewModel @Inject constructor(
                 onCallBack(result)
             }
         }
+    }
+
+    fun copyToClipboard() {
+        shareTool.copyInviteCodeToClipboard(_inviteCode.value)
+    }
+
+    fun shareToSMS() {
+        shareTool.shareInviteCodeToSMS(_inviteCode.value)
+    }
+
+    fun shareEtc() {
+        shareTool.shareText(_inviteCode.value)
     }
 }

@@ -1,6 +1,5 @@
 package com.example.planup.main.friend.ui
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -17,9 +16,7 @@ import com.example.planup.R
 import com.example.planup.databinding.BottomShareDialogBinding
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
-import com.example.planup.main.MainActivity
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
-import com.example.planup.network.RetrofitInstance
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 
@@ -28,7 +25,7 @@ class FriendInviteFragment : Fragment() {
     private val binding: FragmentFriendInviteBinding
         get() = _binding!!
 
-    private val userInviteCodeViewModel : UserInviteCodeViewModel by activityViewModels()
+    private val userInviteCodeViewModel: UserInviteCodeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,8 +45,10 @@ class FriendInviteFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                userInviteCodeViewModel.inviteCode.collect {
-                    binding.inviteFriendEt.setText(it)
+                userInviteCodeViewModel.inviteCode.collect { code ->
+                    binding.inviteFriendEt.setText(code)
+                    binding.btnCopyInviteCode.isEnabled = code.isNotEmpty()
+                    binding.btnUpload.isEnabled = code.isNotEmpty()
                 }
             }
         }
@@ -61,22 +60,26 @@ class FriendInviteFragment : Fragment() {
     }
 
     private fun clickListener() {
-        binding.btnBack.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendFragment())
-                .commitAllowingStateLoss()
-        }
+        with(binding) {
+            btnBack.setOnClickListener {
+                parentFragmentManager.popBackStack()
+            }
 
-        binding.btnUpload.setOnClickListener {
-            showPopupMenu(binding.btnUpload)
-        }
+            btnCopyInviteCode.setOnClickListener {
+                userInviteCodeViewModel.copyToClipboard()
+            }
 
-        binding.btnSubmitInviteCode.setOnClickListener {
-            showCompleteAddFriendToast()
+            btnUpload.setOnClickListener {
+                showPopupMenu(btnUpload)
+            }
+
+            btnSubmitInviteCode.setOnClickListener {
+                showCompleteAddFriendToast()
+            }
         }
     }
 
-    private fun showCompleteAddFriendToast(){
+    private fun showCompleteAddFriendToast() {
         val inflater = layoutInflater
         val layout = inflater.inflate(R.layout.toast_complete_add_friend, binding.root, false)
         val toast = Toast(requireContext())
@@ -119,13 +122,13 @@ class FriendInviteFragment : Fragment() {
         }
 
         menuBinding.shareMessageTv.setOnClickListener {
-            // TODO: 기본 메시지 공유 로직
+            userInviteCodeViewModel.shareToSMS()
             popupWindow.dismiss()
         }
 
         menuBinding.shareEtcTv.setOnClickListener {
+            userInviteCodeViewModel.shareEtc()
             popupWindow.dismiss()
-            showShareBottomSheet()
         }
     }
 
