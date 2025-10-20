@@ -819,4 +819,6 @@
     <string name="friend_friend_name">친구 1</string>
     <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
+    <string name="friend_code_share">%1$s님이 친구 신청을 보냈어요.\nPlan-Up에서 함께 목표 달성에 참여해 보세요!\n%1$s님의 친구 코드 : %2$s</string>
+
 </resources>

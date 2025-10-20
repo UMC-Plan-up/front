@@ -11,6 +11,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import androidx.core.net.toUri
+import com.example.planup.R
+import com.example.planup.database.UserInfoSaver
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
@@ -20,15 +22,26 @@ import com.kakao.sdk.share.WebSharerClient
  */
 @Singleton
 class ShareTool @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val userInfoSaver: UserInfoSaver
 ) {
     private val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    /**
+     * (이름)님이 친구 신청을 보냈어요.
+     * Plan-Up에서 함께 목표 달성에 참여해 보세요!
+     * (이름)님의 친구 코드 : ######
+     */
+    private fun makeInviteMessage(code: String): String {
+        val name = userInfoSaver.getNickName()
+        return context.getString(R.string.friend_code_share, name, code)
+    }
 
     /**
      * 클립보드로 복사합니다.
      */
     fun copyInviteCodeToClipboard(code: String) {
-        val clip = ClipData.newPlainText("초대코드", code)
+        val clip = ClipData.newPlainText("초대코드", makeInviteMessage(code))
         clipboard.setPrimaryClip(clip)
     }
 
@@ -39,7 +52,7 @@ class ShareTool @Inject constructor(
         try {
             val uri = "smsto:".toUri()
             val intent = Intent(Intent.ACTION_SENDTO, uri).apply {
-                putExtra("sms_body", code)
+                putExtra("sms_body", makeInviteMessage(code))
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(intent)
@@ -51,10 +64,10 @@ class ShareTool @Inject constructor(
     /**
      * Code 문자열을 전송합니다.
      */
-    fun shareText(text: String, title: String = "초대 코드") {
+    fun shareText(code: String, title: String = "초대 코드") {
         val sendIntent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, text)
+            putExtra(Intent.EXTRA_TEXT, makeInviteMessage(code))
             type = "text/plain"
         }
 
@@ -69,11 +82,11 @@ class ShareTool @Inject constructor(
     }
 
     //https://developers.kakao.com/tool/template-builder/app/1290033/template/125174
-    private val inviteTemplate : Long = 125174
+    private val inviteTemplate: Long = 125174
 
     fun shareToKakao(
         activityContext: Context,
-        code : String
+        code: String
     ) {
         val TAG = "JWH"
         if (ShareClient.instance.isKakaoTalkSharingAvailable(activityContext)) {
@@ -82,14 +95,13 @@ class ShareTool @Inject constructor(
                 context = context,
                 templateId = inviteTemplate,
                 templateArgs = mapOf(
-                    "NAME" to "Tester",
+                    "NAME" to userInfoSaver.getNickName(),
                     "CODE" to code
                 )
             ) { sharingResult, error ->
                 if (error != null) {
                     Log.e(TAG, "카카오톡 공유 실패", error)
-                }
-                else if (sharingResult != null) {
+                } else if (sharingResult != null) {
                     Log.d(TAG, "카카오톡 공유 성공 ${sharingResult.intent}")
                     context.startActivity(sharingResult.intent)
 
@@ -109,7 +121,7 @@ class ShareTool @Inject constructor(
             // ex) Chrome, 삼성 인터넷, FireFox, 웨일 등
             try {
                 KakaoCustomTabsClient.openWithDefault(activityContext, sharerUrl)
-            } catch(e: UnsupportedOperationException) {
+            } catch (e: UnsupportedOperationException) {
                 // CustomTabsServiceConnection 지원 브라우저가 없을 때 예외처리
             }
 
