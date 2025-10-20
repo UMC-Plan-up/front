@@ -9,7 +9,7 @@ interface UserRepository {
     /**
      * 내 초대 코드를 가져옵니다.
      */
-    suspend fun getInviteCode(): ApiResult<InviteCodeResult>
+    suspend fun getInviteCode(): String
 
     /**
      * 입력한 초대 코드를 검증합니다.

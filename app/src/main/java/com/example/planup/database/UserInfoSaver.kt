@@ -38,8 +38,8 @@ class UserInfoSaver(
     /**
      * 현재 저장된 초대 코드를 가져옵니다.
      */
-    fun getInviteCode(): String {
-        return prefs.getString(KEY_INVITE_CODE, "") ?: ""
+    fun getInviteCode(): String? {
+        return prefs.getString(KEY_INVITE_CODE, null)
     }
 
     /**

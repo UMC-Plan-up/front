@@ -25,18 +25,15 @@ class UserInviteCodeViewModel @Inject constructor(
     val inviteCode = _inviteCode.asStateFlow()
 
     fun fetchMyInviteCode(
-        onCallBack: (result: ApiResult<InviteCodeResult>) -> Unit
+        onCallBack: (inviteCode : String) -> Unit
     ) {
         if (_inviteCode.value.isEmpty()) {
             //초대 코드가 없을 경우 에만
             viewModelScope.launch {
-                val result = userRepository.getInviteCode()
-                if (result is ApiResult.Success) {
-                    _inviteCode.update {
-                        result.data.inviteCode
-                    }
+                _inviteCode.update {
+                    userRepository.getInviteCode()
                 }
-                onCallBack(result)
+                onCallBack(_inviteCode.value)
             }
         }
     }
