@@ -14,6 +14,7 @@ class UserInfoSaver(
         private const val PREF_TOKEN_NAME = "userInfo"
 
         private const val KEY_NICKNAME = "nickname"
+        private const val KEY_INVITE_CODE = "invite"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
@@ -35,12 +36,30 @@ class UserInfoSaver(
     }
 
     /**
+     * 현재 저장된 초대 코드를 가져옵니다.
+     */
+    fun getInviteCode(): String {
+        return prefs.getString(KEY_INVITE_CODE, "") ?: ""
+    }
+
+    /**
+     * 초대 코드를 저장합니다.
+     */
+    fun saveInviteCode(inviteCode: String) {
+        prefs.edit {
+            putString(KEY_INVITE_CODE, inviteCode)
+        }
+    }
+
+    /**
      * 저장된 모든 유저 정보를 지웁니다.
      * (용도) - 로그아우
      */
     fun clearAllUserInfo(){
         prefs.edit {
-            clear()
+            putString(KEY_NICKNAME,null)
+            putString(KEY_INVITE_CODE, null)
+
         }
     }
 }
