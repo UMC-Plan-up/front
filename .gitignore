@@ -11,7 +11,6 @@
 local.properties
 /local.properties
 output-metadata.json
-/app/src/main/res/drawable/img_speech_ballon.9.png
 
 .kotlin
 *.log
