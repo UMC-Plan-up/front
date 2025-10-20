@@ -13,6 +13,10 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED"/>
 
+    <queries>
+        <package android:name="com.kakao.talk" />
+    </queries>
+
     <application
         android:name=".network.App"
         android:networkSecurityConfig="@xml/network_security_config"
@@ -25,10 +29,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PlanUP"
         android:usesCleartextTraffic="true" >
-
-        <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="@string/kakao_app_key" />
 
         <activity
             android:name=".SplashActivity"

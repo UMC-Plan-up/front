@@ -1,5 +1,6 @@
 package com.example.planup.main.user.ui.viewmodel
 
+import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
@@ -60,5 +61,11 @@ class UserInviteCodeViewModel @Inject constructor(
 
     fun shareEtc() {
         shareTool.shareText(_inviteCode.value)
+    }
+
+    fun shareKaKao(
+        activityContext : Activity
+    ) {
+        shareTool.shareToKakao(activityContext,_inviteCode.value)
     }
 }

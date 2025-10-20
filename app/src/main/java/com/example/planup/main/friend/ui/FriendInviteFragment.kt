@@ -14,13 +14,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
-import com.example.planup.databinding.BottomShareDialogBinding
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
 import com.example.planup.databinding.ToastCompleteAddFriendBinding
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
 import com.example.planup.network.ApiResult
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
 
 class FriendInviteFragment : Fragment() {
@@ -161,7 +159,9 @@ class FriendInviteFragment : Fragment() {
         popupWindow.showAsDropDown(anchor, xOffset, 0)
 
         menuBinding.shareKakaoCl.setOnClickListener {
-            // TODO: 카카오 공유 로직
+            userInviteCodeViewModel.shareKaKao(
+                this@FriendInviteFragment.requireActivity()
+            )
             popupWindow.dismiss()
         }
 
@@ -174,18 +174,5 @@ class FriendInviteFragment : Fragment() {
             userInviteCodeViewModel.shareEtc()
             popupWindow.dismiss()
         }
-    }
-
-    /** 하단 공유 BottomSheet (ViewBinding 사용) */
-    private fun showShareBottomSheet() {
-        val sheetBinding = BottomShareDialogBinding.inflate(layoutInflater)
-        val dialog = BottomSheetDialog(requireContext())
-        dialog.setContentView(sheetBinding.root)
-        dialog.setOnShowListener {
-            val bottomSheet =
-                dialog.findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.setBackgroundColor(Color.TRANSPARENT)
-        }
-        dialog.show()
     }
 }
