@@ -1,8 +1,7 @@
-package com.example.planup.login
+package com.example.planup.login.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
@@ -17,12 +16,12 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
+import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
 import com.example.planup.network.RetrofitInstance
@@ -43,40 +42,40 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var binding: ActivityLoginBinding
 
     lateinit var prefs: SharedPreferences //로그인한 유저 닉네임, 프로필 사진 저장
-    lateinit var editor: Editor //로그인한 유저 닉네임, 프로필 사진 저장
+    lateinit var editor: SharedPreferences.Editor //로그인한 유저 닉네임, 프로필 사진 저장
 
     lateinit var service: UserController //API 연동
     var isPwVisible: Boolean = false //비밀번호 가리기 설정 버튼
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
-    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        if (ev.action == MotionEvent.ACTION_DOWN) {
-            currentFocus?.let { view ->
-                if (view is EditText) { // 현재 포커스가 EditText일 경우만
-                    val outRect = android.graphics.Rect()
-                    view.getGlobalVisibleRect(outRect)
-                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
-                        view.clearFocus()
-                        hideKeyboard(view) // 키보드 숨김
-                    }
-                }
-            }
-        }
-        return super.dispatchTouchEvent(ev)
-    }
-
-    // 혹시 dispatchTouchEvent에서 놓치는 경우 보완
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-        if (event?.action == MotionEvent.ACTION_DOWN) {
-            currentFocus?.let { view ->
-                if (view is EditText) {
-                    view.clearFocus()
-                    hideKeyboard(view)
-                }
-            }
-        }
-        return super.onTouchEvent(event)
-    }
+//    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+//        if (ev.action == MotionEvent.ACTION_DOWN) {
+//            currentFocus?.let { view ->
+//                if (view is EditText) { // 현재 포커스가 EditText일 경우만
+//                    val outRect = android.graphics.Rect()
+//                    view.getGlobalVisibleRect(outRect)
+//                    if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+//                        view.clearFocus()
+//                        hideKeyboard(view) // 키보드 숨김
+//                    }
+//                }
+//            }
+//        }
+//        return super.dispatchTouchEvent(ev)
+//    }
+//
+//    // 혹시 dispatchTouchEvent에서 놓치는 경우 보완
+//    override fun onTouchEvent(event: MotionEvent?): Boolean {
+//        if (event?.action == MotionEvent.ACTION_DOWN) {
+//            currentFocus?.let { view ->
+//                if (view is EditText) {
+//                    view.clearFocus()
+//                    hideKeyboard(view)
+//                }
+//            }
+//        }
+//        return super.onTouchEvent(event)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -116,7 +115,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         }
 
         // 비밀번호 찾기 화면 전환
-        binding.forgotPasswordText.setOnClickListener {
+        binding.forgotPasswordButton.setOnClickListener {
             val intent = Intent(this, ResetPasswordActivity::class.java)
             startActivity(intent)
         }
@@ -216,7 +215,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
         val toast = Toast(this)
         toast.view = layout
-        toast.duration = LENGTH_SHORT
+        toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 700)
         toast.show()
     }
@@ -228,7 +227,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
         val toast = Toast(this)
         toast.view = layout
-        toast.duration = LENGTH_SHORT
+        toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 700)
         toast.show()
     }
@@ -249,7 +248,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             else -> {
                 editor.putString("accessToken", loginResult.accessToken)
                 editor.apply() // 즉시 저장
-                App.jwt.token = "Bearer " + loginResult.accessToken
+                App.Companion.jwt.token = "Bearer " + loginResult.accessToken
                 // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
                 service.setUserInfoAdapter(this)
                 service.userInfoService()
@@ -265,7 +264,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
         val toast = Toast(this)
         toast.view = layout
-        toast.duration = LENGTH_SHORT
+        toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
@@ -289,24 +288,25 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
         val toast = Toast(this)
         toast.view = layout
-        toast.duration = LENGTH_SHORT
+        toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
 
     private fun toast(msg: String) {
-        Toast.makeText(this, msg, LENGTH_SHORT).show()
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     // 카카오 인가코드 얻기
     private suspend fun getKakaoAuthorizationCode(): String =
         suspendCancellableCoroutine { cont ->
             val callback: (String?, Throwable?) -> Unit = { code, error ->
+                println("code: ${code}|\n error: ${error}")
                 if (error != null) cont.resumeWithException(error)
                 else cont.resume(code ?: "")
             }
 
-            val client = AuthCodeClient.instance
+            val client = AuthCodeClient.Companion.instance
             if (client.isKakaoTalkLoginAvailable(this@LoginActivityNew)) {
                 client.authorizeWithKakaoTalk(this@LoginActivityNew, callback = callback)
             } else {
@@ -338,7 +338,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
                     } else {
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
-                        App.jwt.token = r.accessToken
+                        App.Companion.jwt.token = r.accessToken
                         editor.putString("kakaoCode",code)
                         if (accessToken != null && userInfo != null) {
                             saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
@@ -374,7 +374,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         editor.apply()
 
         // 메인 이동
-        startActivity(Intent(this, com.example.planup.main.MainActivity::class.java))
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 }

@@ -7,7 +7,7 @@ import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.planup.databinding.ActivitySplashBinding
-import com.example.planup.login.LoginActivityNew
+import com.example.planup.login.ui.LoginActivityNew
 
 class  SplashActivity : AppCompatActivity() {
 
