@@ -16,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
@@ -33,13 +34,16 @@ import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.kakao.sdk.auth.AuthCodeClient
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
+@AndroidEntryPoint
 class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
     lateinit var binding: ActivityLoginBinding
+    private val viewModel: LoginViewModel by viewModels()
 
     lateinit var prefs: SharedPreferences //로그인한 유저 닉네임, 프로필 사진 저장
     lateinit var editor: SharedPreferences.Editor //로그인한 유저 닉네임, 프로필 사진 저장
