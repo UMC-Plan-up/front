@@ -19,7 +19,13 @@ data class FriendInfo(
     val todayTime: String?,
     val isNewPhotoVerify: Boolean,
     val profileImage: String
-)
+) {
+    fun getStatusString(): String = StringBuilder().apply {
+        append("${goalCnt}개의 목표 진행 중")
+        todayTime?.let { append(" · 오늘 $it") }
+        if (isNewPhotoVerify) append(" · 새 사진 인증")
+    }.toString()
+}
 
 data class FriendReportRequestDto(
     val userId: Int,

@@ -160,7 +160,7 @@ class FriendRequestsFragment : Fragment() {
 }
 
 @Composable
-fun FriendRequestView(
+fun FriendRequestContent(
     onBack: () -> Unit = {}
 ) {
     Column(
@@ -206,6 +206,6 @@ fun FriendRequestView(
 
 @Preview
 @Composable
-private fun FriendRequestViewPreview() {
-    FriendRequestView()
+private fun FriendRequestContentPreview() {
+    FriendRequestContent()
 }
