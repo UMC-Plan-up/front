@@ -13,33 +13,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.network.App
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
+    private var _binding: ActivityLoginBinding? = null
+    private val binding = _binding!!
 
-    private lateinit var emailEditText: EditText
-    private lateinit var passwordEditText: EditText
-    private lateinit var loginButton: Button
-    private lateinit var signupText: TextView
-    private lateinit var forgotPasswordText: TextView
 
     private lateinit var emailFormatErrorText: TextView
     private lateinit var emailNotFoundErrorText: TextView
     private lateinit var passwordNotFoundErrorText: TextView
 
     // 비밀번호 보이기/숨기기
-    private lateinit var passwordToggleIcon: ImageView
     private var isPwVisible = false  // 현재 비밀번호 표시 상태 저장
 
     // 이메일 도메인 드롭다운 아이콘
-    private lateinit var emailDropdownIcon: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
+        _binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         initView()
         initClickListener()
@@ -59,20 +57,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        emailEditText = findViewById(R.id.emailEditText)
-        passwordEditText = findViewById(R.id.passwordEditText)
-        loginButton = findViewById(R.id.loginButton)
-        signupText = findViewById(R.id.signupButton)
-        forgotPasswordText = findViewById(R.id.forgotPasswordText)
 
+        // TODO:: 각 프래그먼트에서 사용하도록 수정
         emailFormatErrorText = findViewById(R.id.emailFormatErrorText)
         emailNotFoundErrorText = findViewById(R.id.emailNotFoundErrorText)
         passwordNotFoundErrorText = findViewById(R.id.passwordNotFoundErrorText)
-
-
-        passwordToggleIcon = findViewById(R.id.passwordToggleIcon)
-        emailDropdownIcon = findViewById(R.id.emailDropdownIcon)
-
 
         hideAllErrors()
     }
@@ -87,39 +76,39 @@ class LoginActivity : AppCompatActivity() {
 
     private fun initClickListener() {
         // 로그인 버튼
-        loginButton.setOnClickListener { checkLogin() }
+        binding.loginButton.setOnClickListener { checkLogin() }
 
         // 회원가입 화면 전환
-        signupText.setOnClickListener {
+        binding.signupButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
 
         // 비밀번호 찾기 화면 전환
-        forgotPasswordText.setOnClickListener {
+        binding.forgotPasswordButton.setOnClickListener {
             val intent = Intent(this, ResetPasswordActivity::class.java)
             startActivity(intent)
         }
 
         // 눈 아이콘 클릭 시 비밀번호 보이기/숨기기
-        passwordToggleIcon.setOnClickListener {
+        binding.passwordToggleIcon.setOnClickListener {
             isPwVisible = !isPwVisible // 상태 반전
 
             if (isPwVisible) {
-                passwordEditText.inputType =
+                binding.passwordEditText.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                passwordToggleIcon.setImageResource(R.drawable.ic_eye_on)
+                binding.passwordToggleIcon.setImageResource(R.drawable.ic_eye_on)
             } else {
-                passwordEditText.inputType =
+                binding.passwordEditText.inputType =
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                passwordToggleIcon.setImageResource(R.drawable.ic_eye_off)
+                binding.passwordToggleIcon.setImageResource(R.drawable.ic_eye_off)
             }
 
-            passwordEditText.setSelection(passwordEditText.text?.length ?: 0)
+            binding.passwordEditText.setSelection(binding.passwordEditText.text?.length ?: 0)
         }
 
         // 이메일 드롭다운 클릭 시 PopupWindow 열기
-        emailDropdownIcon.setOnClickListener {
+        binding.emailDropdownIcon.setOnClickListener {
             showEmailDomainPopup()
         }
     }
@@ -144,14 +133,14 @@ class LoginActivity : AppCompatActivity() {
         val domainKakao = popupView.findViewById<TextView>(R.id.domainKakao)
 
         val addDomain: (String) -> Unit = { domain ->
-            val currentText = emailEditText.text.toString()
+            val currentText = binding.emailEditText.text.toString()
             val updatedText = if (currentText.contains("@")) {
                 currentText.substringBefore("@") + "@$domain"
             } else {
                 "$currentText@$domain"
             }
-            emailEditText.setText(updatedText)
-            emailEditText.setSelection(updatedText.length)
+            binding.emailEditText.setText(updatedText)
+            binding.emailEditText.setSelection(updatedText.length)
             popupWindow.dismiss()
         }
 
@@ -163,8 +152,8 @@ class LoginActivity : AppCompatActivity() {
         popupWindow.isFocusable = true
         popupWindow.elevation = 8f
 
-        val offsetX = emailEditText.width - popupWidth
-        popupWindow.showAsDropDown(emailEditText, offsetX, 0)
+        val offsetX = binding.emailEditText.width - popupWidth
+        popupWindow.showAsDropDown(binding.emailEditText, offsetX, 0)
     }
 
     private fun fadeInView(view: View) {
@@ -234,8 +223,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun checkLogin() {
-        val email = emailEditText.text.toString().trim()
-        val password = passwordEditText.text.toString().trim()
+        val email = binding.emailEditText.text.toString().trim()
+        val password = binding.passwordEditText.text.toString().trim()
 
         // 에러 메시지 숨기기
         emailFormatErrorText.visibility = View.GONE
