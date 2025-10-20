@@ -14,7 +14,6 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendRequestsBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendRequestAdapter
-import com.example.planup.main.friend.data.FriendActionRequestDto
 import com.example.planup.main.friend.data.FriendRequest
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch

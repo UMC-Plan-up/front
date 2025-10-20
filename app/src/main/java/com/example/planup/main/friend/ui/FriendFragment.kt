@@ -18,9 +18,7 @@ import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.network.ApiResult
-import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
-import kotlin.getValue
 
 /**
  * 친구 탭 메인
