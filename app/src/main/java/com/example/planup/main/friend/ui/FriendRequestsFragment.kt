@@ -7,6 +7,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +34,8 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendRequestAdapter
 import com.example.planup.main.friend.data.FriendRequest
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.theme.BLACK400
+import com.example.planup.theme.Typography
 import kotlinx.coroutines.launch
 
 class FriendRequestsFragment : Fragment() {
@@ -137,4 +157,55 @@ class FriendRequestsFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
     }
+}
+
+@Composable
+fun FriendRequestView(
+    onBack: () -> Unit = {}
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White)
+            .padding(20.dp)
+    ) {
+        Row(
+            modifier = Modifier.height(36.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            IconButton(
+                modifier = Modifier.size(24.dp),
+                onClick = onBack
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_left),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            Text(
+                text = "친구",
+                style = com.example.planup.theme.Typography.semiBold_3XL,
+                color = BLACK400
+            )
+        }
+        Row(
+            modifier = Modifier.height(30.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "받은 친구 신청",
+                style = Typography.medium_XL,
+                color = BLACK400
+            )
+        }
+    }
+
+}
+
+@Preview
+@Composable
+private fun FriendRequestViewPreview() {
+    FriendRequestView()
 }

@@ -16,6 +16,24 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +45,8 @@ import com.example.planup.main.friend.adapter.FriendListsAdapter
 import com.example.planup.main.friend.data.FriendInfo
 import com.example.planup.main.friend.data.FriendReportRequestDto
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.theme.BLACK400
+import com.example.planup.theme.Typography
 import kotlinx.coroutines.launch
 
 class FriendListsFragment : Fragment() {
@@ -284,16 +304,17 @@ class FriendListsFragment : Fragment() {
         }
     }
 
-    private fun blockDialog(friend: FriendInfo){
+    private fun blockDialog(friend: FriendInfo) {
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.dialog_ban_friend)
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
+            setBackgroundDrawable(ContextCompat.getDrawable(context, R.color.transparent))
             dialog.setCanceledOnTouchOutside(true)
         }
-        dialog.findViewById<TextView>(R.id.popup_block_title_tv).text = getString(R.string.popup_block_friend_title,friend.nickname)
+        dialog.findViewById<TextView>(R.id.popup_block_title_tv).text =
+            getString(R.string.popup_block_friend_title, friend.nickname)
         dialog.findViewById<TextView>(R.id.popup_friend_no_btn).setOnClickListener {
             dialog.dismiss()
         }
@@ -309,13 +330,14 @@ class FriendListsFragment : Fragment() {
                         fetchFriends() // 갱신
 
                         val inflater = LayoutInflater.from(context)
-                        val layout = inflater.inflate(R.layout.toast_grey_template,null)
-                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = getString(R.string.toast_block,friend.nickname)
+                        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text =
+                            getString(R.string.toast_block, friend.nickname)
 
                         val toast = Toast(context)
                         toast.view = layout
                         toast.duration = LENGTH_SHORT
-                        toast.setGravity(Gravity.BOTTOM,0,300)
+                        toast.setGravity(Gravity.BOTTOM, 0, 300)
                         toast.show()
                     } else {
                         Toast.makeText(requireContext(), "차단에 실패했습니다.", Toast.LENGTH_SHORT).show()
@@ -329,16 +351,18 @@ class FriendListsFragment : Fragment() {
 
         dialog.show()
     }
-    private fun deleteDialog(friend: FriendInfo){
+
+    private fun deleteDialog(friend: FriendInfo) {
         val dialog = Dialog(context as MainActivity)
         dialog.setContentView(R.layout.dialog_delete_friend)
         dialog.window?.apply {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setBackgroundDrawable(ContextCompat.getDrawable(context,R.color.transparent))
+            setBackgroundDrawable(ContextCompat.getDrawable(context, R.color.transparent))
             dialog.setCanceledOnTouchOutside(true)
         }
-        dialog.findViewById<TextView>(R.id.popup_delete_title_tv).text = getString(R.string.popup_delete_friend,friend.nickname)
+        dialog.findViewById<TextView>(R.id.popup_delete_title_tv).text =
+            getString(R.string.popup_delete_friend, friend.nickname)
         dialog.findViewById<TextView>(R.id.popup_friend_no_btn).setOnClickListener {
             dialog.dismiss()
         }
@@ -354,13 +378,14 @@ class FriendListsFragment : Fragment() {
                         fetchFriends() // 갱신
 
                         val inflater = LayoutInflater.from(context)
-                        val layout = inflater.inflate(R.layout.toast_grey_template,null)
-                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = getString(R.string.toast_delete,friend.nickname)
+                        val layout = inflater.inflate(R.layout.toast_grey_template, null)
+                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text =
+                            getString(R.string.toast_delete, friend.nickname)
 
                         val toast = Toast(context)
                         toast.view = layout
                         toast.duration = LENGTH_SHORT
-                        toast.setGravity(Gravity.BOTTOM,0,300)
+                        toast.setGravity(Gravity.BOTTOM, 0, 300)
                         toast.show()
                     } else {
                         Toast.makeText(requireContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
