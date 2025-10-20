@@ -1,8 +1,13 @@
 package com.example.planup.main.friend.data
 
 import com.example.planup.database.TokenSaver
+import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
+import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
+import com.example.planup.network.safeResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.collections.orEmpty
 
@@ -18,26 +23,47 @@ class FriendRepositoryImpl @Inject constructor(
     private val tokenSaver: TokenSaver
 ) : FriendRepository {
 
-
     /**
      * 친구 목록을 호출합니다.
-     * TODO...
      */
-    override suspend fun getFriendList(): List<FriendInfo>? {
-        val savedToken = tokenSaver.getToken()
-        if (savedToken.isNullOrBlank()) {
-            //TODO Error When Token is null or blank
-            return null
+    override suspend fun getFriendList(): ApiResult<List<FriendInfo>> =
+        withContext(Dispatchers.IO) {
+            tokenSaver.checkToken { token ->
+                safeResult(
+                    response = {
+                        friendApi.getFriendSummary(token)
+                    },
+                    onResponse = { friendDto ->
+                        if (friendDto.isSuccess) {
+                            val resultList = friendDto.result
+                            val friendList =
+                                resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                            ApiResult.Success(friendList)
+                        } else {
+                            ApiResult.Fail(friendDto.message)
+                        }
+                    }
+                )
+            }
         }
-        val response = friendApi.getFriendSummary(savedToken)
-        if (response.isSuccessful && response.body()?.isSuccess == true) {
-            val resultList = response.body()!!.result
-            val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
 
-            return friendList
-        } else {
-            return null
+    override suspend fun getFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
+        withContext(Dispatchers.IO) {
+            tokenSaver.checkToken { token ->
+                safeResult(
+                    response = {
+                        friendApi.getFriendRequests(token)
+                    },
+                    onResponse = { friendRequests ->
+                        if (friendRequests.isSuccess) {
+                            val resultList = friendRequests.result
+                            ApiResult.Success(resultList)
+                        } else {
+                            ApiResult.Fail(friendRequests.message)
+                        }
+                    }
+                )
+            }
         }
-    }
 
 }

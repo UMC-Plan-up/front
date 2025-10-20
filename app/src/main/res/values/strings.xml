@@ -815,7 +815,7 @@
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
     <string name="friend_photo_verification_btn">사진 인증</string>
     <string name="friend_today_time">##:##:##</string>
-    <string name="friend_goal_count">N 개의 목표 진행 중</string>
+    <string name="friend_goal_count">%d 개의 목표 진행 중</string>
     <string name="friend_friend_name">친구 1</string>
     <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
