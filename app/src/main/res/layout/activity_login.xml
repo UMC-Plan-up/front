@@ -7,6 +7,7 @@
     android:padding="28dp"
     android:background="@color/white" >
 
+<!--    TODO:: 이미지 파일로 교체-->
     <LinearLayout
         android:id="@+id/logoLayout"
         android:layout_width="wrap_content"

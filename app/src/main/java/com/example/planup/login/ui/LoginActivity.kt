@@ -41,19 +41,6 @@ class LoginActivity : AppCompatActivity() {
 
         initView()
         initClickListener()
-
-        window.decorView.setOnTouchListener { v, event ->
-            if (event.action == MotionEvent.ACTION_DOWN) {
-                currentFocus?.let { view ->
-                    if (view is EditText) {
-                        view.clearFocus()
-                        hideKeyboard()
-                    }
-                }
-                v.performClick()
-            }
-            true
-        }
     }
 
     private fun initView() {
@@ -75,41 +62,56 @@ class LoginActivity : AppCompatActivity() {
 
 
     private fun initClickListener() {
-        // 로그인 버튼
-        binding.loginButton.setOnClickListener { checkLogin() }
+        with(binding) {
+            // 로그인 버튼
+            loginButton.setOnClickListener { checkLogin() }
 
-        // 회원가입 화면 전환
-        binding.signupButton.setOnClickListener {
-            val intent = Intent(this, SignupActivity::class.java)
-            startActivity(intent)
-        }
-
-        // 비밀번호 찾기 화면 전환
-        binding.forgotPasswordButton.setOnClickListener {
-            val intent = Intent(this, ResetPasswordActivity::class.java)
-            startActivity(intent)
-        }
-
-        // 눈 아이콘 클릭 시 비밀번호 보이기/숨기기
-        binding.passwordToggleIcon.setOnClickListener {
-            isPwVisible = !isPwVisible // 상태 반전
-
-            if (isPwVisible) {
-                binding.passwordEditText.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                binding.passwordToggleIcon.setImageResource(R.drawable.ic_eye_on)
-            } else {
-                binding.passwordEditText.inputType =
-                    InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                binding.passwordToggleIcon.setImageResource(R.drawable.ic_eye_off)
+            // 회원가입 화면 전환
+            signupButton.setOnClickListener {
+                val intent = Intent(this@LoginActivity, SignupActivity::class.java)
+                startActivity(intent)
             }
 
-            binding.passwordEditText.setSelection(binding.passwordEditText.text?.length ?: 0)
+            // 비밀번호 찾기 화면 전환
+            forgotPasswordButton.setOnClickListener {
+                val intent = Intent(this@LoginActivity, ResetPasswordActivity::class.java)
+                startActivity(intent)
+            }
+
+            // 눈 아이콘 클릭 시 비밀번호 보이기/숨기기
+            passwordToggleIcon.setOnClickListener {
+                isPwVisible = !isPwVisible // 상태 반전
+                if (isPwVisible) {
+                    passwordEditText.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    passwordToggleIcon.setImageResource(R.drawable.ic_eye_on)
+                } else {
+                    passwordEditText.inputType =
+                        InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    passwordToggleIcon.setImageResource(R.drawable.ic_eye_off)
+                }
+
+                passwordEditText.setSelection(passwordEditText.text?.length ?: 0)
+            }
+
+            // 이메일 드롭다운 클릭 시 PopupWindow 열기
+            emailDropdownIcon.setOnClickListener {
+                showEmailDomainPopup()
+            }
         }
 
-        // 이메일 드롭다운 클릭 시 PopupWindow 열기
-        binding.emailDropdownIcon.setOnClickListener {
-            showEmailDomainPopup()
+        // TODO:: 동작 확인 필요
+        window.decorView.setOnTouchListener { v, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                currentFocus?.let { view ->
+                    if (view is EditText) {
+                        view.clearFocus()
+                        hideKeyboard()
+                    }
+                }
+                v.performClick()
+            }
+            true
         }
     }
 
