@@ -12,8 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.planup.theme.BLACK200
-import com.example.planup.theme.BLUE200
+import com.example.planup.theme.Black200
+import com.example.planup.theme.Blue200
 import com.example.planup.theme.Typography
 import com.example.planup.theme.fontColor
 
@@ -31,8 +31,8 @@ fun PlanUpButton(
             .height(44.dp)
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
-            containerColor = BLUE200,
-            disabledContainerColor = BLACK200
+            containerColor = Blue200,
+            disabledContainerColor = Black200
         ),
         shape = RoundedCornerShape(6.dp)
     ) {
