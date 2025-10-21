@@ -40,7 +40,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 @AndroidEntryPoint
-class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
+class LoginActivityNew: AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
@@ -161,9 +161,8 @@ class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
                     when(event) {
                         is LoginViewModel.Event.FailLogin -> makeToast(event.message)
                         LoginViewModel.Event.SuccessLogin -> {
-                            // TODO:: 메인으로 이동
-                            service.setUserInfoAdapter(this@LoginActivityNew)
-                            service.userInfoService()
+                            startActivity(Intent(this@LoginActivityNew, MainActivity::class.java))
+                            finish()
                         }
                         LoginViewModel.Event.UnknownEmail -> makeToast("등록되지 않은 이메일이에요")
                         LoginViewModel.Event.UnknownError -> makeToast("알 수 없는 오류가 발생했습니다")
@@ -263,31 +262,6 @@ class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
         view?.let {
             imm.hideSoftInputFromWindow(it.windowToken, 0)
         }
-    }
-
-    //유저 정보 요청 통신 성공
-    override fun successUserInfo(user: UserInfo) {
-        // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
-        // TODO:: UserRepository 로 이전
-        saveUserInfoAndGoToMain(
-            user.id,
-            user.email,
-            user.nickname,
-            user.profileImage
-        )
-    }
-
-    //유저 정보 요청 통신 실패 -> 토스트 메시지 출력
-    override fun failUserInfo(message: String) {
-        val inflater = LayoutInflater.from(this)
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
-
-        val toast = Toast(this)
-        toast.view = layout
-        toast.duration = Toast.LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
-        toast.show()
     }
 
     private fun toast(msg: String) {

@@ -86,6 +86,7 @@ class UserRepositoryImpl @Inject constructor(
                         // 토큰에 Bearer 붙이지 않고 저장
                         tokenSaver.saveToken(result.accessToken)
 
+                        userInfoSaver.clearAllUserInfo()
                         userInfoSaver.saveNickName(result.nickname)
                         userInfoSaver.saveEmail(email)
                         userInfoSaver.saveProfileImg(result.profileImgUrl)
@@ -110,9 +111,10 @@ class UserRepositoryImpl @Inject constructor(
                         val result = response.result
 
                         ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
 
-                    ApiResult.Fail(response.message)
                 }
             )
         } else {
