@@ -21,6 +21,11 @@ class MyPageNickNameEditViewModel @Inject constructor(
     val charLimit = 20
 
     var newName by mutableStateOf("")
+        private set
+
+    fun updateName(name: String) {
+        newName = name
+    }
 
     var errorMsg by mutableStateOf("")
         private set
