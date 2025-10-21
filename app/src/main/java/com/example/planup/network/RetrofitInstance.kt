@@ -53,6 +53,7 @@ object RetrofitInstance {
 
     val termsApi: TermsApi by lazy { retrofit.create(TermsApi::class.java) }
     val profileApi: ProfileApi by lazy { retrofit.create(ProfileApi::class.java) }
+    @Deprecated("Repository 에서 주입 받아 사용")
     val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
     val goalApi: GoalApi by lazy { retrofit.create(GoalApi::class.java) }
     val friendApi: FriendApi by lazy { retrofit.create(FriendApi::class.java) }
