@@ -7,6 +7,7 @@
     android:padding="28dp"
     android:background="@color/white" >
 
+<!--    TODO:: 이미지 파일로 교체-->
     <LinearLayout
         android:id="@+id/logoLayout"
         android:layout_width="wrap_content"
@@ -162,7 +163,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
-        android:id="@+id/forgotPasswordText"
+        android:id="@+id/forgotPasswordButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/password_text"
@@ -182,7 +183,7 @@
         android:layout_marginTop="20dp"
         android:gravity="center"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/forgotPasswordText"
+        app:layout_constraintTop_toBottomOf="@id/forgotPasswordButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 

@@ -7,8 +7,11 @@ import com.example.planup.database.TokenSaver
 class TokenManager(
     private val tokenSaver: TokenSaver
 ) {
+    // 토큰 관련 기능 정리될 때 까지 임시로 추가
     var token: String?
-        get() = tokenSaver.getToken()
+        get() = tokenSaver.getToken()?.let {
+            if(it.startsWith("Bearer")) it else "Bearer $it"
+        }
         set(value) {
             tokenSaver.saveToken(value)
         }

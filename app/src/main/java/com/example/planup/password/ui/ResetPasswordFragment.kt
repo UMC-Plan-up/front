@@ -21,7 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentResetPasswordBinding
 import com.example.planup.databinding.PopupResetBinding
-import com.example.planup.login.LoginActivityNew
+import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.data.PasswordUpdateRequest
 import kotlinx.coroutines.launch

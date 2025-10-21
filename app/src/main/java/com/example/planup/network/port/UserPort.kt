@@ -30,6 +30,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
 
+@Deprecated(message = "UserApi 로 통일해서 사용")
 interface UserPort {
 
     //내 초대코드 조회

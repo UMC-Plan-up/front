@@ -1,7 +1,6 @@
 package com.example.planup.network.controller
 
 import android.util.Log
-import com.example.planup.login.adapter.LoginAdapter
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.CloseAccountAdapter
@@ -18,15 +17,12 @@ import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.KakaoLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
-import com.example.planup.network.data.Login
 import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.ProfileImage
-import com.example.planup.network.data.SyncKakao
 import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
-import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.KakaoLinkCode
 import com.example.planup.network.getRetrofit
@@ -58,12 +54,6 @@ class UserController {
     private lateinit var closeAccountAdapter: CloseAccountAdapter
     fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
         this.closeAccountAdapter = adapter
-    }
-
-    //로그인
-    private lateinit var loginAdapter: LoginAdapter
-    fun setLoginAdapter(adapter: LoginAdapter) {
-        this.loginAdapter = adapter
     }
 
     //로그아웃
@@ -304,29 +294,6 @@ class UserController {
                     serviceAdapter.failServiceSetting(t.toString())
                 }
             })
-    }
-
-    // 로그인
-    fun loginService(loginDto: LoginDto) {
-        val loginService = getRetrofit().create(UserPort::class.java)
-        loginService.login(loginDto).enqueue(object : Callback<UserResponse<Login>> {
-            override fun onResponse(
-                call: Call<UserResponse<Login>>,
-                response: Response<UserResponse<Login>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    loginAdapter.successLogin(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    loginAdapter.failLogin(response.body()!!.message)
-                } else {
-                    loginAdapter.failLogin("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<Login>>, t: Throwable) {
-                loginAdapter.failLogin(t.toString())
-            }
-        })
     }
 
     // 로그아웃

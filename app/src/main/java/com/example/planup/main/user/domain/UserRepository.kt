@@ -1,7 +1,7 @@
 package com.example.planup.main.user.domain
 
+import com.example.planup.login.data.LoginResponse
 import com.example.planup.network.ApiResult
-import com.example.planup.signup.data.InviteCodeResult
 import com.example.planup.signup.data.InviteCodeValidateResponse
 
 interface UserRepository {
@@ -22,4 +22,9 @@ interface UserRepository {
     suspend fun changeNickName(
         newNickName: String
     ): ApiResult<String>
+
+    suspend fun postLogin(
+        email: String,
+        password: String
+    ): ApiResult<LoginResponse.Result>
 }

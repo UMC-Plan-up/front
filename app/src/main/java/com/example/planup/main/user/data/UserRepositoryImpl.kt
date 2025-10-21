@@ -3,12 +3,13 @@ package com.example.planup.main.user.data
 import com.example.planup.database.TokenSaver
 import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
+import com.example.planup.login.data.LoginRequest
+import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.safeResult
-import com.example.planup.signup.data.InviteCodeResult
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
 import kotlinx.coroutines.Dispatchers
@@ -95,5 +96,28 @@ class UserRepositoryImpl @Inject constructor(
                 }
             )
         }
+    }
+
+    override suspend fun postLogin(email: String, password: String): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.login(LoginRequest(email = email, password = password))
+            },
+            onResponse =  { response ->
+                if(response.isSuccess) {
+                    val result = response.result
+
+                    // 토큰 여부 검증
+                    if(result.accessToken.isNotEmpty()) {
+                        // 토큰에 Bearer 붙이지 않고 저장
+                        tokenSaver.saveToken(result.accessToken)
+                    }
+
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
     }
 }
