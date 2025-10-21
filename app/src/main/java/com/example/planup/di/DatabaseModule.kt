@@ -2,6 +2,7 @@ package com.example.planup.di
 
 import android.content.Context
 import com.example.planup.database.TokenSaver
+import com.example.planup.database.UserInfoSaver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,5 +21,13 @@ class DatabaseModule {
         @ApplicationContext context: Context
     ) : TokenSaver {
         return TokenSaver(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserInfoSaver(
+        @ApplicationContext context: Context
+    ) : UserInfoSaver {
+        return UserInfoSaver(context)
     }
 }

@@ -61,14 +61,15 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.viewpager2)
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
+
+
     implementation("com.kakao.sdk:v2-user:2.21.6")
     implementation("com.kakao.sdk:v2-share:2.21.6")
     implementation("com.kakao.sdk:v2-auth:2.21.6")
+
     /*gson 사용하기 위한 라이브러리 다운*/
-//    implementation("com.google.code.gson:gson:2.8.7")
     implementation("com.google.code.gson:gson:2.13.1")
+
     //Retrofit 사용을 위한 lib 추가
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
     //implementation(libs.kotlin.stdlib.v190)
