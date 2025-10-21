@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.example.planup.component.TopHeader
+import com.example.planup.theme.Black400
+import com.example.planup.theme.Typography
 
 /**
  * 하위 Route 진입시 공통 화면
@@ -56,7 +58,9 @@ fun RoutePageDefault(
         ) {
             categoryText?.let { category ->
                 Text(
-                    text = category
+                    text = category,
+                    style = Typography.Medium_L,
+                    color = Black400
                 )
             }
             pageContent()

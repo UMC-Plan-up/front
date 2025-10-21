@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
+import com.example.planup.theme.Black400
+import com.example.planup.theme.Typography
 
 @Composable
 fun TopHeader(
@@ -40,7 +42,9 @@ fun TopHeader(
                 }
             }
             Text(
-                text = title
+                text = title,
+                style = Typography.Medium_2XL,
+                color = Black400
             )
         }
         otherActionContent()

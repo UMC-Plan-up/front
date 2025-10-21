@@ -17,7 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
-import com.example.planup.theme.Semantic5
+import com.example.planup.theme.SemanticB5
 
 @Composable
 fun RouteMenuItem(
@@ -48,7 +48,7 @@ fun RouteMenuItem(
         }
         HorizontalDivider(
             modifier = Modifier.align(Alignment.BottomCenter),
-            color = Semantic5
+            color = SemanticB5
         )
     }
 }
