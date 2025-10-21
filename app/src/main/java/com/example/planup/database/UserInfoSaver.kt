@@ -14,10 +14,17 @@ class UserInfoSaver(
         private const val PREF_TOKEN_NAME = "userInfo"
 
         private const val KEY_NICKNAME = "nickname"
+        private const val KEY_EMAIL = "email"
+        private const val KEY_PROFILE_IMG = "profileImg"
+
         private const val KEY_INVITE_CODE = "invite"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
+
+    // 저장된 유저 정보가 없는지 확인
+    val isEmpty
+        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMG)
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
@@ -32,6 +39,26 @@ class UserInfoSaver(
     fun saveNickName(nickName: String) {
         prefs.edit {
             putString(KEY_NICKNAME, nickName)
+        }
+    }
+
+    fun getEmail(): String {
+        return prefs.getString(KEY_EMAIL, "") ?: ""
+    }
+
+    fun saveEmail(email: String) {
+        prefs.edit {
+            putString(KEY_EMAIL, email)
+        }
+    }
+
+    fun getProfileImg(): String? {
+        return prefs.getString(KEY_PROFILE_IMG, null)
+    }
+
+    fun saveProfileImg(profileImg: String) {
+        prefs.edit {
+            putString(KEY_PROFILE_IMG, profileImg)
         }
     }
 
@@ -57,9 +84,11 @@ class UserInfoSaver(
      */
     fun clearAllUserInfo(){
         prefs.edit {
+            putString(KEY_EMAIL, null)
             putString(KEY_NICKNAME,null)
+            putString(KEY_PROFILE_IMG, null)
             putString(KEY_INVITE_CODE, null)
-
         }
     }
+
 }
