@@ -23,7 +23,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
-import com.example.planup.login.adapter.LoginAdapter
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
