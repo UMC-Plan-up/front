@@ -39,7 +39,7 @@ fun PlanUpButton(
         Text(
             text = title,
             color = fontColor,
-            style = Typography.medium_SM
+            style = Typography.Medium_SM
         )
     }
 }
