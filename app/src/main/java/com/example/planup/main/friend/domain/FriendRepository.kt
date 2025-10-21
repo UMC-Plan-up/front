@@ -1,7 +1,6 @@
 package com.example.planup.main.friend.domain
 
 import com.example.planup.main.friend.data.FriendInfo
-import com.example.planup.main.friend.data.FriendRequestsResponse
 import com.example.planup.main.friend.data.FriendRequestsResult
 import com.example.planup.network.ApiResult
 
