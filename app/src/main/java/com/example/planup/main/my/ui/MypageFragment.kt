@@ -37,7 +37,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -59,6 +58,7 @@ import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.my.adapter.ProfileImageAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
+import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.network.controller.UserController
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -279,9 +279,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         }
         //기타 계정 관리
         binding.mypageOtherIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageOtherFragment())
-                .commitAllowingStateLoss()
+
         }
         //차단 친구 관리
         binding.mypageFriendBlockIv.setOnClickListener {
@@ -647,7 +645,7 @@ fun MyPageView(
                     MyPageRoute.ChangeEmail to R.string.mypage_email,
                     MyPageRoute.ChangePassword to R.string.mypage_password,
                     MyPageRoute.LinkKakao to R.string.mypage_kakao,
-                    MyPageRoute.OtherAccount to R.string.mypage_other,
+                    MyPageRoute.Other to R.string.mypage_other,
                 )
             )
 
@@ -685,28 +683,8 @@ private fun RouteHeader(
 private fun RouteItem(
     title: String,
     action: () -> Unit
-) {
-    Box {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(44.dp)
-                .clickable {
-                    action()
-                },
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title
-            )
-            Image(
-                painter = painterResource(R.drawable.ic_arrow_right),
-                contentDescription = null
-            )
-        }
-        HorizontalDivider(
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
-    }
-}
+) = RouteMenuItem(
+    title = title,
+    showArrow = true,
+    action = action
+)
