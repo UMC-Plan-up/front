@@ -25,6 +25,8 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -33,7 +35,6 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.adapter.ProfileImageAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.network.controller.UserController
@@ -172,10 +173,16 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageBinding.inflate(inflater, container, false)
-        init()
-        clickListener()
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MyPageNavView()
+            }
+        }
+//        binding = FragmentMypageBinding.inflate(inflater, container, false)
+//        init()
+//        clickListener()
+//        return binding.root
     }
 
     private fun init() {
