@@ -19,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFindPasswordBinding
 import com.example.planup.databinding.PopupEmailBinding
-import com.example.planup.login.LoginActivityNew
+import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.password.data.PasswordChangeEmailRequestDto

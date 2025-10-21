@@ -1,7 +1,7 @@
 package com.example.planup.network
 
-import com.example.planup.login.data.LoginRequestDto
-import com.example.planup.login.data.LoginResponseDto
+import com.example.planup.login.data.LoginRequest
+import com.example.planup.login.data.LoginResponse
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -29,11 +29,8 @@ import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -50,8 +47,8 @@ interface UserApi {
     // 로그인
     @POST("/users/login")
     suspend fun login(
-        @Body request: LoginRequestDto
-    ): Response<LoginResponseDto>
+        @Body request: LoginRequest
+    ): Response<LoginResponse>
 
     // 내 초대코드 조회
     @GET("users/me/invite-code")

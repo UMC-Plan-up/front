@@ -80,7 +80,7 @@
         </activity>
 
         <activity
-            android:name=".login.LoginActivityNew"
+            android:name=".login.ui.LoginActivityNew"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 

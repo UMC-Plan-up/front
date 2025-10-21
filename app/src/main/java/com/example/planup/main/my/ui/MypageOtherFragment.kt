@@ -18,7 +18,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageOtherBinding
 import androidx.core.graphics.drawable.toDrawable
-import com.example.planup.login.LoginActivityNew
+import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.network.controller.UserController
 

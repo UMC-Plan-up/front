@@ -10,6 +10,7 @@ import javax.inject.Inject
 class App : Application() {
 
     companion object {
+        @Deprecated(message = "TokenSaver 사용")
         lateinit var jwt: TokenManager
     }
 
@@ -20,6 +21,7 @@ class App : Application() {
         super.onCreate()
         jwt = TokenManager(tokenSaver)
 
+        // TODO:: 상수화
         com.kakao.sdk.common.KakaoSdk.init(this, getString(R.string.kakao_app_key))
     }
 }
