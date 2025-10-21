@@ -26,22 +26,44 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import coil3.compose.AsyncImage
 import com.bumptech.glide.Glide
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
@@ -51,6 +73,7 @@ import com.example.planup.main.my.adapter.ProfileImageAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.network.controller.UserController
+import com.example.planup.theme.Typography
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -577,6 +600,20 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 fun MyPageView(
     navigateRoute: (route: MyPageRoute) -> Unit
 ) {
+    MyPageViewContent(
+        navigateRoute = navigateRoute,
+        profileImage = "",
+        email = "test@gmail.com(수정예정)"
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun MyPageViewContent(
+    navigateRoute: (route: MyPageRoute) -> Unit = {},
+    profileImage: String = "",
+    email: String = "",
+) {
 
     fun LazyListScope.initHeader(
         @StringRes header: Int
@@ -617,10 +654,12 @@ fun MyPageView(
     Column(
         modifier = Modifier.padding(20.dp)
     ) {
+        Spacer(Modifier.height(20.dp))
+        MyPageHeader(profileImage, email)
+        Spacer(Modifier.height(36.dp))
         LazyColumn(
             modifier = Modifier.padding(horizontal = 13.dp)
         ) {
-
             initHeaderWithContent(
                 header = R.string.mypage_profile,
                 content = listOf(
@@ -660,11 +699,120 @@ fun MyPageView(
 }
 
 @Composable
+private fun MyPageHeader(
+    profileImage: String,
+    email: String
+) {
+    var openPopup by remember {
+        mutableStateOf(false)
+    }
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                model = profileImage,
+                placeholder = painterResource(R.drawable.profile_image),
+                error = painterResource(R.drawable.profile_image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.BottomEnd),
+            ) {
+                IconButton(
+                    onClick = {
+                        openPopup = true
+                    },
+                    modifier = Modifier
+                        .size(20.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.badge_rewrite),
+                        contentDescription = null
+                    )
+                }
+                DropdownMenu(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.BottomEnd),
+                    expanded = openPopup,
+                    onDismissRequest = { openPopup = false },
+                    containerColor = Color.White
+                ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "사진 보관함",
+                                style = Typography.Medium_SM
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_item_album),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "사진 찍기",
+                                style = Typography.Medium_SM
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_item_camera),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+
+                        }
+                    )
+                }
+            }
+
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.mypage_cur_email),
+                style = Typography.Semibold_SM
+            )
+            Text(
+                text = email,
+                style = Typography.Medium_SM
+            )
+        }
+    }
+}
+
+@Composable
 private fun RouteHeader(
     title: String
 ) {
     Text(
-        text = title
+        text = title,
+        style = Typography.Semibold_L
     )
 }
 
