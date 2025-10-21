@@ -330,30 +330,6 @@ class UserController {
             })
     }
 
-    // 로그인
-    // TODO:: UserRepository 로 이전
-    fun loginService(loginDto: LoginDto) {
-        val loginService = getRetrofit().create(UserPort::class.java)
-        loginService.login(loginDto).enqueue(object : Callback<UserResponse<Login>> {
-            override fun onResponse(
-                call: Call<UserResponse<Login>>,
-                response: Response<UserResponse<Login>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    loginAdapter.successLogin(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    loginAdapter.failLogin(response.body()!!.message)
-                } else {
-                    loginAdapter.failLogin("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<Login>>, t: Throwable) {
-                loginAdapter.failLogin(t.toString())
-            }
-        })
-    }
-
     // 로그아웃
     fun logoutService() {
         val logoutService = getRetrofit().create(UserPort::class.java)

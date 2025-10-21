@@ -79,6 +79,13 @@ class UserRepositoryImpl @Inject constructor(
             onResponse =  { response ->
                 if(response.isSuccess) {
                     val result = response.result
+
+                    // 토큰 여부 검증
+                    if(result.accessToken.isNotEmpty()) {
+                        // 토큰에 Bearer 붙이지 않고 저장
+                        tokenSaver.saveToken(result.accessToken)
+                    }
+
                     ApiResult.Success(result)
                 } else {
                     ApiResult.Fail(response.message)

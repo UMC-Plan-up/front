@@ -18,7 +18,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.login.adapter.LoginAdapter
@@ -27,9 +29,7 @@ import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.App
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.UserController
-import com.example.planup.network.data.Login
 import com.example.planup.network.data.UserInfo
-import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.KakaoLoginRequest
@@ -41,7 +41,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 @AndroidEntryPoint
-class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
+class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
     lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
@@ -87,6 +87,7 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         setContentView(binding.root)
         init()
         clickListener()
+        initObservers()
         window.decorView.setOnTouchListener { v, event ->
             if (event.action == MotionEvent.ACTION_DOWN) {
                 currentFocus?.let { view ->
@@ -105,12 +106,13 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
         service = UserController()
-        service.setLoginAdapter(this)
     }
 
     private fun clickListener() {
         // 로그인 버튼
-        binding.loginButton.setOnClickListener { checkLogin() }
+        binding.loginButton.setOnClickListener {
+            checkLogin()
+        }
 
         // 회원가입 화면 전환
         binding.signupButton.setOnClickListener {
@@ -148,8 +150,30 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
 
         // 카카오 로그인 버튼
         binding.kakaoLoginLayout.setOnClickListener {
+            // TODO:: 뷰모델로 로직 분리
             onClickKakaoLogin()
         }
+    }
+
+    private fun initObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.eventChannel.collect { event ->
+                    when(event) {
+                        is LoginViewModel.Event.FailLogin -> errorToast(event.message)
+                        LoginViewModel.Event.SuccessLogin -> {
+                            // TODO:: 메인으로 이동
+                            service.setUserInfoAdapter(this@LoginActivityNew)
+                            service.userInfoService()
+                        }
+                        LoginViewModel.Event.UnknownEmail -> errorToast("등록되지 않은 이메일이에요")
+                        LoginViewModel.Event.UnknownError -> errorToast("알 수 없는 오류가 발생했습니다")
+                        LoginViewModel.Event.WrongPassword -> errorToast("비밀번호를 다시 확인해 주세요.")
+                    }
+                }
+            }
+        }
+
     }
 
     private fun checkLogin() {
@@ -158,11 +182,9 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
             makeToast(R.string.toast_incorrect_email)
             return
         } else { //이메일 형식이 옳바른 경우 서버에 로그인 요청
-            service.loginService(
-                LoginDto(
-                    binding.emailEditText.text.toString(),
-                    binding.passwordEditText.text.toString()
-                )
+            viewModel.requestLogin(
+                email = binding.emailEditText.text.toString(),
+                password = binding.passwordEditText.text.toString()
             )
         }
     }
@@ -236,6 +258,10 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         toast.show()
     }
 
+    private fun makeToast(message: String) {
+
+    }
+
     //화면 터치 시 키보드 사라지게
     private fun hideKeyboard(view: View?) {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
@@ -244,38 +270,10 @@ class LoginActivityNew: AppCompatActivity(), LoginAdapter, UserInfoAdapter {
         }
     }
 
-    //로그인 통신 성공
-    override fun successLogin(loginResult: Login) {
-        when (loginResult.message) {
-            "존재하지 않는 사용자입니다" -> errorToast("등록되지 않은 이메일이에요")
-            "비밀번호가 일치하지 않습니다" -> errorToast("비밀번호를 다시 확인해 주세요.")
-            else -> {
-                editor.putString("accessToken", loginResult.accessToken)
-                editor.apply() // 즉시 저장
-                App.Companion.jwt.token = "Bearer " + loginResult.accessToken
-                // 토큰 및 사용자 정보 저장 로직을 통합 함수로 처리
-                service.setUserInfoAdapter(this)
-                service.userInfoService()
-            }
-        }
-    }
-
-    //로그인 통신 실패 -> 토스트 메시지 출력
-    override fun failLogin(message: String) {
-        val inflater = LayoutInflater.from(this)
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
-
-        val toast = Toast(this)
-        toast.view = layout
-        toast.duration = Toast.LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
-        toast.show()
-    }
-
     //유저 정보 요청 통신 성공
     override fun successUserInfo(user: UserInfo) {
         // 유저 정보와 토큰을 함께 저장하고 메인으로 이동하는 통합 함수 호출
+        // TODO:: UserRepository 로 이전
         saveUserInfoAndGoToMain(
             user.id,
             user.email,
