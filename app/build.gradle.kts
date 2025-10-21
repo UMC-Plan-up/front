@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
@@ -88,6 +89,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
+
     implementation("com.android.billingclient:billing-ktx:6.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
@@ -113,5 +117,9 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.11.0")
     // Optional - Integration with ViewModels
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.5")
+    implementation("androidx.navigation:navigation-compose:2.9.5")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
 }

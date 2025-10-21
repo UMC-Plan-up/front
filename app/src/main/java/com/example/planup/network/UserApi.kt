@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.network.data.UserResponse
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -133,6 +134,12 @@ interface UserApi {
     suspend fun checkNickname(
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
+
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
 
     // 비밀번호 재설정
     @POST("/users/password/change")

@@ -5,6 +5,7 @@ import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
@@ -70,6 +71,32 @@ class UserRepositoryImpl @Inject constructor(
                 )
             }
         }
+
+
+    override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
+        val prevName = userInfoSaver.getNickName()
+        if (prevName == newNickName){
+            return@withContext ApiResult.Exception(
+                error = UserNameAlreadyExistException()
+            )
+        }
+        tokenSaver.checkToken { token ->
+            safeResult(
+                response = {
+                    userApi.changeNickname(newNickName)
+                },
+                onResponse = { userResponse ->
+                    if (userResponse.isSuccess) {
+                        val nickName = userResponse.result
+                        userInfoSaver.saveNickName(nickName)
+                        ApiResult.Success(nickName)
+                    } else {
+                        ApiResult.Fail(userResponse.message)
+                    }
+                }
+            )
+        }
+    }
 
     override suspend fun postLogin(email: String, password: String): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
         safeResult(
