@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.network.data.UserResponse
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -29,11 +30,8 @@ import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
