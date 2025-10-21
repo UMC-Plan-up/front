@@ -30,9 +30,7 @@ import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.network.controller.UserController
-import com.example.planup.network.data.UserInfo
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet

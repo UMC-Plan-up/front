@@ -1,7 +1,6 @@
 package com.example.planup.network.controller
 
 import android.util.Log
-import com.example.planup.main.home.adapter.UserInfoAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
@@ -19,7 +18,6 @@ import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.ProfileImage
-import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
@@ -42,12 +40,6 @@ class UserController {
     private lateinit var nicknameChangeAdapter: NicknameChangeAdapter
     fun setNicknameChangeAdapter(adapter: NicknameChangeAdapter) {
         this.nicknameChangeAdapter = adapter
-    }
-
-    //회원 정보 조회
-    private lateinit var userInfoAdapter: UserInfoAdapter
-    fun setUserInfoAdapter(adapter: UserInfoAdapter) {
-        this.userInfoAdapter = adapter
     }
 
     //회원 탈퇴
@@ -106,30 +98,6 @@ class UserController {
     private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
     fun setKakaoLinkAdapter(adapter: KakaoLinkAdapter) {
         this.kakaoLinkAdapter = adapter
-    }
-
-    //유저 정보 조회
-    fun userInfoService() {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.getUserInfo().enqueue(object : Callback<UserResponse<UserInfo>> {
-            override fun onResponse(
-                call: Call<UserResponse<UserInfo>>,
-                response: Response<UserResponse<UserInfo>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    userInfoAdapter.successUserInfo(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    userInfoAdapter.failUserInfo(response.body()!!.message)
-                } else {
-                    userInfoAdapter.failUserInfo("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<UserInfo>>, t: Throwable) {
-                userInfoAdapter.failUserInfo(t.toString())
-            }
-
-        })
     }
 
     //새로운 nickname으로 수정
