@@ -89,6 +89,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:compiler:4.16.0")
 
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
+
     implementation("com.android.billingclient:billing-ktx:6.1.0")
     implementation("androidx.core:core-splashscreen:1.0.1")
 
