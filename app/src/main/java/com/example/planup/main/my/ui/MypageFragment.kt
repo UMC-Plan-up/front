@@ -25,8 +25,28 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -89,6 +109,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
             }
         }
     }
+
     //카메라 권한 설정에 대한 콜백 변수
     //카메라 실행 또는 토스트 메시지
     private val cameraPermissionLauncher = registerForActivityResult(
@@ -114,13 +135,14 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
             Toast.makeText(context as MainActivity, "파일 접근 권한이 필요합니다.", LENGTH_SHORT).show()
         }
     }
+
     //앨범에서 선택한 사진을 처리하는 콜백 변수
     private val albumLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         if (result.resultCode == RESULT_OK) {
             val uri = result.data?.data
-            val file = uriToFile(context as MainActivity,uri!!)
+            val file = uriToFile(context as MainActivity, uri!!)
 
             file?.let {
                 val requestFile = it.asRequestBody("image/png".toMediaTypeOrNull())
@@ -131,10 +153,11 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
             }
         }
     }
+
     //카메라 실행 이후 콜백 변수
     private val cameraLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
-    ) {  result ->
+    ) { result ->
         if (result.resultCode == RESULT_OK && cameraImageUri != null) {
             val file = uriToFile(context as MainActivity, cameraImageUri!!)
 
@@ -154,7 +177,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val fileImageUri = result.data?.data
-        if(result.resultCode == RESULT_OK) {
+        if (result.resultCode == RESULT_OK) {
             val file = uriToFile(context as MainActivity, fileImageUri!!)
 
             file?.let {
@@ -186,7 +209,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     private fun init() {
-        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val height = binding.mypageCl.height
                 binding.mypageInnerCl.minHeight = height
@@ -204,8 +228,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         binding.mypageMainEmailTv.text = prefs.getString("email", "null").toString()
         //사용자 프로필 사진
         Glide.with(context as MainActivity)
-            .load(prefs.getString("profileImg","no-data"))
-            .error(ContextCompat.getDrawable(context,R.color.red_300)) //디버깅용 or 오류 이미지일 때 추가해도 될듯
+            .load(prefs.getString("profileImg", "no-data"))
+            .error(ContextCompat.getDrawable(context, R.color.red_300)) //디버깅용 or 오류 이미지일 때 추가해도 될듯
             .into(binding.mypageMainImageIv)
     }
 
@@ -307,7 +331,12 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
         // 팝업 바깥 클릭 시 닫힘 설정
         popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context as MainActivity,R.color.transparent))
+        popupWindow.setBackgroundDrawable(
+            ContextCompat.getDrawable(
+                context as MainActivity,
+                R.color.transparent
+            )
+        )
 
         // 팝업 표시 (예: 이미지뷰 아래에)
         popupWindow.showAsDropDown(view)
@@ -335,7 +364,11 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         //tiramisu 이상: 사진 접근 허용
         //나머지: 저장소 읽기 허용
         val permissionList = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(READ_MEDIA_VISUAL_USER_SELECTED, Manifest.permission.READ_MEDIA_IMAGES)
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(
+                READ_MEDIA_VISUAL_USER_SELECTED,
+                Manifest.permission.READ_MEDIA_IMAGES
+            )
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
             else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
@@ -343,12 +376,16 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         val denied = permissionList.filter {
             //permissionList의 원소(권한)이 granted가 아닌 경우에만 denied에 저장
             //denied가 empty이면 모든 권한이 granted 상태라는 뜻
-            ContextCompat.checkSelfPermission(context as MainActivity, it) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context as MainActivity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
         }
         if (denied.isNotEmpty()) {
             //안드로이드 14 이상인 경우 하나의 권한만 허용해도 앨범 접근
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-                && denied.size < 2) {
+                && denied.size < 2
+            ) {
                 openAlbum()
             } else {
                 //granted 아닌 권한에 대해 허용을 요청하는 팝업 출력
@@ -361,10 +398,13 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //카메라 권한 설정 또는 카메라 열기
-    private fun accessCamera(){
+    private fun accessCamera() {
         val permission = arrayOf(Manifest.permission.CAMERA)
         val denied = permission.filter {
-            ContextCompat.checkSelfPermission(context as MainActivity,it) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context as MainActivity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
         }
         if (denied.isNotEmpty()) {
             cameraPermissionLauncher.launch(denied[0])
@@ -374,7 +414,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //파일 권한 설정 또는 파일 열기
-    private fun accessFile(){
+    private fun accessFile() {
 
         var permission: Array<String>
         // SDK 버전에 따라 요청 권한 다르게
@@ -384,9 +424,12 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
             permission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
         val denied = permission.filter {
-            ContextCompat.checkSelfPermission(context as MainActivity, it) != PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context as MainActivity,
+                it
+            ) != PackageManager.PERMISSION_GRANTED
         }
-        if (denied.isNotEmpty()){
+        if (denied.isNotEmpty()) {
             filePermissionLauncher.launch(denied[0])
         } else {
             openFile()
@@ -395,15 +438,16 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
     //앨범 열기
     private fun openAlbum() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
-        }
+        val intent =
+            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
+                type = "image/*"
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
+            }
         albumLauncher.launch(intent)
     }
 
     //카메라 열기
-    private fun openCamera(){
+    private fun openCamera() {
         val photoFile = createImageFile(context as MainActivity)
         cameraImageUri = FileProvider.getUriForFile(
             context as MainActivity,
@@ -417,7 +461,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //파일 열기
-    private fun openFile(){
+    private fun openFile() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
             addCategory(Intent.CATEGORY_OPENABLE)
             type = "image/png"  // png 파일만 표시
@@ -453,15 +497,15 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //API 오류에 대한 토스트 메시지 출력
-    private fun errorToast(message: String){
+    private fun errorToast(message: String) {
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
 
@@ -479,13 +523,14 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
     //마케팅 수신 동의 API 오류
     override fun failServiceSetting(message: String) {
-       errorToast(message)
+        errorToast(message)
     }
 
     //프로필 이미지 API 성공
     override fun successProfileImage(image: String) {
         //사용자 프로필 사진
-        Glide.with(context as MainActivity).load(prefs.getString("profileImg","no-data")).into(binding.mypageMainImageIv)
+        Glide.with(context as MainActivity).load(prefs.getString("profileImg", "no-data"))
+            .into(binding.mypageMainImageIv)
     }
 
     //프로필 이미지 API 오류
@@ -494,7 +539,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //uri를 파일 형식으로 전환
-    private fun uriToFile(context: Context, uri: Uri): File?{
+    private fun uriToFile(context: Context, uri: Uri): File? {
         val inputStream = context.contentResolver.openInputStream(uri)
         inputStream?.let {
             val file = createImageFile(context)
@@ -503,6 +548,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         }
         return null
     }
+
     //이미지 파일 생성
     private fun createImageFile(context: Context): File {
         val timeStamp = System.currentTimeMillis()
@@ -514,14 +560,15 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
             storageDir
         )
     }
+
     //생성한 파일을 바이트 스트림으로 전환
-    private fun copyInputStreamToFile(inputStream: InputStream,file: File){
+    private fun copyInputStreamToFile(inputStream: InputStream, file: File) {
         try {
             FileOutputStream(file).use { outputStream ->
                 val buffer = ByteArray(4 * 1024)
                 var read: Int
-                while (inputStream.read(buffer).also {read = it} != -1) {
-                   outputStream.write(buffer, 0, read)
+                while (inputStream.read(buffer).also { read = it } != -1) {
+                    outputStream.write(buffer, 0, read)
                 }
                 outputStream.flush()
             }
@@ -534,5 +581,125 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
                 e.printStackTrace()
             }
         }
+    }
+}
+
+@Composable
+fun MyPageView(
+    navigateRoute: (route: MyPageRoute) -> Unit
+) {
+
+    fun LazyListScope.initHeader(
+        @StringRes header: Int
+    ) {
+        item(
+            contentType = "header"
+        ) {
+            RouteHeader(
+                title = stringResource(header)
+            )
+        }
+    }
+
+    fun LazyListScope.initHeaderWithContent(
+        @StringRes header: Int,
+        content: List<Pair<MyPageRoute, Int>>,
+        withSpacer: Boolean = true
+    ) {
+        initHeader(header)
+        content.forEach { (route, title) ->
+            item(
+                contentType = "route"
+            ) {
+                RouteItem(
+                    title = stringResource(title)
+                ) {
+                    navigateRoute(route)
+                }
+            }
+        }
+        if (withSpacer) {
+            item {
+                Spacer(Modifier.height(28.dp))
+            }
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(20.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 13.dp)
+        ) {
+
+            initHeaderWithContent(
+                header = R.string.mypage_profile,
+                content = listOf(
+                    MyPageRoute.EditNickName to R.string.mypage_nickname
+                )
+            )
+
+            initHeaderWithContent(
+                header = R.string.mypage_account,
+                content = listOf(
+                    MyPageRoute.ChangeEmail to R.string.mypage_email,
+                    MyPageRoute.ChangePassword to R.string.mypage_password,
+                    MyPageRoute.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.OtherAccount to R.string.mypage_other,
+                )
+            )
+
+            initHeaderWithContent(
+                header = R.string.mypage_friend,
+                content = listOf(
+                    MyPageRoute.ManageBlockFriend to R.string.mypage_block,
+                )
+            )
+
+            initHeader(
+                header = R.string.mypage_alert
+            )
+
+            initHeaderWithContent(
+                header = R.string.mypage_service,
+                content = listOf(
+                    MyPageRoute.Policy to R.string.mypage_policy,
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun RouteHeader(
+    title: String
+) {
+    Text(
+        text = title
+    )
+}
+
+@Composable
+private fun RouteItem(
+    title: String,
+    action: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(44.dp)
+            .clickable {
+                action()
+            },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title
+        )
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = null
+        )
     }
 }

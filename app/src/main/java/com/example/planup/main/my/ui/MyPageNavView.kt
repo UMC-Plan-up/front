@@ -1,26 +1,13 @@
 package com.example.planup.main.my.ui
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.planup.R
 import com.example.planup.component.TopHeader
 import kotlinx.serialization.Serializable
 
@@ -30,6 +17,24 @@ sealed interface MyPageRoute {
 
     @Serializable
     data object EditNickName : MyPageRoute
+
+    @Serializable
+    data object ChangeEmail : MyPageRoute
+
+    @Serializable
+    data object ChangePassword : MyPageRoute
+
+    @Serializable
+    data object LinkKakao : MyPageRoute
+
+    @Serializable
+    data object OtherAccount : MyPageRoute
+
+    @Serializable
+    data object ManageBlockFriend : MyPageRoute
+
+    @Serializable
+    data object Policy : MyPageRoute
 }
 
 @Composable
@@ -40,23 +45,13 @@ fun MyPageNavView() {
         startDestination = MyPageRoute.Main
     ) {
         composable<MyPageRoute.Main> {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                LazyColumn(
-                    modifier = Modifier.padding(horizontal = 13.dp)
-                ) {
-                    item {
-                        RouteItem(
-                            title = stringResource(R.string.mypage_nickname)
-                        ) {
-                            navController.navigate(MyPageRoute.EditNickName) {
-                                launchSingleTop = true
-                            }
-                        }
+            MyPageView(
+                navigateRoute = { route ->
+                    navController.navigate(route) {
+                        launchSingleTop = true
                     }
                 }
-            }
+            )
         }
         composable<MyPageRoute.EditNickName> {
             Column(
@@ -70,30 +65,23 @@ fun MyPageNavView() {
                 )
             }
         }
-    }
-}
+        composable<MyPageRoute.ChangeEmail> {
 
-@Composable
-private fun RouteItem(
-    title: String,
-    action: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clickable {
-                action()
-            },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title
-        )
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = null
-        )
+        }
+        composable<MyPageRoute.ChangePassword> {
+
+        }
+        composable<MyPageRoute.LinkKakao> {
+
+        }
+        composable<MyPageRoute.OtherAccount> {
+
+        }
+        composable<MyPageRoute.ManageBlockFriend> {
+
+        }
+        composable<MyPageRoute.Policy> {
+
+        }
     }
 }
