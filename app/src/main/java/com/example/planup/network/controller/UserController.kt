@@ -142,30 +142,6 @@ class UserController {
         })
     }
 
-    //새로운 nickname으로 수정
-    fun nicknameService(nickname: String) {
-        val nicknameService = getRetrofit().create(UserPort::class.java)
-        nicknameService.changeNickname(nickname)
-            .enqueue(object : Callback<UserResponse<String>> {
-                override fun onResponse(
-                    call: Call<UserResponse<String>>,
-                    response: Response<UserResponse<String>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        nicknameChangeAdapter.successNicknameChange(nickname)
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        nicknameChangeAdapter.failNicknameChange(response.body()!!.message)
-                    } else {
-                        nicknameChangeAdapter.failNicknameChange("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<String>>, t: Throwable) {
-                    nicknameChangeAdapter.failNicknameChange(t.toString())
-                }
-            })
-    }
-
     //회원가입 시 인증링크 재발송
     fun signupLinkService(email: String) {
         val emailSendService = getRetrofit().create(UserPort::class.java)

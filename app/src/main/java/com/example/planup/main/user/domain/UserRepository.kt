@@ -17,4 +17,9 @@ interface UserRepository {
     suspend fun validateInviteCode(
         code: String
     ): ApiResult<InviteCodeValidateResponse.Result>
+
+
+    suspend fun changeNickName(
+        newNickName: String
+    ): ApiResult<String>
 }
