@@ -1,9 +1,8 @@
-package com.example.planup.network.dto.user
+package com.example.planup.login.data
 
 import com.google.gson.annotations.SerializedName
 
-@Deprecated("LoginRequest 로 통일")
-data class LoginDto(
+data class LoginRequest(
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String
 )
