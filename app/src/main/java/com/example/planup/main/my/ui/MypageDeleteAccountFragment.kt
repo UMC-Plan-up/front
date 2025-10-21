@@ -12,16 +12,19 @@ import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.core.content.ContextCompat
+import androidx.compose.foundation.layout.Box
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
-import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageDeleteAccountBinding
 import com.example.planup.login.LoginActivityNew
+import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.CloseAccountAdapter
+import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.network.controller.UserController
 
-class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
+class MypageDeleteAccountFragment : Fragment(), CloseAccountAdapter {
     lateinit var binding: FragmentMypageDeleteAccountBinding
 
     lateinit var prefs: SharedPreferences
@@ -31,7 +34,7 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageDeleteAccountBinding.inflate(inflater,container,false)
+        binding = FragmentMypageDeleteAccountBinding.inflate(inflater, container, false)
         init()
         clickListener()
 
@@ -42,7 +45,8 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
     }
 
     private fun init() {
-        binding.mypageDeleteAccountCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+        binding.mypageDeleteAccountCl.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val height = binding.mypageDeleteAccountCl.height
                 binding.mypageDeleteAccountInnerCl.minHeight = height
@@ -50,26 +54,26 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
             }
 
         })
-        prefs = (context as MainActivity).getSharedPreferences("userInfo",MODE_PRIVATE)
-        binding.deleteAccountNameTv.text = prefs.getString("nickname","no-data")
+        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        binding.deleteAccountNameTv.text = prefs.getString("nickname", "no-data")
     }
 
     private fun clickListener() {
 
         /*뒤로가기*/
-        binding.deleteAccountBackIv.setOnClickListener{
+        binding.deleteAccountBackIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageOtherFragment())
                 .commitAllowingStateLoss()
         }
 
         /*회원 탈퇴 체크박스*/
-        binding.deleteAgreeCheckIv.setOnClickListener{
+        binding.deleteAgreeCheckIv.setOnClickListener {
             binding.deleteAgreeCheckIv.visibility = View.GONE
             binding.deleteAgreeUncheckIv.visibility = View.VISIBLE
             binding.btnDeleteAccountTv.isActivated = false
         }
-        binding.deleteAgreeUncheckIv.setOnClickListener{
+        binding.deleteAgreeUncheckIv.setOnClickListener {
             binding.deleteAgreeCheckIv.visibility = View.VISIBLE
             binding.deleteAgreeUncheckIv.visibility = View.GONE
             binding.btnDeleteAccountTv.isActivated = true
@@ -77,7 +81,7 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
 
         /*회원 탈퇴 버튼*/
         binding.btnDeleteAccountTv.setOnClickListener {
-            if(!binding.btnDeleteAccountTv.isActivated) return@setOnClickListener
+            if (!binding.btnDeleteAccountTv.isActivated) return@setOnClickListener
             val service = UserController()
             service.setCloseAccountAdapter(this)
             service.closeAccountService(binding.deleteAccountReasonEt.text.toString())
@@ -91,13 +95,27 @@ class MypageDeleteAccountFragment: Fragment(), CloseAccountAdapter{
 
     override fun failCloseAccount(message: String) {
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
+    }
+}
+
+
+@Composable
+fun MyPageDeleteAccountView(
+    onBack: () -> Unit
+) {
+    Box {
+        RoutePageDefault(
+            onBack = onBack,
+            categoryText = stringResource(R.string.mypage_nickname)
+        ) {
+        }
     }
 }
