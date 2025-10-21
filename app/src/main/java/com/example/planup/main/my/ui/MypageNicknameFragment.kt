@@ -15,18 +15,29 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.component.TopHeader
 import com.example.planup.databinding.FragmentMypageNicknameBinding
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.network.controller.UserController
 
 //마이페이지의 닉네임 변경 프레그먼트
-class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
+class MypageNicknameFragment : Fragment(), NicknameChangeAdapter {
 
-    lateinit var binding:FragmentMypageNicknameBinding
+    lateinit var binding: FragmentMypageNicknameBinding
     lateinit var prefs: SharedPreferences
     lateinit var editor: Editor
 
@@ -35,7 +46,7 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageNicknameBinding.inflate(inflater,container,false)
+        binding = FragmentMypageNicknameBinding.inflate(inflater, container, false)
         init()
         clickListener()
         textListener()
@@ -43,8 +54,9 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
     }
 
     //초기 세팅
-    private fun init(){
-        binding.mypageNicknameCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+    private fun init() {
+        binding.mypageNicknameCl.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val height = binding.mypageNicknameCl.height
                 binding.mypageNicknameInnerCl.minHeight = height
@@ -55,18 +67,20 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
     }
-    private fun clickListener(){
+
+    private fun clickListener() {
         //뒤로 가기
-        binding.nicknameBackIv.setOnClickListener{
+        binding.nicknameBackIv.setOnClickListener {
             (context as MainActivity).navigateToFragment(MypageFragment())
         }
         //완료 버튼 클릭: 마이페이지 화면으로 이동
-        binding.nicknameCompleteBtn.setOnClickListener{
-            val newNickname = prefs.getString("nickname","null")
+        binding.nicknameCompleteBtn.setOnClickListener {
+            val newNickname = prefs.getString("nickname", "null")
             val prevNickname = binding.nicknameEt.text.toString()
 
             if (prevNickname == newNickname?.removeSurrounding("\"")
-                && newNickname != "null"){
+                && newNickname != "null"
+            ) {
                 val errorColor = ContextCompat.getColor(context, R.color.semanticR1)
                 binding.nickNameErrorTv.setText(R.string.error_already_nickname)
                 binding.nickNameLv.setBackgroundColor(errorColor)
@@ -79,18 +93,18 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
     }
 
     /*닉네임 검사*/
-    private fun textListener(){
+    private fun textListener() {
         val errorColor = ContextCompat.getColor(context, R.color.red_200)
-        val normalColor = ContextCompat.getColor(context,R.color.black_400)
-        binding.nicknameEt.addTextChangedListener(object: TextWatcher{
+        val normalColor = ContextCompat.getColor(context, R.color.black_400)
+        binding.nicknameEt.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
 
-                if (binding.nicknameEt.text.toString().length in 1..20){
+                if (binding.nicknameEt.text.toString().length in 1..20) {
                     //정상
                     binding.nickNameErrorTv.setText(null)
                     binding.nickNameLv.setBackgroundColor(normalColor)
                     binding.nicknameCompleteBtn.isActivated = true
-                }else if (20 < binding.nicknameEt.text.toString().length){
+                } else if (20 < binding.nicknameEt.text.toString().length) {
                     //20자 초과
                     binding.nickNameErrorTv.setText(R.string.error_under_twenty_word)
                     binding.nickNameLv.setBackgroundColor(errorColor)
@@ -107,10 +121,11 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
 
     //닉네임 변경 성공
     override fun successNicknameChange(nickname: String) {
-        editor.putString("nickname",nickname)
+        editor.putString("nickname", nickname)
         editor.apply()
         (context as MainActivity).navigateToFragment(MypageFragment())
     }
+
     //닉네임 변경 오류
     override fun failNicknameChange(message: String) {
         val errorColor = ContextCompat.getColor(context, R.color.semanticR1)
@@ -118,13 +133,49 @@ class MypageNicknameFragment:Fragment(), NicknameChangeAdapter {
         binding.nickNameLv.setBackgroundColor(errorColor)
 
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
+    }
+}
+
+@Composable
+fun MyPageNickNamEditView(
+    onBack: () -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        TopHeader(
+            title = "목록",
+            onBackAction = onBack
+        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = 24.dp
+                )
+                .padding(
+                    top = 20.dp
+                )
+        ) {
+            Text(
+                text = stringResource(R.string.mypage_nickname)
+            )
+            Spacer(Modifier.height(79.dp))
+            Column(
+
+            ) {
+                Text(
+                    text = stringResource(R.string.nickname_title)
+                )
+            }
+        }
     }
 }

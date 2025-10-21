@@ -54,16 +54,9 @@ fun MyPageNavView() {
             )
         }
         composable<MyPageRoute.EditNickName> {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                TopHeader(
-                    title = "목록",
-                    onBackAction = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+            MyPageNickNamEditView(
+                onBack = navController::navigateUp
+            )
         }
         composable<MyPageRoute.ChangeEmail> {
 

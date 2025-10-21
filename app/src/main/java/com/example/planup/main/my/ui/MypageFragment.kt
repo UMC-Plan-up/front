@@ -29,6 +29,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -38,6 +39,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -202,10 +204,10 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
                 MyPageNavView()
             }
         }
-//        binding = FragmentMypageBinding.inflate(inflater, container, false)
-//        init()
-//        clickListener()
-//        return binding.root
+        binding = FragmentMypageBinding.inflate(inflater, container, false)
+        init()
+        clickListener()
+        return binding.root
     }
 
     private fun init() {
@@ -684,22 +686,27 @@ private fun RouteItem(
     title: String,
     action: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(44.dp)
-            .clickable {
-                action()
-            },
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title
-        )
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = null
+    Box {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .clickable {
+                    action()
+                },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title
+            )
+            Image(
+                painter = painterResource(R.drawable.ic_arrow_right),
+                contentDescription = null
+            )
+        }
+        HorizontalDivider(
+            modifier = Modifier.align(Alignment.BottomCenter)
         )
     }
 }
