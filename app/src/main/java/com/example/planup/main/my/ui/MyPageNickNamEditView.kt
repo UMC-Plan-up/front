@@ -25,10 +25,11 @@ import com.example.planup.R
 import com.example.planup.component.PlanUpButton
 import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageNickNameEditViewModel
+import com.example.planup.theme.Black200
 import com.example.planup.theme.Black400
 import com.example.planup.theme.Red200
 import com.example.planup.theme.SemanticR1
-
+import com.example.planup.theme.Typography
 
 @Composable
 fun MyPageNickNamEditView(
@@ -57,7 +58,8 @@ fun MyPageNickNamEditView(
                     verticalArrangement = Arrangement.spacedBy(13.dp)
                 ) {
                     Text(
-                        text = stringResource(R.string.nickname_title)
+                        text = stringResource(R.string.nickname_title),
+                        style = Typography.Medium_L
                     )
                     BasicTextField(
                         value = myPageNickNameEditViewModel.newName,
@@ -65,6 +67,9 @@ fun MyPageNickNamEditView(
                             myPageNickNameEditViewModel.newName = it
                         },
                         singleLine = true,
+                        textStyle = Typography.Medium_L.copy(
+                            color = Black400
+                        ),
                         decorationBox = { innerTextField ->
                             Column {
                                 Box(
@@ -76,7 +81,9 @@ fun MyPageNickNamEditView(
                                     innerTextField()
                                     if (myPageNickNameEditViewModel.newName.isEmpty()) {
                                         Text(
-                                            text = "닉네임을 입력하세요"
+                                            text = "닉네임을 입력하세요",
+                                            style = Typography.Medium_L,
+                                            color = Black200
                                         )
                                     }
                                 }
@@ -90,7 +97,8 @@ fun MyPageNickNamEditView(
                                 if (myPageNickNameEditViewModel.isNameError) {
                                     Text(
                                         text = stringResource(R.string.error_under_twenty_word),
-                                        color = SemanticR1
+                                        color = SemanticR1,
+                                        style = Typography.Medium_XS
                                     )
                                 }
                             }
