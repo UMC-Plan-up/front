@@ -159,15 +159,15 @@ class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.eventChannel.collect { event ->
                     when(event) {
-                        is LoginViewModel.Event.FailLogin -> errorToast(event.message)
+                        is LoginViewModel.Event.FailLogin -> makeToast(event.message)
                         LoginViewModel.Event.SuccessLogin -> {
                             // TODO:: 메인으로 이동
                             service.setUserInfoAdapter(this@LoginActivityNew)
                             service.userInfoService()
                         }
-                        LoginViewModel.Event.UnknownEmail -> errorToast("등록되지 않은 이메일이에요")
-                        LoginViewModel.Event.UnknownError -> errorToast("알 수 없는 오류가 발생했습니다")
-                        LoginViewModel.Event.WrongPassword -> errorToast("비밀번호를 다시 확인해 주세요.")
+                        LoginViewModel.Event.UnknownEmail -> makeToast("등록되지 않은 이메일이에요")
+                        LoginViewModel.Event.UnknownError -> makeToast("알 수 없는 오류가 발생했습니다")
+                        LoginViewModel.Event.WrongPassword -> makeToast("비밀번호를 다시 확인해 주세요.")
                     }
                 }
             }
@@ -245,7 +245,7 @@ class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
         toast.show()
     }
 
-    private fun errorToast(message: String) {
+    private fun makeToast(message: String) {
         val inflater = LayoutInflater.from(this)
         val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
@@ -255,10 +255,6 @@ class LoginActivityNew: AppCompatActivity(), UserInfoAdapter {
         toast.duration = Toast.LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 700)
         toast.show()
-    }
-
-    private fun makeToast(message: String) {
-
     }
 
     //화면 터치 시 키보드 사라지게
