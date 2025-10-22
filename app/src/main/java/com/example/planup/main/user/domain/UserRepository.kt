@@ -1,6 +1,7 @@
 package com.example.planup.main.user.domain
 
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.signup.data.InviteCodeValidateResponse
 
@@ -27,4 +28,6 @@ interface UserRepository {
         email: String,
         password: String
     ): ApiResult<LoginResponse.Result>
+
+    suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
 }

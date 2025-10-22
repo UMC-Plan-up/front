@@ -111,6 +111,11 @@ class UserRepositoryImpl @Inject constructor(
                     if(result.accessToken.isNotEmpty()) {
                         // 토큰에 Bearer 붙이지 않고 저장
                         tokenSaver.saveToken(result.accessToken)
+
+                        userInfoSaver.clearAllUserInfo()
+                        userInfoSaver.saveNickName(result.nickname)
+                        userInfoSaver.saveEmail(email)
+                        userInfoSaver.saveProfileImage(result.profileImgUrl)
                     }
 
                     ApiResult.Success(result)
@@ -120,4 +125,33 @@ class UserRepositoryImpl @Inject constructor(
             }
         )
     }
+
+    override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> = withContext(Dispatchers.IO) {
+       if(userInfoSaver.isEmpty) {
+            safeResult(
+                response = {
+                    userApi.getUserInfo()
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+
+                }
+            )
+        } else {
+            // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
+            ApiResult.Success(UserInfoResponse.Result(
+                id = -1,
+                email = userInfoSaver.getEmail(),
+                nickname = userInfoSaver.getNickName(),
+                profileImage = userInfoSaver.getProfileImage() ?: ""
+            ))
+        }
+    }
+
 }

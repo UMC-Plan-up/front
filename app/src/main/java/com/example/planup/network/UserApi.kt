@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.UserResponse
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
@@ -146,4 +147,8 @@ interface UserApi {
     suspend fun changePassword(
         @Body request: PasswordUpdateRequest
     ): Response<PasswordUpdateResponse>
+
+    // 유저 정보 조회
+    @GET("/users/info")
+    suspend fun getUserInfo(): Response<UserInfoResponse>
 }

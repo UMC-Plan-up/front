@@ -21,6 +21,10 @@ class UserInfoSaver(
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
 
+    // 저장된 유저 정보가 없는지 확인
+    val isEmpty
+        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMAGE)
+
     /**
      * 현재 저장된 닉네임을 가져옵니다.
      */
@@ -36,7 +40,7 @@ class UserInfoSaver(
             putString(KEY_NICKNAME, nickName)
         }
     }
-
+    
     /**
      * 현재 저장된 초대 코드를 가져옵니다.
      */
@@ -105,4 +109,5 @@ class UserInfoSaver(
             putString(KEY_PROFILE_IMAGE, null)
         }
     }
+
 }

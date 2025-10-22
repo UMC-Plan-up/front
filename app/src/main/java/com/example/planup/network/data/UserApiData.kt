@@ -15,14 +15,6 @@ data class MyInviteCode(
     @SerializedName("inviteCode") val inviteCode: String
 )
 
-//유저 정보 조회
-data class UserInfo(
-    @SerializedName(value = "id") var id: Int,
-    @SerializedName(value = "email") var email: String,
-    @SerializedName(value = "nickname") var nickname: String,
-    @SerializedName(value = "profileImg") var profileImage: String
-)
-
 //카카오 연동 상태 확인
 data class UsingKakao(
     @SerializedName(value = "kakaoEmail") var kakaoEmail: String,
@@ -82,18 +74,6 @@ data class ProfileImage(
     @SerializedName("file") val file: String
 )
 
-data class SyncKakao(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: KakaoAccount,
-    @SerializedName("newUser") val newUser: Boolean
-)
-data class KakaoAccount(
-    @SerializedName("tempUserId") val tempUserId: String,
-    @SerializedName("accessToken") val accessToken: String,
-    @SerializedName("userInfo") val userInfo: UserInfo
-)
 data class KakaoLink(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,

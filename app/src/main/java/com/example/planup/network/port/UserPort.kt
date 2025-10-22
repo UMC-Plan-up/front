@@ -1,6 +1,5 @@
 package com.example.planup.network.port
 
-import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
@@ -11,9 +10,7 @@ import com.example.planup.network.data.MyInviteCode
 import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.Signup
-import com.example.planup.network.data.SyncKakao
 import com.example.planup.network.data.UserResponse
-import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.LoginDto
@@ -37,9 +34,6 @@ interface UserPort {
     @GET("users/me/invite-code")
     fun getInviteCode(): Call<UserResponse<MyInviteCode>>
     //유저 정보 조회
-    @GET("users/info")
-    fun getUserInfo(): Call<UserResponse<UserInfo>>
-    //카카오 계정 연동상태 확인
     @GET("mypage/kakao-account")
     fun getKakao(): Call<UserResponse<UsingKakao>>
 
@@ -88,8 +82,6 @@ interface UserPort {
     @POST("/users/password/change")
     fun changePassword(@Body password: ChangePassword): Call<UserResponse<Boolean>>
 
-    @POST("users/auth/kakao")
-    fun syncKakao(@Body code: String): Call<SyncKakao>
 
     @POST("mypage/kakao-account/link")
     fun linkKakao(@Body code: KakaoLinkCode): Call<UserResponse<KakaoLink>>
