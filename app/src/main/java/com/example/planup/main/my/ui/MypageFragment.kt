@@ -350,7 +350,7 @@ private fun MyPageHeader(
     }
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
-            myPageProfileEditViewModel.setProfileImage(
+            myPageProfileEditViewModel.setProfileImageByPicker(
                 imageUri = uri,
                 onSuccess = {
 
@@ -361,6 +361,20 @@ private fun MyPageHeader(
             )
         }
     }
+
+    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {success ->
+        if (success) {
+            myPageProfileEditViewModel.setProfileImageCamera(
+                onSuccess = {
+
+                },
+                onFail = {
+
+                }
+            )
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -436,7 +450,7 @@ private fun MyPageHeader(
                             )
                         },
                         onClick = {
-
+                            cameraLauncher.launch(myPageProfileEditViewModel.makeCameraTempFileUri())
                         }
                     )
                 }

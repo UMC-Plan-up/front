@@ -165,14 +165,18 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun setProfileImage(file: File): ApiResult<ProfileImage> =
+    override suspend fun setProfileImage(file: File): ApiResult<ProfileImage> {
+        val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val multipartBody =
+            MultipartBody.Part.createFormData("file", file.name, requestFile)
+        return setProfileImage(multipartBody)
+    }
+
+    override suspend fun setProfileImage(body: MultipartBody.Part): ApiResult<ProfileImage>  =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-                    val multipartBody =
-                        MultipartBody.Part.createFormData("file", file.name, requestFile)
-                    userApi.setProfileImage(multipartBody)
+                    userApi.setProfileImage(body)
                 },
                 onResponse = { response ->
                     if (response.isSuccess) {

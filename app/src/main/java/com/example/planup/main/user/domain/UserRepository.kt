@@ -5,6 +5,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.signup.data.InviteCodeValidateResponse
+import okhttp3.MultipartBody
 import java.io.File
 
 interface UserRepository {
@@ -35,5 +36,9 @@ interface UserRepository {
 
     suspend fun setProfileImage(
         file: File
-    ) : ApiResult<ProfileImage>
+    ): ApiResult<ProfileImage>
+
+    suspend fun setProfileImage(
+        body: MultipartBody.Part
+    ): ApiResult<ProfileImage>
 }
