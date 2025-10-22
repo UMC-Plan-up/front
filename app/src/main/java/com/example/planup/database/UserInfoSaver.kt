@@ -91,7 +91,7 @@ class UserInfoSaver(
      *
      * @param profileImage 프로필 이미지 주소
      */
-    fun saveProfileImage(profileImage: String) {
+    fun saveProfileImage(profileImage: String?) {
         prefs.edit {
             putString(KEY_PROFILE_IMAGE, profileImage)
         }

@@ -115,10 +115,7 @@ class UserRepositoryImpl @Inject constructor(
                         userInfoSaver.clearAllUserInfo()
                         userInfoSaver.saveNickName(result.nickname)
                         userInfoSaver.saveEmail(email)
-
-                        if(!result.profileImgUrl.isNullOrEmpty()) {
-                            userInfoSaver.saveProfileImage(result.profileImgUrl)
-                        }
+                        userInfoSaver.saveProfileImage(result.profileImgUrl)
                     }
 
                     ApiResult.Success(result)
