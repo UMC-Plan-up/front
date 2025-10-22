@@ -3,7 +3,9 @@ package com.example.planup.main.user.domain
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
+import com.example.planup.network.data.ProfileImage
 import com.example.planup.signup.data.InviteCodeValidateResponse
+import java.io.File
 
 interface UserRepository {
 
@@ -30,4 +32,8 @@ interface UserRepository {
     ): ApiResult<LoginResponse.Result>
 
     suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
+
+    suspend fun setProfileImage(
+        file: File
+    ) : ApiResult<ProfileImage>
 }

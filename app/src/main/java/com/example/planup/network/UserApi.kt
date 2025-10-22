@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
+import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserResponse
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
@@ -31,11 +32,14 @@ import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserApi {
@@ -151,4 +155,9 @@ interface UserApi {
     // 유저 정보 조회
     @GET("/users/info")
     suspend fun getUserInfo(): Response<UserInfoResponse>
+
+    //프로필 이미지 변경
+    @Multipart
+    @POST("profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImage>>
 }

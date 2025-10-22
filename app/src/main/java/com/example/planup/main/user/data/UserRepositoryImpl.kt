@@ -9,11 +9,16 @@ import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
+import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import java.io.File
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -75,7 +80,7 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
         val prevName = userInfoSaver.getNickName()
-        if (prevName == newNickName){
+        if (prevName == newNickName) {
             return@withContext ApiResult.Exception(
                 error = UserNameAlreadyExistException()
             )
@@ -98,17 +103,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun postLogin(email: String, password: String): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
+    override suspend fun postLogin(
+        email: String,
+        password: String
+    ): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.login(LoginRequest(email = email, password = password))
             },
-            onResponse =  { response ->
-                if(response.isSuccess) {
+            onResponse = { response ->
+                if (response.isSuccess) {
                     val result = response.result
 
                     // 토큰 여부 검증
-                    if(result.accessToken.isNotEmpty()) {
+                    if (result.accessToken.isNotEmpty()) {
                         // 토큰에 Bearer 붙이지 않고 저장
                         tokenSaver.saveToken(result.accessToken)
 
@@ -126,32 +134,60 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> = withContext(Dispatchers.IO) {
-       if(userInfoSaver.isEmpty) {
+    override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> =
+        withContext(Dispatchers.IO) {
+            if (userInfoSaver.isEmpty) {
+                safeResult(
+                    response = {
+                        userApi.getUserInfo()
+                    },
+                    onResponse = { response ->
+                        if (response.isSuccess) {
+                            val result = response.result
+
+                            ApiResult.Success(result)
+                        } else {
+                            ApiResult.Fail(response.message)
+                        }
+
+                    }
+                )
+            } else {
+                // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
+                ApiResult.Success(
+                    UserInfoResponse.Result(
+                        id = -1,
+                        email = userInfoSaver.getEmail(),
+                        nickname = userInfoSaver.getNickName(),
+                        profileImage = userInfoSaver.getProfileImage() ?: ""
+                    )
+                )
+            }
+        }
+
+    override suspend fun setProfileImage(file: File): ApiResult<ProfileImage> =
+        withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                    userApi.getUserInfo()
+                    val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                    val multipartBody =
+                        MultipartBody.Part.createFormData("file", file.name, requestFile)
+                    userApi.setProfileImage(multipartBody)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
-
-                        ApiResult.Success(result)
+                        when (response.code) {
+                            "200" -> {
+                                userInfoSaver.saveProfileImage(result.file)
+                                ApiResult.Success(result)
+                            }
+                            else -> ApiResult.Fail(response.message)
+                        }
                     } else {
                         ApiResult.Fail(response.message)
                     }
-
                 }
             )
-        } else {
-            // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
-            ApiResult.Success(UserInfoResponse.Result(
-                id = -1,
-                email = userInfoSaver.getEmail(),
-                nickname = userInfoSaver.getNickName(),
-                profileImage = userInfoSaver.getProfileImage() ?: ""
-            ))
         }
-    }
-
 }

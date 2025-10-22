@@ -1,31 +1,28 @@
 package com.example.planup.network.controller
 
 import android.util.Log
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
-import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.adapter.ProfileImageAdapter
+import com.example.planup.main.my.adapter.ServiceAlertAdapter
+import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.KakaoLink
-import com.example.planup.network.data.SignupLink
-import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.PasswordLink
-import com.example.planup.network.data.ProfileImage
+import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.KakaoLinkCode
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserPort
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -88,11 +85,6 @@ class UserController {
     private lateinit var emailLinkAdapter: EmailLinkAdapter
     fun setEmailLinkAdapter(adapter: EmailLinkAdapter) {
         emailLinkAdapter = adapter
-    }
-
-    private lateinit var profileImageAdapter: ProfileImageAdapter
-    fun setProfileImageAdapter(adapter: ProfileImageAdapter) {
-        profileImageAdapter = adapter
     }
 
     private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
@@ -366,34 +358,6 @@ class UserController {
 
         })
     }
-
-    //프로필 사진 업로드
-    fun imageUploadService(file: MultipartBody.Part) {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.setProfileImage(file).enqueue(object : Callback<UserResponse<ProfileImage>> {
-            override fun onResponse(
-                call: Call<UserResponse<ProfileImage>>,
-                response: Response<UserResponse<ProfileImage>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    when (response.body()!!.code) {
-                        "200" -> profileImageAdapter.successProfileImage(response.body()!!.result.file)
-                        "U001" -> profileImageAdapter.failProfileImage(response.body()!!.message)
-                    }
-                } else if (!response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp", "image, ${response.body()!!.message}")
-                } else {
-                    Log.d("okhttp", "image, null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<ProfileImage>>, t: Throwable) {
-                profileImageAdapter.failProfileImage(t.toString())
-            }
-
-        })
-    }
-
 
     fun kakaoLinkService(code: String){
         val service = getRetrofit().create(UserPort::class.java)
