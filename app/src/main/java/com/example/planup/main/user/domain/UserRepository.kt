@@ -30,4 +30,8 @@ interface UserRepository {
     ): ApiResult<LoginResponse.Result>
 
     suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
+
+
+    suspend fun getUserEmail() : String
+    suspend fun getUserProfileImage() : String
 }

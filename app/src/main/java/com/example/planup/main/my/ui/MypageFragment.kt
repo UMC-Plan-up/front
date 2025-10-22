@@ -45,6 +45,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -63,6 +65,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.bumptech.glide.Glide
 import com.example.planup.R
@@ -72,6 +75,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.ProfileImageAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
+import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.network.controller.UserController
 import com.example.planup.theme.Typography
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -598,12 +602,19 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
 @Composable
 fun MyPageView(
-    navigateRoute: (route: MyPageRoute) -> Unit
+    navigateRoute: (route: MyPageRoute) -> Unit,
+    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(true) {
+        myPageInfoViewModel.fetchUserInfo()
+    }
+    val email by myPageInfoViewModel.email.collectAsState()
+    val profileImage by myPageInfoViewModel.profileImage.collectAsState()
+
     MyPageViewContent(
         navigateRoute = navigateRoute,
-        profileImage = "",
-        email = "test@gmail.com(수정예정)"
+        profileImage = profileImage,
+        email = email
     )
 }
 
