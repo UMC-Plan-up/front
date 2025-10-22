@@ -12,7 +12,6 @@ import com.example.planup.network.UserApi
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
-import com.google.android.gms.common.api.Api
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -116,7 +115,7 @@ class UserRepositoryImpl @Inject constructor(
                         userInfoSaver.clearAllUserInfo()
                         userInfoSaver.saveNickName(result.nickname)
                         userInfoSaver.saveEmail(email)
-                        userInfoSaver.saveProfileImg(result.profileImgUrl)
+                        userInfoSaver.saveProfileImage(result.profileImgUrl)
                     }
 
                     ApiResult.Success(result)
@@ -150,7 +149,7 @@ class UserRepositoryImpl @Inject constructor(
                 id = -1,
                 email = userInfoSaver.getEmail(),
                 nickname = userInfoSaver.getNickName(),
-                profileImage = userInfoSaver.getProfileImg() ?: ""
+                profileImage = userInfoSaver.getProfileImage() ?: ""
             ))
         }
     }
