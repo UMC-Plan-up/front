@@ -47,22 +47,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
-import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
+import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
 import com.example.planup.network.controller.UserController
 import com.example.planup.theme.Typography
 import java.text.SimpleDateFormat
@@ -254,7 +258,11 @@ fun MyPageView(
     MyPageViewContent(
         navigateRoute = navigateRoute,
         profileImage = profileImage,
-        email = email
+        email = email,
+        fetch = myPageInfoViewModel::fetchUserInfo,
+        onErrorMsg = {
+
+        }
     )
 }
 
@@ -264,7 +272,15 @@ private fun MyPageViewContent(
     navigateRoute: (route: MyPageRoute) -> Unit = {},
     profileImage: String = "",
     email: String = "",
+    fetch: () -> Unit ={},
+    onErrorMsg: (String) -> Unit ={}
 ) {
+    val context = LocalContext.current
+    fun LazyListScope.addSpacer(height : Dp = 28.dp) {
+        item {
+            Spacer(Modifier.height(height))
+        }
+    }
 
     fun LazyListScope.initHeader(
         @StringRes header: Int
@@ -276,6 +292,7 @@ private fun MyPageViewContent(
                 title = stringResource(header)
             )
         }
+        addSpacer(2.dp)
     }
 
     fun LazyListScope.initHeaderWithContent(
@@ -288,17 +305,16 @@ private fun MyPageViewContent(
             item(
                 contentType = "route"
             ) {
-                RouteItem(
-                    title = stringResource(title)
-                ) {
-                    navigateRoute(route)
-                }
+                RouteMenuItemWithArrow(
+                    title = stringResource(title),
+                    action = {
+                        navigateRoute(route)
+                    }
+                )
             }
         }
         if (withSpacer) {
-            item {
-                Spacer(Modifier.height(28.dp))
-            }
+            addSpacer()
         }
     }
 
@@ -306,7 +322,12 @@ private fun MyPageViewContent(
         modifier = Modifier.padding(20.dp)
     ) {
         Spacer(Modifier.height(20.dp))
-        MyPageHeader(profileImage, email)
+        MyPageHeader(
+            profileImage = profileImage,
+            email = email,
+            fetchProfile = fetch,
+            onErrorMsg = onErrorMsg
+        )
         Spacer(Modifier.height(36.dp))
         LazyColumn(
             modifier = Modifier.padding(horizontal = 13.dp)
@@ -338,13 +359,43 @@ private fun MyPageViewContent(
             initHeader(
                 header = R.string.mypage_alert
             )
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_service_alert),
+                    rightContent = {
+
+                    }
+                )
+            }
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_benefit),
+                    rightContent = {
+
+                    }
+                )
+            }
+            addSpacer()
 
             initHeaderWithContent(
                 header = R.string.mypage_service,
                 content = listOf(
                     MyPageRoute.Policy to R.string.mypage_policy,
-                )
+                ),
+                withSpacer = false
             )
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_version),
+                    rightContent = {
+                        Text(
+                            text = context.getAppVersion(),
+                            style = Typography.Semibold_S
+                        )
+                    }
+                )
+            }
+            addSpacer()
         }
     }
 }
@@ -353,37 +404,33 @@ private fun MyPageViewContent(
 private fun MyPageHeader(
     profileImage: String,
     email: String,
+    fetchProfile: () -> Unit,
+    onErrorMsg: (String) -> Unit,
     myPageProfileEditViewModel: MyPageProfileEditViewModel = hiltViewModel()
 ) {
     var openPopup by remember {
         mutableStateOf(false)
     }
-    val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) {
-            myPageProfileEditViewModel.setProfileImageByPicker(
-                imageUri = uri,
-                onSuccess = {
-
-                },
-                onFail = {
-
-                }
-            )
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    imageUri = uri,
+                    onSuccess = fetchProfile,
+                    onFail = onErrorMsg
+                )
+            }
         }
-    }
 
-    val cameraLauncher = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) {success ->
-        if (success) {
-            myPageProfileEditViewModel.setProfileImageCamera(
-                onSuccess = {
-
-                },
-                onFail = {
-
-                }
-            )
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                myPageProfileEditViewModel.setProfileImageCamera(
+                    onSuccess = fetchProfile,
+                    onFail = onErrorMsg
+                )
+            }
         }
-    }
 
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -494,13 +541,3 @@ private fun RouteHeader(
         style = Typography.Semibold_L
     )
 }
-
-@Composable
-private fun RouteItem(
-    title: String,
-    action: () -> Unit
-) = RouteMenuItem(
-    title = title,
-    showArrow = true,
-    action = action
-)
