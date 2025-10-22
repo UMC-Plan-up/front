@@ -41,4 +41,9 @@ interface UserRepository {
     suspend fun setProfileImage(
         body: MultipartBody.Part
     ): ApiResult<ProfileImage>
+
+
+    suspend fun getUserEmail() : String
+    suspend fun getUserProfileImage() : String
+
 }

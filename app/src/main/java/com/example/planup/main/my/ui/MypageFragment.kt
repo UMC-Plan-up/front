@@ -35,6 +35,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,6 +62,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.network.controller.UserController
 import com.example.planup.theme.Typography
 import java.text.SimpleDateFormat
@@ -239,12 +242,19 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
 
 @Composable
 fun MyPageView(
-    navigateRoute: (route: MyPageRoute) -> Unit
+    navigateRoute: (route: MyPageRoute) -> Unit,
+    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel()
 ) {
+    LaunchedEffect(true) {
+        myPageInfoViewModel.fetchUserInfo()
+    }
+    val email by myPageInfoViewModel.email.collectAsState()
+    val profileImage by myPageInfoViewModel.profileImage.collectAsState()
+
     MyPageViewContent(
         navigateRoute = navigateRoute,
-        profileImage = "",
-        email = "test@gmail.com(수정예정)"
+        profileImage = profileImage,
+        email = email
     )
 }
 

@@ -194,4 +194,12 @@ class UserRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun getUserEmail(): String {
+        return userInfoSaver.getEmail()
+    }
+
+    override suspend fun getUserProfileImage(): String {
+        return userInfoSaver.getProfileImage()
+    }
 }
