@@ -82,7 +82,9 @@ fun MyPageNavView() {
 
         }
         composable<MyPageRoute.Policy> {
-
+            MyPagePolicyView(
+                onBack = navController::navigateUp
+            )
         }
     }
 }
