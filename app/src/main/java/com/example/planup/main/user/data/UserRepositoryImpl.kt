@@ -115,7 +115,10 @@ class UserRepositoryImpl @Inject constructor(
                         userInfoSaver.clearAllUserInfo()
                         userInfoSaver.saveNickName(result.nickname)
                         userInfoSaver.saveEmail(email)
-                        userInfoSaver.saveProfileImage(result.profileImgUrl)
+
+                        if(!result.profileImgUrl.isNullOrEmpty()) {
+                            userInfoSaver.saveProfileImage(result.profileImgUrl)
+                        }
                     }
 
                     ApiResult.Success(result)
@@ -149,7 +152,7 @@ class UserRepositoryImpl @Inject constructor(
                 id = -1,
                 email = userInfoSaver.getEmail(),
                 nickname = userInfoSaver.getNickName(),
-                profileImage = userInfoSaver.getProfileImage() ?: ""
+                profileImage = userInfoSaver.getProfileImage()
             ))
         }
     }

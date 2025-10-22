@@ -11,7 +11,7 @@ data class LoginResponse(
     data class Result(
         @SerializedName(value = "accessToken") val accessToken: String,
         @SerializedName(value = "nickname") val nickname: String,
-        @SerializedName(value = "profileImgUrl") val profileImgUrl: String,
+        @SerializedName(value = "profileImgUrl") val profileImgUrl: String?,
         @SerializedName(value = "message") val message: String
     )
 
