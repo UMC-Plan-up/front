@@ -81,9 +81,6 @@ interface UserPort {
     //비밀번호 변경
     @POST("/users/password/change")
     fun changePassword(@Body password: ChangePassword): Call<UserResponse<Boolean>>
-    //닉네임 수정
-    @POST("mypage/profile/nickname")
-    fun changeNickname(@Body nickname: String): Call<UserResponse<String>>
 
 
     @POST("mypage/kakao-account/link")

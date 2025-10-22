@@ -22,7 +22,8 @@ object Typography {
         fontFamily = pretendard,
         fontWeight = FontWeight.Medium,
         letterSpacing = 0.015.sp,
-        lineHeight = 1.5.em
+        lineHeight = 1.5.em,
+        color = Black400
     )
 
     // 함수로 텍스트 스타일 생성
@@ -35,7 +36,7 @@ object Typography {
     val Semibold_3XL = style(24.sp, FontWeight.SemiBold)
     val Semibold_2XL = style(22.sp, FontWeight.SemiBold)
     val Semibold_XL  = style(20.sp, FontWeight.SemiBold)
-    val Semibold_L   = style(28.sp, FontWeight.SemiBold)
+    val Semibold_L   = style(18.sp, FontWeight.SemiBold)
     val Semibold_SM  = style(16.sp, FontWeight.SemiBold)
     val Semibold_S   = style(14.sp, FontWeight.SemiBold)
 

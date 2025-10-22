@@ -135,6 +135,12 @@ interface UserApi {
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
 
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
+
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(

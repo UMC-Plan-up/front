@@ -14,10 +14,9 @@ class UserInfoSaver(
         private const val PREF_TOKEN_NAME = "userInfo"
 
         private const val KEY_NICKNAME = "nickname"
-        private const val KEY_EMAIL = "email"
-        private const val KEY_PROFILE_IMG = "profileImg"
-
         private const val KEY_INVITE_CODE = "invite"
+        private const val KEY_EMAIL = "email"
+        private const val KEY_PROFILE_IMAGE = "profileImg"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
@@ -41,27 +40,7 @@ class UserInfoSaver(
             putString(KEY_NICKNAME, nickName)
         }
     }
-
-    fun getEmail(): String {
-        return prefs.getString(KEY_EMAIL, "") ?: ""
-    }
-
-    fun saveEmail(email: String) {
-        prefs.edit {
-            putString(KEY_EMAIL, email)
-        }
-    }
-
-    fun getProfileImg(): String? {
-        return prefs.getString(KEY_PROFILE_IMG, null)
-    }
-
-    fun saveProfileImg(profileImg: String) {
-        prefs.edit {
-            putString(KEY_PROFILE_IMG, profileImg)
-        }
-    }
-
+    
     /**
      * 현재 저장된 초대 코드를 가져옵니다.
      */
@@ -79,15 +58,55 @@ class UserInfoSaver(
     }
 
     /**
+     * 이메일을 가져옵니다.
+     *
+     * @return 저장된 이메일 값
+     */
+    fun getEmail(): String {
+        return prefs.getString(KEY_EMAIL, null) ?: ""
+    }
+
+    /**
+     * 이메일을 저장합니다.
+     *
+     * @param email 저장할 값
+     */
+    fun saveEmail(email: String) {
+        prefs.edit {
+            putString(KEY_EMAIL, email)
+        }
+    }
+
+    /**
+     * 프로필 이미지 주소를 가져옵니다.
+     *
+     * @return 프로필 이미지 주소
+     */
+    fun getProfileImage(): String {
+        return prefs.getString(KEY_PROFILE_IMAGE, null) ?: ""
+    }
+
+    /**
+     * 프로필 이미지 주소를 저장합니다.
+     *
+     * @param profileImage 프로필 이미지 주소
+     */
+    fun saveProfileImage(profileImage: String) {
+        prefs.edit {
+            putString(KEY_PROFILE_IMAGE, profileImage)
+        }
+    }
+
+    /**
      * 저장된 모든 유저 정보를 지웁니다.
      * (용도) - 로그아우
      */
-    fun clearAllUserInfo(){
+    fun clearAllUserInfo() {
         prefs.edit {
-            putString(KEY_EMAIL, null)
-            putString(KEY_NICKNAME,null)
-            putString(KEY_PROFILE_IMG, null)
+            putString(KEY_NICKNAME, null)
             putString(KEY_INVITE_CODE, null)
+            putString(KEY_EMAIL, null)
+            putString(KEY_PROFILE_IMAGE, null)
         }
     }
 
