@@ -9,12 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Snackbar
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,16 +23,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
+import com.example.planup.component.GraySnackbarHost
 import com.example.planup.component.PlanUpButton
 import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageNickNameEditViewModel
 import com.example.planup.theme.Black200
-import com.example.planup.theme.Black300
 import com.example.planup.theme.Black400
 import com.example.planup.theme.Red200
 import com.example.planup.theme.SemanticR1
 import com.example.planup.theme.Typography
-import com.example.planup.theme.fontColor
 
 @Composable
 fun MyPageNickNamEditView(
@@ -70,25 +65,9 @@ fun MyPageNickNamEditView(
                 )
             }
         )
-        SnackbarHost(
+        GraySnackbarHost(
             modifier = Modifier.align(Alignment.BottomCenter),
-            hostState = snackBarHost,
-            snackbar = {
-                Snackbar(
-                    modifier = Modifier
-                        .padding(horizontal = 20.dp)
-                        .padding(bottom = 44.dp)
-                    ,
-                    containerColor = Black300,
-                    shape = RoundedCornerShape(6.dp),
-                ) {
-                    Text(
-                        text = it.visuals.message,
-                        style = Typography.Medium_SM,
-                        color = fontColor
-                    )
-                }
-            }
+            hostState = snackBarHost
         )
     }
 }
