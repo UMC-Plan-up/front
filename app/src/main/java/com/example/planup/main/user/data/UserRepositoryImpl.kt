@@ -149,7 +149,7 @@ class UserRepositoryImpl @Inject constructor(
                 id = -1,
                 email = userInfoSaver.getEmail(),
                 nickname = userInfoSaver.getNickName(),
-                profileImage = userInfoSaver.getProfileImage() ?: ""
+                profileImage = userInfoSaver.getProfileImage()
             ))
         }
     }
