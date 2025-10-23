@@ -12,16 +12,12 @@ import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.compose.foundation.layout.Box
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageDeleteAccountBinding
 import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.CloseAccountAdapter
-import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.network.controller.UserController
 
 class MypageDeleteAccountFragment : Fragment(), CloseAccountAdapter {
@@ -96,19 +92,5 @@ class MypageDeleteAccountFragment : Fragment(), CloseAccountAdapter {
         toast.duration = LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
-    }
-}
-
-
-@Composable
-fun MyPageDeleteAccountView(
-    onBack: () -> Unit
-) {
-    Box {
-        RoutePageDefault(
-            onBack = onBack,
-            categoryText = stringResource(R.string.mypage_nickname)
-        ) {
-        }
     }
 }

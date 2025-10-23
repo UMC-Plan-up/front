@@ -120,7 +120,9 @@ fun MyPageNavView(
             )
         }
         composable<MyPageRoute.Account.OtherMenu.DeleteAccount> {
-
+            MyPageOtherDeleteAccountView(
+                onBack = navController::navigateUp
+            )
         }
         composable<MyPageRoute.Friend.ManageBlockFriend> {
 
