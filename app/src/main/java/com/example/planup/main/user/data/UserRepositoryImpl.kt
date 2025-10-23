@@ -193,14 +193,6 @@ class UserRepositoryImpl @Inject constructor(
                     }
                 }
             )
-        } else {
-            // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
-            ApiResult.Success(UserInfoResponse.Result(
-                id = -1,
-                email = userInfoSaver.getEmail(),
-                nickname = userInfoSaver.getNickName(),
-                profileImage = userInfoSaver.getProfileImage()
-            ))
         }
 
     override suspend fun getUserEmail(): String {
