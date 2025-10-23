@@ -1,9 +1,13 @@
 package com.example.planup.main.my.ui
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute {
@@ -33,6 +37,11 @@ sealed interface MyPageRoute {
 
     @Serializable
     data object Policy : MyPageRoute
+
+    @Serializable
+    data class PolicyDetail(
+        val url: String
+    ) : MyPageRoute
 }
 
 @Composable
@@ -51,7 +60,33 @@ fun MyPageNavView() {
                 }
             )
         }
-        composable<MyPageRoute.EditNickName> {
+        composable<MyPageRoute.EditNickName>(
+            enterTransition = {
+                // 들어 올때 <-
+                slideInHorizontally { it }
+            },
+            exitTransition = {
+                // 나갈 때 ->
+                slideOutHorizontally(
+                    targetOffsetX = { it },
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                // 뒤로 가기 할 때 들어오는 애니메이션 ->
+                slideInHorizontally(
+                    initialOffsetX = { it },
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                // 뒤로 가기 할 때 나가는 애니메이션 <-
+                slideOutHorizontally(
+                    targetOffsetX = { -it },
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
             MyPageNickNamEditView(
                 onBack = navController::navigateUp
             )
@@ -81,9 +116,29 @@ fun MyPageNavView() {
         composable<MyPageRoute.ManageBlockFriend> {
 
         }
-        composable<MyPageRoute.Policy> {
+        composable<MyPageRoute.Policy>(
+            enterTransition = {
+                slideInHorizontally { it }
+            }
+        ) {
             MyPagePolicyView(
-                onBack = navController::navigateUp
+                onBack = navController::navigateUp,
+                routePolicy = { policyDetail ->
+                    navController.navigate(policyDetail) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable<MyPageRoute.PolicyDetail>(
+            enterTransition = {
+                slideInHorizontally { it }
+            }
+        ) { backstackEntry ->
+            val detail = backstackEntry.toRoute<MyPageRoute.PolicyDetail>()
+            MyPagePolicyDetailView(
+                onBack = navController::navigateUp,
+                url = detail.url
             )
         }
     }
