@@ -339,24 +339,24 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_profile,
                 content = listOf(
-                    MyPageRoute.EditNickName to R.string.mypage_nickname
+                    MyPageRoute.Profile.EditNickName to R.string.mypage_nickname
                 )
             )
 
             initHeaderWithContent(
                 header = R.string.mypage_account,
                 content = listOf(
-                    MyPageRoute.ChangeEmail to R.string.mypage_email,
-                    MyPageRoute.ChangePassword to R.string.mypage_password,
-                    MyPageRoute.LinkKakao to R.string.mypage_kakao,
-                    MyPageRoute.Other to R.string.mypage_other,
+                    MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
+                    MyPageRoute.Account.ChangePassword to R.string.mypage_password,
+                    MyPageRoute.Account.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.Account.Other to R.string.mypage_other,
                 )
             )
 
             initHeaderWithContent(
                 header = R.string.mypage_friend,
                 content = listOf(
-                    MyPageRoute.ManageBlockFriend to R.string.mypage_block,
+                    MyPageRoute.Friend.ManageBlockFriend to R.string.mypage_block,
                 )
             )
 
@@ -384,7 +384,7 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_service,
                 content = listOf(
-                    MyPageRoute.Policy to R.string.mypage_policy,
+                    MyPageRoute.Service.Policy to R.string.mypage_policy,
                 ),
                 withSpacer = false
             )
