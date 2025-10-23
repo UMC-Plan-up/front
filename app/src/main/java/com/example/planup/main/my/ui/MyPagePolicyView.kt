@@ -3,13 +3,13 @@ package com.example.planup.main.my.ui
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -59,25 +59,28 @@ fun MyPagePolicyDetailView(
     onBack: () -> Unit,
     url: String
 ) {
+    val context = LocalContext.current
+    val webView = remember {
+        WebView(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            with(settings) {
+                domStorageEnabled = true
+                javaScriptEnabled = true
+            }
+            webViewClient = WebViewClient()
+        }
+    }
+
+
     RoutePageDefault(onBack = onBack) {
         AndroidView(
-            factory = { context ->
-                WebView(context).apply {
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
-                    with(settings) {
-                        domStorageEnabled = true
-                        javaScriptEnabled = true
-                    }
-                    webViewClient = WebViewClient()
-                    loadUrl(url)
-                }
-            },
+            factory = { webView },
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Magenta)
+                .fillMaxSize(),
+            update = { it.loadUrl(url) }
         )
     }
 }
