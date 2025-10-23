@@ -25,7 +25,6 @@ fun GraySnackbarHost(
             Snackbar(
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
-                    .padding(bottom = 44.dp)
                 ,
                 containerColor = Black300,
                 shape = RoundedCornerShape(6.dp),
