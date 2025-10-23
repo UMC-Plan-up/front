@@ -50,6 +50,10 @@ interface UserApi {
         @Body request: SignupRequestDto
     ): Response<SignupResponseDto>
 
+    //로그아웃
+    @POST("users/logout")
+    suspend fun logout(): Response<UserResponse<String>>
+
     // 로그인
     @POST("/users/login")
     suspend fun login(

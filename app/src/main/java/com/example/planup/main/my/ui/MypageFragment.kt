@@ -55,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.planup.R
@@ -62,6 +63,7 @@ import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
@@ -82,6 +84,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
     //sharedPreferences
     private lateinit var prefs: SharedPreferences
 
+    private val mainSnackbarViewModel : MainSnackbarViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -90,7 +94,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MyPageNavView()
+                MyPageNavView(mainSnackbarViewModel)
             }
         }
     }

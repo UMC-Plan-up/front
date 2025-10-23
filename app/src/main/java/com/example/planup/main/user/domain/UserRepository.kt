@@ -32,6 +32,8 @@ interface UserRepository {
         password: String
     ): ApiResult<LoginResponse.Result>
 
+    suspend fun logout() : ApiResult<String>
+
     suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
 
     suspend fun setProfileImage(

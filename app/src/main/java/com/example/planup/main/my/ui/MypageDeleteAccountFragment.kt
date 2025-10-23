@@ -60,13 +60,6 @@ class MypageDeleteAccountFragment : Fragment(), CloseAccountAdapter {
 
     private fun clickListener() {
 
-        /*뒤로가기*/
-        binding.deleteAccountBackIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageOtherFragment())
-                .commitAllowingStateLoss()
-        }
-
         /*회원 탈퇴 체크박스*/
         binding.deleteAgreeCheckIv.setOnClickListener {
             binding.deleteAgreeCheckIv.visibility = View.GONE

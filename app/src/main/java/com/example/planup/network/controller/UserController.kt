@@ -1,10 +1,8 @@
 package com.example.planup.network.controller
 
-import android.util.Log
 import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
-import com.example.planup.main.my.adapter.LogoutAdapter
 import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
@@ -43,12 +41,6 @@ class UserController {
     private lateinit var closeAccountAdapter: CloseAccountAdapter
     fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
         this.closeAccountAdapter = adapter
-    }
-
-    //로그아웃
-    private lateinit var logoutAdapter: LogoutAdapter
-    fun setLogoutAdapter(adapter: LogoutAdapter) {
-        this.logoutAdapter = adapter
     }
 
     //카카오톡 연동 상태 확인
@@ -255,30 +247,6 @@ class UserController {
                     serviceAdapter.failServiceSetting(t.toString())
                 }
             })
-    }
-
-    // 로그아웃
-    fun logoutService() {
-        val logoutService = getRetrofit().create(UserPort::class.java)
-        logoutService.logout().enqueue(object : Callback<UserResponse<Boolean>> {
-            override fun onResponse(
-                call: Call<UserResponse<Boolean>>,
-                response: Response<UserResponse<Boolean>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp", "로그인 액티비티")
-                    logoutAdapter.successLogout()
-                } else if (!response.isSuccessful && response.body() != null) {
-                    logoutAdapter.failLogout(response.body()!!.message)
-                } else {
-                    logoutAdapter.failLogout("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                logoutAdapter.failLogout(t.toString())
-            }
-        })
     }
 
     // 회원 탈퇴

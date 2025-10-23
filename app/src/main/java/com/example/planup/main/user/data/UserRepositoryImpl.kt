@@ -134,6 +134,23 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun logout(): ApiResult<String> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.logout()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.clearAllUserInfo()
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
     override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> =
         withContext(Dispatchers.IO) {
             if (userInfoSaver.isEmpty) {

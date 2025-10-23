@@ -5,12 +5,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
 import kotlinx.serialization.Serializable
 
@@ -44,11 +41,10 @@ sealed interface MyPageRoute {
 }
 
 @Composable
-fun MyPageNavView() {
+fun MyPageNavView(
+    mainSnackbarViewModel : MainSnackbarViewModel
+) {
     val navController = rememberNavController()
-    val context = LocalContext.current
-    val mainSnackbarViewModel: MainSnackbarViewModel = hiltViewModel(context as MainActivity)
-
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
@@ -87,6 +83,7 @@ fun MyPageNavView() {
         composable<MyPageRoute.Other> {
             MyPageOtherView(
                 onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel,
                 navigateDelete = {
                     navController.navigate(MyPageRoute.DeleteAccount) {
                         launchSingleTop = true
