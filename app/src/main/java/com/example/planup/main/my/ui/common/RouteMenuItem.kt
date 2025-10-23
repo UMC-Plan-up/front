@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -24,16 +25,16 @@ import com.example.planup.theme.Typography
 @Composable
 fun RouteMenuItem(
     title: String,
-    showArrow: Boolean = false,
-    action: () -> Unit
+    rightContent : @Composable RowScope.() -> Unit = {},
+    action: (() -> Unit)? = null
 ) {
     Box {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(44.dp)
-                .clickable {
-                    action()
+                .clickable(action != null) {
+                    action?.invoke()
                 },
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
@@ -42,16 +43,8 @@ fun RouteMenuItem(
                 text = title,
                 style = Typography.Semibold_S
             )
-            if (showArrow) {
-                Box(
-                    modifier = Modifier.size(24.dp)
-                ) {
-                    Image(
-                        modifier = Modifier.align(Alignment.Center),
-                        painter = painterResource(R.drawable.ic_arrow_right),
-                        contentDescription = null,
-                    )
-                }
+            Row {
+                rightContent()
             }
         }
         HorizontalDivider(
@@ -61,11 +54,35 @@ fun RouteMenuItem(
     }
 }
 
+
+@Composable
+fun RouteMenuItemWithArrow(
+    title: String,
+    action: () -> Unit
+) {
+    RouteMenuItem(
+        title = title,
+        rightContent = {
+            Box(
+                modifier = Modifier.size(24.dp)
+            ) {
+                Image(
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(R.drawable.ic_arrow_right),
+                    contentDescription = null,
+                )
+            }
+        },
+        action = action
+    )
+}
+
+
 @Composable
 @Preview
 private fun RouteMenuItemPreview() {
     Column {
         RouteMenuItem("test") { }
-        RouteMenuItem("test2",true) { }
+        RouteMenuItemWithArrow("test2") { }
     }
 }

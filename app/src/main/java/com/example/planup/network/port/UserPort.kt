@@ -1,31 +1,26 @@
 package com.example.planup.network.port
 
 import com.example.planup.network.data.EmailLink
-import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.InviteCodeValidate
 import com.example.planup.network.data.KakaoLink
-import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.MyInviteCode
 import com.example.planup.network.data.PasswordLink
-import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.Signup
+import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
-import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.KakaoLinkCode
+import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.SignupDto
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Part
-import retrofit2.http.Query
 
 @Deprecated(message = "UserApi 로 통일해서 사용")
 interface UserPort {
@@ -74,11 +69,7 @@ interface UserPort {
     //이메일 변경 인증 메일 재발송
     @POST("users/email/change/resend")
     fun emailReLink(@Body email: String): Call<UserResponse<EmailLink>>
-    //이미지 변경
-    @Multipart
-    @POST("profile/image")
-    fun setProfileImage(@Part file: MultipartBody.Part): Call<UserResponse<ProfileImage>>
-    //비밀번호 변경
+     //비밀번호 변경
     @POST("/users/password/change")
     fun changePassword(@Body password: ChangePassword): Call<UserResponse<Boolean>>
 
