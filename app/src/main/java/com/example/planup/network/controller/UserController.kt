@@ -3,7 +3,6 @@ package com.example.planup.network.controller
 import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
-import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
@@ -30,12 +29,6 @@ class UserController {
     /*
 * Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
 * 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
-
-    //닉네임 변경
-    private lateinit var nicknameChangeAdapter: NicknameChangeAdapter
-    fun setNicknameChangeAdapter(adapter: NicknameChangeAdapter) {
-        this.nicknameChangeAdapter = adapter
-    }
 
     //회원 탈퇴
     private lateinit var closeAccountAdapter: CloseAccountAdapter
