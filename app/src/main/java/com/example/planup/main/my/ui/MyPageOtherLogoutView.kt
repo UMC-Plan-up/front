@@ -32,7 +32,7 @@ import com.example.planup.main.my.ui.viewmodel.MyPageLogoutViewModel
 import com.example.planup.theme.Typography
 
 @Composable
-fun LogoutView(
+fun MyPageOtherLogoutView(
     onDismissRequest: () -> Unit,
     mainSnackbarViewModel: MainSnackbarViewModel,
     myPageLogoutViewModel: MyPageLogoutViewModel = hiltViewModel()

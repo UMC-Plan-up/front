@@ -114,7 +114,7 @@ fun MyPageNavView(
             )
         }
         dialog<MyPageRoute.Account.OtherMenu.Logout> {
-            LogoutView(
+            MyPageOtherLogoutView(
                 onDismissRequest = navController::navigateUp,
                 mainSnackbarViewModel = mainSnackbarViewModel
             )
