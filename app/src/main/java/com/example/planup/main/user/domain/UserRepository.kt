@@ -45,6 +45,7 @@ interface UserRepository {
     ): ApiResult<ProfileImage>
 
 
+    suspend fun getUserNickName() : String
     suspend fun getUserEmail() : String
     suspend fun getUserProfileImage() : String
 

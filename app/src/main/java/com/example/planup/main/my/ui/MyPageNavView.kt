@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
@@ -119,9 +121,13 @@ fun MyPageNavView(
                 mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
-        composable<MyPageRoute.Account.OtherMenu.DeleteAccount> {
+        composable<MyPageRoute.Account.OtherMenu.DeleteAccount> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(MyPageRoute.Main)
+            }
             MyPageOtherDeleteAccountView(
-                onBack = navController::navigateUp
+                onBack = navController::navigateUp,
+                myPageInfoViewModel = hiltViewModel(parentEntry)
             )
         }
         composable<MyPageRoute.Friend.ManageBlockFriend> {

@@ -212,6 +212,9 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun getUserNickName(): String {
+        return userInfoSaver.getNickName()
+    }
     override suspend fun getUserEmail(): String {
         return userInfoSaver.getEmail()
     }

@@ -17,6 +17,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -31,13 +32,27 @@ import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.component.PlanUpButton
 import com.example.planup.main.my.ui.common.RoutePageDefault
+import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.theme.Black200
 import com.example.planup.theme.Black300
 import com.example.planup.theme.Typography
 
 @Composable
 fun MyPageOtherDeleteAccountView(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    myPageInfoViewModel: MyPageInfoViewModel
+) {
+    val nickName by myPageInfoViewModel.nickName.collectAsState()
+    MyPageOtherDeleteAccountContent(
+        onBack = onBack,
+        nickName = nickName
+    )
+}
+
+@Composable
+private fun MyPageOtherDeleteAccountContent(
+    onBack: () -> Unit,
+    nickName: String
 ) {
     var checkButton by rememberSaveable {
         mutableStateOf(false)
@@ -69,7 +84,7 @@ fun MyPageOtherDeleteAccountView(
                 item {
                     Text(
                         text = buildAnnotatedString {
-                            append("닉네임")
+                            append(nickName)
                             appendLine("님,")
                             append("정말 Plan-Up을 탈퇴하시겠어요?")
                         },
