@@ -4,6 +4,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.ProfileImage
+import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.InviteCodeValidateResponse
 import okhttp3.MultipartBody
 import java.io.File
@@ -33,6 +34,16 @@ interface UserRepository {
     ): ApiResult<LoginResponse.Result>
 
     suspend fun logout() : ApiResult<String>
+
+    /**
+     * 회원 탈퇴
+     * @param reason 탈퇴 사유
+     * @see WithDraw
+     * @return
+     */
+    suspend fun withdraw(
+        reason : String
+    ) : ApiResult<WithDraw>
 
     suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
 

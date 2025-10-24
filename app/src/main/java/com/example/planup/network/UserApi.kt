@@ -5,6 +5,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -59,6 +60,12 @@ interface UserApi {
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
+
+    //회원 탈퇴
+    @POST("users/withdraw")
+    suspend fun withdrawAccount(
+        @Body reason: String
+    ): Response<UserResponse<WithDraw>>
 
     // 내 초대코드 조회
     @GET("users/me/invite-code")
