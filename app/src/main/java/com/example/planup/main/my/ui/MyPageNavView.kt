@@ -127,7 +127,8 @@ fun MyPageNavView(
             }
             MyPageOtherDeleteAccountView(
                 onBack = navController::navigateUp,
-                myPageInfoViewModel = hiltViewModel(parentEntry)
+                myPageInfoViewModel = hiltViewModel(parentEntry),
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         composable<MyPageRoute.Friend.ManageBlockFriend> {

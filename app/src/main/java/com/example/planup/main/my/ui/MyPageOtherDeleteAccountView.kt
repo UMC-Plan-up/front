@@ -1,5 +1,6 @@
 package com.example.planup.main.my.ui
 
+import android.content.Intent
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,13 +26,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
 import com.example.planup.component.PlanUpButton
+import com.example.planup.extension.findActivity
+import com.example.planup.login.ui.LoginActivityNew
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.common.RoutePageDefault
+import com.example.planup.main.my.ui.viewmodel.MyPageDeleteAccountViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.theme.Black200
 import com.example.planup.theme.Black300
@@ -40,24 +47,45 @@ import com.example.planup.theme.Typography
 @Composable
 fun MyPageOtherDeleteAccountView(
     onBack: () -> Unit,
-    myPageInfoViewModel: MyPageInfoViewModel
+    myPageInfoViewModel: MyPageInfoViewModel,
+    mainSnackbarViewModel: MainSnackbarViewModel,
+    myPageDeleteAccountViewModel: MyPageDeleteAccountViewModel = hiltViewModel()
 ) {
+    val context = LocalContext.current
     val nickName by myPageInfoViewModel.nickName.collectAsState()
     MyPageOtherDeleteAccountContent(
         onBack = onBack,
-        nickName = nickName
+        nickName = nickName,
+        withdraw = { reason ->
+            myPageDeleteAccountViewModel.withDraw(
+                reason,
+                onSuccess = {
+                    val activity = context.findActivity()
+                    activity?.let {
+                        val intent = Intent(context, LoginActivityNew::class.java)
+                        it.finishAffinity()
+                        context.startActivity(intent)
+                    }
+                },
+                onFail = { message ->
+                    mainSnackbarViewModel.updateMessage(message)
+                }
+            )
+        }
     )
 }
 
 @Composable
 private fun MyPageOtherDeleteAccountContent(
     onBack: () -> Unit,
-    nickName: String
+    nickName: String,
+    withdraw: (reason: String) -> Unit
 ) {
     var checkButton by rememberSaveable {
         mutableStateOf(false)
     }
-    var opinion by rememberSaveable {
+
+    var reason by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -164,9 +192,9 @@ private fun MyPageOtherDeleteAccountContent(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(125.dp),
-                            value = opinion,
+                            value = reason,
                             onValueChange = {
-                                opinion = it
+                                reason = it
                             },
                             textStyle = Typography.Medium_S,
                             decorationBox = { innerTextField ->
@@ -180,7 +208,7 @@ private fun MyPageOtherDeleteAccountContent(
                                             )
                                     ) {
                                         innerTextField()
-                                        if (opinion.isEmpty()) {
+                                        if (reason.isEmpty()) {
                                             Text(
                                                 text = stringResource(R.string.delete_account_feedback),
                                                 style = Typography.Medium_S,
@@ -198,7 +226,9 @@ private fun MyPageOtherDeleteAccountContent(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(R.string.btn_close_account),
                 enabled = checkButton,
-                onClick = {}
+                onClick = {
+                    withdraw(reason)
+                }
             )
         }
     }
