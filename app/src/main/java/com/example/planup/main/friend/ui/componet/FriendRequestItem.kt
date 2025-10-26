@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.component.PlanUpButtonSecondarySmall
 import com.example.planup.component.PlanUpButtonSmall
-import com.example.planup.main.friend.data.FriendInfo
+import com.example.planup.main.friend.data.FriendRequestsResult
 
 @Composable
 fun FriendRequestItem(
-    friendInfo: FriendInfo,
+    friendInfo: FriendRequestsResult,
     clickItem: () -> Unit,
     acceptFriend: () -> Unit,
     declineFriend: () -> Unit
@@ -84,11 +84,11 @@ fun FriendRequestItem(
 @Preview
 private fun FriendRequestItemPreview() {
     FriendRequestItem(
-        FriendInfo(
-            id = 1234,
+        FriendRequestsResult(
+            id = 1,
             nickname = "Tester",
-            goalCnt = 123,
-            todayTime = "",
+            goalCnt = 3,
+            todayTime = "00:01:54",
             isNewPhotoVerify = true,
             profileImage = ""
         ),
