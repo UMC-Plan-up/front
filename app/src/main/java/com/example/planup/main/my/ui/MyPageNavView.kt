@@ -54,6 +54,11 @@ sealed interface MyPageRoute {
     object Service {
         @Serializable
         data object Policy : MyPageRoute
+
+        @Serializable
+        data class Detail(
+            val url: String
+        ) : MyPageRoute
     }
 
 }
@@ -127,8 +132,32 @@ fun MyPageNavView(
         composable<MyPageRoute.Friend.ManageBlockFriend> {
 
         }
-        composable<MyPageRoute.Service.Policy> {
-
+        composable<MyPageRoute.Service.Policy>(
+            enterTransition = { slideHorizontallyTransition() },
+            exitTransition = { slideHorizontallyExitTransition() },
+            popEnterTransition = { slideHorizontallyPopEnterTransition() },
+            popExitTransition = { slideHorizontallyPopExitTransition() }
+        ) {
+            MyPagePolicyView(
+                onBack = navController::navigateUp,
+                routePolicy = { policyDetail ->
+                    navController.navigate(policyDetail) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable<MyPageRoute.Service.Detail>(
+            enterTransition = { slideHorizontallyTransition() },
+            exitTransition = { slideHorizontallyExitTransition() },
+            popEnterTransition = { slideHorizontallyPopEnterTransition() },
+            popExitTransition = { slideHorizontallyPopExitTransition() }
+        ) { backstackEntry ->
+            val detail = backstackEntry.toRoute<MyPageRoute.Service.Policy>()
+            MyPagePolicyDetailView(
+                onBack = navController::navigateUp,
+                url = detail.url
+            )
         }
     }
 }

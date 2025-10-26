@@ -168,14 +168,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         binding.mypageAlertBenefitOffIv.setOnClickListener {
             service.notificationAgreementService(true)
         }
-        //이용약관 및 정책
-        binding.mypagePolicyIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePolicyFragment())
-                .commitAllowingStateLoss()
-        }
-
-
     }
 
     //마케팅 수신 동의하는 경우 팝업 메시지

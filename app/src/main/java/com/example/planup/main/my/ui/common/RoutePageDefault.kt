@@ -44,7 +44,9 @@ fun RoutePageDefault(
             },
     ) {
         TopHeader(
-            modifier = Modifier.padding(horizontal = 20.dp)
+            modifier = Modifier
+                .padding(top = 20.dp)
+                .padding(horizontal = 20.dp)
                 .height(32.dp),
             title = headerText,
             onBackAction = onBack
