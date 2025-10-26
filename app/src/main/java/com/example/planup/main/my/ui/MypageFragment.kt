@@ -62,6 +62,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.planup.R
+import com.example.planup.component.PlanUpSwitch
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
@@ -396,7 +397,10 @@ private fun MyPageViewContent(
                 RouteMenuItem(
                     title = stringResource(R.string.mypage_service_alert),
                     rightContent = {
-
+                        PlanUpSwitch(
+                            checked = serviceNotification,
+                            onCheckedChange = updateServiceNotification
+                        )
                     }
                 )
             }
@@ -404,10 +408,7 @@ private fun MyPageViewContent(
                 RouteMenuItem(
                     title = stringResource(R.string.mypage_benefit),
                     rightContent = {
-                        Switch(
-                            checked = serviceNotification,
-                            onCheckedChange = updateServiceNotification
-                        )
+
                     }
                 )
             }
