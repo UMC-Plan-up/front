@@ -17,13 +17,21 @@ class UserInfoSaver(
         private const val KEY_INVITE_CODE = "invite"
         private const val KEY_EMAIL = "email"
         private const val KEY_PROFILE_IMAGE = "profileImg"
+
+
+        /**
+         * 서비스 알림 수신 여부
+         */
+        private const val KEY_NOTIFICATION_LOCAL = "notificationLocal"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
 
     // 저장된 유저 정보가 없는지 확인
     val isEmpty
-        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMAGE)
+        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(
+            KEY_PROFILE_IMAGE
+        )
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
@@ -40,7 +48,7 @@ class UserInfoSaver(
             putString(KEY_NICKNAME, nickName)
         }
     }
-    
+
     /**
      * 현재 저장된 초대 코드를 가져옵니다.
      */
@@ -94,6 +102,25 @@ class UserInfoSaver(
     fun saveProfileImage(profileImage: String?) {
         prefs.edit {
             putString(KEY_PROFILE_IMAGE, profileImage)
+        }
+    }
+
+    /**
+     * 서비스 알림 수신 여부를 가져옵니다.
+     **/
+    fun getNotificationLocal(): Boolean {
+        //해당 정보는 로컬별로 수신이므로, 기본값은 false
+        return prefs.getBoolean(KEY_NOTIFICATION_LOCAL, false)
+    }
+
+    /**
+     * 서비스 알림 수신여부를 변경합니다.
+     */
+    fun saveNotificationLocal(
+        notificationLocal: Boolean
+    ) {
+        prefs.edit {
+            putBoolean(KEY_NOTIFICATION_LOCAL, notificationLocal)
         }
     }
 

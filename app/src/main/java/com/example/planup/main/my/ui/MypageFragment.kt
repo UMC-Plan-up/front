@@ -3,6 +3,8 @@ package com.example.planup.main.my.ui
 import android.app.Dialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -33,6 +35,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,7 +87,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
     //sharedPreferences
     private lateinit var prefs: SharedPreferences
 
-    private val mainSnackbarViewModel : MainSnackbarViewModel by activityViewModels()
+    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -248,13 +251,46 @@ fun MyPageView(
     LaunchedEffect(true) {
         myPageInfoViewModel.fetchUserInfo()
     }
+
+    val context = LocalContext.current
+
     val email by myPageInfoViewModel.email.collectAsState()
     val profileImage by myPageInfoViewModel.profileImage.collectAsState()
+    val serviceNotification by myPageInfoViewModel.notificationLocal.collectAsState()
+
+    /**
+     * 알림 권한 요청
+     */
+    val notificationPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+            if (result) {
+                myPageInfoViewModel.updateNotificationLocal(true)
+            } else {
+                Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
+            }
+        }
 
     MyPageViewContent(
         navigateRoute = navigateRoute,
         profileImage = profileImage,
         email = email,
+        serviceNotification = serviceNotification,
+        updateServiceNotification = { newNotification ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                //33 이상은 먼저 POST_NOTIFICATIONS 권한 체크를 먼저 진행한다.
+                //이가 선행 되지 않으면, true가 되더라도 실제 알림 수신을 트리거 할 수 없다.
+                if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
+                    myPageInfoViewModel.updateNotificationLocal(newNotification)
+                } else {
+                    notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            } else {
+                //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
+                myPageInfoViewModel.updateNotificationLocal(newNotification)
+            }
+        },
         fetch = myPageInfoViewModel::fetchUserInfo,
         onErrorMsg = {
 
@@ -263,16 +299,17 @@ fun MyPageView(
 }
 
 @Composable
-@Preview(showBackground = true)
 private fun MyPageViewContent(
-    navigateRoute: (route: MyPageRoute) -> Unit = {},
-    profileImage: String = "",
-    email: String = "",
-    fetch: () -> Unit ={},
-    onErrorMsg: (String) -> Unit ={}
+    navigateRoute: (route: MyPageRoute) -> Unit,
+    profileImage: String,
+    email: String,
+    serviceNotification: Boolean,
+    updateServiceNotification: (Boolean) -> Unit,
+    fetch: () -> Unit,
+    onErrorMsg: (String) -> Unit
 ) {
     val context = LocalContext.current
-    fun LazyListScope.addSpacer(height : Dp = 28.dp) {
+    fun LazyListScope.addSpacer(height: Dp = 28.dp) {
         item {
             Spacer(Modifier.height(height))
         }
@@ -367,7 +404,10 @@ private fun MyPageViewContent(
                 RouteMenuItem(
                     title = stringResource(R.string.mypage_benefit),
                     rightContent = {
-
+                        Switch(
+                            checked = serviceNotification,
+                            onCheckedChange = updateServiceNotification
+                        )
                     }
                 )
             }

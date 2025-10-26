@@ -21,6 +21,13 @@ class MyPageInfoViewModel @Inject constructor(
     private var _profileImage = MutableStateFlow("")
     val profileImage = _profileImage.asStateFlow()
 
+
+    /**
+     * 서비스 알림 수신 정보
+     */
+    private var _notificationLocal = MutableStateFlow(false)
+    val notificationLocal = _notificationLocal.asStateFlow()
+
     fun fetchUserInfo() {
         viewModelScope.launch {
             _email.update {
@@ -29,7 +36,19 @@ class MyPageInfoViewModel @Inject constructor(
             _profileImage.update {
                 userRepository.getUserProfileImage()
             }
+            fetchNotificationLocal()
         }
     }
 
+
+    private suspend fun fetchNotificationLocal() = _notificationLocal.update {
+        userRepository.getUserNotificationLocal()
+    }
+
+    fun updateNotificationLocal(notificationLocal: Boolean) {
+        viewModelScope.launch {
+            userRepository.updateUserNotificationLocal(notificationLocal)
+            fetchNotificationLocal()
+        }
+    }
 }

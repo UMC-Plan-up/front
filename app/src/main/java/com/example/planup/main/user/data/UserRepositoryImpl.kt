@@ -219,4 +219,12 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserProfileImage(): String {
         return userInfoSaver.getProfileImage()
     }
+
+    override suspend fun getUserNotificationLocal(): Boolean {
+        return userInfoSaver.getNotificationLocal()
+    }
+
+    override suspend fun updateUserNotificationLocal(isOnNotification: Boolean) {
+        userInfoSaver.saveNotificationLocal(isOnNotification)
+    }
 }

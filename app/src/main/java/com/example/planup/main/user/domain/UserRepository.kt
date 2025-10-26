@@ -32,7 +32,7 @@ interface UserRepository {
         password: String
     ): ApiResult<LoginResponse.Result>
 
-    suspend fun logout() : ApiResult<String>
+    suspend fun logout(): ApiResult<String>
 
     suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
 
@@ -45,7 +45,9 @@ interface UserRepository {
     ): ApiResult<ProfileImage>
 
 
-    suspend fun getUserEmail() : String
-    suspend fun getUserProfileImage() : String
+    suspend fun getUserEmail(): String
+    suspend fun getUserProfileImage(): String
+    suspend fun getUserNotificationLocal(): Boolean
+    suspend fun updateUserNotificationLocal(isOnNotification: Boolean)
 
 }
