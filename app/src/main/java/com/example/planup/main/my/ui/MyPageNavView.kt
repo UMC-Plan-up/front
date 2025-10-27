@@ -1,5 +1,10 @@
 package com.example.planup.main.my.ui
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -11,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.planup.main.MainSnackbarViewModel
 import kotlinx.serialization.Serializable
 
@@ -56,9 +62,31 @@ sealed interface MyPageRoute {
     object Service {
         @Serializable
         data object Policy : MyPageRoute
+
+        @Serializable
+        data class Detail(
+            val url: String
+        ) : MyPageRoute
     }
 
 }
+
+private fun slideHorizontallyTransition(): EnterTransition = slideInHorizontally { it }
+
+private fun slideHorizontallyExitTransition(): ExitTransition = slideOutHorizontally(
+    targetOffsetX = { it },
+    animationSpec = tween(300)
+)
+
+private fun slideHorizontallyPopEnterTransition(): EnterTransition = slideInHorizontally(
+    initialOffsetX = { it },
+    animationSpec = tween(300)
+)
+
+private fun slideHorizontallyPopExitTransition(): ExitTransition = slideOutHorizontally(
+    targetOffsetX = { -it },
+    animationSpec = tween(300)
+)
 
 @Composable
 fun MyPageNavView(
@@ -134,8 +162,32 @@ fun MyPageNavView(
         composable<MyPageRoute.Friend.ManageBlockFriend> {
 
         }
-        composable<MyPageRoute.Service.Policy> {
-
+        composable<MyPageRoute.Service.Policy>(
+            enterTransition = { slideHorizontallyTransition() },
+            exitTransition = { slideHorizontallyExitTransition() },
+            popEnterTransition = { slideHorizontallyPopEnterTransition() },
+            popExitTransition = { slideHorizontallyPopExitTransition() }
+        ) {
+            MyPagePolicyView(
+                onBack = navController::navigateUp,
+                routePolicy = { policyDetail ->
+                    navController.navigate(policyDetail) {
+                        launchSingleTop = true
+                    }
+                }
+            )
+        }
+        composable<MyPageRoute.Service.Detail>(
+            enterTransition = { slideHorizontallyTransition() },
+            exitTransition = { slideHorizontallyExitTransition() },
+            popEnterTransition = { slideHorizontallyPopEnterTransition() },
+            popExitTransition = { slideHorizontallyPopExitTransition() }
+        ) { backstackEntry ->
+            val detail = backstackEntry.toRoute<MyPageRoute.Service.Detail>()
+            MyPagePolicyDetailView(
+                onBack = navController::navigateUp,
+                url = detail.url
+            )
         }
     }
 }
