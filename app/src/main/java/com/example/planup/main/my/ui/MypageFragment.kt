@@ -35,7 +35,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +53,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -247,7 +245,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
 @Composable
 fun MyPageView(
     navigateRoute: (route: MyPageRoute) -> Unit,
-    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel()
+    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel(),
+    mainSnackbarViewModel: MainSnackbarViewModel
 ) {
     LaunchedEffect(true) {
         myPageInfoViewModel.fetchUserInfo()
@@ -272,7 +271,30 @@ fun MyPageView(
         }
 
     MyPageViewContent(
-        navigateRoute = navigateRoute,
+        navigateRoute = { route ->
+            if (route is MyPageRoute.Account.LinkKakao) {
+                //KaKao이동인 경우 먼저 검증
+                myPageInfoViewModel.checkKakaoAccountLink(
+                    onSuccess = {usingKakao ->
+                        if (usingKakao.linked && usingKakao.kakaoEmail != null) {
+                            navigateRoute(
+                                MyPageRoute.Account.LinkKakao(
+                                    usingKakao.kakaoEmail!!,
+                                    usingKakao.linked
+                                )
+                            )
+                        } else {
+                            //TODO Link To KAKAO ACCOUNT
+                        }
+                    },
+                    onFail = { msg ->
+                        mainSnackbarViewModel.updateMessage(msg)
+                    }
+                )
+            } else {
+                navigateRoute(route)
+            }
+        },
         profileImage = profileImage,
         email = email,
         serviceNotification = serviceNotification,
@@ -293,8 +315,8 @@ fun MyPageView(
             }
         },
         fetch = myPageInfoViewModel::fetchUserInfo,
-        onErrorMsg = {
-
+        onErrorMsg = { msg ->
+            mainSnackbarViewModel.updateMessage(msg)
         }
     )
 }
@@ -378,7 +400,7 @@ private fun MyPageViewContent(
                 content = listOf(
                     MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
                     MyPageRoute.Account.ChangePassword to R.string.mypage_password,
-                    MyPageRoute.Account.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.Account.LinkKakao("", false) to R.string.mypage_kakao,
                     MyPageRoute.Account.Other to R.string.mypage_other,
                 )
             )
