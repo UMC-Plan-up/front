@@ -3,6 +3,9 @@ package com.example.planup.main.my.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
+import com.example.planup.network.data.UsingKakao
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -63,6 +66,18 @@ class MyPageInfoViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.updateUserNotificationLocal(notificationLocal)
             fetchNotificationLocal()
+        }
+    }
+
+
+    fun checkKakaoAccountLink(
+        onSuccess: (UsingKakao) -> Unit,
+        onFail: (message: String) -> Unit
+    ) {
+        viewModelScope.launch {
+            userRepository.getKakaoAccountLink()
+                .onSuccess(onSuccess)
+                .onFailWithMessage(onFail)
         }
     }
 }

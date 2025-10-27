@@ -10,6 +10,8 @@ import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.ProfileImage
+import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeValidateRequest
@@ -19,6 +21,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
@@ -27,6 +30,29 @@ class UserRepositoryImpl @Inject constructor(
     private val tokenSaver: TokenSaver,
     private val userInfoSaver: UserInfoSaver
 ) : UserRepository {
+
+    /**
+     * [safeResult]의 UserResponse<T>응답 처리 형태 개선 버전
+     *
+     * @param response API 콜을 통한 Response<UserResponse<T>> 응답
+     * @param onResponse 응답 성공시 T를 기반으로 ApiResult<R> 결과값 반환
+     */
+    private suspend inline fun <T, R> safeUserResponseResult(
+        response: suspend () -> Response<UserResponse<T>>,
+        onResponse: (T) -> ApiResult<R>
+    ): ApiResult<R> {
+        return safeResult(
+            response = response,
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    onResponse(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
 
     override suspend fun getInviteCode(): String {
         val inviteCode = userInfoSaver.getInviteCode()
@@ -235,6 +261,15 @@ class UserRepositoryImpl @Inject constructor(
                     }
                 }
             )
+        }
+
+    override suspend fun getKakaoAccountLink(): ApiResult<UsingKakao> =
+        withContext(Dispatchers.IO) {
+            safeUserResponseResult(
+                response = userApi::getKakaoAccountLink
+            )  { usingKakao ->
+                ApiResult.Success(usingKakao)
+            }
         }
 
     override suspend fun getUserNickName(): String {
