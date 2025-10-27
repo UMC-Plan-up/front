@@ -1,8 +1,5 @@
 package com.example.planup.main.my.ui
 
-import android.app.Activity
-import android.content.Context
-import android.content.ContextWrapper
 import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
 import com.example.planup.component.PlanUpBorderButton
 import com.example.planup.component.PlanUpButton
+import com.example.planup.extension.findActivity
 import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageLogoutViewModel
@@ -94,8 +92,3 @@ fun MyPageOtherLogoutView(
     }
 }
 
-fun Context.findActivity(): Activity? = when (this) {
-    is Activity -> this
-    is ContextWrapper -> baseContext.findActivity()
-    else -> null
-}

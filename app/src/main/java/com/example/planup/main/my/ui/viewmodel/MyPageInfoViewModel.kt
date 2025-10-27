@@ -21,27 +21,41 @@ class MyPageInfoViewModel @Inject constructor(
     private var _profileImage = MutableStateFlow("")
     val profileImage = _profileImage.asStateFlow()
 
-
     /**
      * 서비스 알림 수신 정보
      */
     private var _notificationLocal = MutableStateFlow(false)
     val notificationLocal = _notificationLocal.asStateFlow()
 
+    /**
+     * 유저 닉네임 정보
+     */
+    private var _nickName = MutableStateFlow("")
+    val nickName = _nickName.asStateFlow()
+
     fun fetchUserInfo() {
         viewModelScope.launch {
-            _email.update {
-                userRepository.getUserEmail()
-            }
-            _profileImage.update {
-                userRepository.getUserProfileImage()
-            }
+            fetchEmail()
+            fetchNickName()
+            fetchProfileImage()
             fetchNotificationLocal()
         }
     }
 
+    suspend fun fetchEmail() = _email.update {
+        userRepository.getUserEmail()
+    }
 
-    private suspend fun fetchNotificationLocal() = _notificationLocal.update {
+    suspend fun fetchNickName() = _nickName.update {
+        userRepository.getUserNickName()
+    }
+
+    suspend fun fetchProfileImage() = _profileImage.update {
+        userRepository.getUserProfileImage()
+    }
+
+
+    suspend fun fetchNotificationLocal() = _notificationLocal.update {
         userRepository.getUserNotificationLocal()
     }
 

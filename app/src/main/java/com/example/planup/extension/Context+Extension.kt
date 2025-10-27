@@ -1,6 +1,8 @@
 package com.example.planup.extension
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageManager
 
 fun Context.getAppVersion(): String {
@@ -10,4 +12,10 @@ fun Context.getAppVersion(): String {
     } catch (e: PackageManager.NameNotFoundException) {
         "Unknown"
     }
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

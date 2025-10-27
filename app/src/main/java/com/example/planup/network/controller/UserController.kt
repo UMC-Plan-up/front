@@ -1,6 +1,5 @@
 package com.example.planup.network.controller
 
-import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
@@ -14,7 +13,6 @@ import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
-import com.example.planup.network.data.WithDraw
 import com.example.planup.network.dto.user.ChangePassword
 import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.KakaoLinkCode
@@ -24,17 +22,15 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@Deprecated(
+    message = "UserRepository로 이관",
+    replaceWith = ReplaceWith("UserRepository")
+)
 class UserController {
 
     /*
 * Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
 * 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
-
-    //회원 탈퇴
-    private lateinit var closeAccountAdapter: CloseAccountAdapter
-    fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
-        this.closeAccountAdapter = adapter
-    }
 
     //카카오톡 연동 상태 확인
     private lateinit var kakaoAdapter: KakaoAdapter
@@ -238,30 +234,6 @@ class UserController {
 
                 override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
                     serviceAdapter.failServiceSetting(t.toString())
-                }
-            })
-    }
-
-    // 회원 탈퇴
-    fun closeAccountService(reason: String) {
-        val closeAccountService = getRetrofit().create(UserPort::class.java)
-        closeAccountService.withdrawAccount(reason)
-            .enqueue(object : Callback<UserResponse<WithDraw>> {
-                override fun onResponse(
-                    call: Call<UserResponse<WithDraw>>,
-                    response: Response<UserResponse<WithDraw>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        closeAccountAdapter.successCloseAccount()
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        closeAccountAdapter.failCloseAccount(response.body()!!.message)
-                    } else {
-                        closeAccountAdapter.failCloseAccount("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<WithDraw>>, t: Throwable) {
-                    closeAccountAdapter.failCloseAccount(t.toString())
                 }
             })
     }
