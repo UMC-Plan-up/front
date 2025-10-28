@@ -23,6 +23,13 @@ sealed interface MyPageRoute {
     @Serializable
     data object Main : MyPageRoute
 
+    @Serializable
+    data class NotificationMarketing(
+        val isAgree: Boolean,
+        val nickName: String,
+        val date: String
+    ) : MyPageRoute
+
     object Profile {
 
         @Serializable
@@ -103,6 +110,16 @@ fun MyPageNavView(
                         launchSingleTop = true
                     }
                 }
+            )
+        }
+        dialog<MyPageRoute.NotificationMarketing> {
+            val notificationMarketing = it.toRoute<MyPageRoute.NotificationMarketing>()
+            MyPageNotificationMarketingResultView(
+                onBack = navController::navigateUp,
+                isAgree = notificationMarketing.isAgree,
+                nickName = notificationMarketing.nickName,
+                date = notificationMarketing.date
+
             )
         }
         composable<MyPageRoute.Profile.EditNickName> {

@@ -15,6 +15,7 @@ class MyPageInfoViewModel @Inject constructor(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
+
     private var _email = MutableStateFlow("")
     val email = _email.asStateFlow()
 
@@ -41,7 +42,7 @@ class MyPageInfoViewModel @Inject constructor(
     }
 
 
-    private suspend fun fetchNotificationLocal() = _notificationLocal.update {
+    suspend fun fetchNotificationLocal() = _notificationLocal.update {
         userRepository.getUserNotificationLocal()
     }
 

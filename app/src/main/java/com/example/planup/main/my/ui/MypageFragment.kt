@@ -35,7 +35,6 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -54,7 +53,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -174,32 +172,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         }
     }
 
-    //마케팅 수신 동의하는 경우 팝업 메시지
-    private fun alertAgreementPopup(view: Int) {
-        val dialog = Dialog(context as MainActivity)
-        val today = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
-        dialog.setContentView(view)
-        dialog.window?.apply {
-            setLayout(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            setGravity(Gravity.CENTER)
-        }
-        //팝업 바깥 부분 터치하는 경우 팝업 끄기
-        dialog.setCanceledOnTouchOutside(true)
-        //닉네임, 오늘 날짜 출력하기
-        dialog.findViewById<TextView>(R.id.popup_benefit_explain_tv).text = getString(
-            R.string.popup_benefit_explain,
-            prefs.getString("nickname", "null"),
-            today
-        )
-        //확인버틍으로 팝업 끄기
-        dialog.findViewById<TextView>(R.id.popup_benefit_ok_btn).setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
 
     //API 오류에 대한 토스트 메시지 출력
     private fun errorToast(message: String) {
@@ -219,7 +191,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         if (condition) { //condition==true: 토글 켜기
             binding.mypageAlertBenefitOnIv.visibility = View.VISIBLE
             binding.mypageAlertBenefitOffIv.visibility = View.GONE
-            alertAgreementPopup(R.layout.popup_benefit_agree)
         } else { //condition == false: 토글 끄기
             binding.mypageAlertBenefitOnIv.visibility = View.GONE
             binding.mypageAlertBenefitOffIv.visibility = View.VISIBLE
@@ -259,6 +230,21 @@ fun MyPageView(
     val profileImage by myPageInfoViewModel.profileImage.collectAsState()
     val serviceNotification by myPageInfoViewModel.notificationLocal.collectAsState()
 
+    var marketingNotification by remember {
+        mutableStateOf(false)
+    }
+
+    val navigateMarketing = { isAgree: Boolean ->
+        navigateRoute(
+            MyPageRoute.NotificationMarketing(
+                isAgree,
+                "테스터",
+                "2025년 12월 25일"
+            )
+        )
+    }
+
+
     /**
      * 알림 권한 요청
      */
@@ -271,11 +257,23 @@ fun MyPageView(
             }
         }
 
+    val notificationMarketingPermissionLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
+            if (result) {
+                marketingNotification = true
+                navigateMarketing(true)
+            } else {
+                Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+
     MyPageViewContent(
         navigateRoute = navigateRoute,
         profileImage = profileImage,
         email = email,
         serviceNotification = serviceNotification,
+        marketingNotification = marketingNotification,
         updateServiceNotification = { newNotification ->
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 //33 이상은 먼저 POST_NOTIFICATIONS 권한 체크를 먼저 진행한다.
@@ -292,6 +290,24 @@ fun MyPageView(
                 myPageInfoViewModel.updateNotificationLocal(newNotification)
             }
         },
+        updateMarketingNotification = { newNotification ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                //33 이상은 먼저 POST_NOTIFICATIONS 권한 체크를 먼저 진행한다.
+                //이가 선행 되지 않으면, true가 되더라도 실제 알림 수신을 트리거 할 수 없다.
+                if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED
+                ) {
+                    marketingNotification = newNotification
+                    navigateMarketing(newNotification)
+                } else {
+                    notificationMarketingPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            } else {
+                //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
+                marketingNotification = newNotification
+                navigateMarketing(newNotification)
+            }
+        },
         fetch = myPageInfoViewModel::fetchUserInfo,
         onErrorMsg = {
 
@@ -305,7 +321,9 @@ private fun MyPageViewContent(
     profileImage: String,
     email: String,
     serviceNotification: Boolean,
+    marketingNotification: Boolean,
     updateServiceNotification: (Boolean) -> Unit,
+    updateMarketingNotification: (Boolean) -> Unit,
     fetch: () -> Unit,
     onErrorMsg: (String) -> Unit
 ) {
@@ -408,7 +426,10 @@ private fun MyPageViewContent(
                 RouteMenuItem(
                     title = stringResource(R.string.mypage_benefit),
                     rightContent = {
-
+                        PlanUpSwitch(
+                            checked = marketingNotification,
+                            onCheckedChange = updateMarketingNotification
+                        )
                     }
                 )
             }
