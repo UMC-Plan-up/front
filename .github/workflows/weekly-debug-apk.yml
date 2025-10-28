@@ -1,0 +1,85 @@
+name: Weekly Debug APK & Git Log
+
+on:
+  schedule:
+    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC (한국 시간 21:00 KST)
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Git log start date (YYYY-MM-DD)'
+        required: false
+      end_date:
+        description: 'Git log end date (YYYY-MM-DD)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper/
+          key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: gradle-
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload APK as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Get commits for the period
+        id: gitlog
+        run: |
+          # 날짜 입력 값이 없으면 자동 계산
+          START_DATE="${{ github.event.inputs.start_date }}"
+          END_DATE="${{ github.event.inputs.end_date }}"
+          
+          if [ -z "$START_DATE" ]; then
+            START_DATE=$(date -d "last Wednesday - 7 days" +%Y-%m-%d)
+          fi
+          if [ -z "$END_DATE" ]; then
+            END_DATE=$(date -d "last Wednesday" +%Y-%m-%d)
+          fi
+          
+          echo "Getting commits from $START_DATE to $END_DATE"
+          COMMITS=$(git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" --pretty=format:"%h - %s (%an)")
+          
+          # GitHub Actions 출력용
+          echo "commits<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMITS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Send Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        with:
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          message: |
+            Weekly Debug APK built successfully!  
+            *Git commits for period:*  
+            ${{ steps.gitlog.outputs.commits }}
+          attachments: |
+            [
+              {
+                "fallback": "Debug APK",
+                "color": "#36a64f",
+                "title": "Download Debug APK",
+                "title_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
+              }
+            ]
