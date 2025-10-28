@@ -21,7 +21,7 @@ import com.example.planup.main.my.ui.common.RoutePageDefault
 @Composable
 fun MyPagePolicyView(
     onBack: () -> Unit,
-    routePolicy: (MyPageRoute.PolicyDetail) -> Unit
+    routePolicy: (MyPageRoute.Service.Detail) -> Unit
 ) {
     MyPagePolicyContent(
         onBack = onBack,
@@ -32,7 +32,7 @@ fun MyPagePolicyView(
 @Composable
 private fun MyPagePolicyContent(
     onBack: () -> Unit,
-    routePolicy: (MyPageRoute.PolicyDetail) -> Unit
+    routePolicy: (MyPageRoute.Service.Detail) -> Unit
 ) {
     RoutePageDefault(
         onBack = onBack,
@@ -42,13 +42,13 @@ private fun MyPagePolicyContent(
         RouteMenuItemWithArrow(
             title = "서비스 이용 약관",
             action = {
-                routePolicy(MyPageRoute.PolicyDetail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb8032a668f6e4dfd6afc5?pvs=149"))
+                routePolicy(MyPageRoute.Service.Detail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb8032a668f6e4dfd6afc5?pvs=149"))
             }
         )
         RouteMenuItemWithArrow(
             title = "개인정보 처리방침",
             action = {
-                routePolicy(MyPageRoute.PolicyDetail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb80f18068c43792c0634c?pvs=149"))
+                routePolicy(MyPageRoute.Service.Detail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb80f18068c43792c0634c?pvs=149"))
             }
         )
     }

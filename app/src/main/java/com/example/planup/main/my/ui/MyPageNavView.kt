@@ -5,47 +5,71 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.planup.main.MainSnackbarViewModel
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute {
+
     @Serializable
     data object Main : MyPageRoute
 
-    @Serializable
-    data object EditNickName : MyPageRoute
+    object Profile {
 
-    @Serializable
-    data object ChangeEmail : MyPageRoute
+        @Serializable
+        data object EditNickName : MyPageRoute
+    }
 
-    @Serializable
-    data object ChangePassword : MyPageRoute
+    object Account {
+        @Serializable
+        data object ChangeEmail : MyPageRoute
 
-    @Serializable
-    data object LinkKakao : MyPageRoute
+        @Serializable
+        data object ChangePassword : MyPageRoute
 
-    @Serializable
-    data object Other : MyPageRoute
+        @Serializable
+        data object LinkKakao : MyPageRoute
 
-    @Serializable
-    data object DeleteAccount : MyPageRoute
+        @Serializable
+        data object Other : MyPageRoute
 
-    @Serializable
-    data object ManageBlockFriend : MyPageRoute
+        object OtherMenu {
+            @Serializable
+            data object Logout : MyPageRoute
 
-    @Serializable
-    data object Policy : MyPageRoute
+            @Serializable
+            data object DeleteAccount : MyPageRoute
+        }
+    }
 
-    @Serializable
-    data class PolicyDetail(
-        val url: String
-    ) : MyPageRoute
+    object Friend {
+
+        @Serializable
+        data object ManageBlockFriend : MyPageRoute
+    }
+
+    object Service {
+        @Serializable
+        data object Policy : MyPageRoute
+
+        @Serializable
+        data class Detail(
+            val url: String
+        ) : MyPageRoute
+    }
+
 }
-
 
 private fun slideHorizontallyTransition(): EnterTransition = slideInHorizontally { it }
 
@@ -65,9 +89,12 @@ private fun slideHorizontallyPopExitTransition(): ExitTransition = slideOutHoriz
 )
 
 @Composable
-fun MyPageNavView() {
+fun MyPageNavView(
+    mainSnackbarViewModel: MainSnackbarViewModel
+) {
     val navController = rememberNavController()
     NavHost(
+        modifier = Modifier.fillMaxSize(),
         navController = navController,
         startDestination = MyPageRoute.Main
     ) {
@@ -80,42 +107,62 @@ fun MyPageNavView() {
                 }
             )
         }
-        composable<MyPageRoute.EditNickName>(
-            enterTransition = { slideHorizontallyTransition() },
-            exitTransition = { slideHorizontallyExitTransition() },
-            popEnterTransition = { slideHorizontallyPopEnterTransition() },
-            popExitTransition = { slideHorizontallyPopExitTransition() }
-        ) {
+        composable<MyPageRoute.Profile.EditNickName> {
             MyPageNickNamEditView(
-                onBack = navController::navigateUp
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
-        composable<MyPageRoute.ChangeEmail> {
+        composable<MyPageRoute.Account.ChangeEmail> {
+            Button(
+                onClick = {
+                    mainSnackbarViewModel.updateMessage("123")
+                }
+            ) {
+                Text(text = "test")
+            }
+        }
+        composable<MyPageRoute.Account.ChangePassword> {
 
         }
-        composable<MyPageRoute.ChangePassword> {
+        composable<MyPageRoute.Account.LinkKakao> {
 
         }
-        composable<MyPageRoute.LinkKakao> {
-
-        }
-        composable<MyPageRoute.Other> {
+        composable<MyPageRoute.Account.Other> {
             MyPageOtherView(
                 onBack = navController::navigateUp,
+                navigateLogout = {
+                    navController.navigate(MyPageRoute.Account.OtherMenu.Logout) {
+                        launchSingleTop = true
+                    }
+                },
                 navigateDelete = {
-                    navController.navigate(MyPageRoute.DeleteAccount) {
+                    navController.navigate(MyPageRoute.Account.OtherMenu.DeleteAccount) {
                         launchSingleTop = true
                     }
                 }
             )
         }
-        composable<MyPageRoute.DeleteAccount> {
+        dialog<MyPageRoute.Account.OtherMenu.Logout> {
+            MyPageOtherLogoutView(
+                onDismissRequest = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
+        }
+        composable<MyPageRoute.Account.OtherMenu.DeleteAccount> { backStackEntry ->
+            val parentEntry = remember(backStackEntry) {
+                navController.getBackStackEntry(MyPageRoute.Main)
+            }
+            MyPageOtherDeleteAccountView(
+                onBack = navController::navigateUp,
+                myPageInfoViewModel = hiltViewModel(parentEntry),
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
+        }
+        composable<MyPageRoute.Friend.ManageBlockFriend> {
 
         }
-        composable<MyPageRoute.ManageBlockFriend> {
-
-        }
-        composable<MyPageRoute.Policy>(
+        composable<MyPageRoute.Service.Policy>(
             enterTransition = { slideHorizontallyTransition() },
             exitTransition = { slideHorizontallyExitTransition() },
             popEnterTransition = { slideHorizontallyPopEnterTransition() },
@@ -130,13 +177,13 @@ fun MyPageNavView() {
                 }
             )
         }
-        composable<MyPageRoute.PolicyDetail>(
+        composable<MyPageRoute.Service.Detail>(
             enterTransition = { slideHorizontallyTransition() },
             exitTransition = { slideHorizontallyExitTransition() },
             popEnterTransition = { slideHorizontallyPopEnterTransition() },
             popExitTransition = { slideHorizontallyPopExitTransition() }
         ) { backstackEntry ->
-            val detail = backstackEntry.toRoute<MyPageRoute.PolicyDetail>()
+            val detail = backstackEntry.toRoute<MyPageRoute.Service.Detail>()
             MyPagePolicyDetailView(
                 onBack = navController::navigateUp,
                 url = detail.url

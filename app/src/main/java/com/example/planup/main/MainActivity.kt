@@ -10,9 +10,14 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.component.GraySnackbarHost
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.goal.ui.GoalFragment
@@ -31,6 +36,9 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var prefs: SharedPreferences
     private lateinit var editor: Editor
+
+
+    private val mainSnackbarViewModel : MainSnackbarViewModel by viewModels()
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -81,6 +89,22 @@ class MainActivity : AppCompatActivity() {
 
         val fromChallenge = intent.getStringExtra("FROM_CHALLENGE_TO")
         val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
+
+        binding.composeSnackbar.setContent {
+            val snackBarHost = remember { SnackbarHostState() }
+            LaunchedEffect(mainSnackbarViewModel.snackbarMessage) {
+                mainSnackbarViewModel.snackbarMessage?.let { message ->
+                    if (message.isNotEmpty()) {
+                        snackBarHost.currentSnackbarData?.dismiss()
+                        snackBarHost.showSnackbar(message)
+                        mainSnackbarViewModel.clearMessage()
+                    }
+                }
+            }
+            GraySnackbarHost(
+                hostState = snackBarHost
+            )
+        }
 
         val startFragment = if (isFromGoalDetail){
             SubscriptionPlanFragment().apply {
@@ -143,7 +167,7 @@ class MainActivity : AppCompatActivity() {
             } else -> HomeFragment()
         }
 
-        initBottomNavigation(deeplinkFragment)
+        navigateToFragment(deeplinkFragment)
     }
 
     fun navigateToFragment(fragment: Fragment) {
@@ -155,10 +179,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun initBottomNavigation(fragment: Fragment) {
         binding.bottomNavigationView.selectedItemId = R.id.fragment_home
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, fragment)
-            .commitAllowingStateLoss()
-
+        navigateToFragment(fragment)
         binding.bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.fragment_goal -> {

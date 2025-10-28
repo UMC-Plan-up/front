@@ -55,6 +55,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.planup.R
@@ -62,6 +63,7 @@ import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
@@ -82,6 +84,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
     //sharedPreferences
     private lateinit var prefs: SharedPreferences
 
+    private val mainSnackbarViewModel : MainSnackbarViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -90,7 +94,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MyPageNavView()
+                MyPageNavView(mainSnackbarViewModel)
             }
         }
     }
@@ -327,24 +331,24 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_profile,
                 content = listOf(
-                    MyPageRoute.EditNickName to R.string.mypage_nickname
+                    MyPageRoute.Profile.EditNickName to R.string.mypage_nickname
                 )
             )
 
             initHeaderWithContent(
                 header = R.string.mypage_account,
                 content = listOf(
-                    MyPageRoute.ChangeEmail to R.string.mypage_email,
-                    MyPageRoute.ChangePassword to R.string.mypage_password,
-                    MyPageRoute.LinkKakao to R.string.mypage_kakao,
-                    MyPageRoute.Other to R.string.mypage_other,
+                    MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
+                    MyPageRoute.Account.ChangePassword to R.string.mypage_password,
+                    MyPageRoute.Account.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.Account.Other to R.string.mypage_other,
                 )
             )
 
             initHeaderWithContent(
                 header = R.string.mypage_friend,
                 content = listOf(
-                    MyPageRoute.ManageBlockFriend to R.string.mypage_block,
+                    MyPageRoute.Friend.ManageBlockFriend to R.string.mypage_block,
                 )
             )
 
@@ -372,7 +376,7 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_service,
                 content = listOf(
-                    MyPageRoute.Policy to R.string.mypage_policy,
+                    MyPageRoute.Service.Policy to R.string.mypage_policy,
                 ),
                 withSpacer = false
             )

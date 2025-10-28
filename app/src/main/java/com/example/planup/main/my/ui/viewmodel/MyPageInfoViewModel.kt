@@ -21,15 +21,27 @@ class MyPageInfoViewModel @Inject constructor(
     private var _profileImage = MutableStateFlow("")
     val profileImage = _profileImage.asStateFlow()
 
+    private var _nickName = MutableStateFlow("")
+    val nickName = _nickName.asStateFlow()
+
     fun fetchUserInfo() {
         viewModelScope.launch {
-            _email.update {
-                userRepository.getUserEmail()
-            }
-            _profileImage.update {
-                userRepository.getUserProfileImage()
-            }
+            fetchEmail()
+            fetchNickName()
+            fetchProfileImage()
         }
+    }
+
+    suspend fun fetchEmail() = _email.update {
+        userRepository.getUserEmail()
+    }
+
+    suspend fun fetchNickName() = _nickName.update {
+        userRepository.getUserNickName()
+    }
+
+    suspend fun fetchProfileImage() = _profileImage.update {
+        userRepository.getUserProfileImage()
     }
 
 }

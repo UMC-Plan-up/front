@@ -10,6 +10,7 @@ import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.ProfileImage
+import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
@@ -134,6 +135,46 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun logout(): ApiResult<String> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.logout()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.clearAllUserInfo()
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
+    override suspend fun withdraw(
+        reason: String
+    ): ApiResult<WithDraw> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.withdrawAccount(reason)
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val withdraw = response.result
+                    if (withdraw.success) {
+                        userInfoSaver.clearAllUserInfo()
+                        ApiResult.Success(withdraw)
+                    } else {
+                        ApiResult.Fail(withdraw.message)
+                    }
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
     override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> =
         withContext(Dispatchers.IO) {
             if (userInfoSaver.isEmpty) {
@@ -172,7 +213,7 @@ class UserRepositoryImpl @Inject constructor(
         return setProfileImage(multipartBody)
     }
 
-    override suspend fun setProfileImage(body: MultipartBody.Part): ApiResult<ProfileImage>  =
+    override suspend fun setProfileImage(body: MultipartBody.Part): ApiResult<ProfileImage> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -186,6 +227,7 @@ class UserRepositoryImpl @Inject constructor(
                                 userInfoSaver.saveProfileImage(result.file)
                                 ApiResult.Success(result)
                             }
+
                             else -> ApiResult.Fail(response.message)
                         }
                     } else {
@@ -194,6 +236,10 @@ class UserRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun getUserNickName(): String {
+        return userInfoSaver.getNickName()
+    }
 
     override suspend fun getUserEmail(): String {
         return userInfoSaver.getEmail()
