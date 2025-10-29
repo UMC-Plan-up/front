@@ -62,16 +62,12 @@ jobs:
           
           echo "Getting commits from $START_DATE to $END_DATE"
           
-          COMMITS=$(git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
-            --pretty=format:"• %s [%an, %h]" || true)
-          
-          if [ -z "$COMMITS" ]; then
-            COMMITS="(No commits during this period)"
-          fi
+          echo "Getting commits from $START_DATE to $END_DATE"
           
           {
             echo "commits<<EOF"
-            echo "$COMMITS"
+            git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
+            --pretty=format:"• %s [%an, %h]" || echo "(No commits during this period)"
             echo "EOF"
             echo "start_date=$START_DATE"
             echo "end_date=$END_DATE"
