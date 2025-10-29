@@ -68,22 +68,16 @@ jobs:
             COMMITS="(No commits during this period)"
           fi
           
-          echo "commits<<EOF" >> $GITHUB_OUTPUT
-          echo "$COMMITS" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          {
+            echo "commits<<EOF"
+            echo "$COMMITS"
+            echo "EOF"
+            echo "start_date=$START_DATE"
+            echo "end_date=$END_DATE"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Post Git Log to Slack
-        uses: MeilCli/slack-post@v3
-        with:
-          slack_token: ${{ env.SLACK_TOKEN }}
-          channel_id: ${{ env.CHANNEL_ID }}
-          text: |
-            *🗓 Weekly Debug APK Build & Git Log*
-            Branch: `${{ github.ref_name }}`
-            Period: `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
-            
-            *Commits:*
-            ${{ steps.gitlog.outputs.commits }}
+      - name: Set build timestamp
+        run: echo "BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
 
       - name: Check if APK exists
         run: |
@@ -101,5 +95,10 @@ jobs:
           file_path: ${{ env.APK_PATH }}
           title: "📦 Weekly Debug APK"
           initial_comment: |
-            `${{ github.ref_name }}` 브랜치용 디버그 빌드입니다.
-            빌드 시각: $(date '+%Y-%m-%d %H:%M:%S')
+            *🗓 Weekly Debug APK Build & Git Log*
+            Branch: `${{ github.ref_name }}`
+            Period: `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
+            빌드 시각: ${{ env.BUILD_TIME }}
+
+            *Commits:*
+            ${{ steps.gitlog.outputs.commits }}
