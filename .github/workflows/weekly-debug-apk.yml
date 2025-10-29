@@ -85,13 +85,15 @@ jobs:
             *Commits:*
             ${{ steps.gitlog.outputs.commits }}
 
-      - name: Upload Debug APK to Slack
-        if: success() && (steps.gitlog.outcome == 'success')
+      - name: Check if APK exists
         run: |
           if [ ! -f "$APK_PATH" ]; then
-            echo "APK file not found: $APK_PATH"
+            echo "❌ APK file not found: $APK_PATH"
             exit 1
           fi
+
+      - name: Upload Debug APK to Slack
+        if: success()
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ env.SLACK_TOKEN }}
