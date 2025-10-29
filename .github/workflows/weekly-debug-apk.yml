@@ -2,7 +2,7 @@ name: Weekly Debug APK & Git Log
 
 on:
   schedule:
-    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC (한국 시간 21:00 KST)
+    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC = 21:00 KST
   workflow_dispatch:
     inputs:
       start_date:
@@ -61,14 +61,13 @@ jobs:
           fi
           
           echo "Getting commits from $START_DATE to $END_DATE"
-          
-          echo "Getting commits from $START_DATE to $END_DATE"
-          
+
+          # GITHUB_OUTPUT에 안전하게 기록
           {
-            echo "commits<<EOF"
-            git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
-            --pretty=format:"• %s [%an, %h]" || echo "(No commits during this period)"
-            echo "EOF"
+            printf "commits<<EOF\n"
+            git log --no-color -n 30 --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
+              --pretty=format:"• %s [%an, %h]" || echo "(No commits during this period)"
+            printf "\nEOF\n"
             echo "start_date=$START_DATE"
             echo "end_date=$END_DATE"
           } >> "$GITHUB_OUTPUT"
@@ -93,9 +92,9 @@ jobs:
           title: "📦 Weekly Debug APK"
           initial_comment: |
             *🗓 Weekly Debug APK Build & Git Log*
-            Branch: `${{ github.ref_name }}`
-            Period: `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
-            빌드 시각: ${{ env.BUILD_TIME }}
+            *Branch:* `${{ github.ref_name }}`
+            *Period:* `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
+            *Build Time:* `${{ env.BUILD_TIME }}`
 
-            *Commits:*
+            *Recent Commits (max 30):*
             ${{ steps.gitlog.outputs.commits }}
