@@ -2,7 +2,7 @@ name: Weekly Debug APK & Git Log
 
 on:
   schedule:
-    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC (한국 시간 21:00 KST)
+    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC (한국 21:00)
   workflow_dispatch:
     inputs:
       start_date:
@@ -15,36 +15,57 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      APK_PATH: app/build/outputs/apk/debug/app-debug.apk
-      CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
-
+    outputs:
+      apk_path: ${{ steps.apk.outputs.path }}
+      build_time: ${{ steps.time.outputs.build_time }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17'
+          distribution: temurin
+          java-version: 17
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
+      - name: Cache Gradle
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+            ~/.gradle/wrapper/
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/gradle.properties', '**/libs.versions.toml') }}
+          restore-keys: gradle-${{ runner.os }}-
 
-      - name: Grant execute permission for Gradle
+      - name: Grant execute permission
         run: chmod +x ./gradlew
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug --build-cache
+
+      - name: Verify APK
+        id: apk
+        run: |
+          APK_PATH=app/build/outputs/apk/debug/app-debug.apk
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ APK not found: $APK_PATH"
+            exit 1
+          fi
+          echo "path=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Save build timestamp
+        id: time
+        run: echo "build_time=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_OUTPUT
+
+  gitlog:
+    runs-on: ubuntu-latest
+    needs: build
+    outputs:
+      commits: ${{ steps.gitlog.outputs.commits }}
+      start_date: ${{ steps.gitlog.outputs.start_date }}
+      end_date: ${{ steps.gitlog.outputs.end_date }}
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Get commits for the period
         id: gitlog
@@ -60,15 +81,11 @@ jobs:
             END_DATE=$(date -d "Wednesday" +%Y-%m-%d)
           fi
           
-          echo "Getting commits from $START_DATE to $END_DATE"
-          
           COMMITS=$(git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
             --pretty=format:"• %s [%an, %h]" || true)
-          
           if [ -z "$COMMITS" ]; then
             COMMITS="(No commits during this period)"
           fi
-          
           {
             echo "commits<<EOF"
             echo "$COMMITS"
@@ -77,29 +94,25 @@ jobs:
             echo "end_date=$END_DATE"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Set build timestamp
-        run: echo "BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
-
-      - name: Check if APK exists
-        run: |
-          if [ ! -f "$APK_PATH" ]; then
-            echo "❌ APK file not found: $APK_PATH"
-            exit 1
-          fi
-
+  notify:
+    runs-on: ubuntu-latest
+    needs: [build, gitlog]
+    env:
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+      CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+    steps:
       - name: Upload Debug APK to Slack
-        if: success()
         uses: MeilCli/slack-upload-file@v4
         with:
           slack_token: ${{ env.SLACK_TOKEN }}
           channel_id: ${{ env.CHANNEL_ID }}
-          file_path: ${{ env.APK_PATH }}
+          file_path: ${{ needs.build.outputs.apk_path }}
           title: "📦 Weekly Debug APK"
           initial_comment: |
             *🗓 Weekly Debug APK Build & Git Log*
             Branch: `${{ github.ref_name }}`
-            Period: `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
-            빌드 시각: ${{ env.BUILD_TIME }}
+            Period: `${{ needs.gitlog.outputs.start_date }} ~ ${{ needs.gitlog.outputs.end_date }}`
+            빌드 시각: ${{ needs.build.outputs.build_time }}
 
             *Commits:*
-            ${{ steps.gitlog.outputs.commits }}
+            ${{ needs.gitlog.outputs.commits }}
