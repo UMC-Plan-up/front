@@ -62,15 +62,19 @@ jobs:
           
           echo "Getting commits from $START_DATE to $END_DATE"
 
-          # GITHUB_OUTPUT에 안전하게 기록
+          # git log 결과를 변수로 저장
+          COMMITS=$(git log --no-color --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
+            --pretty=format:"• %s [%an, %h]" | head -n 30)
+
+          # GITHUB_OUTPUT에 멀티라인 안전하게 저장
           {
-            printf "commits<<EOF\n"
-            git log --no-color -n 30 --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
-              --pretty=format:"• %s [%an, %h]" || echo "(No commits during this period)"
-            printf "\nEOF\n"
+            echo "commits<<EOF"
+            echo "$COMMITS"
+            echo "EOF"
             echo "start_date=$START_DATE"
             echo "end_date=$END_DATE"
           } >> "$GITHUB_OUTPUT"
+
 
       - name: Set build timestamp
         run: echo "BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
@@ -91,10 +95,13 @@ jobs:
           file_path: ${{ env.APK_PATH }}
           title: "📦 Weekly Debug APK"
           initial_comment: |
-            *🗓 Weekly Debug APK Build & Git Log*
-            *Branch:* `${{ github.ref_name }}`
-            *Period:* `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
-            *Build Time:* `${{ env.BUILD_TIME }}`
+            *🧾 Weekly Debug APK & Git Log*
+            ----------------------------------
+            *🌿 Branch:* `${{ github.ref_name }}`
+            *🗓 Period:* `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
+            *🕒 Build Time:* `${{ env.BUILD_TIME }}`
 
-            *Recent Commits (max 30):*
+            *🧩 Recent Commits (max 30):*
+            ``` 
             ${{ steps.gitlog.outputs.commits }}
+            ```
