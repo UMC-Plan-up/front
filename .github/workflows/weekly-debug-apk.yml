@@ -15,6 +15,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      APK_PATH: app/build/outputs/apk/debug/app-debug.apk
+      CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -35,51 +39,65 @@ jobs:
           key: gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: gradle-
 
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
-
-      - name: Upload APK as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: Get commits for the period
         id: gitlog
         run: |
-          # 날짜 입력 값이 없으면 자동 계산
+          set -x
           START_DATE="${{ github.event.inputs.start_date }}"
           END_DATE="${{ github.event.inputs.end_date }}"
           
           if [ -z "$START_DATE" ]; then
-            START_DATE=$(date -d "last Wednesday - 7 days" +%Y-%m-%d)
+            START_DATE=$(date -d "1 week ago Wednesday" +%Y-%m-%d)
           fi
           if [ -z "$END_DATE" ]; then
-            END_DATE=$(date -d "last Wednesday" +%Y-%m-%d)
+            END_DATE=$(date -d "Wednesday" +%Y-%m-%d)
           fi
           
           echo "Getting commits from $START_DATE to $END_DATE"
-          COMMITS=$(git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" --pretty=format:"%h - %s (%an)")
           
-          # GitHub Actions 출력용
+          COMMITS=$(git log --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
+            --pretty=format:"• %s [%an, %h]" || true)
+          
+          if [ -z "$COMMITS" ]; then
+            COMMITS="(No commits during this period)"
+          fi
+          
           echo "commits<<EOF" >> $GITHUB_OUTPUT
           echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - name: Send Slack Notification
-        uses: rtCamp/action-slack-notify@v2
+      - name: Post Git Log to Slack
+        uses: MeilCli/slack-post@v3
         with:
-          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
-          message: |
-            Weekly Debug APK built successfully!  
-            *Git commits for period:*  
+          slack_token: ${{ env.SLACK_TOKEN }}
+          channel_id: ${{ env.CHANNEL_ID }}
+          text: |
+            *🗓 Weekly Debug APK Build & Git Log*
+            Branch: `${{ github.ref_name }}`
+            Period: `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
+            
+            *Commits:*
             ${{ steps.gitlog.outputs.commits }}
-          attachments: |
-            [
-              {
-                "fallback": "Debug APK",
-                "color": "#36a64f",
-                "title": "Download Debug APK",
-                "title_link": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts"
-              }
-            ]
+
+      - name: Upload Debug APK to Slack
+        if: success() && (steps.gitlog.outcome == 'success')
+        run: |
+          if [ ! -f "$APK_PATH" ]; then
+            echo "APK file not found: $APK_PATH"
+            exit 1
+          fi
+        uses: MeilCli/slack-upload-file@v4
+        with:
+          slack_token: ${{ env.SLACK_TOKEN }}
+          channel_id: ${{ env.CHANNEL_ID }}
+          file_path: ${{ env.APK_PATH }}
+          title: "📦 Weekly Debug APK"
+          initial_comment: |
+            `${{ github.ref_name }}` 브랜치용 디버그 빌드입니다.
+            빌드 시각: $(date '+%Y-%m-%d %H:%M:%S')
