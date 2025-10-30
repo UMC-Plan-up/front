@@ -125,6 +125,9 @@ class UserRepositoryImpl @Inject constructor(
                         userInfoSaver.saveNickName(result.nickname)
                         userInfoSaver.saveEmail(email)
                         userInfoSaver.saveProfileImage(result.profileImgUrl)
+
+                        //TODO 마케팅 수신 정보 추가시 값을 추가 해야 합니다.
+//                        userInfoSaver.saveNotificationMarketing(false)
                     }
 
                     ApiResult.Success(result)
@@ -250,6 +253,10 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserNotificationLocal(): Boolean {
+        return userInfoSaver.getNotificationLocal()
+    }
+
+    override suspend fun getUserNotificationMarketing(): Boolean {
         return userInfoSaver.getNotificationLocal()
     }
 

@@ -60,6 +60,7 @@ interface UserRepository {
     suspend fun getUserEmail() : String
     suspend fun getUserProfileImage() : String
     suspend fun getUserNotificationLocal(): Boolean
+    suspend fun getUserNotificationMarketing(): Boolean
     suspend fun updateUserNotificationLocal(isOnNotification: Boolean)
 
 }
