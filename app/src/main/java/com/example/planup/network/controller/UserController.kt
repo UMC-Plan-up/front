@@ -37,12 +37,6 @@ class UserController {
         this.kakaoAdapter = adapter
     }
 
-    //서비스 알림 동의 변경
-    private lateinit var serviceAdapter: ServiceAlertAdapter
-    fun setServiceAdapter(adapter: ServiceAlertAdapter) {
-        this.serviceAdapter = adapter
-    }
-
     //회원가입 시 이메일 인증링크 발송
     private lateinit var signupLinkAdapter: SignupLinkAdapter
     fun setSignupLinkAdapter(adapter: SignupLinkAdapter) {
