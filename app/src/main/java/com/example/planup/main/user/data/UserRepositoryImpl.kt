@@ -257,7 +257,7 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getUserNotificationMarketing(): Boolean {
-        return userInfoSaver.getNotificationLocal()
+        return userInfoSaver.getNotificationMarketing()
     }
 
     override suspend fun updateUserNotificationLocal(isOnNotification: Boolean) {

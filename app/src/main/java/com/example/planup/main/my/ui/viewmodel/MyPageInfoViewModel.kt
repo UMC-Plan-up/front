@@ -52,6 +52,7 @@ class MyPageInfoViewModel @Inject constructor(
             fetchNickName()
             fetchProfileImage()
             fetchNotificationLocal()
+            fetchNotificationMarketing()
         }
     }
 
@@ -89,7 +90,7 @@ class MyPageInfoViewModel @Inject constructor(
     /**
      * 서비스 알림 수신 정보 갱신
      */
-    suspend fun fetchNotificationMarketing() = _notificationLocal.update {
+    suspend fun fetchNotificationMarketing() = _marketingNotification.update {
         userRepository.getUserNotificationMarketing()
     }
 
