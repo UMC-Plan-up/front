@@ -114,7 +114,7 @@ class MyPageInfoViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.updateUserNotificationMarketing(notificationMarketing)
                 .onSuccess {
-                    fetchNotificationLocal()
+                    fetchNotificationMarketing()
                     onSuccess()
                 }.onFailWithMessage(onFail)
         }
