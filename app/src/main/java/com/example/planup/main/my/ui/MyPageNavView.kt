@@ -111,7 +111,8 @@ fun MyPageNavView(
                     navController.navigate(route) {
                         launchSingleTop = true
                     }
-                }
+                },
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         dialog<MyPageRoute.NotificationMarketing> {

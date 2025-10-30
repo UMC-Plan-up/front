@@ -1,19 +1,13 @@
 package com.example.planup.main.my.ui
 
-import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -66,25 +60,17 @@ import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
-import com.example.planup.network.controller.UserController
 import com.example.planup.theme.Typography
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MypageFragment : Fragment(), ServiceAlertAdapter {
+class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
-
-    //API 연동
-    private lateinit var service: UserController
-
-    //sharedPreferences
-    private lateinit var prefs: SharedPreferences
 
     private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
@@ -100,22 +86,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
             }
         }
     }
-
-    private fun init() {
-        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object :
-            ViewTreeObserver.OnGlobalLayoutListener {
-            override fun onGlobalLayout() {
-                val height = binding.mypageCl.height
-                binding.mypageInnerCl.minHeight = height
-                binding.mypageCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-
-        })
-        //API 서비스
-        service = UserController()
-        service.setServiceAdapter(this)
-    }
-
     private fun clickListener() {
 
         binding.mypageMainImageCv.setOnClickListener {
@@ -141,65 +111,12 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
                 .replace(R.id.main_container, MypageKakaoFragment())
                 .commitAllowingStateLoss()
         }
-        //기타 계정 관리
-        binding.mypageOtherIv.setOnClickListener {
-
-        }
         //차단 친구 관리
         binding.mypageFriendBlockIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.main_container, MypageFriendBlockFragment())
                 .commitAllowingStateLoss()
         }
-
-        //서비스 알림 수신 토글 끄기
-        binding.mypageAlertServiceOnIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.GONE
-            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
-        }
-        //서비스 알림 수신 토글 켜기
-        binding.mypageAlertServiceOffIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
-            binding.mypageAlertServiceOffIv.visibility = View.GONE
-        }
-        //마케팅 알림 수신 토글 끄기
-        binding.mypageAlertBenefitOnIv.setOnClickListener {
-            service.notificationAgreementService(false)
-        }
-        //마케팅 알림 수신 토글 켜기
-        binding.mypageAlertBenefitOffIv.setOnClickListener {
-            service.notificationAgreementService(true)
-        }
-    }
-
-
-    //API 오류에 대한 토스트 메시지 출력
-    private fun errorToast(message: String) {
-        val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
-
-        val toast = Toast(context)
-        toast.view = layout
-        toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
-        toast.show()
-    }
-
-    //마케팅 수신 동의 API 성공
-    override fun successServiceSetting(condition: Boolean) {
-        if (condition) { //condition==true: 토글 켜기
-            binding.mypageAlertBenefitOnIv.visibility = View.VISIBLE
-            binding.mypageAlertBenefitOffIv.visibility = View.GONE
-        } else { //condition == false: 토글 끄기
-            binding.mypageAlertBenefitOnIv.visibility = View.GONE
-            binding.mypageAlertBenefitOffIv.visibility = View.VISIBLE
-        }
-    }
-
-    //마케팅 수신 동의 API 오류
-    override fun failServiceSetting(message: String) {
-        errorToast(message)
     }
 
 //    //프로필 이미지 API 성공
@@ -218,7 +135,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
 @Composable
 fun MyPageView(
     navigateRoute: (route: MyPageRoute) -> Unit,
-    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel()
+    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel(),
+    mainSnackbarViewModel: MainSnackbarViewModel
 ) {
     LaunchedEffect(true) {
         myPageInfoViewModel.fetchUserInfo()
@@ -227,20 +145,24 @@ fun MyPageView(
     val context = LocalContext.current
 
     val email by myPageInfoViewModel.email.collectAsState()
+    val nickName by myPageInfoViewModel.nickName.collectAsState()
     val profileImage by myPageInfoViewModel.profileImage.collectAsState()
     val serviceNotification by myPageInfoViewModel.notificationLocal.collectAsState()
+    val marketingNotification by myPageInfoViewModel.marketingNotification.collectAsState()
 
-    var marketingNotification by remember {
-        mutableStateOf(false)
-    }
-
-    val navigateMarketing = { isAgree: Boolean ->
-        navigateRoute(
-            MyPageRoute.NotificationMarketing(
-                isAgree,
-                "테스터",
-                "2025년 12월 25일"
-            )
+    val updateMarketingNotification = { newNotification :Boolean ->
+        myPageInfoViewModel.updateNotificationMarketing(
+            notificationMarketing = newNotification,
+            onSuccess = {
+                navigateRoute(
+                    MyPageRoute.NotificationMarketing(
+                        isAgree = newNotification,
+                        nickName = nickName,
+                        date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
+                    )
+                )
+            },
+            onFail = mainSnackbarViewModel::updateMessage
         )
     }
 
@@ -260,8 +182,7 @@ fun MyPageView(
     val notificationMarketingPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             if (result) {
-                marketingNotification = true
-                navigateMarketing(true)
+                updateMarketingNotification(true)
             } else {
                 Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
             }
@@ -297,21 +218,17 @@ fun MyPageView(
                 if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
-                    marketingNotification = newNotification
-                    navigateMarketing(newNotification)
+                    updateMarketingNotification(newNotification)
                 } else {
                     notificationMarketingPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
             } else {
                 //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
-                marketingNotification = newNotification
-                navigateMarketing(newNotification)
+                updateMarketingNotification(newNotification)
             }
         },
         fetch = myPageInfoViewModel::fetchUserInfo,
-        onErrorMsg = {
-
-        }
+        onErrorMsg = mainSnackbarViewModel::updateMessage
     )
 }
 
