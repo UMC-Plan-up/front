@@ -82,7 +82,7 @@ fun MyPageNotificationMarketingResultView(
             PlanUpButton(
                 modifier = Modifier.fillMaxWidth(),
                 title = stringResource(R.string.btn_ok),
-                onClick = {}
+                onClick = onBack
             )
         }
     }
@@ -92,6 +92,7 @@ fun MyPageNotificationMarketingResultView(
 @Preview(showBackground = false)
 private fun MyPageNotificationAgreePreview() {
     MyPageNotificationMarketingResultView(
+        onBack = {},
         isAgree = true,
         nickName = "닉네임",
         date = "2025년 7월 12일"

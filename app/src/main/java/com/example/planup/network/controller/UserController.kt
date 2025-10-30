@@ -4,7 +4,6 @@ import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
