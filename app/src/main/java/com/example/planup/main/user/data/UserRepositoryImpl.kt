@@ -263,4 +263,21 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun updateUserNotificationLocal(isOnNotification: Boolean) {
         userInfoSaver.saveNotificationLocal(isOnNotification)
     }
+
+    override suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.patchNoticeAgree()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.saveNotificationMarketing(result)
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
 }

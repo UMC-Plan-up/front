@@ -214,30 +214,6 @@ class UserController {
         })
     }
 
-    // 서비스 알림 수신 여부 관리
-    fun notificationAgreementService(condition: Boolean) {
-        val notificationAgreementService = getRetrofit().create(UserPort::class.java)
-        notificationAgreementService.patchNoticeAgree()
-            .enqueue(object : Callback<UserResponse<Boolean>> {
-                override fun onResponse(
-                    call: Call<UserResponse<Boolean>>,
-                    response: Response<UserResponse<Boolean>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        serviceAdapter.successServiceSetting(condition)
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        serviceAdapter.failServiceSetting(response.body()!!.message)
-                    } else {
-                        serviceAdapter.failServiceSetting("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                    serviceAdapter.failServiceSetting(t.toString())
-                }
-            })
-    }
-
     //이메일 변경 시 인증링크 발송
     fun emailLinkService(email: String) {
         val service = getRetrofit().create(UserPort::class.java)
