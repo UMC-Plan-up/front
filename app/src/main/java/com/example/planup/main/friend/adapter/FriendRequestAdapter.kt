@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.main.friend.data.FriendRequest
+import com.example.planup.network.dto.friend.FriendRequest
 
 class FriendRequestAdapter(
     private val items: List<FriendRequest>,

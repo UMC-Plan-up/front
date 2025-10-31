@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.main.friend.data.FriendInfo
+import com.example.planup.network.dto.friend.FriendInfo
 
 class FriendListsAdapter(
     private val items: List<FriendInfo>,

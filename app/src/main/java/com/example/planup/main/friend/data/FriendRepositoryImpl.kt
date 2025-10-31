@@ -5,6 +5,9 @@ import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
+import com.example.planup.network.data.BlockedFriends
+import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.network.dto.friend.FriendRequestsResult
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -65,4 +68,20 @@ class FriendRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun getFriendBlockList(): ApiResult<List<BlockedFriends>> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.getBlockedFriendRequest()
+                },
+                onResponse = { friendRequests ->
+                    if (friendRequests.isSuccess) {
+                        val resultList = friendRequests.result
+                        ApiResult.Success(resultList)
+                    } else {
+                        ApiResult.Fail(friendRequests.message)
+                    }
+                }
+            )
+        }
 }

@@ -9,7 +9,15 @@ data class FriendResponse<T>(
     @SerializedName("message") val message: String,
     @SerializedName("result") val result: T
 )
+
 data class BlockedFriends(
     @SerializedName("friendId") val friendId: Int,
     @SerializedName("friendNickname") val friendNickname: String
 )
+
+
+typealias FriendBlockListResponse = FriendResponse<List<BlockedFriends>>
+
+typealias FriendUnblockResponse = FriendResponse<Boolean>
+
+typealias FriendReportResponse = FriendResponse<Boolean>

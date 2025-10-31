@@ -2,10 +2,10 @@ package com.example.planup.main.friend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.planup.main.friend.data.FriendInfo
-import com.example.planup.main.friend.data.FriendRequestsResult
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
+import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.network.dto.friend.FriendRequestsResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
