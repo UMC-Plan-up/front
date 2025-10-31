@@ -14,18 +14,34 @@ interface FriendRepository {
     /**
      * 친구 목록을 불러 옵니다.
      */
-    suspend fun getFriendList() : ApiResult<List<FriendInfo>>
+    suspend fun getFriendList(): ApiResult<List<FriendInfo>>
 
     /**
      * 친구 요청 수를 불러 옵니다.
      */
 
-    suspend fun getFriendRequestList() : ApiResult<List<FriendRequestsResult>>
+    suspend fun getFriendRequestList(): ApiResult<List<FriendRequestsResult>>
 
 
     /**
      * 차단된 친구 목록을 가져옵니다.
      */
-    suspend fun getFriendBlockList() : ApiResult<List<BlockedFriends>>
+    suspend fun getFriendBlockList(): ApiResult<List<BlockedFriends>>
+
+    /**
+     * 차단된 친구를 해제한다.
+     */
+    suspend fun unBlockFriend(
+        friendName: String
+    ): ApiResult<Boolean>
+
+    /**
+     * 친구를 신고한다.
+     */
+    suspend fun reportFriend(
+        friendId: Int,
+        reason: String,
+        withBlock: Boolean
+    ): ApiResult<Boolean>
 
 }

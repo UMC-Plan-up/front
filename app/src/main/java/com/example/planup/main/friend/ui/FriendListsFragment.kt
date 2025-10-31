@@ -169,7 +169,6 @@ class FriendListsFragment : Fragment() {
                 }
 
                 val resp = RetrofitInstance.friendApi.reportFriend(
-                    token = auth,
                     request = FriendReportRequestDto(
                         userId = userId,
                         friendId = friend.id,
@@ -249,7 +248,6 @@ class FriendListsFragment : Fragment() {
 
             try {
                 val resp = RetrofitInstance.friendApi.reportFriend(
-                    token = auth,
                     request = FriendReportRequestDto(
                         userId = userId,
                         friendId = friend.id,

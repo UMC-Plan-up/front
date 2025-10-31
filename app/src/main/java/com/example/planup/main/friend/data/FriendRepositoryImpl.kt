@@ -1,13 +1,16 @@
 package com.example.planup.main.friend.data
 
 import com.example.planup.database.TokenSaver
+import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
 import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.network.dto.friend.FriendReportRequestDto
 import com.example.planup.network.dto.friend.FriendRequestsResult
+import com.example.planup.network.dto.friend.UnblockFriendRequestDto
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,7 +25,8 @@ import javax.inject.Inject
  */
 class FriendRepositoryImpl @Inject constructor(
     private val friendApi: FriendApi,
-    private val tokenSaver: TokenSaver
+    private val tokenSaver: TokenSaver,
+    private val userInfoSaver: UserInfoSaver
 ) : FriendRepository {
 
     /**
@@ -78,6 +82,58 @@ class FriendRepositoryImpl @Inject constructor(
                     if (friendRequests.isSuccess) {
                         val resultList = friendRequests.result
                         ApiResult.Success(resultList)
+                    } else {
+                        ApiResult.Fail(friendRequests.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun unBlockFriend(
+        friendName: String
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            val request = UnblockFriendRequestDto(
+                userId = userInfoSaver.getUserId(),
+                friendNickname = friendName
+            )
+            safeResult(
+                response = {
+                    friendApi.unblockFriend(
+                        request
+                    )
+                },
+                onResponse = { friendRequests ->
+                    if (friendRequests.isSuccess) {
+                        val unBlockSuccess = friendRequests.result
+                        ApiResult.Success(unBlockSuccess)
+                    } else {
+                        ApiResult.Fail(friendRequests.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun reportFriend(
+        friendId: Int,
+        reason: String,
+        withBlock: Boolean
+    ): ApiResult<Boolean>  =
+        withContext(Dispatchers.IO) {
+            val request = FriendReportRequestDto(
+                userId = userInfoSaver.getUserId(),
+                friendId = friendId,
+                reason = reason,
+                block = withBlock
+            )
+            safeResult(
+                response = {
+                    friendApi.reportFriend(request)
+                },
+                onResponse = { friendRequests ->
+                    if (friendRequests.isSuccess) {
+                        val repostSuccess = friendRequests.result
+                        ApiResult.Success(repostSuccess)
                     } else {
                         ApiResult.Fail(friendRequests.message)
                     }

@@ -1,6 +1,8 @@
 package com.example.planup.network
 
 import com.example.planup.network.data.FriendBlockListResponse
+import com.example.planup.network.data.FriendReportResponse
+import com.example.planup.network.data.FriendUnblockResponse
 import com.example.planup.network.dto.friend.BaseResponse
 import com.example.planup.network.dto.friend.FriendReportRequestDto
 import com.example.planup.network.dto.friend.FriendRequestsResponse
@@ -29,7 +31,9 @@ interface FriendApi {
 
     // 차단된 친구 목록 조회
     @GET("/friends/blocked")
-    suspend fun getBlockedFriendRequest(): Response<FriendBlockListResponse>
+    suspend fun getBlockedFriendRequest(
+
+    ): Response<FriendBlockListResponse>
 
     // 친구 신청 수락
     @POST("/friends/accept")
@@ -63,11 +67,11 @@ interface FriendApi {
     @POST("/friends/unblock")
     suspend fun unblockFriend(
         @Body request: UnblockFriendRequestDto
-    ): Response<BaseResponse>
+    ): Response<FriendUnblockResponse>
 
     // 친구 신고
     @POST("/friends/report")
     suspend fun reportFriend(
         @Body request: FriendReportRequestDto
-    ): Response<BaseResponse>
+    ): Response<FriendReportResponse>
 }
