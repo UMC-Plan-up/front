@@ -14,7 +14,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
+import com.example.planup.main.friend.ui.FriendReportView
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.theme.Blue100
@@ -44,14 +47,16 @@ fun MyPageManageBlockFriendView(
 ) {
     MyPageManageBlockFriendContent(
         onBack = onBack,
-        blockFriendList = emptyList()
+        blockFriendList = listOf(
+            BlockedFriend(1, "test1", 0)
+        )
     )
 }
 
 @Composable
 fun MyPageManageBlockFriendContent(
     onBack: () -> Unit,
-    blockFriendList : List<BlockedFriend>
+    blockFriendList: List<BlockedFriend>
 ) {
     RoutePageDefault(
         onBack = onBack,
@@ -88,9 +93,12 @@ fun MyPageManageBlockFriendContentPreview() {
 @Composable
 private fun FriendBlockItem(
     blockFriend: BlockedFriend,
-    unBlockFriend:() -> Unit
+    unBlockFriend: () -> Unit
 ) {
     var showUnBlockAlert by remember {
+        mutableStateOf(false)
+    }
+    var showReportSheet by remember {
         mutableStateOf(false)
     }
 
@@ -144,7 +152,9 @@ private fun FriendBlockItem(
 
             Button(
                 modifier = Modifier.height(30.dp),
-                onClick = {},
+                onClick = {
+                    showReportSheet = true
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Blue100,
                     contentColor = Color(0xff203358)
@@ -176,6 +186,21 @@ private fun FriendBlockItem(
                 },
                 onConfirm = unBlockFriend
             )
+        }
+    }
+    if (showReportSheet) {
+        ModalBottomSheet(
+            modifier = Modifier
+                .fillMaxWidth(0.95f),
+            sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true
+            ),
+            containerColor = Color.White,
+            onDismissRequest = {
+                showReportSheet = false
+            }
+        ) {
+            FriendReportView()
         }
     }
 }
