@@ -56,7 +56,7 @@ sealed interface MyPageRoute {
     object Friend {
 
         @Serializable
-        data object ManageBlockFriend : MyPageRoute
+        data object ManageBlock : MyPageRoute
     }
 
     object Service {
@@ -159,8 +159,10 @@ fun MyPageNavView(
                 mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
-        composable<MyPageRoute.Friend.ManageBlockFriend> {
-
+        composable<MyPageRoute.Friend.ManageBlock> {
+            MyPageManageBlockFriendView(
+                onBack = navController::navigateUp
+            )
         }
         composable<MyPageRoute.Service.Policy>(
             enterTransition = { slideHorizontallyTransition() },

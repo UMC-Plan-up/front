@@ -348,7 +348,7 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_friend,
                 content = listOf(
-                    MyPageRoute.Friend.ManageBlockFriend to R.string.mypage_block,
+                    MyPageRoute.Friend.ManageBlock to R.string.mypage_block,
                 )
             )
 
