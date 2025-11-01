@@ -12,44 +12,25 @@ import android.view.ViewTreeObserver
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -57,8 +38,8 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.example.planup.R
+import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
@@ -84,7 +65,7 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
     //sharedPreferences
     private lateinit var prefs: SharedPreferences
 
-    private val mainSnackbarViewModel : MainSnackbarViewModel by activityViewModels()
+    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -268,11 +249,11 @@ private fun MyPageViewContent(
     navigateRoute: (route: MyPageRoute) -> Unit = {},
     profileImage: String = "",
     email: String = "",
-    fetch: () -> Unit ={},
-    onErrorMsg: (String) -> Unit ={}
+    fetch: () -> Unit = {},
+    onErrorMsg: (String) -> Unit = {}
 ) {
     val context = LocalContext.current
-    fun LazyListScope.addSpacer(height : Dp = 28.dp) {
+    fun LazyListScope.addSpacer(height: Dp = 28.dp) {
         item {
             Spacer(Modifier.height(height))
         }
@@ -404,113 +385,29 @@ private fun MyPageHeader(
     onErrorMsg: (String) -> Unit,
     myPageProfileEditViewModel: MyPageProfileEditViewModel = hiltViewModel()
 ) {
-    var openPopup by remember {
-        mutableStateOf(false)
-    }
-    val pickMedia =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                myPageProfileEditViewModel.setProfileImageByPicker(
-                    imageUri = uri,
-                    onSuccess = fetchProfile,
-                    onFail = onErrorMsg
-                )
-            }
-        }
-
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success) {
-                myPageProfileEditViewModel.setProfileImageCamera(
-                    onSuccess = fetchProfile,
-                    onFail = onErrorMsg
-                )
-            }
-        }
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Box(
+        ProfileView(
             modifier = Modifier
-                .size(60.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape),
-                model = profileImage,
-                placeholder = painterResource(R.drawable.profile_image),
-                error = painterResource(R.drawable.profile_image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .align(Alignment.BottomEnd),
-            ) {
-                IconButton(
-                    onClick = {
-                        openPopup = true
-                    },
-                    modifier = Modifier
-                        .size(20.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.badge_rewrite),
-                        contentDescription = null
-                    )
-                }
-                DropdownMenu(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.BottomEnd),
-                    expanded = openPopup,
-                    onDismissRequest = { openPopup = false },
-                    containerColor = Color.White
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "사진 보관함",
-                                style = Typography.Medium_SM
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_item_album),
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "사진 찍기",
-                                style = Typography.Medium_SM
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_item_camera),
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            cameraLauncher.launch(myPageProfileEditViewModel.makeCameraTempFileUri())
-                        }
-                    )
-                }
+                .align(Alignment.CenterHorizontally),
+            profileUrl = profileImage,
+            onNewImageByPhotoPicker = { uri ->
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    uri,
+                    fetchProfile,
+                    onErrorMsg
+                )
+            },
+            onNewImageByCamera = { bitmap ->
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    bitmap,
+                    fetchProfile,
+                    onErrorMsg
+                )
             }
-
-        }
-
+        )
         Column(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),
