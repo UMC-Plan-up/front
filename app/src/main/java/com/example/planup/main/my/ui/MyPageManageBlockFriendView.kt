@@ -59,15 +59,27 @@ fun MyPageManageBlockFriendView(
 
     val context = LocalContext.current
     LaunchedEffect(Unit) {
+        myPageManageBlockFriendViewModel.fetchBlockFriend()
+    }
+    LaunchedEffect(Unit) {
         myPageManageBlockFriendViewModel.uiMessage.collect { message ->
-            val text = when (message) {
-                is UiMessage.Error -> message.msg
-                is UiMessage.ReportSuccess -> context.getString(R.string.toast_report)
+            when (message) {
+                is UiMessage.Error -> {
+                    mainSnackbarViewModel.updateErrorMessage(message.msg)
+                }
+
+                is UiMessage.ReportSuccess -> {
+                    mainSnackbarViewModel.updateSuccessMessage(
+                        context.getString(R.string.toast_report)
+                    )
+                }
+
                 is UiMessage.UnBlockSuccess -> {
-                    context.getString(R.string.toast_unblock, message.friendName)
+                    mainSnackbarViewModel.updateSuccessMessage(
+                        context.getString(R.string.toast_unblock, message.friendName)
+                    )
                 }
             }
-            mainSnackbarViewModel.updateErrorMessage(text)
         }
     }
     MyPageManageBlockFriendContent(

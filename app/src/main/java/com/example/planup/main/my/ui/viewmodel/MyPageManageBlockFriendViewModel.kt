@@ -65,6 +65,12 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
                 )
                 .onSuccess { result ->
                     if (result) {
+                        //성공 했다면 리스트에서 제거 시도
+                        _blockFriendList.update { current ->
+                            current.filterNot { blocked ->
+                                blocked.id == friend.id
+                            }
+                        }
                         _uiMessage.emit(
                             UiMessage.UnBlockSuccess(friend.name)
                         )
