@@ -42,8 +42,17 @@ fun FriendReportView(
 fun FriendReportContent(
     report: (reason: String, withBlock: Boolean) -> Unit
 ) {
+    val reasonList = listOf(
+        "욕설/비방/혐오 표현 사용",
+        "음란물/선정적 내용",
+        "스팸/광고",
+        "사기/허위 정보",
+        "개인정보 노출/유출",
+        "불쾌하거나 부적절한 내용",
+        "기타"
+    )
     var reason by remember {
-        mutableStateOf("")
+        mutableStateOf(reasonList.first())
     }
     var withBlock by remember {
         mutableStateOf(true)
@@ -74,15 +83,7 @@ fun FriendReportContent(
             )
         }
         Column {
-            listOf(
-                "욕설/비방/혐오 표현 사용",
-                "음란물/선정적 내용",
-                "스팸/광고",
-                "사기/허위 정보",
-                "개인정보 노출/유출",
-                "불쾌하거나 부적절한 내용",
-                "기타"
-            ).forEach { title ->
+            reasonList.forEach { title ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -139,6 +140,7 @@ fun FriendReportContent(
                 report(reason, withBlock)
             }
         )
+        Spacer(Modifier.height(10.dp))
     }
 }
 
