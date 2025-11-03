@@ -143,13 +143,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter {
         binding.mypageOtherIv.setOnClickListener {
 
         }
-        //차단 친구 관리
-        binding.mypageFriendBlockIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageFriendBlockFragment())
-                .commitAllowingStateLoss()
-        }
-
         //서비스 알림 수신 토글 끄기
         binding.mypageAlertServiceOnIv.setOnClickListener {
             binding.mypageAlertServiceOnIv.visibility = View.GONE
