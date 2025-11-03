@@ -92,13 +92,9 @@ class MainActivity : AppCompatActivity() {
 
         binding.composeSnackbar.setContent {
             val snackBarHost = remember { SnackbarHostState() }
-            LaunchedEffect(mainSnackbarViewModel.snackbarMessage) {
-                mainSnackbarViewModel.snackbarMessage?.let { message ->
-                    if (message.isNotEmpty()) {
-                        snackBarHost.currentSnackbarData?.dismiss()
-                        snackBarHost.showSnackbar(message)
-                        mainSnackbarViewModel.clearMessage()
-                    }
+            LaunchedEffect(Unit) {
+                mainSnackbarViewModel.snackbarEvents.collect { event ->
+                    snackBarHost.showSnackbar(event.message)
                 }
             }
             GraySnackbarHost(
