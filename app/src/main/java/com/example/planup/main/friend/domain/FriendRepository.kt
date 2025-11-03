@@ -1,7 +1,7 @@
 package com.example.planup.main.friend.domain
 
+import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.ApiResult
-import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.network.dto.friend.FriendRequestsResult
 
@@ -26,7 +26,7 @@ interface FriendRepository {
     /**
      * 차단된 친구 목록을 가져옵니다.
      */
-    suspend fun getFriendBlockList(): ApiResult<List<BlockedFriends>>
+    suspend fun getFriendBlockList(): ApiResult<List<BlockedFriend>>
 
     /**
      * 차단된 친구를 해제한다.

@@ -30,12 +30,18 @@ import com.example.planup.theme.Black100
 import com.example.planup.theme.Typography
 
 @Composable
-fun FriendReportView() {
-    FriendReportContent()
+fun FriendReportView(
+    report: (reason: String, withBlock: Boolean) -> Unit
+) {
+    FriendReportContent(
+        report = report
+    )
 }
 
 @Composable
-fun FriendReportContent() {
+fun FriendReportContent(
+    report: (reason: String, withBlock: Boolean) -> Unit
+) {
     var reason by remember {
         mutableStateOf("")
     }
@@ -76,9 +82,10 @@ fun FriendReportContent() {
                 "개인정보 노출/유출",
                 "불쾌하거나 부적절한 내용",
                 "기타"
-            ).forEach {title ->
+            ).forEach { title ->
                 Row(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .height(37.dp)
                         .clickable(true) {
                             reason = title
@@ -113,7 +120,7 @@ fun FriendReportContent() {
             )
             RouteMenuItem(
                 title = "해당 유저 차단하기",
-                rightContent =  {
+                rightContent = {
                     PlanUpSwitch(
                         checked = withBlock,
                         onCheckedChange = {
@@ -128,7 +135,9 @@ fun FriendReportContent() {
             modifier = Modifier.fillMaxWidth(),
             enabled = reason.isNotEmpty(),
             title = stringResource(R.string.btn_report_complete),
-            onClick = {}
+            onClick = {
+                report(reason, withBlock)
+            }
         )
     }
 }
@@ -136,5 +145,7 @@ fun FriendReportContent() {
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun FriendReportContentPreview() {
-    FriendReportContent()
+    FriendReportContent(
+        report = { _, _ -> }
+    )
 }

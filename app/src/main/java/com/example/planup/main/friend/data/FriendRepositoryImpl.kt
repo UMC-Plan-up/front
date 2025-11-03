@@ -4,9 +4,9 @@ import com.example.planup.database.TokenSaver
 import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
+import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
-import com.example.planup.network.data.BlockedFriends
 import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.network.dto.friend.FriendReportRequestDto
 import com.example.planup.network.dto.friend.FriendRequestsResult
@@ -72,7 +72,7 @@ class FriendRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getFriendBlockList(): ApiResult<List<BlockedFriends>> =
+    override suspend fun getFriendBlockList(): ApiResult<List<BlockedFriend>> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -80,7 +80,13 @@ class FriendRepositoryImpl @Inject constructor(
                 },
                 onResponse = { friendRequests ->
                     if (friendRequests.isSuccess) {
-                        val resultList = friendRequests.result
+                        val resultList = friendRequests.result.map { blockFriendResponse ->
+                            BlockedFriend(
+                                id = blockFriendResponse.friendId,
+                                name = blockFriendResponse.friendNickname,
+                                profile = 0
+                            )
+                        }
                         ApiResult.Success(resultList)
                     } else {
                         ApiResult.Fail(friendRequests.message)
@@ -118,7 +124,7 @@ class FriendRepositoryImpl @Inject constructor(
         friendId: Int,
         reason: String,
         withBlock: Boolean
-    ): ApiResult<Boolean>  =
+    ): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
             val request = FriendReportRequestDto(
                 userId = userInfoSaver.getUserId(),

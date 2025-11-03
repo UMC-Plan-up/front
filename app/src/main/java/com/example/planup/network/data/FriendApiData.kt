@@ -10,13 +10,13 @@ data class FriendResponse<T>(
     @SerializedName("result") val result: T
 )
 
-data class BlockedFriends(
+data class BlockFriendResponse(
     @SerializedName("friendId") val friendId: Int,
     @SerializedName("friendNickname") val friendNickname: String
 )
 
 
-typealias FriendBlockListResponse = FriendResponse<List<BlockedFriends>>
+typealias FriendBlockListResponse = FriendResponse<List<BlockFriendResponse>>
 
 typealias FriendUnblockResponse = FriendResponse<Boolean>
 

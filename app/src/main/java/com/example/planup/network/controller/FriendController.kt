@@ -4,7 +4,7 @@ import android.util.Log
 import com.example.planup.network.adapter.FriendReportAdapter
 import com.example.planup.network.adapter.FriendsBlockedAdapter
 import com.example.planup.network.adapter.FriendsUnblockedAdapter
-import com.example.planup.network.data.BlockedFriends
+import com.example.planup.network.data.BlockFriendResponse
 import com.example.planup.network.data.FriendResponse
 import com.example.planup.network.dto.friend.FriendReportDto
 import com.example.planup.network.dto.friend.FriendUnblockDto
@@ -42,10 +42,10 @@ class FriendController {
     fun friendsBlockedService() {
         val blockFriendService = getRetrofit().create(FriendPort::class.java)
         blockFriendService.blockedFriends()
-            .enqueue(object : Callback<FriendResponse<List<BlockedFriends>>> {
+            .enqueue(object : Callback<FriendResponse<List<BlockFriendResponse>>> {
                 override fun onResponse(
-                    call: Call<FriendResponse<List<BlockedFriends>>>,
-                    response: Response<FriendResponse<List<BlockedFriends>>>
+                    call: Call<FriendResponse<List<BlockFriendResponse>>>,
+                    response: Response<FriendResponse<List<BlockFriendResponse>>>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
                         friendsBlockedAdapter.successBlockedFriends(response.body()!!.result)
@@ -57,7 +57,7 @@ class FriendController {
                 }
 
                 override fun onFailure(
-                    call: Call<FriendResponse<List<BlockedFriends>>>, t: Throwable
+                    call: Call<FriendResponse<List<BlockFriendResponse>>>, t: Throwable
                 ) {
                     Log.d("okhttp", "fail\n$t")
                 }

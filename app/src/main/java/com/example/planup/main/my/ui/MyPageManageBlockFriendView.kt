@@ -18,6 +18,8 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,38 +27,75 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.FriendReportView
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.main.my.ui.common.RoutePageDefault
+import com.example.planup.main.my.ui.viewmodel.MyPageManageBlockFriendViewModel
+import com.example.planup.main.my.ui.viewmodel.UiMessage
 import com.example.planup.theme.Blue100
 import com.example.planup.theme.Green100
 import com.example.planup.theme.Green200
 import com.example.planup.theme.Typography
 
+
 @Composable
 fun MyPageManageBlockFriendView(
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    mainSnackbarViewModel: MainSnackbarViewModel,
+    myPageManageBlockFriendViewModel: MyPageManageBlockFriendViewModel = hiltViewModel()
 ) {
+    val blockFriendList by myPageManageBlockFriendViewModel.blockFriendList.collectAsState()
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        myPageManageBlockFriendViewModel.uiMessage.collect { message ->
+            val text = when (message) {
+                is UiMessage.Error -> message.msg
+                is UiMessage.ReportSuccess -> context.getString(R.string.toast_report)
+                is UiMessage.UnBlockSuccess -> {
+                    context.getString(R.string.toast_unblock, message.friendName)
+                }
+            }
+            mainSnackbarViewModel.updateErrorMessage(text)
+        }
+    }
     MyPageManageBlockFriendContent(
         onBack = onBack,
         blockFriendList = listOf(
             BlockedFriend(1, "test1", 0)
-        )
+        ) + blockFriendList,
+        unBlockFriend = { friend ->
+            myPageManageBlockFriendViewModel.unBlockFriend(
+                friend = friend
+            )
+        },
+        reportFriend = { friend, reason, withBlock ->
+            myPageManageBlockFriendViewModel.reportFriend(
+                friend = friend,
+                reason = reason,
+                withBlock = withBlock
+            )
+        }
     )
 }
 
 @Composable
 fun MyPageManageBlockFriendContent(
     onBack: () -> Unit,
-    blockFriendList: List<BlockedFriend>
+    blockFriendList: List<BlockedFriend>,
+    unBlockFriend: (friend: BlockedFriend) -> Unit,
+    reportFriend: (friend: BlockedFriend, reason: String, withBlock: Boolean) -> Unit
 ) {
     RoutePageDefault(
         onBack = onBack,
@@ -67,7 +106,12 @@ fun MyPageManageBlockFriendContent(
                 item {
                     FriendBlockItem(
                         blockFriend = blockedFriend,
-                        unBlockFriend = {}
+                        unBlockFriend = {
+                            unBlockFriend(blockedFriend)
+                        },
+                        reportFriend = { reason, withBlock ->
+                            reportFriend(blockedFriend, reason, withBlock)
+                        }
                     )
                 }
                 item {
@@ -85,7 +129,9 @@ fun MyPageManageBlockFriendContentPreview() {
         onBack = {},
         blockFriendList = List(100) {
             BlockedFriend(it + 1, "test${it + 1}", 0)
-        }
+        },
+        unBlockFriend = {},
+        reportFriend = { _, _, _ -> }
     )
 }
 
@@ -93,7 +139,8 @@ fun MyPageManageBlockFriendContentPreview() {
 @Composable
 private fun FriendBlockItem(
     blockFriend: BlockedFriend,
-    unBlockFriend: () -> Unit
+    unBlockFriend: () -> Unit,
+    reportFriend: (reason: String, withBlock: Boolean) -> Unit
 ) {
     var showUnBlockAlert by remember {
         mutableStateOf(false)
@@ -184,7 +231,10 @@ private fun FriendBlockItem(
                 onDismissRequest = {
                     showUnBlockAlert = false
                 },
-                onConfirm = unBlockFriend
+                onConfirm = {
+                    unBlockFriend()
+                    showUnBlockAlert = false
+                }
             )
         }
     }
@@ -200,7 +250,12 @@ private fun FriendBlockItem(
                 showReportSheet = false
             }
         ) {
-            FriendReportView()
+            FriendReportView(
+                report = { reason, withBlock ->
+                    reportFriend(reason, withBlock)
+                    showReportSheet = false
+                }
+            )
         }
     }
 }
@@ -210,6 +265,7 @@ private fun FriendBlockItem(
 fun FriendBlockItemPreview() {
     FriendBlockItem(
         blockFriend = BlockedFriend(1, "test", 0),
-        unBlockFriend = {}
+        unBlockFriend = {},
+        reportFriend = { _, _ -> }
     )
 }

@@ -16,16 +16,16 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.example.planup.main.MainActivity
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageFriendBlockBinding
+import com.example.planup.main.MainActivity
 import com.example.planup.main.my.adapter.BlockFriendRVAdapter
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.adapter.FriendReportAdapter
 import com.example.planup.network.adapter.FriendsBlockedAdapter
 import com.example.planup.network.adapter.FriendsUnblockedAdapter
 import com.example.planup.network.controller.FriendController
-import com.example.planup.network.data.BlockedFriends
+import com.example.planup.network.data.BlockFriendResponse
 import com.example.planup.network.dto.friend.FriendReportDto
 import com.example.planup.network.dto.friend.FriendUnblockDto
 
@@ -214,7 +214,7 @@ class MypageFriendBlockFragment : Fragment(), FriendsBlockedAdapter, FriendRepor
     }
 
     //차단 친구 목룍 불러오기 완료
-    override fun successBlockedFriends(blockedFriendsList: List<BlockedFriends>?) {
+    override fun successBlockedFriends(blockedFriendsList: List<BlockFriendResponse>?) {
         blockedFriendsList?.let { list ->
             for (friend in list) {
                 friends.add(BlockedFriend(friend.friendId, friend.friendNickname, 0))
