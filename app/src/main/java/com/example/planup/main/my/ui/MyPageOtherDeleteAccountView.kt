@@ -69,7 +69,7 @@ fun MyPageOtherDeleteAccountView(
                     }
                 },
                 onFail = { message ->
-                    mainSnackbarViewModel.updateMessage(message)
+                    mainSnackbarViewModel.updateErrorMessage(message)
                 }
             )
         }

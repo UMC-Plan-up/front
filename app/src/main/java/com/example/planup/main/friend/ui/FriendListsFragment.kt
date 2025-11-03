@@ -24,9 +24,9 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendListsBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendListsAdapter
-import com.example.planup.main.friend.data.FriendInfo
-import com.example.planup.main.friend.data.FriendReportRequestDto
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.network.dto.friend.FriendReportRequestDto
 import kotlinx.coroutines.launch
 
 class FriendListsFragment : Fragment() {
@@ -169,7 +169,6 @@ class FriendListsFragment : Fragment() {
                 }
 
                 val resp = RetrofitInstance.friendApi.reportFriend(
-                    token = auth,
                     request = FriendReportRequestDto(
                         userId = userId,
                         friendId = friend.id,
@@ -249,7 +248,6 @@ class FriendListsFragment : Fragment() {
 
             try {
                 val resp = RetrofitInstance.friendApi.reportFriend(
-                    token = auth,
                     request = FriendReportRequestDto(
                         userId = userId,
                         friendId = friend.id,

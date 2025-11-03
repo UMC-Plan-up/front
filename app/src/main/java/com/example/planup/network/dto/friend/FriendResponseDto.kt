@@ -1,4 +1,4 @@
-package com.example.planup.main.friend.data
+package com.example.planup.network.dto.friend
 
 data class FriendResponseDto(
     val isSuccess: Boolean,

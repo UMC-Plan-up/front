@@ -38,7 +38,7 @@ fun MyPageNickNamEditView(
 ) {
     LaunchedEffect(myPageNickNameEditViewModel.errorMsg) {
         if (myPageNickNameEditViewModel.errorMsg.isNotEmpty()) {
-            mainSnackbarViewModel.updateMessage(myPageNickNameEditViewModel.errorMsg)
+            mainSnackbarViewModel.updateErrorMessage(myPageNickNameEditViewModel.errorMsg)
             myPageNickNameEditViewModel.clearErrorMsg()
         }
     }

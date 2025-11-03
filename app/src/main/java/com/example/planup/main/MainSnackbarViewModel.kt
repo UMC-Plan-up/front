@@ -1,25 +1,46 @@
 package com.example.planup.main
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+data class SnackbarEvent(
+    val id: Long = System.currentTimeMillis(),
+    val message: String
+)
 
 @HiltViewModel
 class MainSnackbarViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    var snackbarMessage by mutableStateOf<String?>(null)
-        private set
+    private val _snackbarErrorEvents = MutableSharedFlow<SnackbarEvent>(
+        replay = 0,
+        extraBufferCapacity = 1
+    )
+    val snackbarErrorEvents = _snackbarErrorEvents.asSharedFlow()
 
-    fun updateMessage(message: String) {
-        snackbarMessage = message
+
+    fun updateErrorMessage(message: String) {
+        viewModelScope.launch {
+            _snackbarErrorEvents.emit(SnackbarEvent(message = message))
+        }
     }
 
-    fun clearMessage() {
-        snackbarMessage = null
+    private val _snackbarBlueEvents = MutableSharedFlow<SnackbarEvent>(
+        replay = 0,
+        extraBufferCapacity = 1
+    )
+    val snackbarBlueEvents = _snackbarErrorEvents.asSharedFlow()
+
+    fun updateSuccessMessage(message: String) {
+        viewModelScope.launch {
+            _snackbarBlueEvents.emit(SnackbarEvent(message = message))
+        }
     }
+
 }

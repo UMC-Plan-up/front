@@ -13,6 +13,7 @@ class UserInfoSaver(
     companion object {
         private const val PREF_TOKEN_NAME = "userInfo"
 
+        private const val KEY_USER_ID = "userId"
         private const val KEY_NICKNAME = "nickname"
         private const val KEY_INVITE_CODE = "invite"
         private const val KEY_EMAIL = "email"
@@ -24,6 +25,27 @@ class UserInfoSaver(
     // 저장된 유저 정보가 없는지 확인
     val isEmpty
         get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMAGE)
+
+    /**
+     * 현재 저장된 UserId를 가져옵니다.
+     *
+     * @return
+     */
+    fun getUserId(): Int {
+        return prefs.getInt(KEY_USER_ID, -1)
+    }
+
+    /**
+     * UserId를 저장합니다.
+     *
+     * @param id
+     */
+    fun saveUserId(id: Int) {
+        prefs.edit {
+            putInt(KEY_USER_ID, id)
+        }
+    }
+
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
@@ -103,6 +125,7 @@ class UserInfoSaver(
      */
     fun clearAllUserInfo() {
         prefs.edit {
+            remove(KEY_USER_ID)
             putString(KEY_NICKNAME, null)
             putString(KEY_INVITE_CODE, null)
             putString(KEY_EMAIL, null)
