@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.fragment.app.Fragment
 import com.example.planup.R
+import com.example.planup.component.snackbar.BlueSnackbarHost
 import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
@@ -91,14 +92,23 @@ class MainActivity : AppCompatActivity() {
         val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
 
         binding.composeSnackbar.setContent {
-            val snackBarHost = remember { SnackbarHostState() }
+            val errorSnackBarHost = remember { SnackbarHostState() }
+            val blueSnackBarHost = remember { SnackbarHostState() }
             LaunchedEffect(Unit) {
                 mainSnackbarViewModel.snackbarErrorEvents.collect { event ->
-                    snackBarHost.showSnackbar(event.message)
+                    errorSnackBarHost.showSnackbar(event.message)
+                }
+            }
+            LaunchedEffect(Unit) {
+                mainSnackbarViewModel.snackbarBlueEvents.collect { event ->
+                    blueSnackBarHost.showSnackbar(event.message)
                 }
             }
             GraySnackbarHost(
-                hostState = snackBarHost
+                hostState = errorSnackBarHost
+            )
+            BlueSnackbarHost(
+                hostState = blueSnackBarHost
             )
         }
 
