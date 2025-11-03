@@ -17,7 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.fragment.app.Fragment
 import com.example.planup.R
-import com.example.planup.component.GraySnackbarHost
+import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.goal.ui.GoalFragment
