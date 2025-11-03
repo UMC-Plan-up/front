@@ -33,7 +33,7 @@ fun MyPageOtherLogoutView(
                     }
                 },
                 onFail = { message ->
-                    mainSnackbarViewModel.updateMessage(message)
+                    mainSnackbarViewModel.updateErrorMessage(message)
                 }
             )
         }

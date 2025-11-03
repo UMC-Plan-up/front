@@ -116,7 +116,7 @@ fun MyPageNavView(
         composable<MyPageRoute.Account.ChangeEmail> {
             Button(
                 onClick = {
-                    mainSnackbarViewModel.updateMessage("123")
+                    mainSnackbarViewModel.updateErrorMessage("123")
                 }
             ) {
                 Text(text = "test")
@@ -161,7 +161,8 @@ fun MyPageNavView(
         }
         composable<MyPageRoute.Friend.ManageBlock> {
             MyPageManageBlockFriendView(
-                onBack = navController::navigateUp
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         composable<MyPageRoute.Service.Policy>(

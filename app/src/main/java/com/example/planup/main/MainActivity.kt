@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         binding.composeSnackbar.setContent {
             val snackBarHost = remember { SnackbarHostState() }
             LaunchedEffect(Unit) {
-                mainSnackbarViewModel.snackbarEvents.collect { event ->
+                mainSnackbarViewModel.snackbarErrorEvents.collect { event ->
                     snackBarHost.showSnackbar(event.message)
                 }
             }
