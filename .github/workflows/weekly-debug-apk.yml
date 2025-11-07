@@ -56,7 +56,7 @@ jobs:
           END_DATE="${{ github.event.inputs.end_date }}"
           
           if [ -z "$START_DATE" ]; then
-            START_DATE=$(date -d "1 week ago Wednesday" +%Y-%m-%d)
+            START_DATE=$(date -d "1 week ago Wednesday +1 day" +%Y-%m-%d)
           fi
           if [ -z "$END_DATE" ]; then
             END_DATE=$(date -d "Wednesday" +%Y-%m-%d)
