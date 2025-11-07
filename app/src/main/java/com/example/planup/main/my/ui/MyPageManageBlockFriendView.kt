@@ -1,12 +1,8 @@
 package com.example.planup.main.my.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
@@ -24,21 +20,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.FriendReportView
+import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageManageBlockFriendViewModel
@@ -160,74 +154,48 @@ private fun FriendBlockItem(
     var showReportSheet by remember {
         mutableStateOf(false)
     }
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 6.dp, vertical = 12.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+    FriendProfileRow(
+        profileImage = blockFriend.profile,
+        friendName = blockFriend.name
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            AsyncImage(
-                modifier = Modifier.size(42.dp),
-                model = blockFriend.profile,
-                placeholder = painterResource(R.drawable.profile_image),
-                error = painterResource(R.drawable.profile_image),
-                contentDescription = null
+        Button(
+            modifier = Modifier.height(30.dp),
+            onClick = {
+                showUnBlockAlert = true
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Green100,
+                contentColor = Green200
+            ),
+            shape = RoundedCornerShape(8.dp),
+            contentPadding = PaddingValues(
+                horizontal = 5.dp
             )
+        ) {
             Text(
-                text = blockFriend.name,
-                style = Typography.Medium_XL
+                text = "차단 해제",
+                style = Typography.Medium_SM
             )
         }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        Button(
+            modifier = Modifier.height(30.dp),
+            onClick = {
+                showReportSheet = true
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Blue100,
+                contentColor = Color(0xff203358)
+            ),
+            shape = RoundedCornerShape(8.dp),
+            contentPadding = PaddingValues(
+                horizontal = 5.dp
+            )
         ) {
-            Button(
-                modifier = Modifier.height(30.dp),
-                onClick = {
-                    showUnBlockAlert = true
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Green100,
-                    contentColor = Green200
-                ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(
-                    horizontal = 5.dp
-                )
-            ) {
-                Text(
-                    text = "차단 해제",
-                    style = Typography.Medium_SM
-                )
-            }
-
-            Button(
-                modifier = Modifier.height(30.dp),
-                onClick = {
-                    showReportSheet = true
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Blue100,
-                    contentColor = Color(0xff203358)
-                ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(
-                    horizontal = 5.dp
-                )
-            ) {
-                Text(
-                    text = "신고",
-                    style = Typography.Medium_SM
-                )
-            }
+            Text(
+                text = "신고",
+                style = Typography.Medium_SM
+            )
         }
     }
     if (showUnBlockAlert) {

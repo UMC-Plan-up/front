@@ -31,7 +31,6 @@ import kotlinx.coroutines.launch
 
 class FriendListsFragment : Fragment() {
     lateinit var binding: FragmentFriendListsBinding
-    private var friends: List<FriendInfo> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
