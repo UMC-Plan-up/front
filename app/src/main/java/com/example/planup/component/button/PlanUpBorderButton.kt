@@ -1,4 +1,4 @@
-package com.example.planup.component
+package com.example.planup.component.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement

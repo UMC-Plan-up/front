@@ -23,8 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
-import com.example.planup.component.PlanUpRedButton
 import com.example.planup.component.PlanUpSwitch
+import com.example.planup.component.button.PlanUpRedButton
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.theme.Black100
 import com.example.planup.theme.Typography
