@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import com.example.planup.component.button.PlanUpRedButton
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.theme.Black100
 import com.example.planup.theme.Typography
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,18 +46,25 @@ fun FriendReportSheet(
     onDismissRequest: () -> Unit,
     reportFriend: (reason: String, withBlock: Boolean) -> Unit
 ) {
+    val scope = rememberCoroutineScope()
+    val close: () -> Unit = {
+        scope.launch {
+            sheetState.hide()
+            onDismissRequest()
+        }
+    }
     ModalBottomSheet(
         modifier = Modifier
             .fillMaxWidth(0.95f),
         sheetState = sheetState,
         containerColor = Color.White,
-        onDismissRequest = onDismissRequest
+        onDismissRequest = close
     ) {
         FriendReportContent(
             showWithBlock = showWithBlock,
             report = { reason, withBlock ->
                 reportFriend(reason, withBlock)
-                onDismissRequest()
+                close()
             }
         )
     }
