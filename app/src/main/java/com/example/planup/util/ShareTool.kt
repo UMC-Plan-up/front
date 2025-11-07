@@ -7,15 +7,15 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
-import javax.inject.Singleton
 import androidx.core.net.toUri
 import com.example.planup.R
 import com.example.planup.database.UserInfoSaver
 import com.kakao.sdk.common.util.KakaoCustomTabsClient
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.share.WebSharerClient
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * 공유 관련 기능을 모듈화 해둔 class
@@ -41,7 +41,7 @@ class ShareTool @Inject constructor(
      * 클립보드로 복사합니다.
      */
     fun copyInviteCodeToClipboard(code: String) {
-        val clip = ClipData.newPlainText("초대코드", makeInviteMessage(code))
+        val clip = ClipData.newPlainText("초대코드", code)
         clipboard.setPrimaryClip(clip)
     }
 
