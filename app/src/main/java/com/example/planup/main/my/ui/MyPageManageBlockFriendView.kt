@@ -1,17 +1,11 @@
 package com.example.planup.main.my.ui
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,22 +19,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
 import com.example.planup.component.RoutePageDefault
+import com.example.planup.component.button.PlanUpSmallButton
+import com.example.planup.component.button.SmallButtonType
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.FriendReportView
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.main.my.ui.viewmodel.MyPageManageBlockFriendViewModel
 import com.example.planup.main.my.ui.viewmodel.UiMessage
-import com.example.planup.theme.Blue100
-import com.example.planup.theme.Green100
-import com.example.planup.theme.Green200
-import com.example.planup.theme.Typography
 
 
 @Composable
@@ -158,45 +149,21 @@ private fun FriendBlockItem(
         profileImage = blockFriend.profile,
         friendName = blockFriend.name
     ) {
-        Button(
-            modifier = Modifier.height(30.dp),
+        PlanUpSmallButton(
+            smallButtonType = SmallButtonType.Green,
             onClick = {
                 showUnBlockAlert = true
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Green100,
-                contentColor = Green200
-            ),
-            shape = RoundedCornerShape(8.dp),
-            contentPadding = PaddingValues(
-                horizontal = 5.dp
-            )
-        ) {
-            Text(
-                text = "차단 해제",
-                style = Typography.Medium_SM
-            )
-        }
+            title = "차단 해제"
+        )
 
-        Button(
-            modifier = Modifier.height(30.dp),
+        PlanUpSmallButton(
+            smallButtonType = SmallButtonType.Blue,
             onClick = {
                 showReportSheet = true
             },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Blue100,
-                contentColor = Color(0xff203358)
-            ),
-            shape = RoundedCornerShape(8.dp),
-            contentPadding = PaddingValues(
-                horizontal = 5.dp
-            )
-        ) {
-            Text(
-                text = "신고",
-                style = Typography.Medium_SM
-            )
-        }
+            title = "신고"
+        )
     }
     if (showUnBlockAlert) {
         BasicAlertDialog(
