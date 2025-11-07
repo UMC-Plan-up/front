@@ -16,13 +16,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.planup.R
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
 import com.example.planup.databinding.FragmentFriendListsBinding
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
+import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.network.dto.friend.FriendInfo
+import kotlinx.coroutines.launch
 
 class FriendListsFragment : Fragment() {
     private var _binding: FragmentFriendListsBinding? = null
@@ -30,6 +37,7 @@ class FriendListsFragment : Fragment() {
         get() = _binding!!
 
     private val friendViewModel: FriendViewModel by activityViewModels()
+    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,14 +50,36 @@ class FriendListsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.btnBack.setOnClickListener {
+            parentFragmentManager.popBackStack(
+                FriendFragment.FRIEND_FRAGMENT_STACK,
+                0
+            )
+        }
         binding.friendListsRecyclerView.setContent {
             val friendList by friendViewModel.friendList.collectAsState()
             FriendListView(
                 friendList = friendList,
                 reportFriend = { friend, reason, withBlock ->
-
+                    friendViewModel.reportFriend(friend, reason,withBlock)
                 }
             )
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                friendViewModel.uiMessage.collect { uiMessage ->
+                    when(uiMessage) {
+                        is FriendUiMessage.Error -> {
+                            mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
+                        }
+                        is FriendUiMessage.ReportSuccess ->  {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                requireContext().getString(R.string.toast_report)
+                            )
+                        }
+                    }
+                }
+            }
         }
     }
 
