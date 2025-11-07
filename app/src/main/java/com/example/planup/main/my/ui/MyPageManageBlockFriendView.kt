@@ -79,7 +79,7 @@ fun MyPageManageBlockFriendView(
     MyPageManageBlockFriendContent(
         onBack = onBack,
         blockFriendList = listOf(
-            BlockedFriend(1, "test1", 0)
+            BlockedFriend(1, "test1", "")
         ) + blockFriendList,
         unBlockFriend = { friend ->
             myPageManageBlockFriendViewModel.unBlockFriend(
@@ -244,7 +244,7 @@ private fun FriendBlockItem(
 @Composable
 fun FriendBlockItemPreview() {
     FriendBlockItem(
-        blockFriend = BlockedFriend(1, "test", 0),
+        blockFriend = BlockedFriend(1, "test", ""),
         unBlockFriend = {},
         reportFriend = { _, _ -> }
     )
