@@ -1,12 +1,9 @@
 package com.example.planup.main.my.ui
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -14,8 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,8 +22,8 @@ import com.example.planup.component.RoutePageDefault
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
 import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.friend.ui.FriendReportView
 import com.example.planup.main.friend.ui.common.FriendProfileRow
+import com.example.planup.main.friend.ui.sheet.FriendReportSheet
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.main.my.ui.viewmodel.MyPageManageBlockFriendViewModel
 import com.example.planup.main.my.ui.viewmodel.UiMessage
@@ -186,24 +181,16 @@ private fun FriendBlockItem(
         }
     }
     if (showReportSheet) {
-        ModalBottomSheet(
-            modifier = Modifier
-                .fillMaxWidth(0.95f),
-            sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true
-            ),
-            containerColor = Color.White,
+        FriendReportSheet(
+            showWithBlock = false,
             onDismissRequest = {
                 showReportSheet = false
+            },
+            reportFriend = { reason, withBlock ->
+                //항상 이미 차단되어 있는 대상 이므로,
+                reportFriend(reason, true)
             }
-        ) {
-            FriendReportView(
-                report = { reason, withBlock ->
-                    reportFriend(reason, withBlock)
-                    showReportSheet = false
-                }
-            )
-        }
+        )
     }
 }
 

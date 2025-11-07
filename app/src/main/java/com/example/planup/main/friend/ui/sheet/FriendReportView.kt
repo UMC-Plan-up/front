@@ -1,4 +1,4 @@
-package com.example.planup.main.friend.ui
+package com.example.planup.main.friend.ui.sheet
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,8 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,17 +34,37 @@ import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.theme.Black100
 import com.example.planup.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FriendReportView(
-    report: (reason: String, withBlock: Boolean) -> Unit
+fun FriendReportSheet(
+    showWithBlock: Boolean = true,
+    sheetState: SheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true
+    ),
+    onDismissRequest: () -> Unit,
+    reportFriend: (reason: String, withBlock: Boolean) -> Unit
 ) {
-    FriendReportContent(
-        report = report
-    )
+    ModalBottomSheet(
+        modifier = Modifier
+            .fillMaxWidth(0.95f),
+        sheetState = sheetState,
+        containerColor = Color.White,
+        onDismissRequest = onDismissRequest
+    ) {
+        FriendReportContent(
+            showWithBlock = showWithBlock,
+            report = { reason, withBlock ->
+                reportFriend(reason, withBlock)
+                onDismissRequest()
+            }
+        )
+    }
 }
 
+
 @Composable
-fun FriendReportContent(
+private fun FriendReportContent(
+    showWithBlock: Boolean = true,
     report: (reason: String, withBlock: Boolean) -> Unit
 ) {
     val reasonList = listOf(
@@ -111,25 +136,27 @@ fun FriendReportContent(
             Spacer(Modifier.height(20.dp))
         }
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                modifier = Modifier.padding(start = 2.dp),
-                text = "해당 유저를 차단하시겠어요?",
-                style = Typography.Medium_L
-            )
-            RouteMenuItem(
-                title = "해당 유저 차단하기",
-                rightContent = {
-                    PlanUpSwitch(
-                        checked = withBlock,
-                        onCheckedChange = {
-                            withBlock = it
-                        }
-                    )
-                }
-            )
+        if (showWithBlock) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    modifier = Modifier.padding(start = 2.dp),
+                    text = "해당 유저를 차단하시겠어요?",
+                    style = Typography.Medium_L
+                )
+                RouteMenuItem(
+                    title = "해당 유저 차단하기",
+                    rightContent = {
+                        PlanUpSwitch(
+                            checked = withBlock,
+                            onCheckedChange = {
+                                withBlock = it
+                            }
+                        )
+                    }
+                )
+            }
         }
 
         PlanUpRedButton(
@@ -146,7 +173,7 @@ fun FriendReportContent(
 
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
-fun FriendReportContentPreview() {
+private fun FriendReportContentPreview() {
     FriendReportContent(
         report = { _, _ -> }
     )
