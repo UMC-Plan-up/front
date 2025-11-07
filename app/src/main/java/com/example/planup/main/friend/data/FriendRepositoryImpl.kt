@@ -84,7 +84,7 @@ class FriendRepositoryImpl @Inject constructor(
                             BlockedFriend(
                                 id = blockFriendResponse.friendId,
                                 name = blockFriendResponse.friendNickname,
-                                profile = 0
+                                profile = ""
                             )
                         }
                         ApiResult.Success(resultList)

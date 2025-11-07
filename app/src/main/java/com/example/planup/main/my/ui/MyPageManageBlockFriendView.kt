@@ -140,7 +140,7 @@ fun MyPageManageBlockFriendContentPreview() {
     MyPageManageBlockFriendContent(
         onBack = {},
         blockFriendList = List(100) {
-            BlockedFriend(it + 1, "test${it + 1}", 0)
+            BlockedFriend(it + 1, "test${it + 1}", "")
         },
         unBlockFriend = {},
         reportFriend = { _, _, _ -> }
