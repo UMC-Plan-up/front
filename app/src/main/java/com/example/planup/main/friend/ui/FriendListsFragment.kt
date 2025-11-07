@@ -16,14 +16,19 @@ import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
+import com.example.planup.component.button.PlanUpSmallButton
+import com.example.planup.component.button.SmallButtonType
 import com.example.planup.databinding.FragmentFriendListsBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendListsAdapter
+import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.network.dto.friend.FriendReportRequestDto
@@ -370,4 +375,53 @@ class FriendListsFragment : Fragment() {
         }
         dialog.show()
     }
+}
+
+
+@Composable
+private fun FriendListItem(
+    friend: FriendInfo
+) {
+    FriendProfileRow(
+        profileImage = friend.profileImage,
+        friendName = friend.nickname
+    ) {
+        PlanUpSmallButton(
+            smallButtonType = SmallButtonType.Red,
+            onClick = {
+
+            },
+            title = "삭제"
+        )
+        PlanUpSmallButton(
+            smallButtonType = SmallButtonType.Green,
+            onClick = {
+
+            },
+            title = "차단"
+        )
+
+        PlanUpSmallButton(
+            smallButtonType = SmallButtonType.Blue,
+            onClick = {
+
+            },
+            title = "신고"
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FriendListItemPreview() {
+    FriendListItem(
+        friend = FriendInfo(
+            1,
+            "test",
+            1,
+            "",
+            true,
+            ""
+        )
+    )
 }
