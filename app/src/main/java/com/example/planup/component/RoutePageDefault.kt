@@ -1,4 +1,4 @@
-package com.example.planup.main.my.ui.common
+package com.example.planup.component
 
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
@@ -13,7 +13,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import com.example.planup.component.TopHeader
 import com.example.planup.theme.Black400
 import com.example.planup.theme.Typography
 

@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
 import com.example.planup.component.PlanUpButton
+import com.example.planup.component.RoutePageDefault
 import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageNickNameEditViewModel
 import com.example.planup.theme.Black200
 import com.example.planup.theme.Black400
