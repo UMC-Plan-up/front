@@ -18,8 +18,8 @@ import com.example.planup.R
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
 import com.example.planup.databinding.ToastCompleteAddFriendBinding
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
-import com.example.planup.network.ApiResult
 import kotlinx.coroutines.launch
 
 class FriendInviteFragment : Fragment() {
@@ -28,6 +28,7 @@ class FriendInviteFragment : Fragment() {
         get() = _binding!!
 
     private val userInviteCodeViewModel: UserInviteCodeViewModel by activityViewModels()
+    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,34 +69,20 @@ class FriendInviteFragment : Fragment() {
             }
 
             btnSubmitInviteCode.setOnClickListener {
+                btnSubmitInviteCode.isEnabled = false
                 userInviteCodeViewModel.fetchInvalidateInviteCode(
-                    code = etInviteCodeInput.text.toString()
-                ) { result ->
-                    when (result) {
-                        is ApiResult.Success -> {
-                            val data = result.data
-                            if (data.valid) {
-                                val nickName = data.targetUserNickname
-                                showCompleteAddFriendToast(nickName)
-                                etInviteCodeInput.setText("")
-                            } else {
-                                showSimpleToast(data.message)
-                            }
-                        }
-
-                        is ApiResult.Error -> {
-                            showSimpleToast(result.message)
-                        }
-
-                        is ApiResult.Exception -> {
-                            showSimpleToast("알 수 없는 오류 입니다.")
-                        }
-
-                        is ApiResult.Fail -> {
-                            showSimpleToast(result.message)
-                        }
+                    code = etInviteCodeInput.text.toString(),
+                    onCallBack = { processResult ->
+                        btnSubmitInviteCode.isEnabled = true
+                        val nickName = processResult.friendNickname
+                        showCompleteAddFriendToast(nickName)
+                        etInviteCodeInput.setText("")
+                    },
+                    onError = { message ->
+                        btnSubmitInviteCode.isEnabled = true
+                        mainSnackbarViewModel.updateErrorMessage(message)
                     }
-                }
+                )
             }
 
             etInviteCodeInput.addTextChangedListener {
