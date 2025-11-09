@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -57,7 +58,7 @@ class FriendListsFragment : Fragment() {
         binding.btnBack.setOnClickListener {
             parentFragmentManager.popBackStack(
                 FriendFragment.FRIEND_FRAGMENT_STACK,
-                0
+                FragmentManager.POP_BACK_STACK_INCLUSIVE
             )
         }
         binding.friendListsRecyclerView.setContent {
