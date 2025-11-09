@@ -12,12 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.planup.theme.BLACK100
-import com.example.planup.theme.BLACK200
-import com.example.planup.theme.BLACK300
-import com.example.planup.theme.BLUE200
-import com.example.planup.theme.Typography
-import com.example.planup.theme.fontColor
+import com.example.planup.theme.Black100
+import com.example.planup.theme.Black300
 import com.example.planup.theme.pretendard
 
 @Composable
@@ -33,13 +29,13 @@ fun PlanUpButtonSecondarySmall(
             .height(36.dp)
             .then(modifier),
         colors = ButtonDefaults.buttonColors(
-            containerColor = BLACK100,
+            containerColor = Black100,
         ),
         shape = RoundedCornerShape(6.dp)
     ) {
         Text(
             text = title,
-            color = BLACK300,
+            color = Black300,
             fontFamily = pretendard,
         )
     }

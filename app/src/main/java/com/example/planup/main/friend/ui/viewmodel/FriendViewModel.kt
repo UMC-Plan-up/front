@@ -35,7 +35,7 @@ class FriendViewModel @Inject constructor(
         )
 
     val friendRequestList = friendRepository
-        .getFriendBlockList().stateIn(
+        .getFriendRequestList().stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             emptyList()
@@ -66,7 +66,7 @@ class FriendViewModel @Inject constructor(
 
     fun fetchFriendRequest() {
         viewModelScope.launch {
-            friendRepository.fetchFriendBlockList()
+            friendRepository.fetchFriendRequestList()
                 .onFailWithMessageOnBlock()
         }
     }

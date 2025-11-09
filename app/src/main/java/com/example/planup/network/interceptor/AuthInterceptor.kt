@@ -13,7 +13,7 @@ class AuthInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
 
-        if (original.header("Authorization") != null) {
+        if (original.header("Authorization") != null || chain.request().url.pathSegments == listOf("users","login")) {
             return chain.proceed(original)
         }
 

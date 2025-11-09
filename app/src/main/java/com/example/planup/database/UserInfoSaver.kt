@@ -126,10 +126,10 @@ class UserInfoSaver(
     fun clearAllUserInfo() {
         prefs.edit {
             remove(KEY_USER_ID)
-            putString(KEY_NICKNAME, null)
-            putString(KEY_INVITE_CODE, null)
-            putString(KEY_EMAIL, null)
-            putString(KEY_PROFILE_IMAGE, null)
+            remove(KEY_NICKNAME)
+            remove(KEY_INVITE_CODE)
+            remove(KEY_EMAIL)
+            remove(KEY_PROFILE_IMAGE)
         }
     }
 
