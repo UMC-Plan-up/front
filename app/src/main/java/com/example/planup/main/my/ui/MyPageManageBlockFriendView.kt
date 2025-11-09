@@ -64,9 +64,7 @@ fun MyPageManageBlockFriendView(
     }
     MyPageManageBlockFriendContent(
         onBack = onBack,
-        blockFriendList = listOf(
-            BlockedFriend(1, "test1", "")
-        ) + blockFriendList,
+        blockFriendList = blockFriendList,
         unBlockFriend = { friend ->
             myPageManageBlockFriendViewModel.unBlockFriend(
                 friend = friend
