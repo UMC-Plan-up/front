@@ -41,7 +41,7 @@ data class FriendRequestsResult(
     val goalCnt: Int,
     val todayTime: String?,
     val isNewPhotoVerify: Boolean,
-    val profileImage: String
+    val profileImage: String?
 ) {
     fun getStatusString(): String = StringBuilder().apply {
         append("${goalCnt}개의 목표 진행 중")

@@ -1,12 +1,9 @@
 package com.example.planup.main.friend.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,16 +26,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.component.PlanUpButtonSecondarySmall
 import com.example.planup.component.PlanUpButtonSmall
 import com.example.planup.databinding.FragmentFriendRequestsBinding
-import com.example.planup.main.MainActivity
-import com.example.planup.main.friend.adapter.FriendRequestAdapter
-import com.example.planup.main.friend.domain.FriendRequestItem
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
-import com.example.planup.network.RetrofitInstance
-import com.example.planup.network.dto.friend.FriendRequest
+import com.example.planup.network.dto.friend.FriendRequestsResult
 import kotlinx.coroutines.launch
 
 class FriendRequestsFragment : Fragment() {
@@ -60,24 +54,8 @@ class FriendRequestsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                friendViewModel.friendRequestList.collect { dtoList ->
-                    val items: List<FriendRequest> = dtoList.map { dto ->
-                        FriendRequest(
-                            id = dto.id,
-                            nickname = dto.nickname,
-                            status = buildString {
-                                append("${dto.goalCnt}개의 목표 진행 중")
-                                dto.todayTime?.let { append(" · 오늘 $it") }
-                                if (dto.isNewPhotoVerify) append(" · 새 사진 인증")
-                            }
-                        )
-                    }
+                friendViewModel.friendRequestList.collect { items ->
 
-                    binding.friendRequestRecyclerView.adapter = FriendRequestAdapter(
-                        items,
-                        onAcceptClick = { friend ->  },
-                        onDeclineClick = { friend ->  }
-                    )
                 }
             }
         }
@@ -125,7 +103,7 @@ class FriendRequestsFragment : Fragment() {
 
 @Composable
 fun FriendRequestItem(
-    friendInfo: FriendRequestItem,
+    friendInfo: FriendRequestsResult,
     clickItem: () -> Unit,
     acceptFriend: () -> Unit,
     declineFriend: () -> Unit
@@ -142,7 +120,18 @@ fun FriendRequestItem(
         ) {
             Box(
                 modifier = Modifier.size(50.dp)
-            ) { }
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .align(Alignment.Center)
+                    ,
+                    model = friendInfo.profileImage,
+                    placeholder = painterResource(R.drawable.profile_image),
+                    error = painterResource(R.drawable.profile_image),
+                    contentDescription = null
+                )
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -150,10 +139,10 @@ fun FriendRequestItem(
             ) {
                 Column {
                     Text(
-                        text = friendInfo.nickName
+                        text = friendInfo.nickname
                     )
                     Text(
-                        text = friendInfo.count.toString()
+                        text = friendInfo.getStatusString()
                     )
                 }
 
@@ -186,10 +175,13 @@ fun FriendRequestItem(
 @Preview
 private fun FriendRequestItemPreview() {
     FriendRequestItem(
-        FriendRequestItem(
+        FriendRequestsResult(
             id = 1,
-            nickName = "Tester",
-            1
+            nickname = "Tester",
+            goalCnt = 1,
+            todayTime = "",
+            isNewPhotoVerify = true,
+            profileImage = null
         ),
         {},
         {},
