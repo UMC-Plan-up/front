@@ -102,8 +102,7 @@ class FriendFragment : Fragment() {
     /** 알림 배지 표시/숨김 */
     private fun updateNotificationBadge(pendingCount: Int) {
         // 요청이 1개 이상이면 빨간 점 표시, 아니면 숨김
-        binding.notificationBadge.visibility =
-            if (pendingCount > 0) View.VISIBLE else View.GONE
+        binding.ivNotification.isSelected = pendingCount > 0
     }
 
     private fun setupClicks() {
