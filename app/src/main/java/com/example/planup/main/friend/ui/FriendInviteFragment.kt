@@ -19,6 +19,7 @@ import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
 import com.example.planup.databinding.ToastCompleteAddFriendBinding
 import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
 import kotlinx.coroutines.launch
 
@@ -27,6 +28,7 @@ class FriendInviteFragment : Fragment() {
     private val binding: FragmentFriendInviteBinding
         get() = _binding!!
 
+    private val friendViewModel: FriendViewModel by activityViewModels()
     private val userInviteCodeViewModel: UserInviteCodeViewModel by activityViewModels()
     private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
@@ -75,8 +77,11 @@ class FriendInviteFragment : Fragment() {
                     onCallBack = { processResult ->
                         btnSubmitInviteCode.isEnabled = true
                         val nickName = processResult.friendNickname
-                        showCompleteAddFriendToast(nickName)
+                        mainSnackbarViewModel.updateSuccessMessage(
+                            getString(R.string.toast_complete_add_friend, nickName)
+                        )
                         etInviteCodeInput.setText("")
+                        friendViewModel.fetchFriendList()
                     },
                     onError = { message ->
                         btnSubmitInviteCode.isEnabled = true
@@ -94,29 +99,6 @@ class FriendInviteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-
-    private fun showCompleteAddFriendToast(
-        nickName: String
-    ) {
-        val completeAddToastBinding =
-            ToastCompleteAddFriendBinding.inflate(layoutInflater, binding.root, false)
-        completeAddToastBinding.toastChallengeAcceptTv.text =
-            getString(R.string.toast_complete_add_friend, nickName)
-        val toast = Toast(requireContext())
-        toast.view = completeAddToastBinding.root
-        toast.duration = Toast.LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
-        toast.show()
-    }
-
-    private fun showSimpleToast(message: String) {
-        Toast.makeText(
-            requireContext(),
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */
