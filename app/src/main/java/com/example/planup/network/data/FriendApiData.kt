@@ -20,4 +20,6 @@ typealias FriendBlockListResponse = FriendResponse<List<BlockFriendResponse>>
 
 typealias FriendUnblockResponse = FriendResponse<Boolean>
 
+typealias FriendBlockResponse = FriendResponse<Boolean>
+
 typealias FriendReportResponse = FriendResponse<Boolean>

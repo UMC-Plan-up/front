@@ -123,6 +123,29 @@ class FriendRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun blockFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.blockFriend(
+                        friendId
+                    )
+                },
+                onResponse = { friendBlockResponse ->
+                    if (friendBlockResponse.isSuccess) {
+                        val blockSuccess = friendBlockResponse.result
+                        fetchFriendList()
+                        fetchFriendBlockList()
+                        ApiResult.Success(blockSuccess)
+                    } else {
+                        ApiResult.Fail(friendBlockResponse.message)
+                    }
+                }
+            )
+        }
+
     override suspend fun unBlockFriend(
         friendName: String
     ): ApiResult<Boolean> =

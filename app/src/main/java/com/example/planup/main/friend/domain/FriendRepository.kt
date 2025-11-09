@@ -46,6 +46,11 @@ interface FriendRepository {
      */
     suspend fun fetchFriendBlockList(): ApiResult<List<BlockedFriend>>
 
+
+    suspend fun blockFriend(
+        friendId: Int
+    ): ApiResult<Boolean>
+
     /**
      * 차단된 친구를 해제한다.
      */

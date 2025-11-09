@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class FriendUiMessage {
+    data class BlockSuccess(val friendName: String) : FriendUiMessage()
     data class ReportSuccess(val friendName: String) : FriendUiMessage()
     data class Error(val msg: String) : FriendUiMessage()
 }
@@ -92,6 +93,22 @@ class FriendViewModel @Inject constructor(
                     )
                 }
                 .onFailWithMessageOnBlock()
+        }
+    }
+
+    fun blockFriend(
+        friend: FriendInfo
+    ) {
+        viewModelScope.launch {
+            friendRepository
+                .blockFriend(
+                    friendId = friend.id
+                )
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.BlockSuccess(friend.nickname)
+                    )
+                }.onFailWithMessageOnBlock()
         }
     }
 }

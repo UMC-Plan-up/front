@@ -1,6 +1,7 @@
 package com.example.planup.network
 
 import com.example.planup.network.data.FriendBlockListResponse
+import com.example.planup.network.data.FriendBlockResponse
 import com.example.planup.network.data.FriendReportResponse
 import com.example.planup.network.data.FriendUnblockResponse
 import com.example.planup.network.dto.friend.BaseResponse
@@ -52,9 +53,8 @@ interface FriendApi {
     // 친구 차단
     @POST("/friends/block")
     suspend fun blockFriend(
-        @Header("Authorization") token: String,
         @Query("friendId") request: Int
-    ): Response<BaseResponse>
+    ): Response<FriendBlockResponse>
 
     //친구 삭제
     @POST("/friends/delete")
