@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class FriendUiMessage {
+    data class DeleteSuccess(val friendName: String) : FriendUiMessage()
     data class BlockSuccess(val friendName: String) : FriendUiMessage()
     data class ReportSuccess(val friendName: String) : FriendUiMessage()
     data class Error(val msg: String) : FriendUiMessage()
@@ -50,11 +51,6 @@ class FriendViewModel @Inject constructor(
                 FriendUiMessage.Error(message)
             )
         }
-    }
-
-    init {
-        fetchFriendList()
-        fetchFriendRequest()
     }
 
     /**
@@ -107,6 +103,22 @@ class FriendViewModel @Inject constructor(
                 .onSuccess { result ->
                     _uiMessage.emit(
                         FriendUiMessage.BlockSuccess(friend.nickname)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun deleteFriend(
+        friend: FriendInfo
+    ) {
+        viewModelScope.launch {
+            friendRepository
+                .deleteFriend(
+                    friendId = friend.id
+                )
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.DeleteSuccess(friend.nickname)
                     )
                 }.onFailWithMessageOnBlock()
         }

@@ -47,6 +47,10 @@ interface FriendRepository {
     suspend fun fetchFriendBlockList(): ApiResult<List<BlockedFriend>>
 
 
+    suspend fun deleteFriend(
+        friendId: Int
+    ) : ApiResult<Boolean>
+
     suspend fun blockFriend(
         friendId: Int
     ): ApiResult<Boolean>

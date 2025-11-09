@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BasicAlertDialog
@@ -14,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
@@ -65,7 +67,12 @@ class FriendListsFragment : Fragment() {
             val friendList by friendViewModel.friendList.collectAsState()
             FriendListView(
                 friendList = friendList,
-                blockFriend =  { friend ->
+                deleteFriend = { friend ->
+                    friendViewModel.deleteFriend(
+                        friend = friend
+                    )
+                },
+                blockFriend = { friend ->
                     friendViewModel.blockFriend(
                         friend = friend
                     )
@@ -95,9 +102,21 @@ class FriendListsFragment : Fragment() {
                             )
                         }
 
-                        is FriendUiMessage.BlockSuccess ->  {
+                        is FriendUiMessage.BlockSuccess -> {
                             mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(R.string.toast_block,uiMessage.friendName)
+                                requireContext().getString(
+                                    R.string.toast_block,
+                                    uiMessage.friendName
+                                )
+                            )
+                        }
+
+                        is FriendUiMessage.DeleteSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                requireContext().getString(
+                                    R.string.toast_delete,
+                                    uiMessage.friendName
+                                )
                             )
                         }
                     }
@@ -110,132 +129,25 @@ class FriendListsFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
-
-    //    /** 친구 목록 조회 */
-//    private fun fetchFriends() {
-//        lifecycleScope.launch {
-//            val auth = buildAuthHeader()
-//            if (auth.isNullOrBlank()) {
-//                Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-//                return@launch
-//            }
-//
-//            try {
-//                val resp = RetrofitInstance.friendApi.getFriendSummary(auth)
-//                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-//                    val list: List<FriendInfo> =
-//                        resp.body()!!.result.firstOrNull()?.friendInfoSummaryList.orEmpty()
-//
-//                    binding.friendListsRecyclerView.adapter = FriendListsAdapter(
-//                        items = list,
-//                        onDeleteClick = { friend -> deleteDialog(friend) },
-//                        onBlockClick = { friend -> blockDialog(friend) },
-//                        onReportClick = { friend -> showReportDialog(friend) }
-//                    )
-//                } else {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        resp.body()?.message ?: "목록을 불러오지 못했습니다.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "서버 오류", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-//
-//    /** “삭제” 동작
-//     * 서버에 ‘삭제’ API가 별도로 없다면, 실사용에선 ‘차단’으로 대체하거나
-//     * 백엔드에 “언프렌드” 엔드포인트를 요청해야 합니다.
-//     * 여기서는 편의상 ‘차단’과 동일하게 처리합니다.
-//     */
-//    /** 삭제 API **/
-//    private fun deleteFriend(friend: FriendInfo) {
-//        lifecycleScope.launch {
-//            val auth = buildAuthHeader() ?: return@launch
-//            try {
-//                val resp = RetrofitInstance.friendApi.deleteFriend(
-//                    token = auth,
-//                    request = friend.id
-//                )
-//                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-//                    Toast.makeText(
-//                        requireContext(),
-//                        "${friend.nickname} 님을 삭제했어요.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                    fetchFriends() // 갱신
-//                } else {
-//                    Toast.makeText(requireContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
-//                }
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-//
-//    private fun deleteDialog(friend: FriendInfo) {
-//        val dialog = Dialog(context as MainActivity)
-//        dialog.setContentView(R.layout.dialog_delete_friend)
-//        dialog.window?.apply {
-//            setGravity(Gravity.CENTER)
-//            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-//            setBackgroundDrawable(ContextCompat.getDrawable(context, R.color.transparent))
-//            dialog.setCanceledOnTouchOutside(true)
-//        }
-//        dialog.findViewById<TextView>(R.id.popup_delete_title_tv).text =
-//            getString(R.string.popup_delete_friend, friend.nickname)
-//        dialog.findViewById<TextView>(R.id.popup_friend_no_btn).setOnClickListener {
-//            dialog.dismiss()
-//        }
-//        dialog.findViewById<TextView>(R.id.popup_friend_yes_btn).setOnClickListener {
-//            lifecycleScope.launch {
-//                val auth = buildAuthHeader() ?: return@launch
-//                try {
-//                    val resp = RetrofitInstance.friendApi.deleteFriend(
-//                        token = auth,
-//                        request = friend.id
-//                    )
-//                    if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-//                        fetchFriends() // 갱신
-//
-//                        val inflater = LayoutInflater.from(context)
-//                        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-//                        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text =
-//                            getString(R.string.toast_delete, friend.nickname)
-//
-//                        val toast = Toast(context)
-//                        toast.view = layout
-//                        toast.duration = LENGTH_SHORT
-//                        toast.setGravity(Gravity.BOTTOM, 0, 300)
-//                        toast.show()
-//                    } else {
-//                        Toast.makeText(requireContext(), "삭제에 실패했습니다.", Toast.LENGTH_SHORT).show()
-//                    }
-//                } catch (e: Exception) {
-//                    Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//            dialog.dismiss()
-//        }
-//        dialog.show()
-//    }
 }
 
 
 @Composable
 private fun FriendListView(
     friendList: List<FriendInfo>,
+    deleteFriend: (friend: FriendInfo) -> Unit,
     blockFriend: (friend: FriendInfo) -> Unit,
     reportFriend: (friend: FriendInfo, reason: String, withBlock: Boolean) -> Unit
 ) {
     LazyColumn(
-
+        modifier = Modifier.fillMaxSize()
     ) {
         items(friendList) { friend ->
             FriendListItem(
                 friend = friend,
+                deleteFriend = {
+                    deleteFriend(friend)
+                },
                 blockFriend = {
                     blockFriend(friend)
                 },
@@ -251,14 +163,18 @@ private fun FriendListView(
 @Composable
 private fun FriendListItem(
     friend: FriendInfo,
+    deleteFriend: () -> Unit,
     blockFriend: () -> Unit,
     reportFriend: (reason: String, withBlock: Boolean) -> Unit
 ) {
-    var showReportSheet by remember {
+
+    var showDeleteAlert by remember {
         mutableStateOf(false)
     }
-
     var showBlockAlert by remember {
+        mutableStateOf(false)
+    }
+    var showReportSheet by remember {
         mutableStateOf(false)
     }
 
@@ -269,7 +185,7 @@ private fun FriendListItem(
         PlanUpSmallButton(
             smallButtonType = SmallButtonType.Red,
             onClick = {
-
+                showDeleteAlert = true
             },
             title = "삭제"
         )
@@ -321,6 +237,25 @@ private fun FriendListItem(
             )
         }
     }
+    if (showDeleteAlert) {
+        BasicAlertDialog(
+            onDismissRequest = {
+                showDeleteAlert = false
+            },
+            properties = DialogProperties()
+        ) {
+            PlanUpAlertBaseContent(
+                title = stringResource(R.string.popup_delete_friend, friend.nickname),
+                onDismissRequest = {
+                    showDeleteAlert = false
+                },
+                onConfirm = {
+                    deleteFriend()
+                    showDeleteAlert = false
+                }
+            )
+        }
+    }
 }
 
 @Preview(showBackground = true)
@@ -335,6 +270,7 @@ private fun FriendListItemPreview() {
             true,
             ""
         ),
+        deleteFriend = {},
         blockFriend = {},
         reportFriend = { _, _ -> }
     )

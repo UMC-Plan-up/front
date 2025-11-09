@@ -123,6 +123,32 @@ class FriendRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun deleteFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.deleteFriend(
+                        friendId
+                    )
+                },
+                onResponse = { friendDeleteResponse ->
+                    if (friendDeleteResponse.isSuccess) {
+                        val deleteSuccess = friendDeleteResponse.result
+                        //삭제 성공 했다면 다시 요청 하지 않고 직접 친구 목록에서 해당 id를 삭제 요청한다.
+                        _friendList.update {
+                            it.filter { friendInfo ->
+                                friendInfo.id != friendId
+                            }
+                        }
+                        ApiResult.Success(deleteSuccess)
+                    } else {
+                        ApiResult.Fail(friendDeleteResponse.message)
+                    }
+                }
+            )
+        }
     override suspend fun blockFriend(
         friendId: Int
     ): ApiResult<Boolean> =

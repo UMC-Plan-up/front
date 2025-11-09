@@ -62,6 +62,12 @@ class FriendFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        friendViewModel.fetchFriendList()
+        friendViewModel.fetchFriendRequest()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
