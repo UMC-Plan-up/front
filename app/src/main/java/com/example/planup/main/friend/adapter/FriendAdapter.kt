@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.ItemFriendBinding
-import com.example.planup.main.friend.data.FriendInfo
+import com.example.planup.network.dto.friend.FriendInfo
 
 class FriendAdapter(
     private val onArrowClick: (FriendInfo) -> Unit

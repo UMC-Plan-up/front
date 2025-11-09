@@ -1,7 +1,11 @@
 package com.example.planup.network
 
-import com.example.planup.login.data.LoginRequestDto
-import com.example.planup.login.data.LoginResponseDto
+import com.example.planup.login.data.LoginRequest
+import com.example.planup.login.data.LoginResponse
+import com.example.planup.main.user.data.UserInfoResponse
+import com.example.planup.network.data.ProfileImage
+import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -29,14 +33,14 @@ import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
-import retrofit2.Call
+import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface UserApi {
@@ -47,11 +51,21 @@ interface UserApi {
         @Body request: SignupRequestDto
     ): Response<SignupResponseDto>
 
+    //로그아웃
+    @POST("users/logout")
+    suspend fun logout(): Response<UserResponse<String>>
+
     // 로그인
     @POST("/users/login")
     suspend fun login(
-        @Body request: LoginRequestDto
-    ): Response<LoginResponseDto>
+        @Body request: LoginRequest
+    ): Response<LoginResponse>
+
+    //회원 탈퇴
+    @POST("users/withdraw")
+    suspend fun withdrawAccount(
+        @Body reason: String
+    ): Response<UserResponse<WithDraw>>
 
     // 내 초대코드 조회
     @GET("users/me/invite-code")
@@ -137,9 +151,24 @@ interface UserApi {
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
 
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
+
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(
         @Body request: PasswordUpdateRequest
     ): Response<PasswordUpdateResponse>
+
+    // 유저 정보 조회
+    @GET("/users/info")
+    suspend fun getUserInfo(): Response<UserInfoResponse>
+
+    //프로필 이미지 변경
+    @Multipart
+    @POST("profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImage>>
 }

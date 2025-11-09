@@ -1,76 +1,36 @@
 package com.example.planup.network.controller
 
-import android.util.Log
-import com.example.planup.login.adapter.LoginAdapter
-import com.example.planup.main.home.adapter.UserInfoAdapter
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
-import com.example.planup.main.my.adapter.CloseAccountAdapter
 import com.example.planup.main.my.adapter.EmailLinkAdapter
-import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
-import com.example.planup.main.my.adapter.LogoutAdapter
-import com.example.planup.main.my.adapter.NicknameChangeAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.adapter.ProfileImageAdapter
+import com.example.planup.main.my.adapter.ServiceAlertAdapter
+import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.KakaoLink
-import com.example.planup.network.data.SignupLink
-import com.example.planup.network.data.UsingKakao
-import com.example.planup.network.data.Login
 import com.example.planup.network.data.PasswordLink
-import com.example.planup.network.data.ProfileImage
-import com.example.planup.network.data.SyncKakao
-import com.example.planup.network.data.UserInfo
+import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
-import com.example.planup.network.data.WithDraw
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.dto.user.ChangePassword
-import com.example.planup.network.dto.user.LoginDto
 import com.example.planup.network.dto.user.EmailForPassword
 import com.example.planup.network.dto.user.KakaoLinkCode
 import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.UserPort
-import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+@Deprecated(
+    message = "UserRepository로 이관",
+    replaceWith = ReplaceWith("UserRepository")
+)
 class UserController {
 
     /*
 * Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
 * 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
-
-    //닉네임 변경
-    private lateinit var nicknameChangeAdapter: NicknameChangeAdapter
-    fun setNicknameChangeAdapter(adapter: NicknameChangeAdapter) {
-        this.nicknameChangeAdapter = adapter
-    }
-
-    //회원 정보 조회
-    private lateinit var userInfoAdapter: UserInfoAdapter
-    fun setUserInfoAdapter(adapter: UserInfoAdapter) {
-        this.userInfoAdapter = adapter
-    }
-
-    //회원 탈퇴
-    private lateinit var closeAccountAdapter: CloseAccountAdapter
-    fun setCloseAccountAdapter(adapter: CloseAccountAdapter) {
-        this.closeAccountAdapter = adapter
-    }
-
-    //로그인
-    private lateinit var loginAdapter: LoginAdapter
-    fun setLoginAdapter(adapter: LoginAdapter) {
-        this.loginAdapter = adapter
-    }
-
-    //로그아웃
-    private lateinit var logoutAdapter: LogoutAdapter
-    fun setLogoutAdapter(adapter: LogoutAdapter) {
-        this.logoutAdapter = adapter
-    }
 
     //카카오톡 연동 상태 확인
     private lateinit var kakaoAdapter: KakaoAdapter
@@ -108,63 +68,11 @@ class UserController {
         emailLinkAdapter = adapter
     }
 
-    private lateinit var profileImageAdapter: ProfileImageAdapter
-    fun setProfileImageAdapter(adapter: ProfileImageAdapter) {
-        profileImageAdapter = adapter
-    }
-
     private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
     fun setKakaoLinkAdapter(adapter: KakaoLinkAdapter) {
         this.kakaoLinkAdapter = adapter
     }
 
-    //유저 정보 조회
-    fun userInfoService() {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.getUserInfo().enqueue(object : Callback<UserResponse<UserInfo>> {
-            override fun onResponse(
-                call: Call<UserResponse<UserInfo>>,
-                response: Response<UserResponse<UserInfo>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    userInfoAdapter.successUserInfo(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    userInfoAdapter.failUserInfo(response.body()!!.message)
-                } else {
-                    userInfoAdapter.failUserInfo("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<UserInfo>>, t: Throwable) {
-                userInfoAdapter.failUserInfo(t.toString())
-            }
-
-        })
-    }
-
-    //새로운 nickname으로 수정
-    fun nicknameService(nickname: String) {
-        val nicknameService = getRetrofit().create(UserPort::class.java)
-        nicknameService.changeNickname(nickname)
-            .enqueue(object : Callback<UserResponse<String>> {
-                override fun onResponse(
-                    call: Call<UserResponse<String>>,
-                    response: Response<UserResponse<String>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        nicknameChangeAdapter.successNicknameChange(nickname)
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        nicknameChangeAdapter.failNicknameChange(response.body()!!.message)
-                    } else {
-                        nicknameChangeAdapter.failNicknameChange("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<String>>, t: Throwable) {
-                    nicknameChangeAdapter.failNicknameChange(t.toString())
-                }
-            })
-    }
 
     //회원가입 시 인증링크 재발송
     fun signupLinkService(email: String) {
@@ -330,77 +238,6 @@ class UserController {
             })
     }
 
-    // 로그인
-    fun loginService(loginDto: LoginDto) {
-        val loginService = getRetrofit().create(UserPort::class.java)
-        loginService.login(loginDto).enqueue(object : Callback<UserResponse<Login>> {
-            override fun onResponse(
-                call: Call<UserResponse<Login>>,
-                response: Response<UserResponse<Login>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    loginAdapter.successLogin(response.body()!!.result)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    loginAdapter.failLogin(response.body()!!.message)
-                } else {
-                    loginAdapter.failLogin("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<Login>>, t: Throwable) {
-                loginAdapter.failLogin(t.toString())
-            }
-        })
-    }
-
-    // 로그아웃
-    fun logoutService() {
-        val logoutService = getRetrofit().create(UserPort::class.java)
-        logoutService.logout().enqueue(object : Callback<UserResponse<Boolean>> {
-            override fun onResponse(
-                call: Call<UserResponse<Boolean>>,
-                response: Response<UserResponse<Boolean>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp", "로그인 액티비티")
-                    logoutAdapter.successLogout()
-                } else if (!response.isSuccessful && response.body() != null) {
-                    logoutAdapter.failLogout(response.body()!!.message)
-                } else {
-                    logoutAdapter.failLogout("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                logoutAdapter.failLogout(t.toString())
-            }
-        })
-    }
-
-    // 회원 탈퇴
-    fun closeAccountService(reason: String) {
-        val closeAccountService = getRetrofit().create(UserPort::class.java)
-        closeAccountService.withdrawAccount(reason)
-            .enqueue(object : Callback<UserResponse<WithDraw>> {
-                override fun onResponse(
-                    call: Call<UserResponse<WithDraw>>,
-                    response: Response<UserResponse<WithDraw>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        closeAccountAdapter.successCloseAccount()
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        closeAccountAdapter.failCloseAccount(response.body()!!.message)
-                    } else {
-                        closeAccountAdapter.failCloseAccount("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<WithDraw>>, t: Throwable) {
-                    closeAccountAdapter.failCloseAccount(t.toString())
-                }
-            })
-    }
-
     //이메일 변경 시 인증링크 발송
     fun emailLinkService(email: String) {
         val service = getRetrofit().create(UserPort::class.java)
@@ -454,34 +291,6 @@ class UserController {
 
         })
     }
-
-    //프로필 사진 업로드
-    fun imageUploadService(file: MultipartBody.Part) {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.setProfileImage(file).enqueue(object : Callback<UserResponse<ProfileImage>> {
-            override fun onResponse(
-                call: Call<UserResponse<ProfileImage>>,
-                response: Response<UserResponse<ProfileImage>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    when (response.body()!!.code) {
-                        "200" -> profileImageAdapter.successProfileImage(response.body()!!.result.file)
-                        "U001" -> profileImageAdapter.failProfileImage(response.body()!!.message)
-                    }
-                } else if (!response.isSuccessful && response.body() != null) {
-                    Log.d("okhttp", "image, ${response.body()!!.message}")
-                } else {
-                    Log.d("okhttp", "image, null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<ProfileImage>>, t: Throwable) {
-                profileImageAdapter.failProfileImage(t.toString())
-            }
-
-        })
-    }
-
 
     fun kakaoLinkService(code: String){
         val service = getRetrofit().create(UserPort::class.java)

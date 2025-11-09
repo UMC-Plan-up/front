@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -17,14 +16,19 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.friend.adapter.FriendAdapter
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
-import com.example.planup.network.ApiResult
 import kotlinx.coroutines.launch
 
 /**
  * 친구 탭 메인
  */
 class FriendFragment : Fragment() {
-    private lateinit var binding: FragmentFriendBinding
+
+    companion object {
+        const val FRIEND_FRAGMENT_STACK = "friend_list"
+    }
+    private var _binding: FragmentFriendBinding? = null
+    private val binding: FragmentFriendBinding
+        get() = _binding!!
 
     /**
      * Hilt를 통해 [FriendViewModel]이 사용됨
@@ -38,7 +42,7 @@ class FriendFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendBinding.inflate(inflater, container, false)
+        _binding = FragmentFriendBinding.inflate(inflater, container, false)
 
         friedLAdapter = FriendAdapter() { friend ->
             // ▶ 친구 목표 보기로 이동
@@ -55,8 +59,18 @@ class FriendFragment : Fragment() {
         }
 
         setupClicks()
-        fetchAll()
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        friendViewModel.fetchFriendList()
+        friendViewModel.fetchFriendRequest()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -88,74 +102,27 @@ class FriendFragment : Fragment() {
     /** 알림 배지 표시/숨김 */
     private fun updateNotificationBadge(pendingCount: Int) {
         // 요청이 1개 이상이면 빨간 점 표시, 아니면 숨김
-        binding.notificationBadge.visibility =
-            if (pendingCount > 0) View.VISIBLE else View.GONE
-    }
-
-    /** 친구 요약 + 대기중 초대요청 수 모두 로드 */
-    private fun fetchAll() {
-        lifecycleScope.launch {
-
-            // 1) 친구 요약 불러오기
-            friendViewModel.fetchFriendList(
-                onCallBack = { friendResult ->
-                    when (friendResult) {
-                        is ApiResult.Error -> {
-                            Toast.makeText(
-                                requireContext(),
-                                "데이터를 불러오지 못했습니다.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        is ApiResult.Exception -> {
-                            Toast.makeText(
-                                requireContext(),
-                                "데이터를 불러오지 못했습니다.",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        is ApiResult.Fail -> {
-                            Toast.makeText(
-                                requireContext(),
-                                friendResult.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-
-                        else -> {}
-                    }
-                }
-            )
-
-            // 2) 대기중 친구요청 수로 배지 갱신
-            friendViewModel.fetchFriendRequest(
-                onCallBack = {
-
-                }
-            )
-        }
+        binding.ivNotification.isSelected = pendingCount > 0
     }
 
     private fun setupClicks() {
         binding.ivSetting.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendListsFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_container, FriendListsFragment())
+                .addToBackStack(FRIEND_FRAGMENT_STACK)
+                .commit()
         }
         binding.ivNotification.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendRequestsFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_container, FriendRequestsFragment())
+                .addToBackStack(FRIEND_FRAGMENT_STACK)
+                .commit()
         }
         binding.btnAddFriend.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendInviteFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            parentFragmentManager.beginTransaction()
+                .add(R.id.main_container, FriendInviteFragment())
+                .addToBackStack(FRIEND_FRAGMENT_STACK)
+                .commit()
         }
     }
 }

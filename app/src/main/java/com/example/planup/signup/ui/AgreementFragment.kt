@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
-import com.example.planup.login.LoginActivityNew
+import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.adapter.TermItemAdapter

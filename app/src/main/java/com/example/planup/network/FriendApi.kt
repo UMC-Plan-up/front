@@ -1,11 +1,15 @@
 package com.example.planup.network
 
-import com.example.planup.main.friend.data.BaseResponse
-import com.example.planup.main.friend.data.FriendActionRequestDto
-import com.example.planup.main.friend.data.FriendReportRequestDto
-import com.example.planup.main.friend.data.FriendRequestsResponse
-import com.example.planup.main.friend.data.FriendResponseDto
-import com.example.planup.main.friend.data.UnblockFriendRequestDto
+import com.example.planup.network.data.FriendBlockListResponse
+import com.example.planup.network.data.FriendBlockResponse
+import com.example.planup.network.data.FriendDeleteResponse
+import com.example.planup.network.data.FriendReportResponse
+import com.example.planup.network.data.FriendUnblockResponse
+import com.example.planup.network.dto.friend.BaseResponse
+import com.example.planup.network.dto.friend.FriendReportRequestDto
+import com.example.planup.network.dto.friend.FriendRequestsResponse
+import com.example.planup.network.dto.friend.FriendResponseDto
+import com.example.planup.network.dto.friend.UnblockFriendRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -30,8 +34,8 @@ interface FriendApi {
     // 차단된 친구 목록 조회
     @GET("/friends/blocked")
     suspend fun getBlockedFriendRequest(
-        @Header("Authorization") token: String
-    ): Response<FriendResponseDto>
+
+    ): Response<FriendBlockListResponse>
 
     // 친구 신청 수락
     @POST("/friends/accept")
@@ -50,28 +54,24 @@ interface FriendApi {
     // 친구 차단
     @POST("/friends/block")
     suspend fun blockFriend(
-        @Header("Authorization") token: String,
         @Query("friendId") request: Int
-    ): Response<BaseResponse>
+    ): Response<FriendBlockResponse>
 
     //친구 삭제
     @POST("/friends/delete")
     suspend fun deleteFriend(
-        @Header("Authorization") token: String,
         @Query("friendId") request: Int
-    ): Response<BaseResponse>
+    ): Response<FriendDeleteResponse>
 
     // 친구 차단 해제
     @POST("/friends/unblock")
     suspend fun unblockFriend(
-        @Header("Authorization")token: String,
         @Body request: UnblockFriendRequestDto
-    ): Response<BaseResponse>
+    ): Response<FriendUnblockResponse>
 
     // 친구 신고
     @POST("/friends/report")
     suspend fun reportFriend(
-        @Header("Authorization") token: String,
         @Body request: FriendReportRequestDto
-    ): Response<BaseResponse>
+    ): Response<FriendReportResponse>
 }

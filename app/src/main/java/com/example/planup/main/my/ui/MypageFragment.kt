@@ -1,54 +1,81 @@
 package com.example.planup.main.my.ui
 
-import android.Manifest
-import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
-import android.app.Activity.RESULT_OK
 import android.app.Dialog
-import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
-import android.content.pm.PackageManager
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.provider.MediaStore
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
-import com.example.planup.main.MainActivity
+import androidx.fragment.app.activityViewModels
+import androidx.hilt.navigation.compose.hiltViewModel
+import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.databinding.FragmentMypageBinding
+import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
-import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.adapter.ProfileImageAdapter
+import com.example.planup.main.MainActivity
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.adapter.ServiceAlertAdapter
+import com.example.planup.main.my.ui.common.RouteMenuItem
+import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
+import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
 import com.example.planup.network.controller.UserController
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
+import com.example.planup.theme.Typography
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
+class MypageFragment : Fragment(), ServiceAlertAdapter {
     lateinit var binding: FragmentMypageBinding
 
     //API 연동
@@ -56,130 +83,25 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
     //sharedPreferences
     private lateinit var prefs: SharedPreferences
-    private lateinit var editor: Editor
 
-    //카메라로 촬영한 이미지 파일의 uri 주소
-    private var cameraImageUri: Uri? = null
-
-    //앨범 접근 권한 팝업에서 권한을 설정한 이후 콜백
-    private val albumPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        //안드로이드 14 이상인 경우
-        //선택사진 또는 전체사진 중 한 개 권한만 허용해도 됨
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            //둘 중 하나의 권한이 허용된 경우 앨범 실행
-            if (permissions[READ_MEDIA_VISUAL_USER_SELECTED]!! || permissions[Manifest.permission.READ_MEDIA_IMAGES]!!) {
-                openAlbum()
-            } else {
-                //두 권한 모두 허용되지 않은 경우 토스트 메시지
-                Toast.makeText(context as MainActivity, "앨범 접근 권한이 필요합니다.", LENGTH_SHORT).show()
-            }
-        } else {
-            //안드로이드 14 이하인 경우
-            //전체사진 접근 권한이 허용되어야 함
-            val allGranted = permissions.all { it.value }
-            if (allGranted) {
-                //권한이 허용된 경우 앨범 실행
-                openAlbum()
-            } else {
-                //허용되지 않은 경우 토스트 메시지
-                Toast.makeText(context as MainActivity, "앨범 접근 권한이 필요합니다.", LENGTH_SHORT).show()
-            }
-        }
-    }
-    //카메라 권한 설정에 대한 콜백 변수
-    //카메라 실행 또는 토스트 메시지
-    private val cameraPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            openCamera()
-        } else {
-            //허용되지 않은 경우 토스트 메시지
-            Toast.makeText(context as MainActivity, "카메라 접근 권한이 필요합니다.", LENGTH_SHORT).show()
-        }
-    }
-
-    //파일 권한 설정에 대한 콜백 변수
-    //파일 열기 또는 토스트 메시지
-    private val filePermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            openFile()
-        } else {
-            //허용되지 않은 경우 토스트 메시지
-            Toast.makeText(context as MainActivity, "파일 접근 권한이 필요합니다.", LENGTH_SHORT).show()
-        }
-    }
-    //앨범에서 선택한 사진을 처리하는 콜백 변수
-    private val albumLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        if (result.resultCode == RESULT_OK) {
-            val uri = result.data?.data
-            val file = uriToFile(context as MainActivity,uri!!)
-
-            file?.let {
-                val requestFile = it.asRequestBody("image/png".toMediaTypeOrNull())
-                val multipartBody =
-                    MultipartBody.Part.createFormData("file", it.name, requestFile)
-
-                service.imageUploadService(multipartBody)
-            }
-        }
-    }
-    //카메라 실행 이후 콜백 변수
-    private val cameraLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {  result ->
-        if (result.resultCode == RESULT_OK && cameraImageUri != null) {
-            val file = uriToFile(context as MainActivity, cameraImageUri!!)
-
-            file?.let {
-                val requestFile = it.asRequestBody("image/png".toMediaTypeOrNull())
-                val multipartBody =
-                    MultipartBody.Part.createFormData("file", it.name, requestFile)
-
-                service.imageUploadService(multipartBody)
-            }
-        }
-
-    }
-
-    //파일 접근 이후 콜백 변수
-    private val fileLauncher = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val fileImageUri = result.data?.data
-        if(result.resultCode == RESULT_OK) {
-            val file = uriToFile(context as MainActivity, fileImageUri!!)
-
-            file?.let {
-                val requestFile = it.asRequestBody("image/png".toMediaTypeOrNull())
-                val multipartBody =
-                    MultipartBody.Part.createFormData("file", it.name, requestFile)
-
-                service.imageUploadService(multipartBody)
-            }
-        }
-
-    }
+    private val mainSnackbarViewModel : MainSnackbarViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentMypageBinding.inflate(inflater, container, false)
-        init()
-        clickListener()
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                MyPageNavView(mainSnackbarViewModel)
+            }
+        }
     }
 
     private fun init() {
-        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
+        binding.mypageCl.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val height = binding.mypageCl.height
                 binding.mypageInnerCl.minHeight = height
@@ -190,42 +112,15 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         //API 서비스
         service = UserController()
         service.setServiceAdapter(this)
-        service.setProfileImageAdapter(this)
-        //유저 정보 업데이트 및 UI에 반영
-        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        editor = prefs.edit()
-        binding.mypageMainEmailTv.text = prefs.getString("email", "null").toString()
-        //사용자 프로필 사진
-        Glide.with(context as MainActivity)
-            .load(prefs.getString("profileImg","no-data"))
-            .error(ContextCompat.getDrawable(context,R.color.red_300)) //디버깅용 or 오류 이미지일 때 추가해도 될듯
-            .into(binding.mypageMainImageIv)
     }
 
     private fun clickListener() {
-
-//        binding.mypageBackIv.setOnClickListener {
-//            (context as MainActivity).supportFragmentManager.beginTransaction()
-//                .replace(R.id.main_container, HomeFragment())
-//                .commitAllowingStateLoss()
-//        }
 
         binding.mypageMainImageCv.setOnClickListener {
             val intent = Intent(context as MainActivity, GoalActivity::class.java)
             startActivity(intent)
         }
 
-        /*프로필 사진 변경*/
-        binding.mypageMainRewriteIv.setOnClickListener {
-            showDropdown(binding.mypageMainRewriteIv)
-        }
-
-        /*닉네임 변경*/
-        binding.mypageNicknameIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageNicknameFragment())
-                .commitAllowingStateLoss()
-        }
         /*이메일 변경*/
         binding.mypageEmailIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
@@ -246,17 +141,8 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         }
         //기타 계정 관리
         binding.mypageOtherIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageOtherFragment())
-                .commitAllowingStateLoss()
-        }
-        //차단 친구 관리
-        binding.mypageFriendBlockIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageFriendBlockFragment())
-                .commitAllowingStateLoss()
-        }
 
+        }
         //서비스 알림 수신 토글 끄기
         binding.mypageAlertServiceOnIv.setOnClickListener {
             binding.mypageAlertServiceOnIv.visibility = View.GONE
@@ -275,147 +161,6 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
         binding.mypageAlertBenefitOffIv.setOnClickListener {
             service.notificationAgreementService(true)
         }
-        //이용약관 및 정책
-        binding.mypagePolicyIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePolicyFragment())
-                .commitAllowingStateLoss()
-        }
-
-
-    }
-
-    /*프로필 사진 재설정 드롭다운 메뉴*/
-    private fun showDropdown(view: View) {
-
-        val inflater = LayoutInflater.from(context)
-        val popupView = inflater.inflate(R.layout.dropdown_profile_img, null)
-
-        val popupWindow = PopupWindow(
-            popupView,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true // 포커스 가능
-        )
-
-        // 팝업 바깥 클릭 시 닫힘 설정
-        popupWindow.isOutsideTouchable = true
-        popupWindow.setBackgroundDrawable(ContextCompat.getDrawable(context as MainActivity,R.color.transparent))
-
-        // 팝업 표시 (예: 이미지뷰 아래에)
-        popupWindow.showAsDropDown(view)
-
-        popupView.findViewById<View>(R.id.album_cl).setOnClickListener {
-            popupWindow.dismiss()
-            accessAlbum()
-        }
-        popupView.findViewById<View>(R.id.photo_cl).setOnClickListener {
-            popupWindow.dismiss()
-            accessCamera()
-        }
-        popupView.findViewById<View>(R.id.file_cl).setOnClickListener {
-            popupWindow.dismiss()
-            accessFile()
-        }
-
-
-    }
-
-    //앨범 접근 권한 설정 또는 앨범 실행
-    private fun accessAlbum() {
-        //버전에 따른 권한 확인
-        //upside_down_cake 이상: 선택된 사진만 접근 허용 + 사진 접근 허용
-        //tiramisu 이상: 사진 접근 허용
-        //나머지: 저장소 읽기 허용
-        val permissionList = when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> arrayOf(READ_MEDIA_VISUAL_USER_SELECTED, Manifest.permission.READ_MEDIA_IMAGES)
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-            else -> arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-
-        val denied = permissionList.filter {
-            //permissionList의 원소(권한)이 granted가 아닌 경우에만 denied에 저장
-            //denied가 empty이면 모든 권한이 granted 상태라는 뜻
-            ContextCompat.checkSelfPermission(context as MainActivity, it) != PackageManager.PERMISSION_GRANTED
-        }
-        if (denied.isNotEmpty()) {
-            //안드로이드 14 이상인 경우 하나의 권한만 허용해도 앨범 접근
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-                && denied.size < 2) {
-                openAlbum()
-            } else {
-                //granted 아닌 권한에 대해 허용을 요청하는 팝업 출력
-                albumPermissionLauncher.launch(denied.toTypedArray())
-            }
-        } else {
-            // 모두 허용됐으면 바로 앨범 접근
-            openAlbum()
-        }
-    }
-
-    //카메라 권한 설정 또는 카메라 열기
-    private fun accessCamera(){
-        val permission = arrayOf(Manifest.permission.CAMERA)
-        val denied = permission.filter {
-            ContextCompat.checkSelfPermission(context as MainActivity,it) != PackageManager.PERMISSION_GRANTED
-        }
-        if (denied.isNotEmpty()) {
-            cameraPermissionLauncher.launch(denied[0])
-        } else {
-            openCamera()
-        }
-    }
-
-    //파일 권한 설정 또는 파일 열기
-    private fun accessFile(){
-
-        var permission: Array<String>
-        // SDK 버전에 따라 요청 권한 다르게
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) { // Android 14+
-            permission = arrayOf(Manifest.permission.READ_MEDIA_IMAGES)
-        } else {
-            permission = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-        }
-        val denied = permission.filter {
-            ContextCompat.checkSelfPermission(context as MainActivity, it) != PackageManager.PERMISSION_GRANTED
-        }
-        if (denied.isNotEmpty()){
-            filePermissionLauncher.launch(denied[0])
-        } else {
-            openFile()
-        }
-    }
-
-    //앨범 열기
-    private fun openAlbum() {
-        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI).apply {
-            type = "image/*"
-            putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*"))
-        }
-        albumLauncher.launch(intent)
-    }
-
-    //카메라 열기
-    private fun openCamera(){
-        val photoFile = createImageFile(context as MainActivity)
-        cameraImageUri = FileProvider.getUriForFile(
-            context as MainActivity,
-            "com.example.planut.provider",
-            photoFile
-        )
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).apply {
-            putExtra(MediaStore.EXTRA_OUTPUT, cameraImageUri)
-        }
-        cameraLauncher.launch(intent)
-    }
-
-    //파일 열기
-    private fun openFile(){
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            addCategory(Intent.CATEGORY_OPENABLE)
-            type = "image/png"  // png 파일만 표시
-        }
-        fileLauncher.launch(intent)
     }
 
     //마케팅 수신 동의하는 경우 팝업 메시지
@@ -446,15 +191,15 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
     }
 
     //API 오류에 대한 토스트 메시지 출력
-    private fun errorToast(message: String){
+    private fun errorToast(message: String) {
         val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template,null)
+        val layout = inflater.inflate(R.layout.toast_grey_template, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
 
         val toast = Toast(context)
         toast.view = layout
         toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM,0,300)
+        toast.setGravity(Gravity.BOTTOM, 0, 300)
         toast.show()
     }
 
@@ -472,60 +217,316 @@ class MypageFragment : Fragment(), ServiceAlertAdapter, ProfileImageAdapter {
 
     //마케팅 수신 동의 API 오류
     override fun failServiceSetting(message: String) {
-       errorToast(message)
-    }
-
-    //프로필 이미지 API 성공
-    override fun successProfileImage(image: String) {
-        //사용자 프로필 사진
-        Glide.with(context as MainActivity).load(prefs.getString("profileImg","no-data")).into(binding.mypageMainImageIv)
-    }
-
-    //프로필 이미지 API 오류
-    override fun failProfileImage(message: String) {
         errorToast(message)
     }
 
-    //uri를 파일 형식으로 전환
-    private fun uriToFile(context: Context, uri: Uri): File?{
-        val inputStream = context.contentResolver.openInputStream(uri)
-        inputStream?.let {
-            val file = createImageFile(context)
-            copyInputStreamToFile(it, file)
-            return file
-        }
-        return null
+//    //프로필 이미지 API 성공
+//    override fun successProfileImage(image: String) {
+//        //사용자 프로필 사진
+//        Glide.with(context as MainActivity).load(prefs.getString("profileImg", "no-data"))
+//            .into(binding.mypageMainImageIv)
+//    }
+//
+//    //프로필 이미지 API 오류
+//    override fun failProfileImage(message: String) {
+//        errorToast(message)
+//    }
+}
+
+@Composable
+fun MyPageView(
+    navigateRoute: (route: MyPageRoute) -> Unit,
+    myPageInfoViewModel: MyPageInfoViewModel = hiltViewModel()
+) {
+    LaunchedEffect(true) {
+        myPageInfoViewModel.fetchUserInfo()
     }
-    //이미지 파일 생성
-    private fun createImageFile(context: Context): File {
-        val timeStamp = System.currentTimeMillis()
-        val imageFileName = "@${timeStamp}_"
-        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            imageFileName,
-            ".png",
-            storageDir
+    val email by myPageInfoViewModel.email.collectAsState()
+    val profileImage by myPageInfoViewModel.profileImage.collectAsState()
+
+    MyPageViewContent(
+        navigateRoute = navigateRoute,
+        profileImage = profileImage,
+        email = email,
+        fetch = myPageInfoViewModel::fetchUserInfo,
+        onErrorMsg = {
+
+        }
+    )
+}
+
+@Composable
+@Preview(showBackground = true)
+private fun MyPageViewContent(
+    navigateRoute: (route: MyPageRoute) -> Unit = {},
+    profileImage: String = "",
+    email: String = "",
+    fetch: () -> Unit ={},
+    onErrorMsg: (String) -> Unit ={}
+) {
+    val context = LocalContext.current
+    fun LazyListScope.addSpacer(height : Dp = 28.dp) {
+        item {
+            Spacer(Modifier.height(height))
+        }
+    }
+
+    fun LazyListScope.initHeader(
+        @StringRes header: Int
+    ) {
+        item(
+            contentType = "header"
+        ) {
+            RouteHeader(
+                title = stringResource(header)
+            )
+        }
+        addSpacer(2.dp)
+    }
+
+    fun LazyListScope.initHeaderWithContent(
+        @StringRes header: Int,
+        content: List<Pair<MyPageRoute, Int>>,
+        withSpacer: Boolean = true
+    ) {
+        initHeader(header)
+        content.forEach { (route, title) ->
+            item(
+                contentType = "route"
+            ) {
+                RouteMenuItemWithArrow(
+                    title = stringResource(title),
+                    action = {
+                        navigateRoute(route)
+                    }
+                )
+            }
+        }
+        if (withSpacer) {
+            addSpacer()
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(20.dp)
+    ) {
+        Spacer(Modifier.height(20.dp))
+        MyPageHeader(
+            profileImage = profileImage,
+            email = email,
+            fetchProfile = fetch,
+            onErrorMsg = onErrorMsg
         )
-    }
-    //생성한 파일을 바이트 스트림으로 전환
-    private fun copyInputStreamToFile(inputStream: InputStream,file: File){
-        try {
-            FileOutputStream(file).use { outputStream ->
-                val buffer = ByteArray(4 * 1024)
-                var read: Int
-                while (inputStream.read(buffer).also {read = it} != -1) {
-                   outputStream.write(buffer, 0, read)
-                }
-                outputStream.flush()
+        Spacer(Modifier.height(36.dp))
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 13.dp)
+        ) {
+            initHeaderWithContent(
+                header = R.string.mypage_profile,
+                content = listOf(
+                    MyPageRoute.Profile.EditNickName to R.string.mypage_nickname
+                )
+            )
+
+            initHeaderWithContent(
+                header = R.string.mypage_account,
+                content = listOf(
+                    MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
+                    MyPageRoute.Account.ChangePassword to R.string.mypage_password,
+                    MyPageRoute.Account.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.Account.Other to R.string.mypage_other,
+                )
+            )
+
+            initHeaderWithContent(
+                header = R.string.mypage_friend,
+                content = listOf(
+                    MyPageRoute.Friend.ManageBlock to R.string.mypage_block,
+                )
+            )
+
+            initHeader(
+                header = R.string.mypage_alert
+            )
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_service_alert),
+                    rightContent = {
+
+                    }
+                )
             }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        } finally {
-            try {
-                inputStream.close()
-            } catch (e: IOException) {
-                e.printStackTrace()
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_benefit),
+                    rightContent = {
+
+                    }
+                )
             }
+            addSpacer()
+
+            initHeaderWithContent(
+                header = R.string.mypage_service,
+                content = listOf(
+                    MyPageRoute.Service.Policy to R.string.mypage_policy,
+                ),
+                withSpacer = false
+            )
+            item {
+                RouteMenuItem(
+                    title = stringResource(R.string.mypage_version),
+                    rightContent = {
+                        Text(
+                            text = context.getAppVersion(),
+                            style = Typography.Semibold_S
+                        )
+                    }
+                )
+            }
+            addSpacer()
         }
     }
+}
+
+@Composable
+private fun MyPageHeader(
+    profileImage: String,
+    email: String,
+    fetchProfile: () -> Unit,
+    onErrorMsg: (String) -> Unit,
+    myPageProfileEditViewModel: MyPageProfileEditViewModel = hiltViewModel()
+) {
+    var openPopup by remember {
+        mutableStateOf(false)
+    }
+    val pickMedia =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            if (uri != null) {
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    imageUri = uri,
+                    onSuccess = fetchProfile,
+                    onFail = onErrorMsg
+                )
+            }
+        }
+
+    val cameraLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success) {
+                myPageProfileEditViewModel.setProfileImageCamera(
+                    onSuccess = fetchProfile,
+                    onFail = onErrorMsg
+                )
+            }
+        }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(60.dp)
+                .align(Alignment.CenterHorizontally)
+        ) {
+            AsyncImage(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(CircleShape),
+                model = profileImage,
+                placeholder = painterResource(R.drawable.profile_image),
+                error = painterResource(R.drawable.profile_image),
+                contentDescription = null,
+                contentScale = ContentScale.Crop
+            )
+            Box(
+                modifier = Modifier
+                    .size(20.dp)
+                    .align(Alignment.BottomEnd),
+            ) {
+                IconButton(
+                    onClick = {
+                        openPopup = true
+                    },
+                    modifier = Modifier
+                        .size(20.dp),
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.badge_rewrite),
+                        contentDescription = null
+                    )
+                }
+                DropdownMenu(
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .align(Alignment.BottomEnd),
+                    expanded = openPopup,
+                    onDismissRequest = { openPopup = false },
+                    containerColor = Color.White
+                ) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "사진 보관함",
+                                style = Typography.Medium_SM
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_item_album),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "사진 찍기",
+                                style = Typography.Medium_SM
+                            )
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_item_camera),
+                                contentDescription = null
+                            )
+                        },
+                        onClick = {
+                            cameraLauncher.launch(myPageProfileEditViewModel.makeCameraTempFileUri())
+                        }
+                    )
+                }
+            }
+
+        }
+
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(R.string.mypage_cur_email),
+                style = Typography.Semibold_SM
+            )
+            Text(
+                text = email,
+                style = Typography.Medium_SM
+            )
+        }
+    }
+}
+
+@Composable
+private fun RouteHeader(
+    title: String
+) {
+    Text(
+        text = title,
+        style = Typography.Semibold_L
+    )
 }

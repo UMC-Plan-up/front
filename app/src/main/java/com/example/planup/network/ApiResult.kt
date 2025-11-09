@@ -1,5 +1,7 @@
 package com.example.planup.network
 
+import com.example.planup.network.dto.ErrorResponse
+import com.google.gson.Gson
 import kotlinx.coroutines.CancellationException
 import retrofit2.Response
 
@@ -8,6 +10,36 @@ sealed class ApiResult<out T> {
     data class Fail(val message: String) : ApiResult<Nothing>()
     data class Error(val message: String) : ApiResult<Nothing>()
     data class Exception(val error: Throwable) : ApiResult<Nothing>()
+}
+
+inline fun <T> ApiResult<T>.onSuccess(
+    onSuccessAction: (data: T) -> Unit
+): ApiResult<T> {
+    if (this is ApiResult.Success) {
+        onSuccessAction(this.data)
+    }
+    return this
+}
+
+inline fun <T> ApiResult<T>.onFailWithMessage(
+    onFailAction: (message: String) -> Unit
+): ApiResult<T> {
+    when (this) {
+        is ApiResult.Fail -> {
+            onFailAction(this.message)
+        }
+
+        is ApiResult.Error -> {
+            onFailAction(this.message)
+        }
+
+        is ApiResult.Exception -> {
+            onFailAction(this.error.message ?: "Unknown Error")
+        }
+
+        else -> return this
+    }
+    return this
 }
 
 /**
@@ -28,7 +60,16 @@ suspend inline fun <T, R> safeResult(
                 ApiResult.Error("fail response by body is null")
             }
         } else {
-            ApiResult.Error("fail response by response empty")
+            val error = runCatching {
+                val body  = response.errorBody()!!.string()
+                val errorResponse = Gson().fromJson(body, ErrorResponse::class.java)
+                errorResponse
+            }
+            if (error.isSuccess) {
+                ApiResult.Error(error.getOrNull()!!.message)
+            } else {
+                ApiResult.Error("fail response by response empty")
+            }
         }
     } catch (e: CancellationException) {
         throw e
