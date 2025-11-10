@@ -1,11 +1,12 @@
 package com.example.planup.network
 
+import com.example.planup.network.data.FriendAcceptResponse
 import com.example.planup.network.data.FriendBlockListResponse
 import com.example.planup.network.data.FriendBlockResponse
+import com.example.planup.network.data.FriendDeclineResponse
 import com.example.planup.network.data.FriendDeleteResponse
 import com.example.planup.network.data.FriendReportResponse
 import com.example.planup.network.data.FriendUnblockResponse
-import com.example.planup.network.dto.friend.BaseResponse
 import com.example.planup.network.dto.friend.FriendReportRequestDto
 import com.example.planup.network.dto.friend.FriendRequestsResponse
 import com.example.planup.network.dto.friend.FriendResponseDto
@@ -39,17 +40,15 @@ interface FriendApi {
 
     // 친구 신청 수락
     @POST("/friends/accept")
-    suspend fun acceptFriendRequest(
-        @Header("Authorization") token: String,
-        @Query("friendId") goalId: Int
-    ): Response<BaseResponse>
+    suspend fun acceptFriend(
+        @Query("friendId") request: Int
+    ): Response<FriendAcceptResponse>
 
     // 친구 신청 거절
     @POST("/friends/reject")
-    suspend fun rejectFriendRequest(
-        @Header("Authorization") token: String,
-        @Query("friendId") goalId: Int
-    ): Response<BaseResponse>
+    suspend fun rejectFriend(
+        @Query("friendId") request: Int
+    ): Response<FriendDeclineResponse>
 
     // 친구 차단
     @POST("/friends/block")

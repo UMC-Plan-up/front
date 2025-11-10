@@ -79,8 +79,18 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                         FriendRequestItem(
                             friendInfo = friendRequestItem,
                             clickItem = {},
-                            acceptFriend = {},
-                            declineFriend = {}
+                            acceptFriend = {
+                                friendViewModel.acceptFriendRequest(
+                                    friendRequestItem.id,
+                                    friendRequestItem.nickname
+                                )
+                            },
+                            declineFriend = {
+                                friendViewModel.declineFriendRequest(
+                                    friendRequestItem.id,
+                                    friendRequestItem.nickname
+                                )
+                            }
                         )
                     }
                 }

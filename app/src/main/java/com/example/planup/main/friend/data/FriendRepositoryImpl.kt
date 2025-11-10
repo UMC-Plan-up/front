@@ -227,4 +227,43 @@ class FriendRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun acceptFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.acceptFriend(friendId)
+                },
+                onResponse = { friendAcceptResponse ->
+                    if (friendAcceptResponse.isSuccess) {
+                        val acceptResult = friendAcceptResponse.result
+                        fetchFriendList()
+                        ApiResult.Success(acceptResult)
+                    } else {
+                        ApiResult.Fail(friendAcceptResponse.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun declineFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =  withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                friendApi.rejectFriend(friendId)
+            },
+            onResponse = { friendRejectResponse ->
+                if (friendRejectResponse.isSuccess) {
+                    val blockSuccess = friendRejectResponse.result
+                    fetchFriendList()
+                    ApiResult.Success(blockSuccess)
+                } else {
+                    ApiResult.Fail(friendRejectResponse.message)
+                }
+            }
+        )
+    }
 }
