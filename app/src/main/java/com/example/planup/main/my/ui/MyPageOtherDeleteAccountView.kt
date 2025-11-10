@@ -34,11 +34,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
-import com.example.planup.component.PlanUpButton
+import com.example.planup.component.RoutePageDefault
+import com.example.planup.component.button.PlanUpButton
 import com.example.planup.extension.findActivity
 import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.my.ui.common.RoutePageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageDeleteAccountViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.theme.Black200

@@ -9,10 +9,9 @@ import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,8 +27,11 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
     private val friendRepository: FriendRepository
 ) : ViewModel() {
 
-    private var _blockFriendList = MutableStateFlow(emptyList<BlockedFriend>())
-    val blockFriendList = _blockFriendList.asStateFlow()
+    val blockFriendList = friendRepository.getFriendBlockList().stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000),
+        emptyList()
+    )
 
     private val _uiMessage = MutableSharedFlow<UiMessage>()
     val uiMessage = _uiMessage.asSharedFlow()
@@ -45,12 +47,7 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
     fun fetchBlockFriend() {
         viewModelScope.launch {
             friendRepository
-                .getFriendBlockList()
-                .onSuccess { result ->
-                    _blockFriendList.update {
-                        result
-                    }
-                }
+                .fetchFriendBlockList()
                 .onFailWithMessageOnBlock()
         }
     }
@@ -65,12 +62,6 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
                 )
                 .onSuccess { result ->
                     if (result) {
-                        //성공 했다면 리스트에서 제거 시도
-                        _blockFriendList.update { current ->
-                            current.filterNot { blocked ->
-                                blocked.id == friend.id
-                            }
-                        }
                         _uiMessage.emit(
                             UiMessage.UnBlockSuccess(friend.name)
                         )
@@ -97,15 +88,9 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
                     withBlock = withBlock
                 )
                 .onSuccess { result ->
-                    if (result) {
-                        _uiMessage.emit(
-                            UiMessage.ReportSuccess(friend.name)
-                        )
-                    } else {
-                        _uiMessage.emit(
-                            UiMessage.Error("Fail Report")
-                        )
-                    }
+                    _uiMessage.emit(
+                        UiMessage.ReportSuccess(friend.name)
+                    )
                 }
                 .onFailWithMessageOnBlock()
         }

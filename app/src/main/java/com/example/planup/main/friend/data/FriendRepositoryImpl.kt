@@ -13,6 +13,10 @@ import com.example.planup.network.dto.friend.FriendRequestsResult
 import com.example.planup.network.dto.friend.UnblockFriendRequestDto
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -29,10 +33,26 @@ class FriendRepositoryImpl @Inject constructor(
     private val userInfoSaver: UserInfoSaver
 ) : FriendRepository {
 
+    private var _friendList = MutableStateFlow(listOf<FriendInfo>())
+    private val friendList = _friendList.asStateFlow()
+
+    private var _friendRequestList = MutableStateFlow(listOf<FriendRequestsResult>())
+    private val friendRequestList = _friendRequestList.asStateFlow()
+
+    private var _blockFriendList = MutableStateFlow(emptyList<BlockedFriend>())
+    private val blockFriendList = _blockFriendList.asStateFlow()
+
+    override fun getFriendList(): Flow<List<FriendInfo>> = friendList
+
+    override fun getFriendRequestList(): Flow<List<FriendRequestsResult>> =
+        friendRequestList
+
+    override fun getFriendBlockList(): Flow<List<BlockedFriend>> = blockFriendList
+
     /**
      * 친구 목록을 호출합니다.
      */
-    override suspend fun getFriendList(): ApiResult<List<FriendInfo>> =
+    override suspend fun fetchFriendList(): ApiResult<List<FriendInfo>> =
         withContext(Dispatchers.IO) {
             tokenSaver.checkToken { token ->
                 safeResult(
@@ -42,8 +62,10 @@ class FriendRepositoryImpl @Inject constructor(
                     onResponse = { friendDto ->
                         if (friendDto.isSuccess) {
                             val resultList = friendDto.result
-                            val friendList =
-                                resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                            val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                            _friendList.update {
+                                friendList
+                            }
                             ApiResult.Success(friendList)
                         } else {
                             ApiResult.Fail(friendDto.message)
@@ -53,7 +75,7 @@ class FriendRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
+    override suspend fun fetchFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
         withContext(Dispatchers.IO) {
             tokenSaver.checkToken { token ->
                 safeResult(
@@ -63,6 +85,9 @@ class FriendRepositoryImpl @Inject constructor(
                     onResponse = { friendRequests ->
                         if (friendRequests.isSuccess) {
                             val resultList = friendRequests.result
+                            _friendRequestList.update {
+                                resultList
+                            }
                             ApiResult.Success(resultList)
                         } else {
                             ApiResult.Fail(friendRequests.message)
@@ -72,7 +97,7 @@ class FriendRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun getFriendBlockList(): ApiResult<List<BlockedFriend>> =
+    override suspend fun fetchFriendBlockList(): ApiResult<List<BlockedFriend>> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -84,12 +109,64 @@ class FriendRepositoryImpl @Inject constructor(
                             BlockedFriend(
                                 id = blockFriendResponse.friendId,
                                 name = blockFriendResponse.friendNickname,
-                                profile = 0
+                                profile = ""
                             )
+                        }
+                        _blockFriendList.update {
+                            resultList
                         }
                         ApiResult.Success(resultList)
                     } else {
                         ApiResult.Fail(friendRequests.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun deleteFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.deleteFriend(
+                        friendId
+                    )
+                },
+                onResponse = { friendDeleteResponse ->
+                    if (friendDeleteResponse.isSuccess) {
+                        val deleteSuccess = friendDeleteResponse.result
+                        //삭제 성공 했다면 다시 요청 하지 않고 직접 친구 목록에서 해당 id를 삭제 요청한다.
+                        _friendList.update {
+                            it.filter { friendInfo ->
+                                friendInfo.id != friendId
+                            }
+                        }
+                        ApiResult.Success(deleteSuccess)
+                    } else {
+                        ApiResult.Fail(friendDeleteResponse.message)
+                    }
+                }
+            )
+        }
+    override suspend fun blockFriend(
+        friendId: Int
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    friendApi.blockFriend(
+                        friendId
+                    )
+                },
+                onResponse = { friendBlockResponse ->
+                    if (friendBlockResponse.isSuccess) {
+                        val blockSuccess = friendBlockResponse.result
+                        fetchFriendList()
+                        fetchFriendBlockList()
+                        ApiResult.Success(blockSuccess)
+                    } else {
+                        ApiResult.Fail(friendBlockResponse.message)
                     }
                 }
             )
@@ -112,6 +189,8 @@ class FriendRepositoryImpl @Inject constructor(
                 onResponse = { friendRequests ->
                     if (friendRequests.isSuccess) {
                         val unBlockSuccess = friendRequests.result
+                        fetchFriendList()
+                        fetchFriendBlockList()
                         ApiResult.Success(unBlockSuccess)
                     } else {
                         ApiResult.Fail(friendRequests.message)
@@ -139,6 +218,8 @@ class FriendRepositoryImpl @Inject constructor(
                 onResponse = { friendRequests ->
                     if (friendRequests.isSuccess) {
                         val repostSuccess = friendRequests.result
+                        fetchFriendList()
+                        fetchFriendBlockList()
                         ApiResult.Success(repostSuccess)
                     } else {
                         ApiResult.Fail(friendRequests.message)

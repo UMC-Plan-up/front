@@ -35,7 +35,7 @@ class MainSnackbarViewModel @Inject constructor(
         replay = 0,
         extraBufferCapacity = 1
     )
-    val snackbarBlueEvents = _snackbarErrorEvents.asSharedFlow()
+    val snackbarBlueEvents = _snackbarBlueEvents.asSharedFlow()
 
     fun updateSuccessMessage(message: String) {
         viewModelScope.launch {

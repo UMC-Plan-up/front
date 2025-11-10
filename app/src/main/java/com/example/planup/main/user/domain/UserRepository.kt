@@ -5,7 +5,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.WithDraw
-import com.example.planup.signup.data.InviteCodeValidateResponse
+import com.example.planup.signup.data.ProcessResult
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -17,11 +17,12 @@ interface UserRepository {
     suspend fun getInviteCode(): String
 
     /**
-     * 입력한 초대 코드를 검증합니다.
+     * 입력한 초대 코드를 검증하고,
+     * 유효 하다면 초대코드를 활성화 합니다.
      */
     suspend fun validateInviteCode(
         code: String
-    ): ApiResult<InviteCodeValidateResponse.Result>
+    ): ApiResult<ProcessResult>
 
 
     suspend fun changeNickName(
