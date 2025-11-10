@@ -1,9 +1,7 @@
 package com.example.planup.main.friend.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,9 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -30,30 +26,16 @@ import com.example.planup.component.PlanUpAlertBaseContent
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
 import com.example.planup.databinding.FragmentFriendListsBinding
-import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
 import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
-import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.network.dto.friend.FriendInfo
 import kotlinx.coroutines.launch
 
-class FriendListsFragment : Fragment() {
-    private var _binding: FragmentFriendListsBinding? = null
-    val binding: FragmentFriendListsBinding
-        get() = _binding!!
-
-    private val friendViewModel: FriendViewModel by activityViewModels()
-    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFriendListsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
+    FragmentFriendListsBinding::inflate
+) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -123,11 +105,6 @@ class FriendListsFragment : Fragment() {
                 }
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
 

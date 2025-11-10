@@ -1,9 +1,7 @@
 package com.example.planup.main.friend.ui
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,8 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -31,27 +27,17 @@ import com.example.planup.R
 import com.example.planup.component.PlanUpButtonSecondarySmall
 import com.example.planup.component.PlanUpButtonSmall
 import com.example.planup.databinding.FragmentFriendRequestsBinding
-import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
+import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
 import com.example.planup.network.dto.friend.FriendRequestsResult
 import kotlinx.coroutines.launch
 
-class FriendRequestsFragment : Fragment() {
-    lateinit var binding: FragmentFriendRequestsBinding
-
-    private val friendViewModel : FriendViewModel by activityViewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentFriendRequestsBinding.inflate(inflater, container, false)
-        binding.friendRequestRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        return binding.root
-    }
+class FriendRequestsFragment : FriendDepth2Fragment<FragmentFriendRequestsBinding>(
+    FragmentFriendRequestsBinding::inflate
+) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.friendRequestRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 friendViewModel.friendRequestList.collect { items ->
