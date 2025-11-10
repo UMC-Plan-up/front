@@ -78,7 +78,12 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                     ) {friendRequestItem ->
                         FriendRequestItem(
                             friendInfo = friendRequestItem,
-                            clickItem = {},
+                            clickItem = {
+                                goToFriendGoal(
+                                    friendId = friendRequestItem.id,
+                                    friendName = friendRequestItem.nickname
+                                )
+                            },
                             acceptFriend = {
                                 friendViewModel.acceptFriendRequest(
                                     friendRequestItem.id,

@@ -46,11 +46,7 @@ abstract class FriendDepth2Fragment<VB : ViewBinding>(
 
 }
 
-abstract class FriendDepth2FragmentBase() : Fragment() {
-
-    protected val friendViewModel: FriendViewModel by activityViewModels()
-    protected val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
-
+abstract class FriendDepth2FragmentBase() : FriendFragmentBase() {
 
     protected fun goToFriendMain() {
         parentFragmentManager.popBackStack(
@@ -58,6 +54,13 @@ abstract class FriendDepth2FragmentBase() : Fragment() {
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
     }
+
+}
+
+abstract class FriendFragmentBase() : Fragment() {
+
+    protected val friendViewModel: FriendViewModel by activityViewModels()
+    protected val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     protected fun goToFriendGoal(
         friendId: Int,
