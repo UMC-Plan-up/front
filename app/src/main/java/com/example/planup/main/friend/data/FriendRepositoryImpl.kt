@@ -240,6 +240,11 @@ class FriendRepositoryImpl @Inject constructor(
                     if (friendAcceptResponse.isSuccess) {
                         val acceptResult = friendAcceptResponse.result
                         fetchFriendList()
+                        _friendRequestList.update {
+                            it.filter { friendRequest ->
+                                friendRequest.id != friendId
+                            }
+                        }
                         ApiResult.Success(acceptResult)
                     } else {
                         ApiResult.Fail(friendAcceptResponse.message)
@@ -259,6 +264,11 @@ class FriendRepositoryImpl @Inject constructor(
                 if (friendRejectResponse.isSuccess) {
                     val blockSuccess = friendRejectResponse.result
                     fetchFriendList()
+                    _friendRequestList.update {
+                        it.filter { friendRequest ->
+                            friendRequest.id != friendId
+                        }
+                    }
                     ApiResult.Success(blockSuccess)
                 } else {
                     ApiResult.Fail(friendRejectResponse.message)

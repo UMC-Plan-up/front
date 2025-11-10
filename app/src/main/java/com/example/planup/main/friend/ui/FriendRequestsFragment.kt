@@ -97,46 +97,6 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
             }
         }
     }
-
-//
-//    private fun acceptFriend(friend: FriendRequest) {
-//        lifecycleScope.launch {
-//            val auth = buildAuthHeader() ?: return@launch
-//            try {
-//                val resp = RetrofitInstance.friendApi.acceptFriendRequest(auth, friend.id) // ✅ 정수 전달
-//                Log.d("FriendAccept", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
-//                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-//                    Toast.makeText(requireContext(), "${friend.nickname} 님을 수락했어요.", Toast.LENGTH_SHORT).show()
-//                    fetchFriendRequests()
-//                } else {
-//                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "수락에 실패했습니다."
-//
-//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-//                }
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-//
-//    private fun declineFriend(friend: FriendRequest) {
-//        lifecycleScope.launch {
-//            val auth = buildAuthHeader() ?: return@launch
-//            try {
-//                val resp = RetrofitInstance.friendApi.rejectFriendRequest(auth, friend.id) // ✅ 정수 전달
-//                Log.d("FriendReject", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
-//                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-//                    Toast.makeText(requireContext(), "${friend.nickname} 님의 요청을 거절했어요.", Toast.LENGTH_SHORT).show()
-//                    fetchFriendRequests()
-//                } else {
-//                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "거절에 실패했습니다."
-//                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-//                }
-//            } catch (e: Exception) {
-//                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
 }
 
 @Composable

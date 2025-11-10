@@ -148,7 +148,7 @@ class FriendViewModel @Inject constructor(
             friendRepository.declineFriend(friendId)
                 .onSuccess { result ->
                     _uiMessage.emit(
-                        FriendUiMessage.DeleteSuccess(friendName)
+                        FriendUiMessage.DeclineSuccess(friendName)
                     )
                 }.onFailWithMessageOnBlock()
         }
