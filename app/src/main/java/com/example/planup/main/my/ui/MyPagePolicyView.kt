@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.planup.R
-import com.example.planup.component.RoutePageDefault
+import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 
 
@@ -34,7 +34,7 @@ private fun MyPagePolicyContent(
     onBack: () -> Unit,
     routePolicy: (MyPageRoute.Service.Detail) -> Unit
 ) {
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_policy)
     ) {
@@ -75,7 +75,7 @@ fun MyPagePolicyDetailView(
     }
 
 
-    RoutePageDefault(onBack = onBack) {
+    MyPageDefault(onBack = onBack) {
         AndroidView(
             factory = { webView },
             modifier = Modifier
