@@ -1,12 +1,20 @@
 package com.example.planup.main.friend.ui
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
-import androidx.compose.foundation.layout.fillMaxSize
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,40 +22,61 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import androidx.fragment.compose.content
 import com.example.planup.R
+import com.example.planup.component.PageDefault
 import com.example.planup.component.PlanUpAlertBaseContent
+import com.example.planup.component.TopHeader
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
-import com.example.planup.databinding.FragmentFriendListsBinding
-import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
+import com.example.planup.main.friend.ui.common.FriendDepth2FragmentBase
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
 import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.theme.Black400
+import com.example.planup.theme.Typography
 
-class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
-    FragmentFriendListsBinding::inflate
-) {
+class FriendListsFragment : FriendDepth2FragmentBase() {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.btnBack.setOnClickListener {
-            goToFriendMain()
-        }
-        binding.friendListsRecyclerView
-            .setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-
-        binding.friendListsRecyclerView.setContent {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return content {
             val friendList by friendViewModel.friendList.collectAsState()
-            FriendListView(
-                friendList = friendList,
-                deleteFriend = friendViewModel::deleteFriend,
-                blockFriend = friendViewModel::blockFriend,
-                reportFriend = friendViewModel::reportFriend
-            )
+
+            PageDefault {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                        .padding(top = 20.dp)
+                ) {
+                    TopHeader(
+                        modifier = Modifier
+                            .height(32.dp),
+                        onBackAction = ::goToFriendMain,
+                        title = "친구"
+                    )
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier
+                            .height(30.dp),
+                        text = "친구 관리",
+                        style = Typography.Medium_XL,
+                        color = Black400
+                    )
+                }
+                FriendListView(
+                    friendList = friendList,
+                    deleteFriend = friendViewModel::deleteFriend,
+                    blockFriend = friendViewModel::blockFriend,
+                    reportFriend = friendViewModel::reportFriend
+                )
+            }
         }
     }
 }
@@ -61,7 +90,7 @@ private fun FriendListView(
     reportFriend: (friend: FriendInfo, reason: String, withBlock: Boolean) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.padding(horizontal = 20.dp),
     ) {
         items(friendList) { friend ->
             FriendListItem(
@@ -103,29 +132,33 @@ private fun FriendListItem(
         profileImage = friend.profileImage,
         friendName = friend.nickname
     ) {
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Red,
-            onClick = {
-                showDeleteAlert = true
-            },
-            title = "삭제"
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Red,
+                onClick = {
+                    showDeleteAlert = true
+                },
+                title = "삭제"
+            )
 
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Green,
-            onClick = {
-                showBlockAlert = true
-            },
-            title = "차단"
-        )
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Green,
+                onClick = {
+                    showBlockAlert = true
+                },
+                title = "차단"
+            )
 
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Blue,
-            onClick = {
-                showReportSheet = true
-            },
-            title = "신고"
-        )
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Blue,
+                onClick = {
+                    showReportSheet = true
+                },
+                title = "신고"
+            )
+        }
     }
     if (showReportSheet) {
         FriendReportSheet(
