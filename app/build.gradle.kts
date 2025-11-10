@@ -65,7 +65,8 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.viewpager2)
-
+    implementation("androidx.fragment:fragment-ktx:1.8.0")
+    implementation("androidx.fragment:fragment-compose:1.8.0")
 
     implementation("com.kakao.sdk:v2-user:2.21.6")
     implementation("com.kakao.sdk:v2-share:2.21.6")
@@ -74,9 +75,6 @@ dependencies {
     /*gson 사용하기 위한 라이브러리 다운*/
     implementation("com.google.code.gson:gson:2.13.1")
 
-    //Retrofit 사용을 위한 lib 추가
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
-    //implementation(libs.kotlin.stdlib.v190)
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")

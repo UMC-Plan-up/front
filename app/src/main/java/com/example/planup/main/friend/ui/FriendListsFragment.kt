@@ -14,10 +14,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -40,11 +40,11 @@ class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack(
-                FriendFragment.FRIEND_FRAGMENT_STACK,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
+            goToFriendMain()
         }
+        binding.friendListsRecyclerView
+            .setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+
         binding.friendListsRecyclerView.setContent {
             val friendList by friendViewModel.friendList.collectAsState()
             FriendListView(
