@@ -44,23 +44,9 @@ class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
             val friendList by friendViewModel.friendList.collectAsState()
             FriendListView(
                 friendList = friendList,
-                deleteFriend = { friend ->
-                    friendViewModel.deleteFriend(
-                        friend = friend
-                    )
-                },
-                blockFriend = { friend ->
-                    friendViewModel.blockFriend(
-                        friend = friend
-                    )
-                },
-                reportFriend = { friend, reason, withBlock ->
-                    friendViewModel.reportFriend(
-                        friend = friend,
-                        reason = reason,
-                        withBlock = withBlock
-                    )
-                }
+                deleteFriend = friendViewModel::deleteFriend,
+                blockFriend = friendViewModel::blockFriend,
+                reportFriend = friendViewModel::reportFriend
             )
         }
     }

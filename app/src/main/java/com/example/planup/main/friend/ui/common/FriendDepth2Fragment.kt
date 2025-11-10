@@ -9,9 +9,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.activityViewModels
 import androidx.viewbinding.ViewBinding
+import com.example.planup.R
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
+import com.example.planup.main.goal.ui.GoalFragment
 
 
 /**
@@ -55,5 +57,19 @@ abstract class FriendDepth2FragmentBase() : Fragment() {
             FriendFragment.FRIEND_FRAGMENT_STACK,
             FragmentManager.POP_BACK_STACK_INCLUSIVE
         )
+    }
+
+    protected fun goToFriendGoal(
+        friendId: Int,
+        friendName: String
+    ) {
+        val gaolFragment = GoalFragment.newInstance(
+            targetUserId = friendId,
+            targetNickname = friendName
+        )
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.main_container, gaolFragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
     }
 }

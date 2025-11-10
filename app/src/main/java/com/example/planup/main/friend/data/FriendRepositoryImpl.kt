@@ -1,8 +1,6 @@
 package com.example.planup.main.friend.data
 
-import com.example.planup.database.TokenSaver
 import com.example.planup.database.UserInfoSaver
-import com.example.planup.database.checkToken
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.ApiResult
@@ -25,11 +23,9 @@ import javax.inject.Inject
  * FriendRepository 구현체,
  * 실제 동작을 정의합니다.
  * @param friendApi Friend관련 네트워크 통신 모듈
- * @param tokenSaver JWT 토큰 관리 모듈
  */
 class FriendRepositoryImpl @Inject constructor(
     private val friendApi: FriendApi,
-    private val tokenSaver: TokenSaver,
     private val userInfoSaver: UserInfoSaver
 ) : FriendRepository {
 
@@ -54,47 +50,43 @@ class FriendRepositoryImpl @Inject constructor(
      */
     override suspend fun fetchFriendList(): ApiResult<List<FriendInfo>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        friendApi.getFriendSummary(token)
-                    },
-                    onResponse = { friendDto ->
-                        if (friendDto.isSuccess) {
-                            val resultList = friendDto.result
-                            val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
-                            _friendList.update {
-                                friendList
-                            }
-                            ApiResult.Success(friendList)
-                        } else {
-                            ApiResult.Fail(friendDto.message)
+            safeResult(
+                response = {
+                    friendApi.getFriendSummary()
+                },
+                onResponse = { friendDto ->
+                    if (friendDto.isSuccess) {
+                        val resultList = friendDto.result
+                        val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                        _friendList.update {
+                            friendList
                         }
+                        ApiResult.Success(friendList)
+                    } else {
+                        ApiResult.Fail(friendDto.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     override suspend fun fetchFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        friendApi.getFriendRequests(token)
-                    },
-                    onResponse = { friendRequests ->
-                        if (friendRequests.isSuccess) {
-                            val resultList = friendRequests.result
-                            _friendRequestList.update {
-                                resultList
-                            }
-                            ApiResult.Success(resultList)
-                        } else {
-                            ApiResult.Fail(friendRequests.message)
+            safeResult(
+                response = {
+                    friendApi.getFriendRequests()
+                },
+                onResponse = { friendRequests ->
+                    if (friendRequests.isSuccess) {
+                        val resultList = friendRequests.result
+                        _friendRequestList.update {
+                            resultList
                         }
+                        ApiResult.Success(resultList)
+                    } else {
+                        ApiResult.Fail(friendRequests.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     override suspend fun fetchFriendBlockList(): ApiResult<List<BlockedFriend>> =
@@ -149,6 +141,7 @@ class FriendRepositoryImpl @Inject constructor(
                 }
             )
         }
+
     override suspend fun blockFriend(
         friendId: Int
     ): ApiResult<Boolean> =
@@ -255,7 +248,7 @@ class FriendRepositoryImpl @Inject constructor(
 
     override suspend fun declineFriend(
         friendId: Int
-    ): ApiResult<Boolean> =  withContext(Dispatchers.IO) {
+    ): ApiResult<Boolean> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 friendApi.rejectFriend(friendId)
