@@ -55,8 +55,9 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                     TopHeader(
                         modifier = Modifier
                             .height(36.dp),
-                        title = "친구",
-                        onBackAction = ::goToFriendMain
+                        onBackAction = ::goToFriendMain,
+                        textStyle = Typography.Semibold_3XL,
+                        title = "친구"
                     )
                     Text(
                         modifier = Modifier
@@ -68,19 +69,11 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                 }
                 Spacer(Modifier.height(24.dp))
                 LazyColumn(
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     items(
-                        items = friendRequestList + listOf(
-                            FriendRequestsResult(
-                                999,
-                                "123",
-                                1,
-                                "",
-                                false,
-                                null
-                            )
-                        ),
+                        items = friendRequestList,
                         key = FriendRequestsResult::id
                     ) {friendRequestItem ->
                         FriendRequestItem(
