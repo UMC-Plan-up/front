@@ -474,6 +474,8 @@
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     <string name="toast_block">%1$s님을 차단했습니다.</string>
+    <string name="toast_accept_friend">%1$s님을 수락했어요..</string>
+    <string name="toast_decline_friend">%1$s님의 요청을 거절했어요.</string>
     <string name="toast_delete">%1$s님을 친구 목록에서 삭제했습니다.</string>
     <string name="toast_make_new_goal">새로운 목표를 추가하세요</string>
 
