@@ -18,9 +18,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
 import com.example.planup.component.button.PlanUpSmallButton
@@ -29,9 +26,7 @@ import com.example.planup.databinding.FragmentFriendListsBinding
 import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
-import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
 import com.example.planup.network.dto.friend.FriendInfo
-import kotlinx.coroutines.launch
 
 class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
     FragmentFriendListsBinding::inflate
@@ -67,43 +62,6 @@ class FriendListsFragment : FriendDepth2Fragment<FragmentFriendListsBinding>(
                     )
                 }
             )
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                friendViewModel.uiMessage.collect { uiMessage ->
-                    when (uiMessage) {
-                        is FriendUiMessage.Error -> {
-                            mainSnackbarViewModel.updateErrorMessage(
-                                uiMessage.msg
-                            )
-                        }
-
-                        is FriendUiMessage.ReportSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(R.string.toast_report)
-                            )
-                        }
-
-                        is FriendUiMessage.BlockSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(
-                                    R.string.toast_block,
-                                    uiMessage.friendName
-                                )
-                            )
-                        }
-
-                        is FriendUiMessage.DeleteSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(
-                                    R.string.toast_delete,
-                                    uiMessage.friendName
-                                )
-                            )
-                        }
-                    }
-                }
-            }
         }
     }
 }

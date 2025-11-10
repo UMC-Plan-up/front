@@ -19,11 +19,16 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.component.snackbar.BlueSnackbarHost
 import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
+import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
+import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
@@ -32,6 +37,7 @@ import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.MypagePasswordChangeFragment
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -43,6 +49,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private val mainSnackbarViewModel : MainSnackbarViewModel by viewModels()
+    private val friendViewModel : FriendViewModel by viewModels()
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -153,6 +160,47 @@ class MainActivity : AppCompatActivity() {
 //            else -> HomeFragment()
 //        }
         initBottomNavigation(startFragment)
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                friendViewModel.uiMessage.collect { uiMessage ->
+                    when (uiMessage) {
+                        is FriendUiMessage.Error -> {
+                            mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
+                        }
+
+                        is FriendUiMessage.ReportSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                getString(R.string.toast_report)
+                            )
+                        }
+
+                        is FriendUiMessage.BlockSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                getString(R.string.toast_block, uiMessage.friendName)
+                            )
+                        }
+
+                        is FriendUiMessage.DeleteSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                getString(R.string.toast_delete, uiMessage.friendName)
+                            )
+                        }
+
+                        is FriendUiMessage.AcceptSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                getString(R.string.toast_accept_friend, uiMessage.friendName)
+                            )
+                        }
+                        is FriendUiMessage.DeclineSuccess -> {
+                            mainSnackbarViewModel.updateSuccessMessage(
+                                getString(R.string.toast_decline_friend, uiMessage.friendName)
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
