@@ -240,7 +240,7 @@
     <string name="sunday">일</string>
     <string name="set_finish_day">종료일 설정</string>
     <string name="finish_day">종료일</string>
-    <string name="duration">기준 기간</string>
+    <string name="duration">주기 설정</string>
     <string name="often">빈도</string>
     <string name="penalty">패널티</string>
     <string name="minimum_number">회 이상</string>
