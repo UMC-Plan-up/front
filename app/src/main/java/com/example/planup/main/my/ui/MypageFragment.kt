@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -43,9 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -57,8 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.example.planup.R
+import com.example.planup.component.CircleProfileImageView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
@@ -430,16 +427,13 @@ private fun MyPageHeader(
                 .size(60.dp)
                 .align(Alignment.CenterHorizontally)
         ) {
-            AsyncImage(
+
+            CircleProfileImageView(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape),
-                model = profileImage,
-                placeholder = painterResource(R.drawable.profile_image),
-                error = painterResource(R.drawable.profile_image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
+                    .fillMaxSize(),
+                profileImage = profileImage
             )
+
             Box(
                 modifier = Modifier
                     .size(20.dp)

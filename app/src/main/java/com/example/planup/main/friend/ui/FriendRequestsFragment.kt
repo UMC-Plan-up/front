@@ -28,8 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.compose.content
-import coil3.compose.AsyncImage
 import com.example.planup.R
+import com.example.planup.component.CircleProfileImageView
 import com.example.planup.component.PageDefault
 import com.example.planup.component.PlanUpButtonSecondarySmall
 import com.example.planup.component.PlanUpButtonSmall
@@ -125,15 +125,10 @@ private fun FriendRequestItem(
             Box(
                 modifier = Modifier.size(50.dp)
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(42.dp)
-                        .align(Alignment.Center)
-                    ,
-                    model = friendInfo.profileImage,
-                    placeholder = painterResource(R.drawable.profile_image),
-                    error = painterResource(R.drawable.profile_image),
-                    contentDescription = null
+                CircleProfileImageView(
+                    modifier = Modifier.size(42.dp)
+                        .align(Alignment.Center),
+                    profileImage = friendInfo.profileImage
                 )
             }
 
