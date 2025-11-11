@@ -140,7 +140,7 @@ private fun FriendListItem(
                 onClick = {
                     showDeleteAlert = true
                 },
-                title = "삭제"
+                title = stringResource(R.string.btn_delete)
             )
 
             PlanUpSmallButton(
@@ -148,7 +148,7 @@ private fun FriendListItem(
                 onClick = {
                     showBlockAlert = true
                 },
-                title = "차단"
+                title = stringResource(R.string.btn_block)
             )
 
             PlanUpSmallButton(
@@ -156,7 +156,7 @@ private fun FriendListItem(
                 onClick = {
                     showReportSheet = true
                 },
-                title = "신고"
+                title = stringResource(R.string.btn_report)
             )
         }
     }
