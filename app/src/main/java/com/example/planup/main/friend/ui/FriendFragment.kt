@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -22,6 +23,7 @@ class FriendFragment : FriendFragmentBase() {
     companion object {
         const val FRIEND_FRAGMENT_STACK = "friend_list"
     }
+
     private var _binding: FragmentFriendBinding? = null
     private val binding: FragmentFriendBinding
         get() = _binding!!
@@ -90,23 +92,20 @@ class FriendFragment : FriendFragmentBase() {
     }
 
     private fun setupClicks() {
-        binding.ivSetting.setOnClickListener {
+        fun goToFriendDepth2(fragment: Fragment) {
             parentFragmentManager.beginTransaction()
-                .add(R.id.main_container, FriendListsFragment())
+                .add(R.id.main_container, fragment)
                 .addToBackStack(FRIEND_FRAGMENT_STACK)
                 .commit()
+        }
+        binding.ivSetting.setOnClickListener {
+            goToFriendDepth2(FriendListsFragment())
         }
         binding.ivNotification.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .add(R.id.main_container, FriendRequestsFragment())
-                .addToBackStack(FRIEND_FRAGMENT_STACK)
-                .commit()
+            goToFriendDepth2(FriendRequestsFragment())
         }
         binding.btnAddFriend.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .add(R.id.main_container, FriendInviteFragment())
-                .addToBackStack(FRIEND_FRAGMENT_STACK)
-                .commit()
+            goToFriendDepth2(FriendInviteFragment())
         }
     }
 }
