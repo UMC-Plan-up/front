@@ -561,4 +561,7 @@
 
     <string name="friend_code_share">%1$s님이 친구 신청을 보냈어요.\nPlan-Up에서 함께 목표 달성에 참여해 보세요!\n%1$s님의 친구 코드 : %2$s</string>
 
+    <string name="friend_title">친구</string>
+    <string name="friend_list_title">친구 관리</string>
+    <string name="friend_request_title">받은 친구 신청</string>
 </resources>

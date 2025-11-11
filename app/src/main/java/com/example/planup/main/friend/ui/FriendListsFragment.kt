@@ -59,13 +59,13 @@ class FriendListsFragment : FriendDepth2FragmentBase() {
                         modifier = Modifier
                             .height(32.dp),
                         onBackAction = ::goToFriendMain,
-                        title = "친구"
+                        title = stringResource(R.string.friend_title)
                     )
                     Spacer(Modifier.height(20.dp))
                     Text(
                         modifier = Modifier
                             .height(30.dp),
-                        text = "친구 관리",
+                        text = stringResource(R.string.friend_list_title),
                         style = Typography.Medium_XL,
                         color = Black400
                     )

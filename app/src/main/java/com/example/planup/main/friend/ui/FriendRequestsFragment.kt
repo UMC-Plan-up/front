@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.compose.content
@@ -57,12 +58,12 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                             .height(36.dp),
                         onBackAction = ::goToFriendMain,
                         textStyle = Typography.Semibold_3XL,
-                        title = "친구"
+                        title = stringResource(R.string.friend_title)
                     )
                     Text(
                         modifier = Modifier
                             .height(30.dp),
-                        text = "받은 친구 신청",
+                        text = stringResource(R.string.friend_request_title),
                         style = Typography.Medium_XL,
                         color = Black400
                     )
@@ -162,12 +163,12 @@ private fun FriendRequestItem(
                 modifier = Modifier
                     .weight(1f)
                     .height(36.dp),
-                title = "수락",
+                title = stringResource(R.string.btn_approval),
                 onClick = acceptFriend
             )
             PlanUpButtonSecondarySmall(
                 modifier = Modifier.weight(1f),
-                title = "거절",
+                title = stringResource(R.string.btn_rejection),
                 onClick = declineFriend
             )
         }
