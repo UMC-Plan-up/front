@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -50,6 +52,7 @@ import com.example.planup.main.friend.ui.common.FriendFragmentBase
 import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.theme.Black300
 import com.example.planup.theme.Blue100
+import com.example.planup.theme.Blue200
 import com.example.planup.theme.Typography
 
 /**
@@ -116,68 +119,92 @@ private fun FriendHomeView(
     showBadge: Boolean
 ) {
     PageDefault {
-        Column(
+        Box(
             modifier = Modifier
+                .fillMaxSize()
                 .padding(horizontal = 20.dp)
-                .padding(top = 20.dp)
         ) {
-            TopHeader(
-                modifier = Modifier.fillMaxWidth()
-                    .height(36.dp),
-                title = stringResource(R.string.friend_title),
-                onBackAction = null,
-                textStyle = Typography.Semibold_3XL,
-                otherActionContent = {
-                    Row {
-                        IconButton(
-                            onClick = goRequest
-                        ) {
-                            if (showBadge) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_notification_on),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_notification_off),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified
-                                )
+            Column {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 20.dp)
+                ) {
+                    TopHeader(
+                        modifier = Modifier.fillMaxWidth()
+                            .height(36.dp),
+                        title = stringResource(R.string.friend_title),
+                        onBackAction = null,
+                        textStyle = Typography.Semibold_3XL,
+                        otherActionContent = {
+                            Row {
+                                IconButton(
+                                    onClick = goRequest
+                                ) {
+                                    if (showBadge) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_notification_on),
+                                            contentDescription = null,
+                                            tint = Color.Unspecified
+                                        )
+                                    } else {
+                                        Icon(
+                                            painter = painterResource(R.drawable.ic_notification_off),
+                                            contentDescription = null,
+                                            tint = Color.Unspecified
+                                        )
+                                    }
+                                }
+                                IconButton(
+                                    onClick = goSetting
+                                ) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_setting),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified
+                                    )
+                                }
                             }
                         }
-                        IconButton(
-                            onClick = goSetting
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_setting),
-                                contentDescription = null,
-                                tint = Color.Unspecified
-                            )
-                        }
+                    )
+                    Text(
+                        text = stringResource(R.string.friend_sub_title, friendList.size),
+                        style = Typography.Medium_XL,
+                        color = Black300
+                    )
+                }
+                Spacer(Modifier.height(24.dp))
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    items(
+                        friendList,
+                        key = FriendInfo::id
+                    ) { friendInfo ->
+                        FriendItem(
+                            friendInfo = friendInfo,
+                            onClick = {
+                                goFriendGoal(friendInfo)
+                            }
+                        )
                     }
                 }
-            )
-            Text(
-                text = stringResource(R.string.friend_sub_title,friendList.size),
-                style = Typography.Medium_XL,
-                color = Black300
-            )
-        }
-        Spacer(Modifier.height(24.dp))
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            items(
-                friendList,
-                key = FriendInfo::id
-            ) { friendInfo ->
-                FriendItem(
-                    friendInfo = friendInfo,
-                    onClick = {
-                        goFriendGoal(friendInfo)
+            }
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 40.dp)
+                    .align(Alignment.BottomEnd)
+                    .size(55.dp)
+                    .clip(CircleShape)
+                    .background(Blue200)
+                    .clickable {
+                        goAdd()
                     }
+            ) {
+                Icon(
+                    modifier = Modifier.align(Alignment.Center),
+                    painter = painterResource(R.drawable.ic_person_add),
+                    contentDescription = null,
+                    tint = Color.White
                 )
             }
         }
