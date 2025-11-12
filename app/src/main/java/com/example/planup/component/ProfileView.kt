@@ -24,10 +24,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
 import com.example.planup.R
 import com.example.planup.theme.Typography
 
@@ -56,15 +54,11 @@ fun ProfileView(
             .size(60.dp)
             .then(modifier)
     ) {
-        AsyncImage(
+        CircleProfileImageView(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(CircleShape),
-            model = profileUrl,
-            placeholder = painterResource(R.drawable.profile_image),
-            error = painterResource(R.drawable.profile_image),
-            contentDescription = null,
-            contentScale = ContentScale.Crop
+            profileImage = profileUrl
         )
         Box(
             modifier = Modifier
