@@ -9,12 +9,12 @@ import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
-import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
+import com.example.planup.signup.data.ProfileImageResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -220,14 +220,14 @@ class UserRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun setProfileImage(file: File): ApiResult<ProfileImage> {
+    override suspend fun setProfileImage(file: File): ApiResult<ProfileImageResponse.Result> {
         val requestFile = file.asRequestBody("image/*".toMediaTypeOrNull())
         val multipartBody =
             MultipartBody.Part.createFormData("file", file.name, requestFile)
         return setProfileImage(multipartBody)
     }
 
-    override suspend fun setProfileImage(body: MultipartBody.Part): ApiResult<ProfileImage> =
+    override suspend fun setProfileImage(body: MultipartBody.Part): ApiResult<ProfileImageResponse.Result> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -236,14 +236,8 @@ class UserRepositoryImpl @Inject constructor(
                 onResponse = { response ->
                     if (response.isSuccess) {
                         val result = response.result
-                        when (response.code) {
-                            "200" -> {
-                                userInfoSaver.saveProfileImage(result.file)
-                                ApiResult.Success(result)
-                            }
-
-                            else -> ApiResult.Fail(response.message)
-                        }
+                        userInfoSaver.saveProfileImage(result.imageUrl)
+                        ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
                     }
