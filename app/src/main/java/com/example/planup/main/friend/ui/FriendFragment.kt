@@ -33,9 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -187,6 +187,9 @@ private fun FriendHomeView(
                             }
                         )
                     }
+                    item {
+                        Spacer(Modifier.height(20.dp))
+                    }
                 }
             }
             Box(
@@ -264,12 +267,18 @@ private fun FriendItem(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .clip(RoundedCornerShape(6.dp))
-                    .background(Color.White)
                     .fillMaxHeight()
-                    .shadow(
-                        elevation = 1.dp,
-                        shape = RoundedCornerShape(6.dp)
+                    .dropShadow(
+                        shape = RoundedCornerShape(6.dp),
+                        shadow = Shadow(
+                            radius = 6.dp,
+                            spread = 0.5.dp,
+                            color = Color.Black.copy(0.25f)
+                        )
+                    )
+                    .background(
+                        Color.White,
+                        RoundedCornerShape(6.dp)
                     )
             ) {
                 Text(
@@ -283,19 +292,23 @@ private fun FriendItem(
             }
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(6.dp))
                     .width(95.dp)
                     .fillMaxHeight()
-                    .drawBehind {
+                    .dropShadow(
+                        shape = RoundedCornerShape(6.dp),
+                        shadow = Shadow(
+                            radius = 6.dp,
+                            spread = 0.5.dp,
+                            color = Color.Black.copy(0.25f)
+                        )
+                    )
+                    .background(
                         if (friendInfo.isNewPhotoVerify) {
-                            drawRect(Blue100)
+                            Blue100
                         } else {
-                            drawRect(Color.White)
-                        }
-                    }
-                    .shadow(
-                        elevation = 1.dp,
-                        shape = RoundedCornerShape(6.dp)
+                            Color.White
+                        },
+                        RoundedCornerShape(6.dp)
                     )
             ) {
                 Text(
@@ -336,8 +349,12 @@ private class FriendInfoPreviewProvider : PreviewParameterProvider<FriendInfo> {
 private fun FriendItemPreview(
     @PreviewParameter(FriendInfoPreviewProvider::class) friendInfo: FriendInfo
 ) {
-    FriendItem(
-        friendInfo = friendInfo,
-        onClick = {}
-    )
+    Column(
+        modifier = Modifier.padding(15.dp)
+    ) {
+        FriendItem(
+            friendInfo = friendInfo,
+            onClick = {}
+        )
+    }
 }
