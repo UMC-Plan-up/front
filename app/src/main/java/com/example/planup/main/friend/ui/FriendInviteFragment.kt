@@ -2,14 +2,10 @@ package com.example.planup.main.friend.ui
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,29 +13,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
-import com.example.planup.databinding.ToastCompleteAddFriendBinding
-import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
+import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
 import kotlinx.coroutines.launch
 
-class FriendInviteFragment : Fragment() {
-    private var _binding: FragmentFriendInviteBinding? = null
-    private val binding: FragmentFriendInviteBinding
-        get() = _binding!!
-
-    private val friendViewModel: FriendViewModel by activityViewModels()
+class FriendInviteFragment : FriendDepth2Fragment<FragmentFriendInviteBinding>(
+    FragmentFriendInviteBinding::inflate
+) {
     private val userInviteCodeViewModel: UserInviteCodeViewModel by activityViewModels()
-    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -94,11 +75,6 @@ class FriendInviteFragment : Fragment() {
                 btnSubmitInviteCode.isEnabled = it.toString().length == 6
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */

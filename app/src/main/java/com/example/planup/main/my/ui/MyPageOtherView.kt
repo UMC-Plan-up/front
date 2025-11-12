@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
-import com.example.planup.component.RoutePageDefault
+import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.common.RouteMenuItem
 
 @Composable
@@ -16,7 +16,7 @@ fun MyPageOtherView(
     navigateLogout: () -> Unit,
     navigateDelete: () -> Unit
 ) {
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.category)
     ) {

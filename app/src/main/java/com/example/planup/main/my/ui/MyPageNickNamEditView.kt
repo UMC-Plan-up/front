@@ -20,9 +20,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
-import com.example.planup.component.RoutePageDefault
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageNickNameEditViewModel
 import com.example.planup.theme.Black200
 import com.example.planup.theme.Black400
@@ -67,7 +67,7 @@ private fun MyPageNickNamEditContent(
     buttonEnabled: Boolean,
     completeAction: () -> Unit
 ) {
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_nickname)
     ) {

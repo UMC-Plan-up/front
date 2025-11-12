@@ -10,10 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import com.example.planup.R
+import com.example.planup.component.CircleProfileImageView
 
 @Composable
 fun FriendProfileRow(
@@ -32,12 +30,9 @@ fun FriendProfileRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            AsyncImage(
+            CircleProfileImageView(
                 modifier = Modifier.size(42.dp),
-                model = profileImage,
-                placeholder = painterResource(R.drawable.profile_image),
-                error = painterResource(R.drawable.profile_image),
-                contentDescription = null
+                profileImage = profileImage
             )
             Text(
                 text = friendName,

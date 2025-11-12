@@ -157,6 +157,7 @@ class UserRepositoryImpl @Inject constructor(
                 if (response.isSuccess) {
                     val result = response.result
                     userInfoSaver.clearAllUserInfo()
+                    tokenSaver
                     ApiResult.Success(result)
                 } else {
                     ApiResult.Fail(response.message)

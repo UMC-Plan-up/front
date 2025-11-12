@@ -16,6 +16,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class FriendUiMessage {
+    data class AcceptSuccess(val friendName: String) : FriendUiMessage()
+    data class DeclineSuccess(val friendName: String) : FriendUiMessage()
     data class DeleteSuccess(val friendName: String) : FriendUiMessage()
     data class BlockSuccess(val friendName: String) : FriendUiMessage()
     data class ReportSuccess(val friendName: String) : FriendUiMessage()
@@ -35,7 +37,7 @@ class FriendViewModel @Inject constructor(
         )
 
     val friendRequestList = friendRepository
-        .getFriendBlockList().stateIn(
+        .getFriendRequestList().stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
             emptyList()
@@ -66,7 +68,7 @@ class FriendViewModel @Inject constructor(
 
     fun fetchFriendRequest() {
         viewModelScope.launch {
-            friendRepository.fetchFriendBlockList()
+            friendRepository.fetchFriendRequestList()
                 .onFailWithMessageOnBlock()
         }
     }
@@ -119,6 +121,34 @@ class FriendViewModel @Inject constructor(
                 .onSuccess { result ->
                     _uiMessage.emit(
                         FriendUiMessage.DeleteSuccess(friend.nickname)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun acceptFriendRequest(
+        friendId : Int,
+        friendName: String
+    ) {
+        viewModelScope.launch {
+            friendRepository.acceptFriend(friendId)
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.AcceptSuccess(friendName)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun declineFriendRequest(
+        friendId : Int,
+        friendName: String
+    ) {
+        viewModelScope.launch {
+            friendRepository.declineFriend(friendId)
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.DeclineSuccess(friendName)
                     )
                 }.onFailWithMessageOnBlock()
         }

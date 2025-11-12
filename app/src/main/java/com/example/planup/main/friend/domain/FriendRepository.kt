@@ -47,10 +47,16 @@ interface FriendRepository {
     suspend fun fetchFriendBlockList(): ApiResult<List<BlockedFriend>>
 
 
+    /**
+     * 친구 관계를 삭제 합니다.
+     */
     suspend fun deleteFriend(
         friendId: Int
     ) : ApiResult<Boolean>
 
+    /**
+     * 친구를 차단 합니다.
+     */
     suspend fun blockFriend(
         friendId: Int
     ): ApiResult<Boolean>
@@ -69,6 +75,25 @@ interface FriendRepository {
         friendId: Int,
         reason: String,
         withBlock: Boolean
+    ): ApiResult<Boolean>
+
+    /**
+     * 친구 요청을 수락한다.
+     *
+     * @param friendId
+     */
+    suspend fun acceptFriend(
+        friendId: Int
+    ) : ApiResult<Boolean>
+
+    /**
+     * 친구 요청을 거절 한다.
+     *
+     * @param friendId
+     * @return
+     */
+    suspend fun declineFriend(
+        friendId: Int
     ): ApiResult<Boolean>
 
 }

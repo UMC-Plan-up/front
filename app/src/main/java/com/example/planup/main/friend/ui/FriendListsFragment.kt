@@ -4,11 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,116 +24,60 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.fragment.compose.content
 import com.example.planup.R
+import com.example.planup.component.PageDefault
 import com.example.planup.component.PlanUpAlertBaseContent
+import com.example.planup.component.TopHeader
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
-import com.example.planup.databinding.FragmentFriendListsBinding
-import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.friend.ui.common.FriendDepth2FragmentBase
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
-import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
-import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.network.dto.friend.FriendInfo
-import kotlinx.coroutines.launch
+import com.example.planup.theme.Black400
+import com.example.planup.theme.Typography
 
-class FriendListsFragment : Fragment() {
-    private var _binding: FragmentFriendListsBinding? = null
-    val binding: FragmentFriendListsBinding
-        get() = _binding!!
-
-    private val friendViewModel: FriendViewModel by activityViewModels()
-    private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
+class FriendListsFragment : FriendDepth2FragmentBase() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFriendListsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack(
-                FriendFragment.FRIEND_FRAGMENT_STACK,
-                FragmentManager.POP_BACK_STACK_INCLUSIVE
-            )
-        }
-        binding.friendListsRecyclerView.setContent {
+    ): View? {
+        return content {
             val friendList by friendViewModel.friendList.collectAsState()
-            FriendListView(
-                friendList = friendList,
-                deleteFriend = { friend ->
-                    friendViewModel.deleteFriend(
-                        friend = friend
+
+            PageDefault {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                        .padding(top = 20.dp)
+                ) {
+                    TopHeader(
+                        modifier = Modifier
+                            .height(32.dp),
+                        onBackAction = ::goToFriendMain,
+                        title = stringResource(R.string.friend_title)
                     )
-                },
-                blockFriend = { friend ->
-                    friendViewModel.blockFriend(
-                        friend = friend
-                    )
-                },
-                reportFriend = { friend, reason, withBlock ->
-                    friendViewModel.reportFriend(
-                        friend = friend,
-                        reason = reason,
-                        withBlock = withBlock
+                    Spacer(Modifier.height(20.dp))
+                    Text(
+                        modifier = Modifier
+                            .height(30.dp),
+                        text = stringResource(R.string.friend_list_title),
+                        style = Typography.Medium_XL,
+                        color = Black400
                     )
                 }
-            )
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                friendViewModel.uiMessage.collect { uiMessage ->
-                    when (uiMessage) {
-                        is FriendUiMessage.Error -> {
-                            mainSnackbarViewModel.updateErrorMessage(
-                                uiMessage.msg
-                            )
-                        }
-
-                        is FriendUiMessage.ReportSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(R.string.toast_report)
-                            )
-                        }
-
-                        is FriendUiMessage.BlockSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(
-                                    R.string.toast_block,
-                                    uiMessage.friendName
-                                )
-                            )
-                        }
-
-                        is FriendUiMessage.DeleteSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                requireContext().getString(
-                                    R.string.toast_delete,
-                                    uiMessage.friendName
-                                )
-                            )
-                        }
-                    }
-                }
+                FriendListView(
+                    friendList = friendList,
+                    deleteFriend = friendViewModel::deleteFriend,
+                    blockFriend = friendViewModel::blockFriend,
+                    reportFriend = friendViewModel::reportFriend
+                )
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
 
@@ -140,7 +90,7 @@ private fun FriendListView(
     reportFriend: (friend: FriendInfo, reason: String, withBlock: Boolean) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.padding(horizontal = 20.dp),
     ) {
         items(friendList) { friend ->
             FriendListItem(
@@ -182,29 +132,33 @@ private fun FriendListItem(
         profileImage = friend.profileImage,
         friendName = friend.nickname
     ) {
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Red,
-            onClick = {
-                showDeleteAlert = true
-            },
-            title = "삭제"
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Red,
+                onClick = {
+                    showDeleteAlert = true
+                },
+                title = stringResource(R.string.btn_delete)
+            )
 
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Green,
-            onClick = {
-                showBlockAlert = true
-            },
-            title = "차단"
-        )
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Green,
+                onClick = {
+                    showBlockAlert = true
+                },
+                title = stringResource(R.string.btn_block)
+            )
 
-        PlanUpSmallButton(
-            smallButtonType = SmallButtonType.Blue,
-            onClick = {
-                showReportSheet = true
-            },
-            title = "신고"
-        )
+            PlanUpSmallButton(
+                smallButtonType = SmallButtonType.Blue,
+                onClick = {
+                    showReportSheet = true
+                },
+                title = stringResource(R.string.btn_report)
+            )
+        }
     }
     if (showReportSheet) {
         FriendReportSheet(

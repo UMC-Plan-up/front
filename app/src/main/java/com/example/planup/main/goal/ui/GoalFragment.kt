@@ -16,35 +16,32 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.planup.main.MainActivity
 import com.example.planup.R
+import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalViewModel
-import com.example.planup.main.goal.item.GoalItem
+import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
+import com.example.planup.main.goal.adapter.GoalApi
+import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
+import com.example.planup.main.goal.data.GoalType
+import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalRetrofitInstance
-import com.example.planup.network.controller.UserController
+import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.controller.GoalController
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import kotlinx.coroutines.launch
-import com.example.planup.network.controller.GoalController
-import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.main.goal.data.MyGoalListDto
-import com.example.planup.main.goal.data.GoalType
-import com.example.planup.network.RetrofitInstance
 import retrofit2.HttpException
 import java.time.LocalDate
-import com.example.planup.main.goal.adapter.GoalApi
-import java.time.LocalDateTime
 
 class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var prefs : SharedPreferences
@@ -68,6 +65,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         }
     }
 
+    lateinit var tokenSaver : TokenSaver
 
     private var targetUserIdArg: Int = -1
     private var targetNicknameArg: String = ""
@@ -117,8 +115,9 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        tokenSaver = TokenSaver(requireContext())
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = prefs.getString("accessToken", null)
+        val token = tokenSaver.safeToken()
         val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
         Log.d("GoalFragment","token: $token")
         loadMyGoalList(token)
@@ -184,7 +183,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             try {
                 // GoalApi 는 네가 준 인터페이스(아래에 있음). 이미 RetrofitInstance.goalApi 쓰고 있으니 동일 사용.
                 val res = RetrofitInstance.goalApi.getFriendGoalList(
-                    token = "Bearer $token",
+                    token = token,
                     friendId = friendUserId
                 )
 
@@ -242,9 +241,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
     // 액세스 토큰 가져오기
     private fun requireTokenOrNull(): String?{
-        if(!::prefs.isInitialized) return null
-        val token = prefs.getString("accessToken", null) ?: return null
-        return "Bearer $token"
+        return tokenSaver.safeToken()
     }
 
     // 삭제
@@ -443,7 +440,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         lifecycleScope.launch {
             try {
                 val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getMyGoalList(token = "Bearer $token")
+                val response = apiService.getMyGoalList(token = token)
                 if (response.isSuccess) {
                     val goals = response.result
                     for (goal in goals) {
@@ -496,7 +493,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
                 val today = LocalDate.now() // yyyy-MM-dd
 
                 val response = apiService.getDailyAchievement(
-                    token = "Bearer $token",
+                    token = token,
                     targetDate = today.toString()
                 )
 

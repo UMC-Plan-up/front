@@ -25,3 +25,7 @@ typealias FriendBlockResponse = FriendResponse<Boolean>
 typealias FriendDeleteResponse = FriendResponse<Boolean>
 
 typealias FriendReportResponse = FriendResponse<Boolean>
+
+typealias FriendAcceptResponse = FriendResponse<Boolean>
+
+typealias FriendDeclineResponse = FriendResponse<Boolean>

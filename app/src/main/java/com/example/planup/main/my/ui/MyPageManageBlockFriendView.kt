@@ -18,13 +18,13 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
 import com.example.planup.component.PlanUpAlertBaseContent
-import com.example.planup.component.RoutePageDefault
 import com.example.planup.component.button.PlanUpSmallButton
 import com.example.planup.component.button.SmallButtonType
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.common.FriendProfileRow
 import com.example.planup.main.friend.ui.sheet.FriendReportSheet
 import com.example.planup.main.my.data.BlockedFriend
+import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPageManageBlockFriendViewModel
 import com.example.planup.main.my.ui.viewmodel.UiMessage
 
@@ -87,7 +87,7 @@ fun MyPageManageBlockFriendContent(
     unBlockFriend: (friend: BlockedFriend) -> Unit,
     reportFriend: (friend: BlockedFriend, reason: String, withBlock: Boolean) -> Unit
 ) {
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_block)
     ) {
