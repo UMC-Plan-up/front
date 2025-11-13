@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
-import com.example.planup.component.PlanUpButton
+import com.example.planup.component.button.PlanUpButton
 import com.example.planup.theme.Black300
 import com.example.planup.theme.Typography
 

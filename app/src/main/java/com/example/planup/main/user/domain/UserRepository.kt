@@ -5,6 +5,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.WithDraw
+import com.example.planup.signup.data.ProcessResult
 import okhttp3.MultipartBody
 import java.io.File
 

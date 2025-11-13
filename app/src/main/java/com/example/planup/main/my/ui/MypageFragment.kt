@@ -1,17 +1,15 @@
 package com.example.planup.main.my.ui
 
-import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,14 +36,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
+import com.example.planup.component.PlanUpSwitch
 import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
-import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.MainSnackbarViewModel
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
+import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
@@ -152,7 +150,7 @@ fun MyPageView(
                     )
                 )
             },
-            onFail = mainSnackbarViewModel::updateMessage
+            onFail = mainSnackbarViewModel::updateErrorMessage
         )
     }
 
@@ -218,7 +216,7 @@ fun MyPageView(
             }
         },
         fetch = myPageInfoViewModel::fetchUserInfo,
-        onErrorMsg = mainSnackbarViewModel::updateMessage
+        onErrorMsg = mainSnackbarViewModel::updateErrorMessage
     )
 }
 
