@@ -141,15 +141,7 @@ fun MyPageView(
     val updateServiceNotification = { newNotification :Boolean ->
         myPageInfoViewModel.updateNotificationService(
             notificationService = newNotification,
-            onSuccess = {
-//                navigateRoute(
-//                    MyPageRoute.NotificationMarketing(
-//                        isAgree = newNotification,
-//                        nickName = nickName,
-//                        date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
-//                    )
-//                )
-            },
+            onSuccess = {},
             onFail = mainSnackbarViewModel::updateErrorMessage
         )
     }
