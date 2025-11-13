@@ -22,7 +22,7 @@ class UserInfoSaver(
         /**
          * 서비스 알림 수신 여부
          */
-        private const val KEY_NOTIFICATION_LOCAL = "notificationLocal"
+        private const val KEY_NOTIFICATION_SERVICE = "notificationService"
 
         /**
          * 마케팅 정보 수신 여부
@@ -111,19 +111,19 @@ class UserInfoSaver(
     /**
      * 서비스 알림 수신 여부를 가져옵니다.
      **/
-    fun getNotificationLocal(): Boolean {
+    fun getNotificationService(): Boolean {
         //해당 정보는 로컬별로 수신이므로, 기본값은 false
-        return prefs.getBoolean(KEY_NOTIFICATION_LOCAL, false)
+        return prefs.getBoolean(KEY_NOTIFICATION_SERVICE, false)
     }
 
     /**
      * 서비스 알림 수신여부를 변경합니다.
      */
-    fun saveNotificationLocal(
-        notificationLocal: Boolean
+    fun saveNotificationService(
+        notificationService: Boolean
     ) {
         prefs.edit {
-            putBoolean(KEY_NOTIFICATION_LOCAL, notificationLocal)
+            putBoolean(KEY_NOTIFICATION_SERVICE, notificationService)
         }
     }
 
@@ -155,7 +155,7 @@ class UserInfoSaver(
             remove(KEY_INVITE_CODE)
             remove(KEY_EMAIL)
             remove(KEY_PROFILE_IMAGE)
-            remove(KEY_NOTIFICATION_LOCAL)
+            remove(KEY_NOTIFICATION_SERVICE)
             remove(KEY_NOTIFICATION_MARKETING)
         }
     }

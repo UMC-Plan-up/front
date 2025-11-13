@@ -265,22 +265,35 @@ class UserRepositoryImpl @Inject constructor(
         return userInfoSaver.getProfileImage()
     }
 
-    override suspend fun getUserNotificationLocal(): Boolean {
-        return userInfoSaver.getNotificationLocal()
+    override suspend fun getUserNotificationService(): Boolean {
+        return userInfoSaver.getNotificationService()
     }
 
     override suspend fun getUserNotificationMarketing(): Boolean {
         return userInfoSaver.getNotificationMarketing()
     }
 
-    override suspend fun updateUserNotificationLocal(isOnNotification: Boolean) {
-        userInfoSaver.saveNotificationLocal(isOnNotification)
+    override suspend fun updateUserNotificationService(isOnNotification: Boolean)  = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.patchNoticeService()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.saveNotificationService(result)
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
     }
 
     override suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) = withContext(Dispatchers.IO) {
         safeResult(
             response = {
-                userApi.patchNoticeAgree()
+                userApi.patchNoticeMarketing()
             },
             onResponse = { response ->
                 if (response.isSuccess) {

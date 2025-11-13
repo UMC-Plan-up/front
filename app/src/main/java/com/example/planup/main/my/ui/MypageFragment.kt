@@ -135,9 +135,24 @@ fun MyPageView(
     val email by myPageInfoViewModel.email.collectAsState()
     val nickName by myPageInfoViewModel.nickName.collectAsState()
     val profileImage by myPageInfoViewModel.profileImage.collectAsState()
-    val serviceNotification by myPageInfoViewModel.notificationLocal.collectAsState()
+    val serviceNotification by myPageInfoViewModel.notificationService.collectAsState()
     val marketingNotification by myPageInfoViewModel.marketingNotification.collectAsState()
 
+    val updateServiceNotification = { newNotification :Boolean ->
+        myPageInfoViewModel.updateNotificationService(
+            notificationService = newNotification,
+            onSuccess = {
+//                navigateRoute(
+//                    MyPageRoute.NotificationMarketing(
+//                        isAgree = newNotification,
+//                        nickName = nickName,
+//                        date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
+//                    )
+//                )
+            },
+            onFail = mainSnackbarViewModel::updateErrorMessage
+        )
+    }
     val updateMarketingNotification = { newNotification :Boolean ->
         myPageInfoViewModel.updateNotificationMarketing(
             notificationMarketing = newNotification,
@@ -161,7 +176,7 @@ fun MyPageView(
     val notificationPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             if (result) {
-                myPageInfoViewModel.updateNotificationLocal(true)
+                updateServiceNotification(true)
             } else {
                 Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
             }
@@ -190,13 +205,13 @@ fun MyPageView(
                 if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
-                    myPageInfoViewModel.updateNotificationLocal(newNotification)
+                    updateServiceNotification(newNotification)
                 } else {
                     notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
             } else {
                 //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
-                myPageInfoViewModel.updateNotificationLocal(newNotification)
+                updateServiceNotification(newNotification)
             }
         },
         updateMarketingNotification = { newNotification ->

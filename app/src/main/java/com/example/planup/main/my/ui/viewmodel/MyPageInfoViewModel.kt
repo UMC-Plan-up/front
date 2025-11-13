@@ -27,8 +27,8 @@ class MyPageInfoViewModel @Inject constructor(
     /**
      * 서비스 알림 수신 정보
      */
-    private var _notificationLocal = MutableStateFlow(false)
-    val notificationLocal = _notificationLocal.asStateFlow()
+    private var _notificationService = MutableStateFlow(false)
+    val notificationService = _notificationService.asStateFlow()
 
     /**
      * 혜택 및 마케팅 알림 정보
@@ -51,7 +51,7 @@ class MyPageInfoViewModel @Inject constructor(
             fetchEmail()
             fetchNickName()
             fetchProfileImage()
-            fetchNotificationLocal()
+            fetchNotificationService()
             fetchNotificationMarketing()
         }
     }
@@ -83,8 +83,8 @@ class MyPageInfoViewModel @Inject constructor(
     /**
      * 서비스 알림 수신 정보 갱신
      */
-    suspend fun fetchNotificationLocal() = _notificationLocal.update {
-        userRepository.getUserNotificationLocal()
+    suspend fun fetchNotificationService() = _notificationService.update {
+        userRepository.getUserNotificationService()
     }
 
     /**
@@ -98,19 +98,26 @@ class MyPageInfoViewModel @Inject constructor(
     /**
      * 서비스 알림 수신 정보 갱신
      *
-     * @param notificationLocal
+     * @param notificationService
      */
-    fun updateNotificationLocal(notificationLocal: Boolean) {
+    fun updateNotificationService(
+        notificationService: Boolean,
+        onSuccess: () -> Unit,
+        onFail: (message: String) -> Unit
+    ) {
         viewModelScope.launch {
-            userRepository.updateUserNotificationLocal(notificationLocal)
-            fetchNotificationLocal()
+            userRepository.updateUserNotificationService(notificationService)
+                .onSuccess {
+                    fetchNotificationService()
+                    onSuccess()
+                }.onFailWithMessage(onFail)
         }
     }
 
     fun updateNotificationMarketing(
         notificationMarketing: Boolean,
-        onSuccess :() -> Unit,
-        onFail :(message: String) -> Unit
+        onSuccess: () -> Unit,
+        onFail: (message: String) -> Unit
     ) {
         viewModelScope.launch {
             userRepository.updateUserNotificationMarketing(notificationMarketing)
@@ -120,4 +127,5 @@ class MyPageInfoViewModel @Inject constructor(
                 }.onFailWithMessage(onFail)
         }
     }
+
 }
