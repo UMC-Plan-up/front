@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.theme.Black400
@@ -21,6 +22,7 @@ fun TopHeader(
     modifier: Modifier = Modifier,
     onBackAction: (() -> Unit)? = null,
     otherActionContent: @Composable RowScope.() -> Unit = {},
+    textStyle : TextStyle = Typography.Medium_2XL,
     title: String,
 ) {
     Row(
@@ -45,7 +47,7 @@ fun TopHeader(
             }
             Text(
                 text = title,
-                style = Typography.Medium_2XL,
+                style = textStyle,
                 color = Black400
             )
         }

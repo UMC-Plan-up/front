@@ -1,66 +1,51 @@
 package com.example.planup.main.my.ui
 
+import android.app.Dialog
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast.LENGTH_SHORT
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil3.compose.AsyncImage
 import com.example.planup.R
-import com.example.planup.component.PlanUpSwitch
+import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
 import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
-import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.common.RouteMenuItem
+import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
@@ -111,13 +96,18 @@ class MypageFragment : Fragment() {
                 .replace(R.id.main_container, MypageKakaoFragment())
                 .commitAllowingStateLoss()
         }
-        //차단 친구 관리
-        binding.mypageFriendBlockIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageFriendBlockFragment())
-                .commitAllowingStateLoss()
+        //서비스 알림 수신 토글 끄기
+        binding.mypageAlertServiceOnIv.setOnClickListener {
+            binding.mypageAlertServiceOnIv.visibility = View.GONE
+            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
+        }
+        //서비스 알림 수신 토글 켜기
+        binding.mypageAlertServiceOffIv.setOnClickListener {
+            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
+            binding.mypageAlertServiceOffIv.visibility = View.GONE
         }
     }
+
 
 //    //프로필 이미지 API 성공
 //    override fun successProfileImage(image: String) {
@@ -321,7 +311,7 @@ private fun MyPageViewContent(
             initHeaderWithContent(
                 header = R.string.mypage_friend,
                 content = listOf(
-                    MyPageRoute.Friend.ManageBlockFriend to R.string.mypage_block,
+                    MyPageRoute.Friend.ManageBlock to R.string.mypage_block,
                 )
             )
 
@@ -383,113 +373,29 @@ private fun MyPageHeader(
     onErrorMsg: (String) -> Unit,
     myPageProfileEditViewModel: MyPageProfileEditViewModel = hiltViewModel()
 ) {
-    var openPopup by remember {
-        mutableStateOf(false)
-    }
-    val pickMedia =
-        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-            if (uri != null) {
-                myPageProfileEditViewModel.setProfileImageByPicker(
-                    imageUri = uri,
-                    onSuccess = fetchProfile,
-                    onFail = onErrorMsg
-                )
-            }
-        }
-
-    val cameraLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success) {
-                myPageProfileEditViewModel.setProfileImageCamera(
-                    onSuccess = fetchProfile,
-                    onFail = onErrorMsg
-                )
-            }
-        }
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Box(
+        ProfileView(
             modifier = Modifier
-                .size(60.dp)
-                .align(Alignment.CenterHorizontally)
-        ) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(CircleShape),
-                model = profileImage,
-                placeholder = painterResource(R.drawable.profile_image),
-                error = painterResource(R.drawable.profile_image),
-                contentDescription = null,
-                contentScale = ContentScale.Crop
-            )
-            Box(
-                modifier = Modifier
-                    .size(20.dp)
-                    .align(Alignment.BottomEnd),
-            ) {
-                IconButton(
-                    onClick = {
-                        openPopup = true
-                    },
-                    modifier = Modifier
-                        .size(20.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.badge_rewrite),
-                        contentDescription = null
-                    )
-                }
-                DropdownMenu(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .align(Alignment.BottomEnd),
-                    expanded = openPopup,
-                    onDismissRequest = { openPopup = false },
-                    containerColor = Color.White
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "사진 보관함",
-                                style = Typography.Medium_SM
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_item_album),
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                        }
-                    )
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "사진 찍기",
-                                style = Typography.Medium_SM
-                            )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_item_camera),
-                                contentDescription = null
-                            )
-                        },
-                        onClick = {
-                            cameraLauncher.launch(myPageProfileEditViewModel.makeCameraTempFileUri())
-                        }
-                    )
-                }
+                .align(Alignment.CenterHorizontally),
+            profileUrl = profileImage,
+            onNewImageByPhotoPicker = { uri ->
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    uri,
+                    fetchProfile,
+                    onErrorMsg
+                )
+            },
+            onNewImageByCamera = { bitmap ->
+                myPageProfileEditViewModel.setProfileImageByPicker(
+                    bitmap,
+                    fetchProfile,
+                    onErrorMsg
+                )
             }
-
-        }
-
+        )
         Column(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally),

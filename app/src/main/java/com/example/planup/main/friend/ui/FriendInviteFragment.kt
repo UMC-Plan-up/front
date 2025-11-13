@@ -2,14 +2,10 @@ package com.example.planup.main.friend.ui
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -17,26 +13,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.DropdownFriendInviteBinding
 import com.example.planup.databinding.FragmentFriendInviteBinding
-import com.example.planup.databinding.ToastCompleteAddFriendBinding
+import com.example.planup.main.friend.ui.common.FriendDepth2Fragment
 import com.example.planup.main.user.ui.viewmodel.UserInviteCodeViewModel
-import com.example.planup.network.ApiResult
 import kotlinx.coroutines.launch
 
-class FriendInviteFragment : Fragment() {
-    private var _binding: FragmentFriendInviteBinding? = null
-    private val binding: FragmentFriendInviteBinding
-        get() = _binding!!
-
+class FriendInviteFragment : FriendDepth2Fragment<FragmentFriendInviteBinding>(
+    FragmentFriendInviteBinding::inflate
+) {
     private val userInviteCodeViewModel: UserInviteCodeViewModel by activityViewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFriendInviteBinding.inflate(inflater, container, false)
-        return binding.root
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,68 +52,29 @@ class FriendInviteFragment : Fragment() {
             }
 
             btnSubmitInviteCode.setOnClickListener {
+                btnSubmitInviteCode.isEnabled = false
                 userInviteCodeViewModel.fetchInvalidateInviteCode(
-                    code = etInviteCodeInput.text.toString()
-                ) { result ->
-                    when (result) {
-                        is ApiResult.Success -> {
-                            val data = result.data
-                            if (data.valid) {
-                                val nickName = data.targetUserNickname
-                                showCompleteAddFriendToast(nickName)
-                                etInviteCodeInput.setText("")
-                            } else {
-                                showSimpleToast(data.message)
-                            }
-                        }
-
-                        is ApiResult.Error -> {
-                            showSimpleToast(result.message)
-                        }
-
-                        is ApiResult.Exception -> {
-                            showSimpleToast("알 수 없는 오류 입니다.")
-                        }
-
-                        is ApiResult.Fail -> {
-                            showSimpleToast(result.message)
-                        }
+                    code = etInviteCodeInput.text.toString(),
+                    onCallBack = { processResult ->
+                        btnSubmitInviteCode.isEnabled = true
+                        val nickName = processResult.friendNickname
+                        mainSnackbarViewModel.updateSuccessMessage(
+                            getString(R.string.toast_complete_add_friend, nickName)
+                        )
+                        etInviteCodeInput.setText("")
+                        friendViewModel.fetchFriendList()
+                    },
+                    onError = { message ->
+                        btnSubmitInviteCode.isEnabled = true
+                        mainSnackbarViewModel.updateErrorMessage(message)
                     }
-                }
+                )
             }
 
             etInviteCodeInput.addTextChangedListener {
                 btnSubmitInviteCode.isEnabled = it.toString().length == 6
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
-
-    private fun showCompleteAddFriendToast(
-        nickName: String
-    ) {
-        val completeAddToastBinding =
-            ToastCompleteAddFriendBinding.inflate(layoutInflater, binding.root, false)
-        completeAddToastBinding.toastChallengeAcceptTv.text =
-            getString(R.string.toast_complete_add_friend, nickName)
-        val toast = Toast(requireContext())
-        toast.view = completeAddToastBinding.root
-        toast.duration = Toast.LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM or Gravity.CENTER_HORIZONTAL, 0, 150)
-        toast.show()
-    }
-
-    private fun showSimpleToast(message: String) {
-        Toast.makeText(
-            requireContext(),
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
     }
 
     /** 프로필 사진 재설정 드롭다운 메뉴 (ViewBinding 사용) */

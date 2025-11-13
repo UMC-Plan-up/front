@@ -25,13 +25,6 @@ sealed interface MyPageRoute {
     @Serializable
     data object Main : MyPageRoute
 
-    @Serializable
-    data class NotificationMarketing(
-        val isAgree: Boolean,
-        val nickName: String,
-        val date: String
-    ) : MyPageRoute
-
     object Profile {
 
         @Serializable
@@ -63,7 +56,7 @@ sealed interface MyPageRoute {
     object Friend {
 
         @Serializable
-        data object ManageBlockFriend : MyPageRoute
+        data object ManageBlock : MyPageRoute
     }
 
     object Service {
@@ -111,18 +104,7 @@ fun MyPageNavView(
                     navController.navigate(route) {
                         launchSingleTop = true
                     }
-                },
-                mainSnackbarViewModel = mainSnackbarViewModel
-            )
-        }
-        dialog<MyPageRoute.NotificationMarketing> {
-            val notificationMarketing = it.toRoute<MyPageRoute.NotificationMarketing>()
-            MyPageNotificationMarketingResultView(
-                onBack = navController::navigateUp,
-                isAgree = notificationMarketing.isAgree,
-                nickName = notificationMarketing.nickName,
-                date = notificationMarketing.date
-
+                }
             )
         }
         composable<MyPageRoute.Profile.EditNickName> {
@@ -134,7 +116,7 @@ fun MyPageNavView(
         composable<MyPageRoute.Account.ChangeEmail> {
             Button(
                 onClick = {
-                    mainSnackbarViewModel.updateMessage("123")
+                    mainSnackbarViewModel.updateErrorMessage("123")
                 }
             ) {
                 Text(text = "test")
@@ -177,8 +159,11 @@ fun MyPageNavView(
                 mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
-        composable<MyPageRoute.Friend.ManageBlockFriend> {
-
+        composable<MyPageRoute.Friend.ManageBlock> {
+            MyPageManageBlockFriendView(
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
         }
         composable<MyPageRoute.Service.Policy>(
             enterTransition = { slideHorizontallyTransition() },

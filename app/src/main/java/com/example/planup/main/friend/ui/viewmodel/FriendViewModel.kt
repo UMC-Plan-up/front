@@ -2,75 +2,155 @@ package com.example.planup.main.friend.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.planup.main.friend.data.FriendInfo
-import com.example.planup.main.friend.data.FriendRequestsResult
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.network.ApiResult
+import com.example.planup.network.dto.friend.FriendInfo
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed class FriendUiMessage {
+    data class AcceptSuccess(val friendName: String) : FriendUiMessage()
+    data class DeclineSuccess(val friendName: String) : FriendUiMessage()
+    data class DeleteSuccess(val friendName: String) : FriendUiMessage()
+    data class BlockSuccess(val friendName: String) : FriendUiMessage()
+    data class ReportSuccess(val friendName: String) : FriendUiMessage()
+    data class Error(val msg: String) : FriendUiMessage()
+}
 
 @HiltViewModel
 class FriendViewModel @Inject constructor(
     private val friendRepository: FriendRepository
 ) : ViewModel() {
 
-    private var _friendList = MutableStateFlow(listOf<FriendInfo>())
-    val friendList = _friendList.asStateFlow()
+    val friendList = friendRepository
+        .getFriendList().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
-    private var _friendRequestList = MutableStateFlow(listOf<FriendRequestsResult>())
-    val friendRequestList = _friendRequestList.asStateFlow()
+    val friendRequestList = friendRepository
+        .getFriendRequestList().stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
 
+
+    private val _uiMessage = MutableSharedFlow<FriendUiMessage>()
+    val uiMessage = _uiMessage.asSharedFlow()
+
+    private suspend fun <T> ApiResult<T>.onFailWithMessageOnBlock() {
+        this.onFailWithMessage { message ->
+            _uiMessage.emit(
+                FriendUiMessage.Error(message)
+            )
+        }
+    }
 
     /**
      * 요청한다.
      * 보통 해당 방식 보다는.. sealedClass를 통해 통신을 하면 더 좋음..
      */
-    fun fetchFriendList(
-        onCallBack: (result: ApiResult<List<FriendInfo>>) -> Unit,
-    ) {
+    fun fetchFriendList() {
         viewModelScope.launch {
-            try {
-                val friendListResult = friendRepository.getFriendList()
-                if (friendListResult is ApiResult.Success) {
-                    _friendList.value = friendListResult.data
-                }
-                onCallBack(friendListResult)
-            } catch (e: CancellationException) {
-                //코루틴의 취소 요청은 정상 신호 이므로 잡으면 안됨
-                throw e
-            } catch (e: Exception) {
-                e.printStackTrace()
-                //그외 에러는 잡아야됨.
-                onCallBack(ApiResult.Exception(e))
-            }
+            friendRepository.fetchFriendList()
+                .onFailWithMessageOnBlock()
         }
     }
 
-    fun fetchFriendRequest(
-        onCallBack: (result: ApiResult<List<FriendRequestsResult>>) -> Unit
+    fun fetchFriendRequest() {
+        viewModelScope.launch {
+            friendRepository.fetchFriendRequestList()
+                .onFailWithMessageOnBlock()
+        }
+    }
+
+    fun reportFriend(
+        friend: FriendInfo,
+        reason: String,
+        withBlock: Boolean
     ) {
         viewModelScope.launch {
-            try {
-                val friendRequestResult = friendRepository.getFriendRequestList()
-
-                if (friendRequestResult is ApiResult.Success) {
-                    _friendRequestList.value = friendRequestResult.data
-                } else {
-                    _friendRequestList.value = emptyList()
+            friendRepository
+                .reportFriend(
+                    friendId = friend.id,
+                    reason = reason,
+                    withBlock = withBlock
+                )
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.ReportSuccess(friend.nickname)
+                    )
                 }
-                onCallBack(friendRequestResult)
-            } catch (e: CancellationException) {
-                //코루틴의 취소 요청은 정상 신호 이므로 잡으면 안됨
-                throw e
-            } catch (e: Exception) {
-                e.printStackTrace()
-                //그외 에러는 잡아야됨.
-                onCallBack(ApiResult.Exception(e))
-            }
+                .onFailWithMessageOnBlock()
+        }
+    }
+
+    fun blockFriend(
+        friend: FriendInfo
+    ) {
+        viewModelScope.launch {
+            friendRepository
+                .blockFriend(
+                    friendId = friend.id
+                )
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.BlockSuccess(friend.nickname)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun deleteFriend(
+        friend: FriendInfo
+    ) {
+        viewModelScope.launch {
+            friendRepository
+                .deleteFriend(
+                    friendId = friend.id
+                )
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.DeleteSuccess(friend.nickname)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun acceptFriendRequest(
+        friendId : Int,
+        friendName: String
+    ) {
+        viewModelScope.launch {
+            friendRepository.acceptFriend(friendId)
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.AcceptSuccess(friendName)
+                    )
+                }.onFailWithMessageOnBlock()
+        }
+    }
+
+    fun declineFriendRequest(
+        friendId : Int,
+        friendName: String
+    ) {
+        viewModelScope.launch {
+            friendRepository.declineFriend(friendId)
+                .onSuccess { result ->
+                    _uiMessage.emit(
+                        FriendUiMessage.DeclineSuccess(friendName)
+                    )
+                }.onFailWithMessageOnBlock()
         }
     }
 }

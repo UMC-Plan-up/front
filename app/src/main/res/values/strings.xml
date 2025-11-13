@@ -459,6 +459,9 @@
     <string name="btn_community_category_goal">목표 설정 시작하기</string>
     <string name="btn_start_PlanUp">Plan-Up 사용 시작하기</string>
     <string name="btn_report_complete">신고완료</string>
+    <string name="btn_delete">삭제</string>
+    <string name="btn_block">차단</string>
+    <string name="btn_report">신고</string>
 
 
     <!-- 토스트 메시지 -->
@@ -474,6 +477,8 @@
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     <string name="toast_block">%1$s님을 차단했습니다.</string>
+    <string name="toast_accept_friend">%1$s님을 수락했어요..</string>
+    <string name="toast_decline_friend">%1$s님의 요청을 거절했어요.</string>
     <string name="toast_delete">%1$s님을 친구 목록에서 삭제했습니다.</string>
     <string name="toast_make_new_goal">새로운 목표를 추가하세요</string>
 
@@ -511,7 +516,7 @@
     <string name="popup_ask_logout">로그아웃 하시겠어요?</string>
     <string name="popup_unblock_title">%1$s님을 차단 해제하시겠어요?</string>
     <string name="popup_unblock_explain">차단 해제 시, 해당 계정에 알림이 가지 않으며 해당 이용자에게 내 계정의 활동 및 기록이 공개됩니다.</string>
-    <string name="popup_block_friend_title">%1$s님을 차단 해제하시겠어요?</string>
+    <string name="popup_block_friend_title">%1$s님을 차단 하시겠어요?</string>
     <string name="popup_block_friend_explain">차단 시, 해당 계정에 알림이 가지 않으며 차단한 이용자에게는 내 계정의 활동및 기록이 보이지 않게 됩니다.</string>
     <string name="popup_delete_friend">%1$s님을 친구 목록에서 삭제하시겠어요?</string>
     <string name="popup_password_changed">비밀번호 재설정 완료</string>
@@ -555,11 +560,15 @@
     <string name="home_with_friends">함께 도전중인 친구들은?</string>
     <string name="friend_detail_week_focus">이번 주 ‘%1$s’ 집중 시간</string>
     <string name="friend_photo_verification_btn">사진 인증</string>
-    <string name="friend_today_time">##:##:##</string>
+    <string name="friend_today_time">오늘 진행 시간 %s</string>
     <string name="friend_goal_count">%d 개의 목표 진행 중</string>
     <string name="friend_friend_name">친구 1</string>
     <string name="friend_goal_detail_today_text">오늘 ‘%1$s’ 집중 시간</string>
 
     <string name="friend_code_share">%1$s님이 친구 신청을 보냈어요.\nPlan-Up에서 함께 목표 달성에 참여해 보세요!\n%1$s님의 친구 코드 : %2$s</string>
 
+    <string name="friend_title">친구</string>
+    <string name="friend_sub_title">목록 (%d명)</string>
+    <string name="friend_list_title">친구 관리</string>
+    <string name="friend_request_title">받은 친구 신청</string>
 </resources>

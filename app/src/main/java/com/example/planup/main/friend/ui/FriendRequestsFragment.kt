@@ -1,140 +1,189 @@
 package com.example.planup.main.friend.ui
 
-import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.fragment.compose.content
 import com.example.planup.R
-import com.example.planup.databinding.FragmentFriendRequestsBinding
-import com.example.planup.main.MainActivity
-import com.example.planup.main.friend.adapter.FriendRequestAdapter
-import com.example.planup.main.friend.data.FriendRequest
-import com.example.planup.network.RetrofitInstance
-import kotlinx.coroutines.launch
+import com.example.planup.component.CircleProfileImageView
+import com.example.planup.component.PageDefault
+import com.example.planup.component.PlanUpButtonSecondarySmall
+import com.example.planup.component.PlanUpButtonSmall
+import com.example.planup.component.TopHeader
+import com.example.planup.main.friend.ui.common.FriendDepth2FragmentBase
+import com.example.planup.network.dto.friend.FriendRequestsResult
+import com.example.planup.theme.Black400
+import com.example.planup.theme.Typography
 
-class FriendRequestsFragment : Fragment() {
-    lateinit var binding: FragmentFriendRequestsBinding
+class FriendRequestsFragment : FriendDepth2FragmentBase() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentFriendRequestsBinding.inflate(inflater, container, false)
-        binding.friendRequestRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        fetchFriendRequests()
-        clickListener()
-        return binding.root
-    }
-
-    private fun buildAuthHeader(): String? {
-        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val prefsToken = prefs.getString("accessToken", null)
-        val appToken = com.example.planup.network.App.jwt.token
-
-        val raw = when {
-            !prefsToken.isNullOrBlank() -> prefsToken
-            !appToken.isNullOrBlank() -> appToken
-            else -> null
-        } ?: return null
-
-        Log.d("Auth", "token? ${!raw.isNullOrBlank()} startsWithBearer=${raw.startsWith("Bearer", true)}")
-        return if (raw.startsWith("Bearer ", ignoreCase = true)) raw else "Bearer $raw"
-    }
-
-    private fun fetchFriendRequests() {
-        lifecycleScope.launch {
-            val auth = buildAuthHeader()
-            if (auth.isNullOrBlank()) {
-                Toast.makeText(requireContext(), "로그인이 필요합니다(토큰 없음).", Toast.LENGTH_SHORT).show()
-                Log.e("FriendAction", "No Authorization token")
-                return@launch
-            }
-
-            try {
-                val response = RetrofitInstance.friendApi.getFriendRequests(auth)
-                Log.d("FriendRequests", "status: ${response.code()}, body: ${response.body()}")
-
-                if (response.isSuccessful && response.body()?.isSuccess == true) {
-                    val dtoList = response.body()!!.result
-
-                    val items: List<FriendRequest> = dtoList.map { dto ->
-                        FriendRequest(
-                            id = dto.id,
-                            nickname = dto.nickname,
-                            status = buildString {
-                                append("${dto.goalCnt}개의 목표 진행 중")
-                                dto.todayTime?.let { append(" · 오늘 $it") }
-                                if (dto.isNewPhotoVerify) append(" · 새 사진 인증")
+        return content {
+            val friendRequestList by friendViewModel.friendRequestList.collectAsState()
+            PageDefault() {
+                Column(
+                    modifier = Modifier.padding(horizontal = 20.dp)
+                        .padding(top = 20.dp)
+                ) {
+                    TopHeader(
+                        modifier = Modifier
+                            .height(36.dp),
+                        onBackAction = ::goToFriendMain,
+                        textStyle = Typography.Semibold_3XL,
+                        title = stringResource(R.string.friend_title)
+                    )
+                    Text(
+                        modifier = Modifier
+                            .height(30.dp),
+                        text = stringResource(R.string.friend_request_title),
+                        style = Typography.Medium_XL,
+                        color = Black400
+                    )
+                }
+                Spacer(Modifier.height(24.dp))
+                LazyColumn(
+                    modifier = Modifier.padding(horizontal = 20.dp),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    items(
+                        items = friendRequestList,
+                        key = FriendRequestsResult::id
+                    ) {friendRequestItem ->
+                        FriendRequestItem(
+                            friendInfo = friendRequestItem,
+                            clickItem = {
+                                goToFriendGoal(
+                                    friendId = friendRequestItem.id,
+                                    friendName = friendRequestItem.nickname
+                                )
+                            },
+                            acceptFriend = {
+                                friendViewModel.acceptFriendRequest(
+                                    friendRequestItem.id,
+                                    friendRequestItem.nickname
+                                )
+                            },
+                            declineFriend = {
+                                friendViewModel.declineFriendRequest(
+                                    friendRequestItem.id,
+                                    friendRequestItem.nickname
+                                )
                             }
                         )
                     }
+                }
+            }
+        }
+    }
+}
 
-                    binding.friendRequestRecyclerView.adapter = FriendRequestAdapter(
-                        items,
-                        onAcceptClick = { friend -> acceptFriend(friend) },
-                        onDeclineClick = { friend -> declineFriend(friend) }
+@Composable
+private fun FriendRequestItem(
+    friendInfo: FriendRequestsResult,
+    clickItem: () -> Unit,
+    acceptFriend: () -> Unit,
+    declineFriend: () -> Unit
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(20.dp)
+    ) {
+        Row(
+            modifier = Modifier.clickable {
+                clickItem()
+            },
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.size(50.dp)
+            ) {
+                CircleProfileImageView(
+                    modifier = Modifier.size(42.dp)
+                        .align(Alignment.Center),
+                    profileImage = friendInfo.profileImage
+                )
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column {
+                    Text(
+                        text = friendInfo.nickname
                     )
-                } else {
-                    Toast.makeText(requireContext(), response.body()?.message ?: "친구 요청을 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Text(
+                        text = friendInfo.getStatusString()
+                    )
                 }
-            } catch (e: Exception) {
-                Log.e("FriendRequests", "Error: ${e.localizedMessage}", e)
-                Toast.makeText(requireContext(), "오류 발생", Toast.LENGTH_SHORT).show()
+
+                Icon(
+                    painter = painterResource(R.drawable.ic_arrow_right),
+                    contentDescription = null
+                )
             }
         }
-    }
-
-    private fun acceptFriend(friend: FriendRequest) {
-        lifecycleScope.launch {
-            val auth = buildAuthHeader() ?: return@launch
-            try {
-                val resp = RetrofitInstance.friendApi.acceptFriendRequest(auth, friend.id) // ✅ 정수 전달
-                Log.d("FriendAccept", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
-                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                    Toast.makeText(requireContext(), "${friend.nickname} 님을 수락했어요.", Toast.LENGTH_SHORT).show()
-                    fetchFriendRequests()
-                } else {
-                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "수락에 실패했습니다."
-
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-            }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            PlanUpButtonSmall(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(36.dp),
+                title = stringResource(R.string.btn_approval),
+                onClick = acceptFriend
+            )
+            PlanUpButtonSecondarySmall(
+                modifier = Modifier.weight(1f),
+                title = stringResource(R.string.btn_rejection),
+                onClick = declineFriend
+            )
         }
     }
+}
 
-    private fun declineFriend(friend: FriendRequest) {
-        lifecycleScope.launch {
-            val auth = buildAuthHeader() ?: return@launch
-            try {
-                val resp = RetrofitInstance.friendApi.rejectFriendRequest(auth, friend.id) // ✅ 정수 전달
-                Log.d("FriendReject", "code=${resp.code()}, body=${resp.body()}, err=${resp.errorBody()?.string()}")
-                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                    Toast.makeText(requireContext(), "${friend.nickname} 님의 요청을 거절했어요.", Toast.LENGTH_SHORT).show()
-                    fetchFriendRequests()
-                } else {
-                    val msg = resp.body()?.message ?: resp.errorBody()?.string() ?: "거절에 실패했습니다."
-                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun clickListener(){
-        binding.btnBack.setOnClickListener {
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, FriendFragment())
-                .commitAllowingStateLoss()
-        }
-    }
+@Composable
+@Preview
+private fun FriendRequestItemPreview() {
+    FriendRequestItem(
+        FriendRequestsResult(
+            id = 1,
+            nickname = "Tester",
+            goalCnt = 1,
+            todayTime = "",
+            isNewPhotoVerify = true,
+            profileImage = null
+        ),
+        {},
+        {},
+        {}
+    )
 }

@@ -12,8 +12,9 @@ import com.example.planup.network.UserApi
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
+import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
-import com.example.planup.signup.data.InviteCodeValidateResponse
+import com.example.planup.signup.data.ProcessResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -59,23 +60,35 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun validateInviteCode(code: String): ApiResult<InviteCodeValidateResponse.Result> =
+    override suspend fun validateInviteCode(code: String): ApiResult<ProcessResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        userApi.validateInviteCode(InviteCodeValidateRequest(code))
-                    },
-                    onResponse = { inviteCodeValidateResponse ->
-                        if (inviteCodeValidateResponse.isSuccess) {
-                            val result = inviteCodeValidateResponse.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(inviteCodeValidateResponse.message)
-                        }
+            safeResult(
+                response = {
+                    userApi.validateInviteCode(InviteCodeValidateRequest(code))
+                },
+                onResponse = { inviteCodeValidateResponse ->
+                    if (inviteCodeValidateResponse.isSuccess) {
+                        val inviteCodeRequest = InviteCodeRequest(
+                            code
+                        )
+                        safeResult(
+                            response = {
+                                userApi.processInviteCode(inviteCodeRequest)
+                            },
+                            onResponse = { inviteCodeProcessResponse ->
+                                if (inviteCodeProcessResponse.isSuccess) {
+                                    val result = inviteCodeProcessResponse.result
+                                    ApiResult.Success(result)
+                                } else {
+                                    ApiResult.Fail(inviteCodeProcessResponse.message)
+                                }
+                            }
+                        )
+                    } else {
+                        ApiResult.Fail(inviteCodeValidateResponse.message)
                     }
-                )
-            }
+                }
+            )
         }
 
 
