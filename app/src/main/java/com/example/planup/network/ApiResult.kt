@@ -34,6 +34,7 @@ inline fun <T> ApiResult<T>.onFailWithMessage(
         }
 
         is ApiResult.Exception -> {
+            error.printStackTrace()
             onFailAction(this.error.message ?: "Unknown Error")
         }
 

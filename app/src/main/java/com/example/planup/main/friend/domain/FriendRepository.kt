@@ -3,7 +3,6 @@ package com.example.planup.main.friend.domain
 import com.example.planup.main.my.data.BlockedFriend
 import com.example.planup.network.ApiResult
 import com.example.planup.network.dto.friend.FriendInfo
-import com.example.planup.network.dto.friend.FriendRequestsResult
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -21,7 +20,7 @@ interface FriendRepository {
      * 친구 요청 수를 불러 옵니다.
      */
 
-    fun getFriendRequestList(): Flow<List<FriendRequestsResult>>
+    fun getFriendRequestList(): Flow<List<FriendInfo>>
 
 
     /**
@@ -38,7 +37,7 @@ interface FriendRepository {
      * 친구 요청 수를 갱신 합니다.
      */
 
-    suspend fun fetchFriendRequestList(): ApiResult<List<FriendRequestsResult>>
+    suspend fun fetchFriendRequestList(): ApiResult<List<FriendInfo>>
 
 
     /**
@@ -65,7 +64,7 @@ interface FriendRepository {
      * 차단된 친구를 해제한다.
      */
     suspend fun unBlockFriend(
-        friendName: String
+        friendId: Int
     ): ApiResult<Boolean>
 
     /**
