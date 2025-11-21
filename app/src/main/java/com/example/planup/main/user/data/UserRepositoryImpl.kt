@@ -135,12 +135,7 @@ class UserRepositoryImpl @Inject constructor(
                         tokenSaver.saveToken(result.accessToken)
 
                         userInfoSaver.clearAllUserInfo()
-                        userInfoSaver.saveNickName(result.nickname)
-                        userInfoSaver.saveEmail(email)
-                        userInfoSaver.saveProfileImage(result.profileImgUrl)
-
-                        //TODO 마케팅 수신 정보 추가시 값을 추가 해야 합니다.
-//                        userInfoSaver.saveNotificationMarketing(false)
+                        getUserInfo()
                     }
 
                     ApiResult.Success(result)
@@ -201,6 +196,11 @@ class UserRepositoryImpl @Inject constructor(
                     onResponse = { response ->
                         if (response.isSuccess) {
                             val result = response.result
+                            userInfoSaver.saveNickName(result.nickname)
+                            userInfoSaver.saveEmail(result.email)
+                            userInfoSaver.saveProfileImage(result.profileImage)
+                            userInfoSaver.saveNotificationService(result.serviceNotification)
+                            userInfoSaver.saveNotificationMarketing(result.marketingNotification)
 
                             ApiResult.Success(result)
                         } else {
@@ -216,7 +216,9 @@ class UserRepositoryImpl @Inject constructor(
                         id = -1,
                         email = userInfoSaver.getEmail(),
                         nickname = userInfoSaver.getNickName(),
-                        profileImage = userInfoSaver.getProfileImage() ?: ""
+                        profileImage = userInfoSaver.getProfileImage() ?: "",
+                        serviceNotification = false,
+                        marketingNotification = false
                     )
                 )
             }
