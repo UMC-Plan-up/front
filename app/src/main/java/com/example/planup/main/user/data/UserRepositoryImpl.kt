@@ -82,7 +82,7 @@ class UserRepositoryImpl @Inject constructor(
                                         if (result.success) {
                                             ApiResult.Success(result)
                                         } else {
-                                            ApiResult.Fail(inviteCodeProcessResponse.message)
+                                            ApiResult.Fail(result.message)
                                         }
                                     } else {
                                         ApiResult.Fail(inviteCodeProcessResponse.message)
