@@ -68,22 +68,30 @@ class UserRepositoryImpl @Inject constructor(
                 },
                 onResponse = { inviteCodeValidateResponse ->
                     if (inviteCodeValidateResponse.isSuccess) {
-                        val inviteCodeRequest = InviteCodeRequest(
-                            code
-                        )
-                        safeResult(
-                            response = {
-                                userApi.processInviteCode(inviteCodeRequest)
-                            },
-                            onResponse = { inviteCodeProcessResponse ->
-                                if (inviteCodeProcessResponse.isSuccess) {
-                                    val result = inviteCodeProcessResponse.result
-                                    ApiResult.Success(result)
-                                } else {
-                                    ApiResult.Fail(inviteCodeProcessResponse.message)
+                        if (inviteCodeValidateResponse.result.valid) {
+                            val inviteCodeRequest = InviteCodeRequest(
+                                code
+                            )
+                            safeResult(
+                                response = {
+                                    userApi.processInviteCode(inviteCodeRequest)
+                                },
+                                onResponse = { inviteCodeProcessResponse ->
+                                    if (inviteCodeProcessResponse.isSuccess) {
+                                        val result = inviteCodeProcessResponse.result
+                                        if (result.success) {
+                                            ApiResult.Success(result)
+                                        } else {
+                                            ApiResult.Fail(inviteCodeProcessResponse.message)
+                                        }
+                                    } else {
+                                        ApiResult.Fail(inviteCodeProcessResponse.message)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } else {
+                            ApiResult.Fail(inviteCodeValidateResponse.message)
+                        }
                     } else {
                         ApiResult.Fail(inviteCodeValidateResponse.message)
                     }
@@ -135,9 +143,7 @@ class UserRepositoryImpl @Inject constructor(
                         tokenSaver.saveToken(result.accessToken)
 
                         userInfoSaver.clearAllUserInfo()
-                        userInfoSaver.saveNickName(result.nickname)
-                        userInfoSaver.saveEmail(email)
-                        userInfoSaver.saveProfileImage(result.profileImgUrl)
+                        getUserInfo()
                     }
 
                     ApiResult.Success(result)
@@ -157,7 +163,6 @@ class UserRepositoryImpl @Inject constructor(
                 if (response.isSuccess) {
                     val result = response.result
                     userInfoSaver.clearAllUserInfo()
-                    tokenSaver
                     ApiResult.Success(result)
                 } else {
                     ApiResult.Fail(response.message)
@@ -199,6 +204,11 @@ class UserRepositoryImpl @Inject constructor(
                     onResponse = { response ->
                         if (response.isSuccess) {
                             val result = response.result
+                            userInfoSaver.saveNickName(result.nickname)
+                            userInfoSaver.saveEmail(result.email)
+                            userInfoSaver.saveProfileImage(result.profileImage)
+                            userInfoSaver.saveNotificationService(result.serviceNotification)
+                            userInfoSaver.saveNotificationMarketing(result.marketingNotification)
 
                             ApiResult.Success(result)
                         } else {
@@ -214,7 +224,9 @@ class UserRepositoryImpl @Inject constructor(
                         id = -1,
                         email = userInfoSaver.getEmail(),
                         nickname = userInfoSaver.getNickName(),
-                        profileImage = userInfoSaver.getProfileImage() ?: ""
+                        profileImage = userInfoSaver.getProfileImage() ?: "",
+                        serviceNotification = false,
+                        marketingNotification = false
                     )
                 )
             }
@@ -261,5 +273,47 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUserProfileImage(): String {
         return userInfoSaver.getProfileImage()
+    }
+
+    override suspend fun getUserNotificationService(): Boolean {
+        return userInfoSaver.getNotificationService()
+    }
+
+    override suspend fun getUserNotificationMarketing(): Boolean {
+        return userInfoSaver.getNotificationMarketing()
+    }
+
+    override suspend fun updateUserNotificationService(isOnNotification: Boolean)  = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.patchNoticeService()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.saveNotificationService(result)
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
+    override suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.patchNoticeMarketing()
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val result = response.result
+                    userInfoSaver.saveNotificationMarketing(result)
+                    ApiResult.Success(result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
     }
 }

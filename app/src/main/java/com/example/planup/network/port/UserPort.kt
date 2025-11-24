@@ -19,7 +19,6 @@ import com.example.planup.network.dto.user.SignupDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 @Deprecated(message = "UserApi 로 통일해서 사용")
@@ -31,10 +30,6 @@ interface UserPort {
     //유저 정보 조회
     @GET("mypage/kakao-account")
     fun getKakao(): Call<UserResponse<UsingKakao>>
-
-    //혜택 및 마케팅 동의 변경
-    @PATCH("mypage/notification/agree")
-    fun patchNoticeAgree(): Call<UserResponse<Boolean>>
 
     //회원 탈퇴
     @POST("users/withdraw")
