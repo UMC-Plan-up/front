@@ -68,22 +68,30 @@ class UserRepositoryImpl @Inject constructor(
                 },
                 onResponse = { inviteCodeValidateResponse ->
                     if (inviteCodeValidateResponse.isSuccess) {
-                        val inviteCodeRequest = InviteCodeRequest(
-                            code
-                        )
-                        safeResult(
-                            response = {
-                                userApi.processInviteCode(inviteCodeRequest)
-                            },
-                            onResponse = { inviteCodeProcessResponse ->
-                                if (inviteCodeProcessResponse.isSuccess) {
-                                    val result = inviteCodeProcessResponse.result
-                                    ApiResult.Success(result)
-                                } else {
-                                    ApiResult.Fail(inviteCodeProcessResponse.message)
+                        if (inviteCodeValidateResponse.result.valid) {
+                            val inviteCodeRequest = InviteCodeRequest(
+                                code
+                            )
+                            safeResult(
+                                response = {
+                                    userApi.processInviteCode(inviteCodeRequest)
+                                },
+                                onResponse = { inviteCodeProcessResponse ->
+                                    if (inviteCodeProcessResponse.isSuccess) {
+                                        val result = inviteCodeProcessResponse.result
+                                        if (result.success) {
+                                            ApiResult.Success(result)
+                                        } else {
+                                            ApiResult.Fail(inviteCodeProcessResponse.message)
+                                        }
+                                    } else {
+                                        ApiResult.Fail(inviteCodeProcessResponse.message)
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        } else {
+                            ApiResult.Fail(inviteCodeValidateResponse.message)
+                        }
                     } else {
                         ApiResult.Fail(inviteCodeValidateResponse.message)
                     }
