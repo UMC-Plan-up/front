@@ -170,7 +170,7 @@ class FriendRepositoryImpl @Inject constructor(
     ): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
             val request = UnblockFriendRequestDto(
-                userId = userInfoSaver.getUserId(),
+                userId = 1,
                 friendNickname = friendName
             )
             safeResult(
@@ -199,7 +199,7 @@ class FriendRepositoryImpl @Inject constructor(
     ): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
             val request = FriendReportRequestDto(
-                userId = userInfoSaver.getUserId(),
+                userId = 1,
                 friendId = friendId,
                 reason = reason,
                 block = withBlock
