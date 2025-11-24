@@ -40,15 +40,23 @@ private fun MyPagePolicyContent(
     ) {
         Spacer(Modifier.height(20.dp))
         RouteMenuItemWithArrow(
-            title = "서비스 이용 약관",
+            title = stringResource(R.string.mypage_policy_service),
             action = {
-                routePolicy(MyPageRoute.Service.Detail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb8032a668f6e4dfd6afc5?pvs=149"))
+                routePolicy(
+                    MyPageRoute.Service.Detail(
+                        "https://wakeful-dragonfly-7f2.notion.site/2a9a435fe4bb80a6957bc53a1c204834?pvs=74"
+                    )
+                )
             }
         )
         RouteMenuItemWithArrow(
-            title = "개인정보 처리방침",
+            title = stringResource(R.string.mypage_policy_privacy),
             action = {
-                routePolicy(MyPageRoute.Service.Detail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb80f18068c43792c0634c?pvs=149"))
+                routePolicy(
+                    MyPageRoute.Service.Detail(
+                        "https://wakeful-dragonfly-7f2.notion.site/2a9a435fe4bb80f783f4c898ca613a0e?pvs=74"
+                    )
+                )
             }
         )
     }
