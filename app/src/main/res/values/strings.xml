@@ -528,8 +528,11 @@
     <string name="popup_email_kakao">카카오톡 소셜로그인 사용하기</string>
     <string name="popup_challenge">챌린지 참여 요청</string>
     <string name="popup_challenge_request">%1$s 님이 1:1 챌린지 참여를 요청했어요. 지금 신청받은 챌린지를 살펴보세요!</string>
-    <string name="popup_benefit_title">혜택 및 마케팅 정보 수신 동의 안내</string>
-    <string name="popup_benefit_explain">전송자 : %1$s\n일시 : %2$s\n내용 : 수신 동의 처리 완료
+    <string name="popup_benefit_title_agree">혜택 및 마케팅 정보 수신 동의 안내</string>
+    <string name="popup_benefit_title_disagree">혜택 및 마케팅 정보 수신 거부 안내</string>
+    <string name="popup_benefit_explain_agree">전송자 : %1$s\n일시 : %2$s\n내용 : 수신 동의 처리 완료
+        \n\n혜택 및 마케팅 정보 수신 동의는 마이페이지 > [알림 설정]에서 변경 가능합니다.</string>
+    <string name="popup_benefit_explain_disagree">전송자 : %1$s\n일시 : %2$s\n내용 : 수신 거부 처리 완료
         \n\n혜택 및 마케팅 정보 수신 동의는 마이페이지 > [알림 설정]에서 변경 가능합니다.</string>
 
     <!-- 드롭다운 -->

@@ -34,7 +34,7 @@ interface UserRepository {
         password: String
     ): ApiResult<LoginResponse.Result>
 
-    suspend fun logout() : ApiResult<String>
+    suspend fun logout(): ApiResult<String>
 
     /**
      * 회원 탈퇴
@@ -60,5 +60,10 @@ interface UserRepository {
     suspend fun getUserNickName() : String
     suspend fun getUserEmail() : String
     suspend fun getUserProfileImage() : String
+    suspend fun getUserNotificationService(): Boolean
+    suspend fun getUserNotificationMarketing(): Boolean
+
+    suspend fun updateUserNotificationService(isOnNotification: Boolean): ApiResult<Boolean>
+    suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) : ApiResult<Boolean>
 
 }

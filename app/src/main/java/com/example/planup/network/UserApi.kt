@@ -169,6 +169,14 @@ interface UserApi {
 
     //프로필 이미지 변경
     @Multipart
-    @POST("mypage/profile/image")
-    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<ProfileImageResponse>
+    @POST("profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse>>
+
+    //서비스 알림 동의 변경
+    @PATCH("mypage/notification/service")
+    suspend fun patchNoticeService(): Response<UserResponse<Boolean>>
+
+    //혜택 및 마케팅 동의 변경
+    @PATCH("mypage/notification/marketing")
+    suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
 }
