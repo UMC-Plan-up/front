@@ -12,6 +12,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -20,6 +23,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
+import com.example.planup.component.snackbar.BlueSnackbarHost
+import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.databinding.ActivityMainBinding
 import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.friend.ui.viewmodel.FriendUiMessage
@@ -108,6 +113,27 @@ class MainActivity : AppCompatActivity() {
 
         val fromChallenge = intent.getStringExtra("FROM_CHALLENGE_TO")
         val isFromGoalDetail = intent.getBooleanExtra("IS_FROM_GOAL_DETAIL", false)
+
+        binding.composeSnackbar.setContent {
+            val errorSnackBarHost = remember { SnackbarHostState() }
+            val blueSnackBarHost = remember { SnackbarHostState() }
+            LaunchedEffect(Unit) {
+                mainSnackbarViewModel.snackbarErrorEvents.collect { event ->
+                    errorSnackBarHost.showSnackbar(event.message)
+                }
+            }
+            LaunchedEffect(Unit) {
+                mainSnackbarViewModel.snackbarBlueEvents.collect { event ->
+                    blueSnackBarHost.showSnackbar(event.message)
+                }
+            }
+            GraySnackbarHost(
+                hostState = errorSnackBarHost
+            )
+            BlueSnackbarHost(
+                hostState = blueSnackBarHost
+            )
+        }
 
         val startFragment = if (isFromGoalDetail){
             SubscriptionPlanFragment().apply {
