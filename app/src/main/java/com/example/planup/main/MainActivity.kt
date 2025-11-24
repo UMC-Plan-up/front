@@ -34,7 +34,6 @@ import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
-import com.example.planup.main.my.ui.MypagePasswordChangeFragment
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -210,17 +209,17 @@ class MainActivity : AppCompatActivity() {
                 val data: Uri? = intent?.data
                 Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
                 when {
-                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
-                        "verified"
-                    ).equals("true") -> {
-                        MypagePasswordChangeFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("verificationToken", prefs.getString("verificationToken","no-data"))
-                                editor.remove("passwordToken")
-                                editor.apply()
-                            }
-                        }
-                    }
+//                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
+//                        "verified"
+//                    ).equals("true") -> {
+//                        MypagePasswordChangeFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putString("verificationToken", prefs.getString("verificationToken","no-data"))
+//                                editor.remove("passwordToken")
+//                                editor.apply()
+//                            }
+//                        }
+//                    }
 
                     data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
                         "verified"

@@ -130,7 +130,7 @@ fun MyPageNavView(
             }
         }
         composable<MyPageRoute.Account.ChangePassword> {
-
+            MyPagePasswordChangeView()
         }
         composable<MyPageRoute.Account.LinkKakao> {
 
