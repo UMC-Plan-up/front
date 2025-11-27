@@ -39,6 +39,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
@@ -170,7 +171,7 @@ interface UserApi {
     //프로필 이미지 변경
     @Multipart
     @POST("profile/image")
-    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse>>
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
 
     //서비스 알림 동의 변경
     @PATCH("mypage/notification/service")
