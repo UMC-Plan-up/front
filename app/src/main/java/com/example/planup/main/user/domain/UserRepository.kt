@@ -3,9 +3,9 @@ package com.example.planup.main.user.domain
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
-import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.ProcessResult
+import com.example.planup.signup.data.ProfileImageResponse
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -50,11 +50,11 @@ interface UserRepository {
 
     suspend fun setProfileImage(
         file: File
-    ): ApiResult<ProfileImage>
+    ): ApiResult<ProfileImageResponse.Result>
 
     suspend fun setProfileImage(
         body: MultipartBody.Part
-    ): ApiResult<ProfileImage>
+    ): ApiResult<ProfileImageResponse.Result>
 
 
     suspend fun getUserNickName() : String

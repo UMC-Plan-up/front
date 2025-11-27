@@ -3,7 +3,6 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
-import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
@@ -28,6 +27,7 @@ import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.NicknameCheckResponse
+import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
@@ -171,7 +171,7 @@ interface UserApi {
     //프로필 이미지 변경
     @Multipart
     @POST("profile/image")
-    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImage>>
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
 
     //서비스 알림 동의 변경
     @PATCH("mypage/notification/service")
