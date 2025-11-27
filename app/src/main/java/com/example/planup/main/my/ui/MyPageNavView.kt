@@ -130,7 +130,9 @@ fun MyPageNavView(
             }
         }
         composable<MyPageRoute.Account.ChangePassword> {
-            MyPagePasswordChangeView()
+            MyPagePasswordChangeView(
+                onBack = navController::navigateUp
+            )
         }
         composable<MyPageRoute.Account.LinkKakao> {
 
