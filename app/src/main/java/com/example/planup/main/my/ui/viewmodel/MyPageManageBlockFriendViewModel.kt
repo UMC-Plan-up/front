@@ -58,7 +58,7 @@ class MyPageManageBlockFriendViewModel @Inject constructor(
         viewModelScope.launch {
             friendRepository
                 .unBlockFriend(
-                    friendName = friend.name
+                    friendId = friend.id
                 )
                 .onSuccess { result ->
                     if (result) {

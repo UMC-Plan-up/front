@@ -7,8 +7,6 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
 import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.network.dto.friend.FriendReportRequestDto
-import com.example.planup.network.dto.friend.FriendRequestsResult
-import com.example.planup.network.dto.friend.UnblockFriendRequestDto
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -32,7 +30,7 @@ class FriendRepositoryImpl @Inject constructor(
     private var _friendList = MutableStateFlow(listOf<FriendInfo>())
     private val friendList = _friendList.asStateFlow()
 
-    private var _friendRequestList = MutableStateFlow(listOf<FriendRequestsResult>())
+    private var _friendRequestList = MutableStateFlow(listOf<FriendInfo>())
     private val friendRequestList = _friendRequestList.asStateFlow()
 
     private var _blockFriendList = MutableStateFlow(emptyList<BlockedFriend>())
@@ -40,7 +38,7 @@ class FriendRepositoryImpl @Inject constructor(
 
     override fun getFriendList(): Flow<List<FriendInfo>> = friendList
 
-    override fun getFriendRequestList(): Flow<List<FriendRequestsResult>> =
+    override fun getFriendRequestList(): Flow<List<FriendInfo>> =
         friendRequestList
 
     override fun getFriendBlockList(): Flow<List<BlockedFriend>> = blockFriendList
@@ -57,7 +55,7 @@ class FriendRepositoryImpl @Inject constructor(
                 onResponse = { friendDto ->
                     if (friendDto.isSuccess) {
                         val resultList = friendDto.result
-                        val friendList = resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                        val friendList = resultList.friendInfoSummaryList
                         _friendList.update {
                             friendList
                         }
@@ -69,7 +67,7 @@ class FriendRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun fetchFriendRequestList(): ApiResult<List<FriendRequestsResult>> =
+    override suspend fun fetchFriendRequestList(): ApiResult<List<FriendInfo>> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -166,17 +164,13 @@ class FriendRepositoryImpl @Inject constructor(
         }
 
     override suspend fun unBlockFriend(
-        friendName: String
+        friendId: Int,
     ): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
-            val request = UnblockFriendRequestDto(
-                userId = 1,
-                friendNickname = friendName
-            )
             safeResult(
                 response = {
                     friendApi.unblockFriend(
-                        request
+                        friendId
                     )
                 },
                 onResponse = { friendRequests ->
@@ -199,7 +193,6 @@ class FriendRepositoryImpl @Inject constructor(
     ): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
             val request = FriendReportRequestDto(
-                userId = 1,
                 friendId = friendId,
                 reason = reason,
                 block = withBlock
