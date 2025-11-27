@@ -5,6 +5,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
@@ -44,7 +45,7 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
 
-interface UserApi {
+interface UserApi : MyPageApi {
 
     // 회원가입
     @POST("/users/signup")
@@ -152,12 +153,6 @@ interface UserApi {
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
 
-    //닉네임 수정
-    @POST("mypage/profile/nickname")
-    suspend fun changeNickname(
-        @Body nickname: String
-    ): Response<UserResponse<String>>
-
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(
@@ -180,4 +175,19 @@ interface UserApi {
     //혜택 및 마케팅 동의 변경
     @PATCH("mypage/notification/marketing")
     suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
+}
+
+interface MyPageApi {
+
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
+
+    //유저 정보 카카오 연동 조회
+    @GET("mypage/kakao-account")
+    suspend fun getKakaoAccountLink(
+
+    ): Response<UserResponse<UsingKakao>>
 }
