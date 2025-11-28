@@ -1,10 +1,8 @@
 package com.example.planup.main.my.ui
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,14 +26,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.compose.content
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.planup.R
@@ -43,7 +40,6 @@ import com.example.planup.component.PlanUpSwitch
 import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
-import com.example.planup.goal.GoalActivity
 import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.MyPageRoute.Account
@@ -64,21 +60,13 @@ class MypageFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MyPageNavView(mainSnackbarViewModel)
-            }
+    ): View {
+        return content {
+            MyPageNavView(mainSnackbarViewModel)
         }
     }
 
     private fun clickListener() {
-
-        binding.mypageMainImageCv.setOnClickListener {
-            val intent = Intent(context as MainActivity, GoalActivity::class.java)
-            startActivity(intent)
-        }
 
         /*이메일 변경*/
         binding.mypageEmailIv.setOnClickListener {
@@ -98,30 +86,7 @@ class MypageFragment : Fragment() {
                 .replace(R.id.main_container, MypageKakaoFragment())
                 .commitAllowingStateLoss()
         }
-        //서비스 알림 수신 토글 끄기
-        binding.mypageAlertServiceOnIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.GONE
-            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
-        }
-        //서비스 알림 수신 토글 켜기
-        binding.mypageAlertServiceOffIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
-            binding.mypageAlertServiceOffIv.visibility = View.GONE
-        }
     }
-
-
-//    //프로필 이미지 API 성공
-//    override fun successProfileImage(image: String) {
-//        //사용자 프로필 사진
-//        Glide.with(context as MainActivity).load(prefs.getString("profileImg", "no-data"))
-//            .into(binding.mypageMainImageIv)
-//    }
-//
-//    //프로필 이미지 API 오류
-//    override fun failProfileImage(message: String) {
-//        errorToast(message)
-//    }
 }
 
 @Composable
@@ -189,7 +154,7 @@ fun MyPageView(
 
             is MyPageUiState.FailKakaoAccount -> {
                 //TODO Launch Kakao Login
-                Log.d("JWH","Kakao 로그인 실행")
+                mainSnackbarViewModel.updateErrorMessage("연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
             }
         }
     }
