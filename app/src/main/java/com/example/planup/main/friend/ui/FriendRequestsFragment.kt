@@ -35,7 +35,7 @@ import com.example.planup.component.PlanUpButtonSecondarySmall
 import com.example.planup.component.PlanUpButtonSmall
 import com.example.planup.component.TopHeader
 import com.example.planup.main.friend.ui.common.FriendDepth2FragmentBase
-import com.example.planup.network.dto.friend.FriendRequestsResult
+import com.example.planup.network.dto.friend.FriendInfo
 import com.example.planup.theme.Black400
 import com.example.planup.theme.Typography
 
@@ -75,7 +75,7 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
                 ) {
                     items(
                         items = friendRequestList,
-                        key = FriendRequestsResult::id
+                        key = FriendInfo::id
                     ) {friendRequestItem ->
                         FriendRequestItem(
                             friendInfo = friendRequestItem,
@@ -107,7 +107,7 @@ class FriendRequestsFragment : FriendDepth2FragmentBase() {
 
 @Composable
 private fun FriendRequestItem(
-    friendInfo: FriendRequestsResult,
+    friendInfo: FriendInfo,
     clickItem: () -> Unit,
     acceptFriend: () -> Unit,
     declineFriend: () -> Unit
@@ -174,7 +174,7 @@ private fun FriendRequestItem(
 @Preview
 private fun FriendRequestItemPreview() {
     FriendRequestItem(
-        FriendRequestsResult(
+        FriendInfo(
             id = 1,
             nickname = "Tester",
             goalCnt = 1,

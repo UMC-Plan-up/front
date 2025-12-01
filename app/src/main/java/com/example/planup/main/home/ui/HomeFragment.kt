@@ -426,9 +426,12 @@ class HomeFragment : Fragment() {
             Log.d("FriendGoalSummary", "getFriendSummary response: $friendResponse")
 
             if (friendResponse.isSuccessful) {
-                val friendList = friendResponse.body()?.result ?: emptyList()
-                Log.d("FriendGoalSummary", "친구 수: ${friendList.size}")
-                val friendInfo = friendList[0].friendInfoSummaryList
+                val friendList = friendResponse.body()?.result
+                if (friendList == null) {
+                    return emptyList()
+                }
+                Log.d("FriendGoalSummary", "친구 수: ${friendList.cnt}")
+                val friendInfo = friendList.friendInfoSummaryList
                 for (friend in friendInfo) {
                     val friendId = friend.id
                     val nickname = friend.nickname
