@@ -1,5 +1,7 @@
 package com.example.planup.network
 
+import com.example.planup.network.dto.ErrorResponse
+import com.google.gson.Gson
 import kotlinx.coroutines.CancellationException
 import retrofit2.Response
 
@@ -32,6 +34,7 @@ inline fun <T> ApiResult<T>.onFailWithMessage(
         }
 
         is ApiResult.Exception -> {
+            error.printStackTrace()
             onFailAction(this.error.message ?: "Unknown Error")
         }
 
@@ -58,7 +61,16 @@ suspend inline fun <T, R> safeResult(
                 ApiResult.Error("fail response by body is null")
             }
         } else {
-            ApiResult.Error("fail response by response empty")
+            val error = runCatching {
+                val body  = response.errorBody()!!.string()
+                val errorResponse = Gson().fromJson(body, ErrorResponse::class.java)
+                errorResponse
+            }
+            if (error.isSuccess) {
+                ApiResult.Error(error.getOrNull()!!.message)
+            } else {
+                ApiResult.Error("fail response by response empty")
+            }
         }
     } catch (e: CancellationException) {
         throw e

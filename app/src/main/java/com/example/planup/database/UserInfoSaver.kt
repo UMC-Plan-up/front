@@ -17,6 +17,17 @@ class UserInfoSaver(
         private const val KEY_INVITE_CODE = "invite"
         private const val KEY_EMAIL = "email"
         private const val KEY_PROFILE_IMAGE = "profileImg"
+
+
+        /**
+         * 서비스 알림 수신 여부
+         */
+        private const val KEY_NOTIFICATION_SERVICE = "notificationService"
+
+        /**
+         * 마케팅 정보 수신 여부
+         */
+        private const val KEY_NOTIFICATION_MARKETING = "notificationMarketing"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
@@ -40,7 +51,7 @@ class UserInfoSaver(
             putString(KEY_NICKNAME, nickName)
         }
     }
-    
+
     /**
      * 현재 저장된 초대 코드를 가져옵니다.
      */
@@ -98,15 +109,54 @@ class UserInfoSaver(
     }
 
     /**
+     * 서비스 알림 수신 여부를 가져옵니다.
+     **/
+    fun getNotificationService(): Boolean {
+        //해당 정보는 로컬별로 수신이므로, 기본값은 false
+        return prefs.getBoolean(KEY_NOTIFICATION_SERVICE, false)
+    }
+
+    /**
+     * 서비스 알림 수신여부를 변경합니다.
+     */
+    fun saveNotificationService(
+        notificationService: Boolean
+    ) {
+        prefs.edit {
+            putBoolean(KEY_NOTIFICATION_SERVICE, notificationService)
+        }
+    }
+
+    /**
+     * 혜택 및 마케팅 알림 수신 여부를 가져옵니다.
+     **/
+    fun getNotificationMarketing(): Boolean {
+        return prefs.getBoolean(KEY_NOTIFICATION_MARKETING, false)
+    }
+
+    /**
+     * 혜택 및 마케팅 알림 수신여부를 변경합니다.
+     */
+    fun saveNotificationMarketing(
+        notificationMarketing: Boolean
+    ) {
+        prefs.edit {
+            putBoolean(KEY_NOTIFICATION_MARKETING, notificationMarketing)
+        }
+    }
+
+    /**
      * 저장된 모든 유저 정보를 지웁니다.
-     * (용도) - 로그아우
+     * (용도) - 로그아웃시
      */
     fun clearAllUserInfo() {
         prefs.edit {
-            putString(KEY_NICKNAME, null)
-            putString(KEY_INVITE_CODE, null)
-            putString(KEY_EMAIL, null)
-            putString(KEY_PROFILE_IMAGE, null)
+            remove(KEY_NICKNAME)
+            remove(KEY_INVITE_CODE)
+            remove(KEY_EMAIL)
+            remove(KEY_PROFILE_IMAGE)
+            remove(KEY_NOTIFICATION_SERVICE)
+            remove(KEY_NOTIFICATION_MARKETING)
         }
     }
 

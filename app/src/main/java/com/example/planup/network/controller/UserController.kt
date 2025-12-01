@@ -4,7 +4,6 @@ import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
-import com.example.planup.main.my.adapter.ServiceAlertAdapter
 import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.adapter.KakaoLinkAdapter
 import com.example.planup.network.data.EmailLink
@@ -36,12 +35,6 @@ class UserController {
     private lateinit var kakaoAdapter: KakaoAdapter
     fun setKakaoAdapter(adapter: KakaoAdapter) {
         this.kakaoAdapter = adapter
-    }
-
-    //서비스 알림 동의 변경
-    private lateinit var serviceAdapter: ServiceAlertAdapter
-    fun setServiceAdapter(adapter: ServiceAlertAdapter) {
-        this.serviceAdapter = adapter
     }
 
     //회원가입 시 이메일 인증링크 발송
@@ -212,30 +205,6 @@ class UserController {
                 kakaoAdapter.failKakao(t.toString())
             }
         })
-    }
-
-    // 서비스 알림 수신 여부 관리
-    fun notificationAgreementService(condition: Boolean) {
-        val notificationAgreementService = getRetrofit().create(UserPort::class.java)
-        notificationAgreementService.patchNoticeAgree()
-            .enqueue(object : Callback<UserResponse<Boolean>> {
-                override fun onResponse(
-                    call: Call<UserResponse<Boolean>>,
-                    response: Response<UserResponse<Boolean>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        serviceAdapter.successServiceSetting(condition)
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        serviceAdapter.failServiceSetting(response.body()!!.message)
-                    } else {
-                        serviceAdapter.failServiceSetting("null")
-                    }
-                }
-
-                override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
-                    serviceAdapter.failServiceSetting(t.toString())
-                }
-            })
     }
 
     //이메일 변경 시 인증링크 발송

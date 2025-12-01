@@ -6,6 +6,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -54,7 +56,7 @@ sealed interface MyPageRoute {
     object Friend {
 
         @Serializable
-        data object ManageBlockFriend : MyPageRoute
+        data object ManageBlock : MyPageRoute
     }
 
     object Service {
@@ -67,6 +69,12 @@ sealed interface MyPageRoute {
         ) : MyPageRoute
     }
 
+    @Serializable
+    data class NotificationMarketing(
+        val isAgree: Boolean,
+        val nickName: String,
+        val date: String
+    ) : MyPageRoute
 }
 
 private fun slideHorizontallyTransition(): EnterTransition = slideInHorizontally { it }
@@ -102,7 +110,8 @@ fun MyPageNavView(
                     navController.navigate(route) {
                         launchSingleTop = true
                     }
-                }
+                },
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         composable<MyPageRoute.Profile.EditNickName> {
@@ -112,9 +121,13 @@ fun MyPageNavView(
             )
         }
         composable<MyPageRoute.Account.ChangeEmail> {
-            MyPageChangeEmailView(
-                onBack = navController::navigateUp,
-            )
+            Button(
+                onClick = {
+                    mainSnackbarViewModel.updateErrorMessage("123")
+                }
+            ) {
+                Text(text = "test")
+            }
         }
         composable<MyPageRoute.Account.ChangePassword> {
 
@@ -153,8 +166,11 @@ fun MyPageNavView(
                 mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
-        composable<MyPageRoute.Friend.ManageBlockFriend> {
-
+        composable<MyPageRoute.Friend.ManageBlock> {
+            MyPageManageBlockFriendView(
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
         }
         composable<MyPageRoute.Service.Policy>(
             enterTransition = { slideHorizontallyTransition() },
@@ -181,6 +197,15 @@ fun MyPageNavView(
             MyPagePolicyDetailView(
                 onBack = navController::navigateUp,
                 url = detail.url
+            )
+        }
+        dialog<MyPageRoute.NotificationMarketing> { route ->
+            val result = route.toRoute<MyPageRoute.NotificationMarketing>()
+            MyPageNotificationMarketingResultView(
+                onBack = navController::navigateUp,
+                result.isAgree,
+                result.nickName,
+                result.date
             )
         }
     }

@@ -13,6 +13,8 @@ data class UserInfoResponse(
         @SerializedName(value = "id") var id: Int,
         @SerializedName(value = "email") var email: String,
         @SerializedName(value = "nickname") var nickname: String,
-        @SerializedName(value = "profileImg") var profileImage: String
+        @SerializedName(value = "profileImg") var profileImage: String,
+        @SerializedName(value = "serviceNotificationAllow") var serviceNotification: Boolean,
+        @SerializedName(value = "marketingNotificationAllow") var marketingNotification: Boolean,
     )
 }
