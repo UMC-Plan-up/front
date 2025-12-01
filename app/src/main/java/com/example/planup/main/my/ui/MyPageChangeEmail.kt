@@ -12,13 +12,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -33,15 +34,18 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.example.planup.R
-import com.example.planup.component.PlanUpButton
-import com.example.planup.main.my.ui.common.RoutePageDefault
+import com.example.planup.component.button.PlanUpButton
+import com.example.planup.main.my.ui.common.MyPageDefault
+import com.example.planup.theme.Black200
 import com.example.planup.theme.Black300
 import com.example.planup.theme.Blue300
 import com.example.planup.theme.Typography
@@ -60,25 +64,32 @@ fun MyPageChangeEmailContent(
     onBack: () -> Unit = {}
 ) {
     var email by remember {
-        mutableStateOf("")
+        mutableStateOf(TextFieldValue(""))
     }
 
     val enableButton by remember(email) {
         derivedStateOf {
-            Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            Patterns.EMAIL_ADDRESS.matcher(email.text).matches()
+        }
+    }
+
+    val showPlaceholder by remember(email) {
+        derivedStateOf {
+            email.text.isEmpty()
         }
     }
 
     var showDropDownMenu by remember {
         mutableStateOf(false)
     }
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_email)
     ) {
         Spacer(Modifier.height(40.dp))
         Column(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .imePadding(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
@@ -122,7 +133,7 @@ fun MyPageChangeEmailContent(
                                     contentAlignment = Alignment.CenterStart
                                 ) {
                                     innerTextField()
-                                    if (email.isEmpty()) {
+                                    if (showPlaceholder) {
                                         Text(
                                             text = stringResource(R.string.email_enter),
                                             style = Typography.Medium_SM,
@@ -158,24 +169,38 @@ fun MyPageChangeEmailContent(
                             ) {
                                 Column(
                                     modifier = Modifier
+                                        .border(1.dp, Black200,RoundedCornerShape(10.dp))
+                                        .padding(10.dp)
                                         .clip(RoundedCornerShape(10.dp))
                                         .background(Color.White)
-                                        .width(118.dp)
-                                        .padding(10.dp)
+                                        .wrapContentWidth()
                                 ) {
                                     listOf(
                                         stringResource(R.string.dropdown_gmail),
                                         stringResource(R.string.dropdown_naver),
                                         stringResource(R.string.dropdown_kakao),
-                                    ).forEach {
-                                        Text(
-                                            text = it,
-                                            style = Typography.Medium_S,
-                                        )
+                                    ).forEach { emailSuffix ->
+                                        TextButton(
+                                            onClick = {
+                                                val newText = if (!email.text.contains("@")) {
+                                                    email.text + emailSuffix
+                                                } else if (email.text.contains("@")) {
+                                                    email.text.substringBefore("@") + emailSuffix
+                                                } else {
+                                                    email.text
+                                                }
+                                                email = email.copy(
+                                                    text = newText,
+                                                    selection = TextRange(newText.length)
+                                                )
+                                            }
+                                        ) {
+                                            Text(
+                                                text = emailSuffix,
+                                                style = Typography.Medium_S,
+                                            )
+                                        }
                                     }
-                                    Text("123456")
-                                    Text("456")
-                                    Text("789")
                                 }
                             }
                         }
