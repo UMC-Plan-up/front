@@ -154,7 +154,7 @@ fun MyPageView(
 
             is MyPageUiState.FailKakaoAccount -> {
                 //TODO Launch Kakao Login
-                mainSnackbarViewModel.updateErrorMessage("연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
+                mainSnackbarViewModel.updateErrorMessage("(미구현)연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
             }
         }
     }
