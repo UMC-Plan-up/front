@@ -45,6 +45,7 @@ import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
 import com.example.planup.theme.Typography
@@ -56,6 +57,7 @@ class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
 
     private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
+    private val myPageEmailChangeViewModel : MyPageEmailChangeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -65,7 +67,10 @@ class MypageFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                MyPageNavView(mainSnackbarViewModel)
+                MyPageNavView(
+                    mainSnackbarViewModel = mainSnackbarViewModel,
+                    emailChangeViewModel = myPageEmailChangeViewModel
+                )
             }
         }
     }

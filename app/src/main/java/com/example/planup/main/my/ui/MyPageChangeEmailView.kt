@@ -224,7 +224,6 @@ private fun ChangeEmailStep1(
                             Column(
                                 modifier = Modifier
                                     .border(1.dp, Black200, RoundedCornerShape(10.dp))
-                                    .padding(10.dp)
                                     .clip(RoundedCornerShape(10.dp))
                                     .background(Color.White)
                                     .wrapContentWidth()

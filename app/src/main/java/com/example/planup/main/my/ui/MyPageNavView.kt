@@ -9,11 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.get
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
@@ -99,13 +95,10 @@ private fun slideHorizontallyPopExitTransition(): ExitTransition = slideOutHoriz
 
 @Composable
 fun MyPageNavView(
-    mainSnackbarViewModel: MainSnackbarViewModel
+    mainSnackbarViewModel: MainSnackbarViewModel,
+    emailChangeViewModel : MyPageEmailChangeViewModel
 ) {
     val navController = rememberNavController()
-    val context = LocalView.current
-    val emailChangeViewModel by lazy {
-        ViewModelProvider(context as ViewModelStoreOwner).get<MyPageEmailChangeViewModel>()
-    }
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
