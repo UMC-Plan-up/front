@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -48,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import com.example.planup.R
 import com.example.planup.component.button.PlanUpButton
@@ -60,6 +64,7 @@ import com.example.planup.theme.Black300
 import com.example.planup.theme.Blue300
 import com.example.planup.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPageChangeEmailView(
     onBack: () -> Unit = {},
@@ -70,24 +75,45 @@ fun MyPageChangeEmailView(
     var showStep2 by rememberSaveable {
         mutableStateOf(false)
     }
+    var showLoading by rememberSaveable {
+       mutableStateOf(false)
+    }
     LaunchedEffect(Unit) {
         emailChangeViewModel.emailChangeUiMessage.collect { uiMessage ->
             when (uiMessage) {
                 is EmailChangeUiMessage.Error -> {
                     mainSnackbarViewModel.updateErrorMessage(uiMessage.message)
+                    showLoading = false
                 }
 
                 is EmailChangeUiMessage.EmailSendSuccess -> {
                     showStep2 = true
+                    showLoading = false
+                }
+
+                EmailChangeUiMessage.Loading -> {
+                    showLoading = true
                 }
             }
         }
     }
+
     MyPageChangeEmailContent(
         onBack = onBack,
         sendEmail = emailChangeViewModel::sendEmail,
         showStep2 = showStep2
     )
+    if (showLoading) {
+        BasicAlertDialog(
+            onDismissRequest = {},
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
+        ) {
+            CircularProgressIndicator()
+        }
+    }
 }
 
 @Composable

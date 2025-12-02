@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed interface EmailChangeUiMessage {
+    data object Loading : EmailChangeUiMessage
     data object EmailSendSuccess : EmailChangeUiMessage
     data class Error(val message: String) : EmailChangeUiMessage
 }
@@ -24,6 +25,8 @@ class MyPageEmailChangeViewModel @Inject constructor(
 
     private var _emailChangeUiMessage = MutableSharedFlow<EmailChangeUiMessage>()
     val emailChangeUiMessage = _emailChangeUiMessage.asSharedFlow()
+
+    private var verificationToken: String? = null
 
     private suspend fun <T> ApiResult<T>.onFailWithMessageOnBlock() {
         this.onFailWithMessage { message ->
@@ -37,11 +40,14 @@ class MyPageEmailChangeViewModel @Inject constructor(
         email: String
     ) {
         viewModelScope.launch {
-            userRepository.sendMail(email)
-                .onSuccess {
+            _emailChangeUiMessage.emit(EmailChangeUiMessage.Loading)
+            userRepository.sendMailForChange(email)
+                .onSuccess { emailLink ->
+                    verificationToken = emailLink.token
                     _emailChangeUiMessage.emit(EmailChangeUiMessage.EmailSendSuccess)
                 }
                 .onFailWithMessageOnBlock()
         }
     }
+
 }

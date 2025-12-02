@@ -80,13 +80,6 @@ class MypageFragment : Fragment() {
             val intent = Intent(context as MainActivity, GoalActivity::class.java)
             startActivity(intent)
         }
-
-        /*이메일 변경*/
-        binding.mypageEmailIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailCheckFragment())
-                .commitAllowingStateLoss()
-        }
         /*비밀번호 변경*/
         binding.mypagePasswordIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()

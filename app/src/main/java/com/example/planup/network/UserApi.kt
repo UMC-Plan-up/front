@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
@@ -127,6 +128,18 @@ interface UserApi {
     suspend fun verifyChangeLink(
         @Query("token") token: String
     ): Response<ChangeLinkVerifyResponseDto>
+
+    //이메일 변경 인증 메일 발송
+    @POST("users/email/change/send")
+    suspend fun emailLink(
+        @Body email: String
+    ): Response<UserResponse<EmailLink>>
+
+    //이메일 변경 인증 메일 재발송
+    @POST("users/email/change/resend")
+    suspend fun emailReLink(
+        @Body email: String
+    ): Response<UserResponse<EmailLink>>
 
     // 카카오 소셜 인증
     @POST("/users/auth/kakao")

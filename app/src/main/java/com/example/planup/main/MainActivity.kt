@@ -3,7 +3,6 @@ package com.example.planup.main
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -32,9 +31,7 @@ import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
-import com.example.planup.main.my.ui.MypagePasswordChangeFragment
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -205,39 +202,58 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val deeplinkFragment = when {
-            intent?.action == Intent.ACTION_VIEW -> {
-                val data: Uri? = intent?.data
-                Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
-                when {
-                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
-                        "verified"
-                    ).equals("true") -> {
-                        MypagePasswordChangeFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("verificationToken", prefs.getString("verificationToken","no-data"))
-                                editor.remove("passwordToken")
-                                editor.apply()
-                            }
+
+        when(intent.action) {
+            Intent.ACTION_VIEW -> {
+                val data = intent.data
+                Log.d("JWH",data.toString())
+                data ?: return
+                val host = data.host
+                when(host) {
+                    "mypage" -> {
+
+                    }
+                    "email" -> {
+
+                        if (data.path?.startsWith("/change") == true && data.getQueryParameter("verified") == "true") {
+                            //이메일 변경
                         }
                     }
-
-                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
-                        "verified"
-                    ).equals("true") -> {
-                        MypageEmailLinkFragment().apply {
-                            arguments = Bundle().apply {
-                                putBoolean("deepLink", true)
-                            }
-                        }
-                    }
-
-                    else -> HomeFragment()
                 }
-            } else -> HomeFragment()
+            }
         }
+//        val deeplinkFragment = when {
+//            intent?.action == Intent.ACTION_VIEW -> {
+//                val data: Uri? = intent?.data
+//                Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
+//                when {
+//                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
+//                        "verified"
+//                    ).equals("true") -> {
+//                        MypagePasswordChangeFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putString("verificationToken", prefs.getString("verificationToken","no-data"))
+//                                editor.remove("passwordToken")
+//                                editor.apply()
+//                            }
+//                        }
+//                    }
+//
+//                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
+//                        "verified"
+//                    ).equals("true") -> {
+//                        MypageEmailLinkFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putBoolean("deepLink", true)
+//                            }
+//                        }
+//                    }
+//
+//                    else -> HomeFragment()
+//                }
+//            } else -> HomeFragment()
+//        }
 
-        navigateToFragment(deeplinkFragment)
     }
 
     fun navigateToFragment(fragment: Fragment) {

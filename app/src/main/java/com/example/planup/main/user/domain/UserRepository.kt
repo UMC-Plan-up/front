@@ -3,8 +3,8 @@ package com.example.planup.main.user.domain
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.WithDraw
-import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import okhttp3.MultipartBody
@@ -31,9 +31,9 @@ interface UserRepository {
      * @param email 변경할 이메일 주소
      * @return
      */
-    suspend fun sendMail(
+    suspend fun sendMailForChange(
         email: String
-    ) : ApiResult<EmailSendResponseDto.EmailSendResult>
+    ) : ApiResult<EmailLink>
 
 
     suspend fun changeNickName(
