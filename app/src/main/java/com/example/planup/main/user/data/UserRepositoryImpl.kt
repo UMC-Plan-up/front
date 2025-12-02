@@ -11,6 +11,8 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
+import com.example.planup.signup.data.EmailSendRequestDto
+import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
@@ -99,6 +101,24 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun sendMail(email: String): ApiResult<EmailSendResponseDto.EmailSendResult> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                val emailSendRequest = EmailSendRequestDto(
+                    email = email
+                )
+                userApi.sendEmail(emailSendRequest)
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val emailSendResult = response.result
+                    ApiResult.Success(emailSendResult)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
 
     override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
         val prevName = userInfoSaver.getNickName()

@@ -9,13 +9,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalView
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.get
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute {
@@ -97,6 +102,10 @@ fun MyPageNavView(
     mainSnackbarViewModel: MainSnackbarViewModel
 ) {
     val navController = rememberNavController()
+    val context = LocalView.current
+    val emailChangeViewModel by lazy {
+        ViewModelProvider(context as ViewModelStoreOwner).get<MyPageEmailChangeViewModel>()
+    }
     NavHost(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
@@ -121,6 +130,8 @@ fun MyPageNavView(
         composable<MyPageRoute.Account.ChangeEmail> {
             MyPageChangeEmailView(
                 onBack = navController::navigateUp,
+                emailChangeViewModel = emailChangeViewModel,
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         composable<MyPageRoute.Account.ChangePassword> {

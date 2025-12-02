@@ -4,6 +4,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.WithDraw
+import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import okhttp3.MultipartBody
@@ -23,6 +24,16 @@ interface UserRepository {
     suspend fun validateInviteCode(
         code: String
     ): ApiResult<ProcessResult>
+
+    /**
+     * 해당 이메일로 메일을 발송합니다.
+     *
+     * @param email 변경할 이메일 주소
+     * @return
+     */
+    suspend fun sendMail(
+        email: String
+    ) : ApiResult<EmailSendResponseDto.EmailSendResult>
 
 
     suspend fun changeNickName(
