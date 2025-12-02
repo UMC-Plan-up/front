@@ -10,7 +10,6 @@ import com.example.planup.network.data.FriendUnblockResponse
 import com.example.planup.network.dto.friend.FriendReportRequestDto
 import com.example.planup.network.dto.friend.FriendRequestsResponse
 import com.example.planup.network.dto.friend.FriendResponseDto
-import com.example.planup.network.dto.friend.UnblockFriendRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -58,7 +57,7 @@ interface FriendApi {
     // 친구 차단 해제
     @POST("/friends/unblock")
     suspend fun unblockFriend(
-        @Body request: UnblockFriendRequestDto
+        @Query("friendId") request: Int
     ): Response<FriendUnblockResponse>
 
     // 친구 신고

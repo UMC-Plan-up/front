@@ -69,11 +69,6 @@ data class EmailLink(
     @SerializedName("verificationToken") val token: String
 )
 
-//프로필 사진 업로드 및 변경
-data class ProfileImage(
-    @SerializedName("file") val file: String
-)
-
 data class KakaoLink(
     @SerializedName("success") val success: Boolean,
     @SerializedName("message") val message: String,
