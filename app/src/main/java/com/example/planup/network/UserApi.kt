@@ -163,10 +163,6 @@ interface UserApi : MyPageApi {
     @GET("/users/info")
     suspend fun getUserInfo(): Response<UserInfoResponse>
 
-    //프로필 이미지 변경
-    @Multipart
-    @POST("profile/image")
-    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
 
     //서비스 알림 동의 변경
     @PATCH("mypage/notification/service")
@@ -190,4 +186,9 @@ interface MyPageApi {
     suspend fun getKakaoAccountLink(
 
     ): Response<UserResponse<UsingKakao>>
+
+    //프로필 이미지 변경
+    @Multipart
+    @POST("mypage/profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
 }
