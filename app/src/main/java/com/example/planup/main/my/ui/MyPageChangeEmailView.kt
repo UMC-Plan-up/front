@@ -76,7 +76,7 @@ fun MyPageChangeEmailView(
         mutableStateOf(false)
     }
     var showLoading by rememberSaveable {
-       mutableStateOf(false)
+        mutableStateOf(false)
     }
     LaunchedEffect(Unit) {
         emailChangeViewModel.emailChangeUiMessage.collect { uiMessage ->

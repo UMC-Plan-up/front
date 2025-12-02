@@ -26,7 +26,8 @@ class MyPageEmailChangeViewModel @Inject constructor(
     private var _emailChangeUiMessage = MutableSharedFlow<EmailChangeUiMessage>()
     val emailChangeUiMessage = _emailChangeUiMessage.asSharedFlow()
 
-    private var verificationToken: String? = null
+    //Token - email 매칭
+    private var verificationTokenMap: MutableMap<String, String> = mutableMapOf()
 
     private suspend fun <T> ApiResult<T>.onFailWithMessageOnBlock() {
         this.onFailWithMessage { message ->
@@ -43,10 +44,22 @@ class MyPageEmailChangeViewModel @Inject constructor(
             _emailChangeUiMessage.emit(EmailChangeUiMessage.Loading)
             userRepository.sendMailForChange(email)
                 .onSuccess { emailLink ->
-                    verificationToken = emailLink.token
+                    verificationTokenMap[emailLink.token] = email
                     _emailChangeUiMessage.emit(EmailChangeUiMessage.EmailSendSuccess)
                 }
                 .onFailWithMessageOnBlock()
+        }
+    }
+
+    fun verifyScheme(
+        token: String?,
+        callbackEmail :(savedEmail : String) -> Unit
+    ) {
+        token ?: return
+        val savedEmail = verificationTokenMap.getOrDefault(token, null)
+        savedEmail ?: return
+        viewModelScope.launch {
+
         }
     }
 

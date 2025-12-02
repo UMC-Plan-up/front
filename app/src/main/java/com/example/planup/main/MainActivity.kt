@@ -32,6 +32,7 @@ import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
 import com.example.planup.main.my.ui.MypageFragment
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
     private val mainSnackbarViewModel : MainSnackbarViewModel by viewModels()
     private val friendViewModel : FriendViewModel by viewModels()
+    private val myPageEmailChangeViewModel : MyPageEmailChangeViewModel by viewModels()
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -214,9 +216,12 @@ class MainActivity : AppCompatActivity() {
 
                     }
                     "email" -> {
-
                         if (data.path?.startsWith("/change") == true && data.getQueryParameter("verified") == "true") {
-                            //이메일 변경
+                            //이메일 변경 완료 됨 검증
+                            val token = data.getQueryParameter("token")
+                            myPageEmailChangeViewModel.verifyScheme(token) {
+                                // TODO SHOW ALERT
+                            }
                         }
                     }
                 }
