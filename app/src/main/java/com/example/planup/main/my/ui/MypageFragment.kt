@@ -82,12 +82,6 @@ class MypageFragment : Fragment() {
                 .replace(R.id.main_container, MypageEmailCheckFragment())
                 .commitAllowingStateLoss()
         }
-        /*비밀번호 변경*/
-        binding.mypagePasswordIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordEmailFragment())
-                .commitAllowingStateLoss()
-        }
         /*카카오톡 계정 연동*/
         binding.mypageKakaoIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
