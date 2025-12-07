@@ -14,7 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,105 +40,199 @@ fun MyPagePasswordChangeView(
     myPagePasswordChangeViewModel: MyPagePasswordChangeViewModel = hiltViewModel(),
     mainSnackbarViewModel: MainSnackbarViewModel
 ) {
+    var showStep2 by rememberSaveable() {
+        mutableStateOf(false)
+    }
     LaunchedEffect(myPagePasswordChangeViewModel) {
         myPagePasswordChangeViewModel.uiEvent.collect { event ->
             when (event) {
                 MyPagePasswordEvent.SuccessLogin -> {
-
+                    showStep2 = true
                 }
+
                 is MyPagePasswordEvent.Error -> {
                     mainSnackbarViewModel.updateErrorMessage(event.message)
                 }
             }
         }
     }
-    MyPagePasswordChangeContent(
+    MyPageDefault(
         onBack = onBack,
-        emailInput = myPagePasswordChangeViewModel.emailInput,
-        passwordInput = myPagePasswordChangeViewModel.passwordInput
-    )
+        categoryText = if (showStep2) {
+            stringResource(R.string.mypage_password)
+        } else {
+            stringResource(R.string.mypage_password_check)
+        }
+    ) {
+        if (showStep2) {
+            MyPagePasswordChangeContent(
+                newPasswordInput = myPagePasswordChangeViewModel.newPasswordInput,
+                newPasswordReInput = myPagePasswordChangeViewModel.newPasswordReInput,
+                changePassword = {}
+            )
+        } else {
+            MyPagePasswordCheckContent(
+                emailInput = myPagePasswordChangeViewModel.emailInput,
+                passwordInput = myPagePasswordChangeViewModel.passwordInput,
+                loginCheck = myPagePasswordChangeViewModel::loginCheck
+            )
+        }
+    }
 }
 
 @Composable
-fun MyPagePasswordChangeContent(
-    onBack: () -> Unit = {},
+private fun MyPagePasswordCheckContent(
     emailInput: TextFieldState,
     passwordInput: TextFieldState,
-    loginCheck :() -> Unit = {}
+    loginCheck: () -> Unit = {}
 ) {
     val enabledButton by remember {
         derivedStateOf {
             emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()
         }
     }
-    MyPageDefault(
-        onBack = onBack,
-        categoryText = stringResource(R.string.mypage_password_check)
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween,
-        ) {
-            Column() {
-                Text(
-                    text = stringResource(R.string.mypage_password_check_sub),
-                    style = Typography.Medium_S
-                )
-                Spacer(Modifier.height(20.dp))
+        Column() {
+            Text(
+                text = stringResource(R.string.mypage_password_check_sub),
+                style = Typography.Medium_S
+            )
+            Spacer(Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text(
-                            text = "이메일",
-                            style = Typography.Medium_L
-                        )
-                        EmailTextField(
-                            state = emailInput
-                        )
+                    Text(
+                        text = "이메일",
+                        style = Typography.Medium_L
+                    )
+                    EmailTextField(
+                        state = emailInput
+                    )
 
-                    }
+                }
 
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        Text(
-                            text = "비밀번호",
-                            style = Typography.Medium_L
-                        )
-                        PasswordTextField(
-                            state = passwordInput
-                        )
-                    }
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "비밀번호",
+                        style = Typography.Medium_L
+                    )
+                    PasswordTextField(
+                        state = passwordInput
+                    )
                 }
             }
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 10.dp)
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp)
+        ) {
+            PlanUpButton(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(R.string.btn_ok),
+                enabled = enabledButton,
+                onClick = loginCheck
+            )
+        }
+    }
+}
+
+@Composable
+private fun MyPagePasswordChangeContent(
+    newPasswordInput: TextFieldState,
+    newPasswordReInput: TextFieldState,
+    changePassword : () -> Unit
+) {
+    val enabledButton by remember {
+        derivedStateOf {
+            newPasswordInput.text.isNotEmpty() && newPasswordReInput.text.isNotEmpty() && newPasswordInput == newPasswordReInput
+        }
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Column() {
+            Text(
+                text = stringResource(R.string.mypage_password_check_sub),
+                style = Typography.Medium_S
+            )
+            Spacer(Modifier.height(20.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
-                PlanUpButton(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(R.string.btn_ok),
-                    enabled = enabledButton,
-                    onClick = loginCheck
-                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.new_password),
+                            style = Typography.Medium_L
+                        )
+                        Text(
+                            text = stringResource(R.string.password_condition),
+                            style = Typography.Medium_S
+                        )
+                    }
+                    PasswordTextField(
+                        state = newPasswordInput
+                    )
+
+                }
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.recheck_password),
+                        style = Typography.Medium_L
+                    )
+                    PasswordTextField(
+                        state = newPasswordReInput,
+                        placeholderText = stringResource(R.string.password_again)
+                    )
+                }
             }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 10.dp)
+        ) {
+            PlanUpButton(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(R.string.btn_ok),
+                enabled = enabledButton,
+                onClick = changePassword
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun MyPagePasswordChangeContentPreview() {
+fun MyPagePasswordCheckContentPreview() {
     val state1 = remember { TextFieldState() }
     val state2 = remember { TextFieldState() }
 
-    MyPagePasswordChangeContent(
+    MyPagePasswordCheckContent(
         emailInput = state1,
-        passwordInput = state2
+        passwordInput = state2,
+        loginCheck = {}
     )
 }

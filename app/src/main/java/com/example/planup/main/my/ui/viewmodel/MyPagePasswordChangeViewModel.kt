@@ -25,12 +25,13 @@ class MyPagePasswordChangeViewModel @Inject constructor(
     val emailInput = TextFieldState()
     val passwordInput = TextFieldState()
 
+    val newPasswordInput = TextFieldState()
+    val newPasswordReInput = TextFieldState()
+
     private val _uiEvent = MutableSharedFlow<MyPagePasswordEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
-    fun login(
-
-    ) {
+    fun loginCheck() {
         viewModelScope.launch {
             val email = emailInput.text.toString()
             if (email != userRepository.getUserEmail()) {
