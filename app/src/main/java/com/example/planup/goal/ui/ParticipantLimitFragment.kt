@@ -114,9 +114,17 @@ class ParticipantLimitFragment : Fragment() {
     /* 참여자 제한 인원 입력 조건 검증 */
     private fun setupInputValidation() {
         // 숫자만 입력 가능
-        binding.participantLimitEditText.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
-            if (source.matches(Regex("[0-9]*"))) source else ""
-        })
+        binding.participantLimitEditText.filters = arrayOf(
+            InputFilter { source, start, end, dest, dstart, dend ->
+                val filtered = StringBuilder()
+                for (i in start until end) {
+                    val c = source[i]
+                    if (c.isDigit()) {
+                        filtered.append(c)   // 숫자만 살려서 추가
+                    }
+                }
+                if (filtered.isEmpty()) "" else filtered.toString()
+            })
 
         binding.participantLimitEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

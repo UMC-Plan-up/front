@@ -2,6 +2,8 @@ package com.example.planup.main.goal.ui
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
+import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +12,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCntBinding
 import android.widget.TextView
 import android.text.TextWatcher
+import android.text.method.DigitsKeyListener
 import kotlin.text.toInt
 
 class EditGoalCntFragment : Fragment() {
@@ -60,7 +63,6 @@ class EditGoalCntFragment : Fragment() {
 
         // 빨간 글씨 안내 TextView
         val warningText = binding.root.findViewById<TextView>(R.id.edit_goal_cnt_warning_tv)
-        // textView_warning는 XML에서 빨간 글씨 TextView id로 변경해주세요
 
         // TextWatcher로 입력값 감시
         binding.editText.addTextChangedListener(object : TextWatcher {
@@ -68,7 +70,8 @@ class EditGoalCntFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
                 val input = s.toString().toIntOrNull() ?: 0
-                warningText.visibility = if (input < limitFriendCount) View.VISIBLE else View.GONE
+                warningText.visibility =
+                    if (input < limitFriendCount) View.VISIBLE else View.GONE
             }
         })
 
