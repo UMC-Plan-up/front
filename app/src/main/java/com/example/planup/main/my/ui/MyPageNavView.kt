@@ -131,7 +131,8 @@ fun MyPageNavView(
         }
         composable<MyPageRoute.Account.ChangePassword> {
             MyPagePasswordChangeView(
-                onBack = navController::navigateUp
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
             )
         }
         composable<MyPageRoute.Account.LinkKakao> {

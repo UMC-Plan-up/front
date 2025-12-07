@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,15 +25,30 @@ import com.example.planup.R
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.component.textfield.EmailTextField
 import com.example.planup.component.textfield.PasswordTextField
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.viewmodel.MyPagePasswordChangeViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPagePasswordEvent
 import com.example.planup.theme.Typography
 
 @Composable
 fun MyPagePasswordChangeView(
     onBack: () -> Unit,
-    myPagePasswordChangeViewModel: MyPagePasswordChangeViewModel = hiltViewModel()
+    myPagePasswordChangeViewModel: MyPagePasswordChangeViewModel = hiltViewModel(),
+    mainSnackbarViewModel: MainSnackbarViewModel
 ) {
+    LaunchedEffect(myPagePasswordChangeViewModel) {
+        myPagePasswordChangeViewModel.uiEvent.collect { event ->
+            when (event) {
+                MyPagePasswordEvent.SuccessLogin -> {
+
+                }
+                is MyPagePasswordEvent.Error -> {
+                    mainSnackbarViewModel.updateErrorMessage(event.message)
+                }
+            }
+        }
+    }
     MyPagePasswordChangeContent(
         onBack = onBack,
         emailInput = myPagePasswordChangeViewModel.emailInput,
@@ -42,8 +60,14 @@ fun MyPagePasswordChangeView(
 fun MyPagePasswordChangeContent(
     onBack: () -> Unit = {},
     emailInput: TextFieldState,
-    passwordInput: TextFieldState
+    passwordInput: TextFieldState,
+    loginCheck :() -> Unit = {}
 ) {
+    val enabledButton by remember {
+        derivedStateOf {
+            emailInput.text.isNotEmpty() && passwordInput.text.isNotEmpty()
+        }
+    }
     MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_password_check)
@@ -91,13 +115,13 @@ fun MyPagePasswordChangeContent(
             }
             Box(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(vertical = 10.dp)
             ) {
                 PlanUpButton(
                     modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.btn_ok),
-                    enabled = true,
-                    onClick = {}
+                    enabled = enabledButton,
+                    onClick = loginCheck
                 )
             }
         }
