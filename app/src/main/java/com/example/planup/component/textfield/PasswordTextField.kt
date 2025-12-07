@@ -80,9 +80,9 @@ fun PasswordTextField(
                     ) {
                         Icon(
                             painter = if (passwordMode == TextObfuscationMode.RevealLastTyped) {
-                                painterResource(R.drawable.ic_eye_on)
-                            } else {
                                 painterResource(R.drawable.ic_eye_off)
+                            } else {
+                                painterResource(R.drawable.ic_eye_on)
                             },
                             contentDescription = null,
                             tint = Color.Unspecified
