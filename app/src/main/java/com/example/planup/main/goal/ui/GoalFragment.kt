@@ -1,5 +1,6 @@
 package com.example.planup.main.goal.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
@@ -114,6 +115,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         tokenSaver = TokenSaver(requireContext())
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
@@ -122,7 +124,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         Log.d("GoalFragment","token: $token")
         loadMyGoalList(token)
 
-        binding.userGoalListTv.text = nickname?.removeSurrounding("\"") + "의 목표 리스트"
+        binding.userGoalListTv.text = "${nickname?.removeSurrounding("\"")}의 목표 리스트"
 
         dailyPieChart = binding.dailyGoalCompletePc
         loadTodayAchievement(token)
