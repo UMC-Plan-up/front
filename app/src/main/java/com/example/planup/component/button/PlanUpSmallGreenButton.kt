@@ -16,7 +16,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.example.planup.theme.Blue100
 import com.example.planup.theme.Green100
-import com.example.planup.theme.Green200
+import com.example.planup.theme.Green300
 import com.example.planup.theme.Red100
 import com.example.planup.theme.Red200
 import com.example.planup.theme.Typography
@@ -37,7 +37,7 @@ private fun SmallButtonType.getButtonColors(): ButtonColors {
 
         SmallButtonType.Green -> ButtonDefaults.buttonColors(
             containerColor = Green100,
-            contentColor = Green200
+            contentColor = Green300
         )
 
         SmallButtonType.Red -> ButtonDefaults.buttonColors(

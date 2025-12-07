@@ -3,6 +3,7 @@ package com.example.planup.main.my.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
+import com.example.planup.component.ValidateRow
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.component.textfield.EmailTextField
 import com.example.planup.component.textfield.PasswordTextField
@@ -154,9 +156,24 @@ private fun MyPagePasswordChangeContent(
     newPasswordReInput: TextFieldState,
     changePassword : () -> Unit
 ) {
+
+    var isCorrectLength by remember {
+        mutableStateOf(false)
+    }
+    var isCorrectDigit by remember {
+        mutableStateOf(false)
+    }
+    var isCorrectSpecial by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(newPasswordInput) {
+        isCorrectLength = newPasswordInput.text.length in 8..20
+        isCorrectDigit = newPasswordInput.text.any { it.isDigit() }
+        isCorrectSpecial = newPasswordInput.text.any { !it.isLetterOrDigit() }
+    }
     val enabledButton by remember {
         derivedStateOf {
-            newPasswordInput.text.isNotEmpty() && newPasswordReInput.text.isNotEmpty() && newPasswordInput == newPasswordReInput
+            isCorrectLength && isCorrectDigit && isCorrectSpecial && newPasswordInput == newPasswordReInput
         }
     }
     Column(
@@ -192,7 +209,16 @@ private fun MyPagePasswordChangeContent(
                     PasswordTextField(
                         state = newPasswordInput
                     )
-
+                    Row() {
+                        ValidateRow(
+                            validateText = "8-20자 이내",
+                            isValidate = isCorrectLength
+                        )
+                        ValidateRow(
+                            validateText = "숫자, 특수문자 포함",
+                            isValidate = isCorrectDigit && isCorrectSpecial
+                        )
+                    }
                 }
 
                 Column(
@@ -206,6 +232,12 @@ private fun MyPagePasswordChangeContent(
                         state = newPasswordReInput,
                         placeholderText = stringResource(R.string.password_again)
                     )
+                    Row() {
+                        ValidateRow(
+                            validateText = "비밀번호 일치",
+                            isValidate = newPasswordInput.text == newPasswordReInput.text
+                        )
+                    }
                 }
             }
         }
