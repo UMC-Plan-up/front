@@ -9,6 +9,7 @@ import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeRequest
@@ -249,6 +250,22 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         val result = response.result
                         userInfoSaver.saveProfileImage(result.imageUrl)
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+
+    override suspend fun getKakaoAccountLink(): ApiResult<UsingKakao> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = userApi::getKakaoAccountLink,
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
                         ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
