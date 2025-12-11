@@ -38,7 +38,9 @@ sealed interface MyPageRoute {
         data object ChangePassword : MyPageRoute
 
         @Serializable
-        data object LinkKakao : MyPageRoute
+        data class LinkKakao(
+            val kakaoAccount : String
+        ) : MyPageRoute
 
         @Serializable
         data object Other : MyPageRoute
@@ -130,8 +132,12 @@ fun MyPageNavView(
         composable<MyPageRoute.Account.ChangePassword> {
 
         }
-        composable<MyPageRoute.Account.LinkKakao> {
-
+        composable<MyPageRoute.Account.LinkKakao> {backstackEntry ->
+            val linkKakao : MyPageRoute.Account.LinkKakao = backstackEntry.toRoute()
+            MyPageKakaoView(
+                onBack = navController::navigateUp,
+                kakaoAccount = linkKakao.kakaoAccount
+            )
         }
         composable<MyPageRoute.Account.Other> {
             MyPageOtherView(

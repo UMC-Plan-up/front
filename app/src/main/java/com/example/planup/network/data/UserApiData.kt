@@ -17,7 +17,7 @@ data class MyInviteCode(
 
 //카카오 연동 상태 확인
 data class UsingKakao(
-    @SerializedName(value = "kakaoEmail") var kakaoEmail: String,
+    @SerializedName(value = "kakaoEmail") var kakaoEmail: String?,
     @SerializedName(value = "linked") var linked: Boolean
 )
 

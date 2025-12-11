@@ -4,6 +4,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
@@ -66,6 +67,16 @@ interface UserRepository {
     suspend fun setProfileImage(
         body: MultipartBody.Part
     ): ApiResult<ProfileImageResponse.Result>
+
+
+    /**
+     * 카카오 계정 연동 정보를 가져옵니다.
+     *
+     * @return
+     */
+    suspend fun getKakaoAccountLink(
+
+    ) : ApiResult<UsingKakao>
 
 
     suspend fun getUserNickName() : String
