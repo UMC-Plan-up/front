@@ -1,6 +1,5 @@
 package com.example.planup.main.my.ui
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -50,6 +49,7 @@ import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
 import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageUiState
 import com.example.planup.theme.Typography
 
 class MypageFragment : Fragment() {
@@ -73,12 +73,6 @@ class MypageFragment : Fragment() {
 
     private fun clickListener() {
 
-        /*이메일 변경*/
-        binding.mypageEmailIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailCheckFragment())
-                .commitAllowingStateLoss()
-        }
         /*비밀번호 변경*/
         binding.mypagePasswordIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
