@@ -91,6 +91,10 @@ fun MyPageChangeEmailView(
                     showLoading = false
                 }
 
+                is EmailChangeUiMessage.EmailReSendSuccess -> {
+                    showLoading = false
+                }
+
                 EmailChangeUiMessage.Loading -> {
                     showLoading = true
                 }
@@ -101,6 +105,7 @@ fun MyPageChangeEmailView(
     MyPageChangeEmailContent(
         onBack = onBack,
         sendEmail = emailChangeViewModel::sendEmail,
+        resendEmail = emailChangeViewModel::reSendEmail,
         showStep2 = showStep2
     )
     if (showLoading) {
@@ -120,6 +125,7 @@ fun MyPageChangeEmailView(
 fun MyPageChangeEmailContent(
     onBack: () -> Unit = {},
     sendEmail: (email: String) -> Unit,
+    resendEmail: (email : String) -> Unit,
     showStep2: Boolean,
 ) {
     val email = remember {
@@ -141,7 +147,10 @@ fun MyPageChangeEmailContent(
         }
         AnimatedVisibility(showStep2) {
             ChangeEmailStep2(
-                email.value.text
+                emailString = email.value.text,
+                resendEmail = {
+                    resendEmail(email.value.text)
+                }
             )
         }
     }
@@ -294,10 +303,15 @@ private fun ChangeEmailStep1(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ChangeEmailStep2(
-    emailString: String
+    emailString: String,
+    resendEmail :() -> Unit
 ) {
+    var showReSendSheet by remember {
+        mutableStateOf(false)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -317,7 +331,7 @@ private fun ChangeEmailStep2(
         )
         Text(
             modifier = Modifier.clickable {
-
+                showReSendSheet = true
             },
             text = stringResource(
                 R.string.not_receive_email
@@ -325,6 +339,21 @@ private fun ChangeEmailStep2(
             style = Typography.Medium_L,
             textAlign = TextAlign.Center,
             textDecoration = TextDecoration.Underline
+        )
+    }
+    if (showReSendSheet) {
+        MyPageChangeEmailSheet(
+            onDismissRequest = {
+                showReSendSheet = false
+            },
+            resendEmail = {
+
+                showReSendSheet = false
+            },
+            useKaKaoLogin = {
+
+                showReSendSheet = false
+            }
         )
     }
 }
@@ -335,6 +364,7 @@ fun MyPageChangeEmailContentPreview() {
     MyPageChangeEmailContent(
         onBack = {},
         sendEmail = {},
+        resendEmail = {},
         showStep2 = false
     )
 }

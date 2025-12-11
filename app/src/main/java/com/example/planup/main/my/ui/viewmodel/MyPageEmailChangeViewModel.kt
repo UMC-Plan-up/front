@@ -15,6 +15,7 @@ import javax.inject.Inject
 sealed interface EmailChangeUiMessage {
     data object Loading : EmailChangeUiMessage
     data object EmailSendSuccess : EmailChangeUiMessage
+    data object EmailReSendSuccess : EmailChangeUiMessage
     data class Error(val message: String) : EmailChangeUiMessage
 }
 
@@ -23,11 +24,11 @@ class MyPageEmailChangeViewModel @Inject constructor(
     private val userRepository: UserRepository,
 ) : ViewModel() {
 
-    private var _emailChangeUiMessage = MutableSharedFlow<EmailChangeUiMessage>()
+    private val _emailChangeUiMessage = MutableSharedFlow<EmailChangeUiMessage>()
     val emailChangeUiMessage = _emailChangeUiMessage.asSharedFlow()
 
     //Token - email 매칭
-    private var verificationTokenMap: MutableMap<String, String> = mutableMapOf()
+    private val verificationTokenMap: MutableMap<String, String> = mutableMapOf()
 
     private suspend fun <T> ApiResult<T>.onFailWithMessageOnBlock() {
         this.onFailWithMessage { message ->
@@ -46,6 +47,20 @@ class MyPageEmailChangeViewModel @Inject constructor(
                 .onSuccess { emailLink ->
                     verificationTokenMap[emailLink.token] = email
                     _emailChangeUiMessage.emit(EmailChangeUiMessage.EmailSendSuccess)
+                }
+                .onFailWithMessageOnBlock()
+        }
+    }
+
+    fun reSendEmail(
+        email: String
+    ) {
+        viewModelScope.launch {
+            _emailChangeUiMessage.emit(EmailChangeUiMessage.Loading)
+            userRepository.sendMailForChange(email)
+                .onSuccess { emailLink ->
+                    verificationTokenMap[emailLink.token] = email
+                    _emailChangeUiMessage.emit(EmailChangeUiMessage.EmailReSendSuccess)
                 }
                 .onFailWithMessageOnBlock()
         }

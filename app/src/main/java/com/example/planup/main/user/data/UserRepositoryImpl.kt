@@ -9,8 +9,8 @@ import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
-import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.signup.data.InviteCodeRequest
@@ -105,6 +105,22 @@ class UserRepositoryImpl @Inject constructor(
         safeResult(
             response = {
                 userApi.emailLink(email)
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val emailSendResult = response.result
+                    ApiResult.Success(emailSendResult)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
+    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.emailReLink(email)
             },
             onResponse = { response ->
                 if (response.isSuccess) {

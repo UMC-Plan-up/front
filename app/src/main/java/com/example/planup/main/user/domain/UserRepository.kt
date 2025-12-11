@@ -36,6 +36,16 @@ interface UserRepository {
         email: String
     ) : ApiResult<EmailLink>
 
+    /**
+     * 해당 이메일로 메일을 다시 발송합니다.
+     *
+     * @param email 변경할 이메일 주소
+     * @return
+     */
+    suspend fun reSendMailForChange(
+        email: String
+    ) : ApiResult<EmailLink>
+
 
     suspend fun changeNickName(
         newNickName: String
