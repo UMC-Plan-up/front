@@ -16,6 +16,7 @@ val SemanticB2 = Color(0xff22262D)
 val SemanticB3 = Color(0xff4B5563)
 val SemanticB4 = Color(0xffC7CACF)
 val SemanticB5 = Color(0xffE4E6E8)
+val SemanticB6 = Color(0xfff1f1f1)
 
 val SemanticR1 = Color(0xffF81E1E)
 val SemanticR2 = Color(0xffCA3535)
@@ -27,6 +28,7 @@ val Information2 = Color(0xffD7EEEE)
 
 val Black100 = Color(0xffE4E6E8)
 val Black200 = Color(0xffC7CACF)
+val Black250 = Color(0xff888888)
 val Black300 = Color(0xff4B5563)
 val Black400 = Color(0xff22262D)
 
