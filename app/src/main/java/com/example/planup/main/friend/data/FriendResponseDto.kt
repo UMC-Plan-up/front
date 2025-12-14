@@ -4,7 +4,7 @@ data class FriendResponseDto(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: List<FriendResult>
+    val result: FriendResult
 )
 
 data class FriendResult(
@@ -16,7 +16,7 @@ data class FriendInfo(
     val id: Int,
     val nickname: String,
     val goalCnt: Int,
-    val todayTime: String?,
+    val todayTime: String,
     val isNewPhotoVerify: Boolean,
     val profileImage: String
 )

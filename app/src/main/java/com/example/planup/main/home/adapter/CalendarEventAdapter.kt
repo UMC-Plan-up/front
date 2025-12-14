@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
-import com.example.planup.main.home.ui.CalendarEvent
+import com.example.planup.main.home.data.CalendarEvent
 import java.util.Calendar
 import androidx.core.graphics.toColorInt
 

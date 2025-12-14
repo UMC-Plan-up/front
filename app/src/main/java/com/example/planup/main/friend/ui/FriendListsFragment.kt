@@ -79,7 +79,7 @@ class FriendListsFragment : Fragment() {
                 val resp = RetrofitInstance.friendApi.getFriendSummary(auth)
                 if (resp.isSuccessful && resp.body()?.isSuccess == true) {
                     val list: List<FriendInfo> =
-                        resp.body()!!.result.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                        resp.body()!!.result.friendInfoSummaryList
 
                     binding.friendListsRecyclerView.adapter = FriendListsAdapter(
                         items = list,

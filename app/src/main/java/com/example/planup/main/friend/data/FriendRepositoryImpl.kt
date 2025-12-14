@@ -36,7 +36,7 @@ class FriendRepositoryImpl @Inject constructor(
                         if (friendDto.isSuccess) {
                             val resultList = friendDto.result
                             val friendList =
-                                resultList.firstOrNull()?.friendInfoSummaryList.orEmpty()
+                                resultList.friendInfoSummaryList
                             ApiResult.Success(friendList)
                         } else {
                             ApiResult.Fail(friendDto.message)

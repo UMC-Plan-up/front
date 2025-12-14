@@ -6,6 +6,7 @@ import com.example.planup.network.data.TodayFriendTimerResponse
 import com.example.planup.network.data.TodayTotalTimeResponse
 import com.example.planup.network.data.UploadResponse
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
@@ -20,19 +21,19 @@ interface VerificationApi {
     suspend fun getTodayTotalTime(
         @Header("Authorization") token: String,
         @Query("GoalId") goalId: Int
-    ): TodayTotalTimeResponse
+    ): Response<TodayTotalTimeResponse>
 
     @POST("verification/timer/start")
     suspend fun postTimerStart(
         @Header("Authorization") token: String,
         @Query("goalId") goalId: Int
-    ): TimerStartResponse
+    ): Response<TimerStartResponse>
 
     @PUT("verification/timer/stop/{timerId}")
     suspend fun putTimerStop(
         @Header("Authorization") token: String,
         @Path("timerId") timerId: Int
-    ): TimerStopResponse
+    ): Response<TimerStopResponse>
 
     @Multipart
     @POST("verification/photo/upload")
@@ -40,12 +41,12 @@ interface VerificationApi {
         @Header("Authorization") token: String,
         @Query("goalId") goalId: Int,
         @Part photoFile: MultipartBody.Part
-    ): UploadResponse
+    ): Response<UploadResponse>
 
     @GET("/verification/friend/{friendId}/timer/today-total")
     suspend fun getTodayFriendTimer(
         @Header("Authorization") token: String,
         @Path("friendId") friendId: Int,
         @Query("goalId") goalId: Int
-    ): TodayFriendTimerResponse
+    ): Response<TodayFriendTimerResponse>
 }

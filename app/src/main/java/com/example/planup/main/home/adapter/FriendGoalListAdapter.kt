@@ -1,5 +1,6 @@
 package com.example.planup.main.home.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
@@ -14,10 +15,13 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 
 class FriendGoalListAdapter(
-    private val items: List<FriendGoalWithAchievement>,
+    private val paramItems: List<FriendGoalWithAchievement>,
     private val onItemClick: (FriendGoalWithAchievement) -> Unit
 ) : RecyclerView.Adapter<FriendGoalListAdapter.FriendGoalViewHolder>() {
-
+    private val items = mutableListOf<FriendGoalWithAchievement>().apply {
+        addAll(paramItems)
+    }
+    private var showingCnt = 3
     inner class FriendGoalViewHolder(val binding: ItemFriendGoalListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val pieChart = binding.friendGoalListPc
@@ -76,7 +80,9 @@ class FriendGoalListAdapter(
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int {
+        return if (showingCnt < items.size) showingCnt else items.size
+    }
 
     private fun setupDonutChart(chart: PieChart, progress: Int, position: Int) {
 
@@ -122,5 +128,17 @@ class FriendGoalListAdapter(
         val secs = seconds % 60
 
         return String.format("%02d:%02d:%02d", hours, minutes, secs)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateItems(newItems: List<FriendGoalWithAchievement>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
+    fun showAllItems() {
+        showingCnt = items.size
+        notifyDataSetChanged()
     }
 }
