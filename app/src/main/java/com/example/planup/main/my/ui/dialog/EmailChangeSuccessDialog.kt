@@ -1,4 +1,4 @@
-package com.example.planup.main.my.dialog
+package com.example.planup.main.my.ui.dialog
 
 import android.content.Intent
 import android.os.Bundle

@@ -31,7 +31,7 @@ import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.dialog.EmailChangeSuccessDialog
+import com.example.planup.main.my.ui.dialog.EmailChangeSuccessDialog
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.record.ui.RecordFragment
