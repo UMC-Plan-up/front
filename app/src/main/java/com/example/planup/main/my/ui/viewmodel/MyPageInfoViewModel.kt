@@ -3,14 +3,20 @@ package com.example.planup.main.my.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
+import com.example.planup.network.ApiResult
+import com.example.planup.network.data.KakaoLink
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -29,13 +35,6 @@ sealed interface MyPageUiState {
         val newNotification: Boolean,
         val date: String
     ) : MyPageUiState
-
-
-    data class SuccessKakaoAccount(
-        val kakaoEmail: String,
-    ) : MyPageUiState
-
-    data object FailKakaoAccount : MyPageUiState
 
 }
 
@@ -66,6 +65,12 @@ class MyPageInfoViewModel @Inject constructor(
     val marketingNotification = _marketingNotification.asStateFlow()
 
     /**
+     * 카카오 계정 연결 정보
+     */
+    private var _kakaoLink = MutableStateFlow<UsingKakao>(UsingKakao(null,false))
+    val kakaoLink = _kakaoLink.asStateFlow()
+
+    /**
      * 유저 닉네임 정보
      */
     private var _nickName = MutableStateFlow("")
@@ -76,12 +81,27 @@ class MyPageInfoViewModel @Inject constructor(
      *
      */
     fun fetchUserInfo() {
-        viewModelScope.launch {
-            fetchEmail()
-            fetchNickName()
-            fetchProfileImage()
-            fetchNotificationService()
-            fetchNotificationMarketing()
+        viewModelScope.launch() {
+            supervisorScope {
+                launch {
+                    fetchEmail()
+                }
+                launch {
+                    fetchNickName()
+                }
+                launch {
+                    fetchProfileImage()
+                }
+                launch {
+                    fetchNotificationService()
+                }
+                launch {
+                    fetchNotificationMarketing()
+                }
+                launch {
+                    fetchKaKaoAccount()
+                }
+            }
         }
     }
 
@@ -121,6 +141,15 @@ class MyPageInfoViewModel @Inject constructor(
      */
     suspend fun fetchNotificationMarketing() = _marketingNotification.update {
         userRepository.getUserNotificationMarketing()
+    }
+
+    suspend fun fetchKaKaoAccount() = _kakaoLink.update {
+        val result = userRepository.getKakaoAccountLink()
+        if (result is ApiResult.Success) {
+            result.data
+        } else {
+            UsingKakao(null,false)
+        }
     }
 
 
@@ -166,32 +195,6 @@ class MyPageInfoViewModel @Inject constructor(
                         )
                     }
                 }.onFailWithMessage { message ->
-                    _uiState.update {
-                        MyPageUiState.Error(message)
-                    }
-                }
-        }
-    }
-
-
-    fun checkKakaoAccountLink() {
-        viewModelScope.launch {
-            _uiState.update {
-                MyPageUiState.Loading
-            }
-            userRepository.getKakaoAccountLink()
-                .onSuccess { usingKakao ->
-                    _uiState.update {
-                        if (usingKakao.linked && usingKakao.kakaoEmail != null) {
-                            MyPageUiState.SuccessKakaoAccount(
-                                kakaoEmail = usingKakao.kakaoEmail!!
-                            )
-                        } else {
-                            MyPageUiState.FailKakaoAccount
-                        }
-                    }
-                }
-                .onFailWithMessage { message ->
                     _uiState.update {
                         MyPageUiState.Error(message)
                     }

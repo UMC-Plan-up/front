@@ -106,6 +106,7 @@ fun MyPageView(
     val profileImage by myPageInfoViewModel.profileImage.collectAsStateWithLifecycle()
     val serviceNotification by myPageInfoViewModel.notificationService.collectAsStateWithLifecycle()
     val marketingNotification by myPageInfoViewModel.marketingNotification.collectAsStateWithLifecycle()
+    val kakaoLink by myPageInfoViewModel.kakaoLink.collectAsStateWithLifecycle()
 
     val uiState by myPageInfoViewModel.uiState.collectAsStateWithLifecycle()
 
@@ -140,22 +141,6 @@ fun MyPageView(
                     )
                 )
             }
-
-            is MyPageUiState.SuccessKakaoAccount -> {
-                val kakaoAccountState =
-                    (uiState as MyPageUiState.SuccessKakaoAccount)
-
-                navigateRoute(
-                    MyPageRoute.Account.LinkKakao(
-                        kakaoAccount = kakaoAccountState.kakaoEmail
-                    )
-                )
-            }
-
-            is MyPageUiState.FailKakaoAccount -> {
-                //TODO Launch Kakao Login
-                mainSnackbarViewModel.updateErrorMessage("(미구현)연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
-            }
         }
     }
 
@@ -186,13 +171,19 @@ fun MyPageView(
     MyPageViewContent(
         navigateRoute = { route ->
             if (route is Account.LinkKakao) {
-                myPageInfoViewModel.checkKakaoAccountLink()
+                if (kakaoLink.linked && kakaoLink.kakaoEmail != null) {
+                    navigateRoute(Account.LinkKakao(kakaoLink.kakaoEmail!!))
+                } else {
+                    //TODO Request KaKaoLogin
+                    mainSnackbarViewModel.updateErrorMessage("(미구현)연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
+                }
             } else {
                 navigateRoute(route)
             }
         },
         profileImage = profileImage,
         email = email,
+        isKaKaoLinked = kakaoLink.linked,
         serviceNotification = serviceNotification,
         marketingNotification = marketingNotification,
         updateServiceNotification = { newNotification ->
@@ -245,6 +236,7 @@ private fun MyPageViewContent(
     navigateRoute: (route: MyPageRoute) -> Unit,
     profileImage: String,
     email: String,
+    isKaKaoLinked: Boolean,
     serviceNotification: Boolean,
     marketingNotification: Boolean,
     updateServiceNotification: (Boolean) -> Unit,
@@ -318,12 +310,19 @@ private fun MyPageViewContent(
 
             initHeaderWithContent(
                 header = R.string.mypage_account,
-                content = listOf(
-                    MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
-                    MyPageRoute.Account.ChangePassword to R.string.mypage_password,
-                    MyPageRoute.Account.LinkKakao("") to R.string.mypage_kakao,
-                    MyPageRoute.Account.Other to R.string.mypage_other,
-                )
+                content =
+                    if (!isKaKaoLinked) {
+                        //카카오 연결 계정이 아닌 경우
+                        listOf(
+                            Account.ChangeEmail to R.string.mypage_email,
+                            Account.ChangePassword to R.string.mypage_password,
+                        )
+                    } else {
+                        emptyList()
+                    } + listOf(
+                        Account.LinkKakao("") to R.string.mypage_kakao,
+                        Account.Other to R.string.mypage_other,
+                    )
             )
 
             initHeaderWithContent(
