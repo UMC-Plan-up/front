@@ -8,7 +8,10 @@ import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,6 +41,13 @@ class MyPageEmailChangeViewModel @Inject constructor(
         }
     }
 
+    private val _showAlertEmail = MutableStateFlow<String?>(null)
+
+    val showAlertEmail = _showAlertEmail.asStateFlow()
+
+    /**
+     * 이메일 보내기
+     */
     fun sendEmail(
         email: String
     ) {
@@ -52,6 +62,9 @@ class MyPageEmailChangeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * 이메일 재전송
+     */
     fun reSendEmail(
         email: String
     ) {
@@ -66,15 +79,22 @@ class MyPageEmailChangeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Intent 검증 및 scheme 처리
+     */
     fun verifyScheme(
         token: String?,
-        callbackEmail :(savedEmail : String) -> Unit
     ) {
+        _showAlertEmail.update {
+            null
+        }
+
         token ?: return
         val savedEmail = verificationTokenMap.getOrDefault(token, null)
         savedEmail ?: return
-        viewModelScope.launch {
 
+        _showAlertEmail.update {
+            savedEmail
         }
     }
 

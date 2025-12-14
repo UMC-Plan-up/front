@@ -31,6 +31,7 @@ import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.main.my.dialog.EmailChangeSuccessDialog
 import com.example.planup.main.my.ui.MypageFragment
 import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.record.ui.RecordFragment
@@ -199,6 +200,15 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                myPageEmailChangeViewModel.showAlertEmail.collect { email ->
+                    email?.let { email ->
+                        val dialog = EmailChangeSuccessDialog.getInstance(email)
+                        dialog.show(supportFragmentManager, "EmailChangeSuccessDialog")
+                    }
+                }
+            }
         }
     }
 
@@ -219,9 +229,7 @@ class MainActivity : AppCompatActivity() {
                         if (data.path?.startsWith("/change") == true && data.getQueryParameter("verified") == "true") {
                             //이메일 변경 완료 됨 검증
                             val token = data.getQueryParameter("token")
-                            myPageEmailChangeViewModel.verifyScheme(token) {
-                                // TODO SHOW ALERT
-                            }
+                            myPageEmailChangeViewModel.verifyScheme(token)
                         }
                     }
                 }
