@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
@@ -126,10 +127,10 @@ private fun MyPageOtherDeleteAccountContent(
 
                 item {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_notice),
@@ -143,17 +144,36 @@ private fun MyPageOtherDeleteAccountContent(
                         }
 
                         Row(
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_notice),
                                 contentDescription = null,
                                 tint = Color.Unspecified
                             )
-                            Text(
-                                text = stringResource(R.string.delete_account_notice2),
-                                style = Typography.Medium_S
-                            )
+                            Column() {
+                                Text(
+                                    text = stringResource(R.string.delete_account_notice2),
+                                    style = Typography.Medium_S
+                                )
+                                listOf(
+                                    stringResource(R.string.delete_account_notice2_detail1),
+                                    stringResource(R.string.delete_account_notice2_detail2),
+                                    stringResource(R.string.delete_account_notice2_detail3),
+                                ).forEach { detail ->
+                                    Row(
+                                        modifier = Modifier.padding(start = 5.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Text("•")
+                                        Column() {
+                                            Text(
+                                                text = detail
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         Row(
@@ -236,4 +256,14 @@ private fun MyPageOtherDeleteAccountContent(
             )
         }
     }
+}
+
+@Preview
+@Composable
+private fun MyPageOtherDeleteAccountContentPreview() {
+    MyPageOtherDeleteAccountContent(
+        onBack = {},
+        nickName = "Test",
+        withdraw = {}
+    )
 }
