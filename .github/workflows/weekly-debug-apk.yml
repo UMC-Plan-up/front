@@ -1,0 +1,109 @@
+name: Weekly Debug APK & Git Log
+
+on:
+  schedule:
+    - cron: '0 12 * * 3' # 매주 수요일 12:00 UTC = 21:00 KST
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: 'Git log start date (YYYY-MM-DD)'
+        required: false
+      end_date:
+        description: 'Git log end date (YYYY-MM-DD)'
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      APK_PATH: app/build/outputs/apk/debug/app-debug.apk
+      CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+      SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for Gradle
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Get commits for the period
+        id: gitlog
+        run: |
+          set -x
+          START_DATE="${{ github.event.inputs.start_date }}"
+          END_DATE="${{ github.event.inputs.end_date }}"
+          
+          if [ -z "$START_DATE" ]; then
+            START_DATE=$(date -d "1 week ago Wednesday +1 day" +%Y-%m-%d)
+          fi
+          if [ -z "$END_DATE" ]; then
+            END_DATE=$(date -d "Wednesday" +%Y-%m-%d)
+          fi
+          
+          echo "Getting commits from $START_DATE to $END_DATE"
+
+          # git log 결과를 변수로 저장
+          COMMITS=$(git log --no-color --since="$START_DATE 00:00" --until="$END_DATE 23:59" \
+            --pretty=format:"• %s [%an, %h]" | head -n 30)
+
+          # GITHUB_OUTPUT에 멀티라인 안전하게 저장
+          {
+            echo "commits<<EOF"
+            echo "$COMMITS"
+            echo "EOF"
+            echo "start_date=$START_DATE"
+            echo "end_date=$END_DATE"
+          } >> "$GITHUB_OUTPUT"
+
+
+      - name: Set build timestamp
+        run: echo "BUILD_TIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+
+      - name: Check if APK exists
+        run: |
+          if [ ! -f "$APK_PATH" ]; then
+            echo "❌ APK file not found: $APK_PATH"
+            exit 1
+          fi
+
+      - name: Upload Debug APK to Slack
+        if: success()
+        uses: MeilCli/slack-upload-file@v4
+        with:
+          slack_token: ${{ env.SLACK_TOKEN }}
+          channel_id: ${{ env.CHANNEL_ID }}
+          file_path: ${{ env.APK_PATH }}
+          title: "📦 Weekly Debug APK"
+          initial_comment: |
+            *🧾 Weekly Debug APK & Git Log*
+            ----------------------------------
+            *🌿 Branch:* `${{ github.ref_name }}`
+            *🗓 Period:* `${{ steps.gitlog.outputs.start_date }} ~ ${{ steps.gitlog.outputs.end_date }}`
+            *🕒 Build Time:* `${{ env.BUILD_TIME }}`
+
+            *🧩 Recent Commits (max 30):*
+            ``` 
+            ${{ steps.gitlog.outputs.commits }}
+            ```

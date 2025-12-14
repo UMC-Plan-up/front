@@ -14,14 +14,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.example.planup.R
+import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
-import com.example.planup.main.my.ui.common.RoutePageDefault
 
 
 @Composable
 fun MyPagePolicyView(
     onBack: () -> Unit,
-    routePolicy: (MyPageRoute.PolicyDetail) -> Unit
+    routePolicy: (MyPageRoute.Service.Detail) -> Unit
 ) {
     MyPagePolicyContent(
         onBack = onBack,
@@ -32,23 +32,31 @@ fun MyPagePolicyView(
 @Composable
 private fun MyPagePolicyContent(
     onBack: () -> Unit,
-    routePolicy: (MyPageRoute.PolicyDetail) -> Unit
+    routePolicy: (MyPageRoute.Service.Detail) -> Unit
 ) {
-    RoutePageDefault(
+    MyPageDefault(
         onBack = onBack,
         categoryText = stringResource(R.string.mypage_policy)
     ) {
         Spacer(Modifier.height(20.dp))
         RouteMenuItemWithArrow(
-            title = "서비스 이용 약관",
+            title = stringResource(R.string.mypage_policy_service),
             action = {
-                routePolicy(MyPageRoute.PolicyDetail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb8032a668f6e4dfd6afc5?pvs=149"))
+                routePolicy(
+                    MyPageRoute.Service.Detail(
+                        "https://wakeful-dragonfly-7f2.notion.site/2a9a435fe4bb80a6957bc53a1c204834?pvs=74"
+                    )
+                )
             }
         )
         RouteMenuItemWithArrow(
-            title = "개인정보 처리방침",
+            title = stringResource(R.string.mypage_policy_privacy),
             action = {
-                routePolicy(MyPageRoute.PolicyDetail("https://wakeful-dragonfly-7f2.notion.site/242a435fe4bb80f18068c43792c0634c?pvs=149"))
+                routePolicy(
+                    MyPageRoute.Service.Detail(
+                        "https://wakeful-dragonfly-7f2.notion.site/2a9a435fe4bb80f783f4c898ca613a0e?pvs=74"
+                    )
+                )
             }
         )
     }
@@ -75,7 +83,7 @@ fun MyPagePolicyDetailView(
     }
 
 
-    RoutePageDefault(onBack = onBack) {
+    MyPageDefault(onBack = onBack) {
         AndroidView(
             factory = { webView },
             modifier = Modifier

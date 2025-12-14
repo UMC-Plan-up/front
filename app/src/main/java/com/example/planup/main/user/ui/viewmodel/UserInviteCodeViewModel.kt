@@ -4,9 +4,9 @@ import android.app.Activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
-import com.example.planup.network.ApiResult
-import com.example.planup.signup.data.InviteCodeResult
-import com.example.planup.signup.data.InviteCodeValidateResponse
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
+import com.example.planup.signup.data.ProcessResult
 import com.example.planup.util.ShareTool
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +25,7 @@ class UserInviteCodeViewModel @Inject constructor(
     val inviteCode = _inviteCode.asStateFlow()
 
     fun fetchMyInviteCode(
-        onCallBack: (inviteCode : String) -> Unit
+        onCallBack: (inviteCode: String) -> Unit
     ) {
         if (_inviteCode.value.isEmpty()) {
             //초대 코드가 없을 경우 에만
@@ -39,12 +39,14 @@ class UserInviteCodeViewModel @Inject constructor(
     }
 
     fun fetchInvalidateInviteCode(
-        code : String,
-        onCallBack: (ApiResult<InviteCodeValidateResponse.Result>) -> Unit
+        code: String,
+        onCallBack: (ProcessResult) -> Unit,
+        onError: (String) -> Unit
     ) {
         viewModelScope.launch {
-            val result = userRepository.validateInviteCode(code)
-            onCallBack(result)
+            userRepository.validateInviteCode(code)
+                .onSuccess(onCallBack)
+                .onFailWithMessage(onError)
         }
     }
 
@@ -61,8 +63,8 @@ class UserInviteCodeViewModel @Inject constructor(
     }
 
     fun shareKaKao(
-        activityContext : Activity
+        activityContext: Activity
     ) {
-        shareTool.shareToKakao(activityContext,_inviteCode.value)
+        shareTool.shareToKakao(activityContext, _inviteCode.value)
     }
 }

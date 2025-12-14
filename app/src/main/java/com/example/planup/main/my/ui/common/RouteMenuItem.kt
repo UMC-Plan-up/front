@@ -25,7 +25,7 @@ import com.example.planup.theme.Typography
 @Composable
 fun RouteMenuItem(
     title: String,
-    rightContent : @Composable RowScope.() -> Unit = {},
+    rightContent : (@Composable RowScope.() -> Unit)? = null,
     action: (() -> Unit)? = null
 ) {
     Box {
@@ -43,8 +43,10 @@ fun RouteMenuItem(
                 text = title,
                 style = Typography.Semibold_S
             )
-            Row {
-                rightContent()
+            rightContent?.let {content ->
+                Row {
+                    content()
+                }
             }
         }
         HorizontalDivider(

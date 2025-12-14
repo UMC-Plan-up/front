@@ -3,7 +3,6 @@ package com.example.planup.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -11,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.theme.Black400
@@ -21,6 +21,7 @@ fun TopHeader(
     modifier: Modifier = Modifier,
     onBackAction: (() -> Unit)? = null,
     otherActionContent: @Composable RowScope.() -> Unit = {},
+    textStyle : TextStyle = Typography.Medium_2XL,
     title: String,
 ) {
     Row(
@@ -34,7 +35,6 @@ fun TopHeader(
         ) {
             onBackAction?.let { onBack ->
                 IconButton(
-                    modifier = Modifier.size(24.dp),
                     onClick = onBack
                 ) {
                     Icon(
@@ -45,7 +45,7 @@ fun TopHeader(
             }
             Text(
                 text = title,
-                style = Typography.Medium_2XL,
+                style = textStyle,
                 color = Black400
             )
         }

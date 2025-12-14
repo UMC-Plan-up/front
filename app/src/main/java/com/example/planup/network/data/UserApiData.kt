@@ -17,7 +17,7 @@ data class MyInviteCode(
 
 //카카오 연동 상태 확인
 data class UsingKakao(
-    @SerializedName(value = "kakaoEmail") var kakaoEmail: String,
+    @SerializedName(value = "kakaoEmail") var kakaoEmail: String?,
     @SerializedName(value = "linked") var linked: Boolean
 )
 
@@ -67,11 +67,6 @@ data class EmailLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
     @SerializedName("verificationToken") val token: String
-)
-
-//프로필 사진 업로드 및 변경
-data class ProfileImage(
-    @SerializedName("file") val file: String
 )
 
 data class KakaoLink(

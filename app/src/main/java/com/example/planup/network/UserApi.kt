@@ -3,8 +3,9 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
-import com.example.planup.network.data.ProfileImage
 import com.example.planup.network.data.UserResponse
+import com.example.planup.network.data.UsingKakao
+import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
@@ -27,6 +28,7 @@ import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.NicknameCheckResponse
+import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
@@ -38,11 +40,12 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Query
 
-interface UserApi {
+interface UserApi : MyPageApi {
 
     // 회원가입
     @POST("/users/signup")
@@ -50,11 +53,21 @@ interface UserApi {
         @Body request: SignupRequestDto
     ): Response<SignupResponseDto>
 
+    //로그아웃
+    @POST("users/logout")
+    suspend fun logout(): Response<UserResponse<String>>
+
     // 로그인
     @POST("/users/login")
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
+
+    //회원 탈퇴
+    @POST("users/withdraw")
+    suspend fun withdrawAccount(
+        @Body reason: String
+    ): Response<UserResponse<WithDraw>>
 
     // 내 초대코드 조회
     @GET("users/me/invite-code")
@@ -140,12 +153,6 @@ interface UserApi {
         @Query("nickname") nickname: String
     ): Response<NicknameCheckResponse>
 
-    //닉네임 수정
-    @POST("mypage/profile/nickname")
-    suspend fun changeNickname(
-        @Body nickname: String
-    ): Response<UserResponse<String>>
-
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(
@@ -156,8 +163,32 @@ interface UserApi {
     @GET("/users/info")
     suspend fun getUserInfo(): Response<UserInfoResponse>
 
+
+    //서비스 알림 동의 변경
+    @PATCH("mypage/notification/service")
+    suspend fun patchNoticeService(): Response<UserResponse<Boolean>>
+
+    //혜택 및 마케팅 동의 변경
+    @PATCH("mypage/notification/marketing")
+    suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
+}
+
+interface MyPageApi {
+
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
+
+    //유저 정보 카카오 연동 조회
+    @GET("mypage/kakao-account")
+    suspend fun getKakaoAccountLink(
+
+    ): Response<UserResponse<UsingKakao>>
+
     //프로필 이미지 변경
     @Multipart
-    @POST("profile/image")
-    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImage>>
+    @POST("mypage/profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
 }

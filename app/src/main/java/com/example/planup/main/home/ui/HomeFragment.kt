@@ -1,36 +1,55 @@
 package com.example.planup.main.home.ui
 
+import android.app.Dialog
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
-import com.example.planup.main.home.adapter.FriendChallengeAdapter
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.planup.R
 import com.example.planup.databinding.FragmentHomeBinding
 import com.example.planup.databinding.ItemCalendarDayBinding
+import com.example.planup.main.MainActivity
+import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.adapter.DailyToDoAdapter
+import com.example.planup.main.home.adapter.FriendChallengeAdapter
+import com.example.planup.main.home.data.ChallengeReceivedTimer
+import com.example.planup.main.home.data.DailyToDo
+import com.example.planup.main.home.item.FriendChallengeItem
+import com.example.planup.network.RetrofitInstance
+import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import retrofit2.HttpException
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
+import kotlin.coroutines.resume
 import kotlinx.coroutines.launch
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.Lifecycle
+import com.example.planup.main.home.data.CalendarEvent
 import com.example.planup.main.home.ui.viewmodel.HomeViewModel
 import com.example.planup.network.ApiResult
 import kotlin.collections.filter
@@ -46,6 +65,12 @@ class HomeFragment : Fragment() {
 
     private val today = LocalDate.now()
     private var selectedDate = today
+    private var eventList = mutableListOf<CalendarEvent>(
+        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 12, 11)),
+        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 12, 18)),
+        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 12, 19)),
+        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 12, 18))
+    )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -136,6 +161,10 @@ class HomeFragment : Fragment() {
                 .replace(R.id.main_container, fragment)
                 .addToBackStack(null)
                 .commit()
+        }
+
+        binding.homeMainProfileIv.setOnClickListener {
+            showPopup()
         }
 
         val calendarCardView = binding.homeCalendarCardView
@@ -240,4 +269,53 @@ class HomeFragment : Fragment() {
             }
         }
     }
-}
+
+    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
+        return eventList.filter { it.date == date }
+    }
+    private fun showPopup(){
+        val timerChallenge = ChallengeReceivedTimer(
+            1,
+            16,
+            listOf(13L),
+            "friend",
+            "goalName",
+            "goalAmount",
+            1200,
+            "endDate",
+            "duration",
+            "frequency",
+            "penalty"
+        )
+        val dialog = Dialog(context as MainActivity)
+        dialog.setContentView(R.layout.popup_challenge)
+        dialog.window?.apply {
+            setGravity(Gravity.CENTER)
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
+            //팝업에 요청한 친구 이름 바인딩
+            dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+            //배경 투명색
+            dialog.setCanceledOnTouchOutside(true)
+        }
+        //닫기 버튼 클릭 시 팝업 종료
+        dialog.findViewById<View>(R.id.popup_challenge_close_iv).setOnClickListener {
+            dialog.dismiss()
+        }
+        //확인하러 가기 버튼 클릭 시 챌린지 요청 조회 화면으로 이동
+        dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
+            dialog.dismiss()
+
+            //API response에 따라 photo 또는 timer로 전환
+            //bundle로 데이터 넘기는 작업도 필요함
+            val challengeTimer = ChallengeReceivedTimerFragment()
+            challengeTimer.arguments = Bundle().apply {
+                putParcelable("receivedChallenge",timerChallenge)
+            }
+            (context as MainActivity).supportFragmentManager.beginTransaction()
+                .replace(R.id.main_container,challengeTimer)
+                .commitAllowingStateLoss()
+        }
+        dialog.show()
+    }
+    }
+
