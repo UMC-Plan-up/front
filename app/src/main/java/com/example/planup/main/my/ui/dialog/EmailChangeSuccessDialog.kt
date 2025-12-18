@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.planup.R
 import com.example.planup.databinding.PopupEmailChangedBinding
 import com.example.planup.login.ui.LoginActivityNew
 
@@ -46,8 +47,8 @@ class EmailChangeSuccessDialog : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val email  = arguments?.getString(EMAIL)
-        binding.popupEmailSubTv.text = email
+        val email = arguments?.getString(EMAIL)
+        binding.popupEmailSubTv.text = getString(R.string.popup_email_explain, email)
         binding.popupEmailResetBtn.setOnClickListener {
             startToLogin()
         }
