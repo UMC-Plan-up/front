@@ -206,8 +206,11 @@
     <string name="kakao_sync">카카오톡 계정(%1$s)에\n이미 연동된 계정이에요.</string>
     <!-- fragment_mypage_other.xml -->
     <!-- fragment_mypage_delete_account.xml -->
-    <string name="delete_account_notice1">지금 탈퇴하시면, 현재까지 기록했던 목표 달성 기록과 친구 목록이 삭제돼요.</string>
-    <string name="delete_account_notice2">지금 탈퇴하시면, 잠금 해제된 목표들도 함께 사라져요. 추후에 같은 계정으로 재가입하셔도해당 내역은 복구되지 않아요.</string>
+    <string name="delete_account_notice1">지금 탈퇴하시면, 현재까지 기록했던 목표 달성 기록과 친구 목록이 삭제돼요. 추후에 같은 계정으로 재가입하셔도 해당 내역은 복구되지 않아요.</string>
+    <string name="delete_account_notice2">탈퇴 시, 입력한 개인정보는 개인정보 보호법을 따라 보관기관 경과 후 즉시 파기됩니다. 다음 항목들은 일정 기간 분리 보관됩니다.</string>
+    <string name="delete_account_notice2_detail1">보관 데이터 : 아이디, 탈퇴 일시 및 사유</string>
+    <string name="delete_account_notice2_detail2">보관 기간 : 탈퇴일로부터 90일</string>
+    <string name="delete_account_notice2_detail3">보관 목적 : 사용자 민원 대응, 악성 유저 반복 가입 제재</string>
     <string name="delete_account_agreement">회원 탈퇴 유의사항을 확인하였으며, 이에 동의합니다.</string>
     <string name="delete_account_reason">탈퇴 이유를 알려주세요😁</string>
     <string name="delete_account_feedback">피드백을 제공해 주신다면, 더 나은 서비스로 발전시켜 보답하겠습니다.</string>
