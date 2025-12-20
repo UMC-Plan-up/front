@@ -16,7 +16,8 @@ import kotlinx.serialization.Serializable
 @Composable
 fun OnboardNavHost(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    state: OnBoardingState
 ) {
 
     NavHost(
@@ -25,16 +26,10 @@ fun OnboardNavHost(
         startDestination = OnBoardTermRoute::class,
     ) {
         composable<OnBoardTermRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardIdRoute)
-                }
-            ) {
-                Text(text = "OnBoardTermRoute")
-            }
+            OnBoardingTermScreen(
+                modifier = modifier,
+                state = state
+            )
         }
 
         composable<OnBoardIdRoute> {
