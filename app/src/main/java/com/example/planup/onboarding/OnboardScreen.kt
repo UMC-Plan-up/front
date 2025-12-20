@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.component.TopHeader
+import com.example.planup.onboarding.component.OnBoardingProgressBar
 
 @Composable
 fun OnBoardScreen(
@@ -28,8 +30,8 @@ fun OnBoardScreen(
 
     Box(
         modifier = modifier
+            .background(Color.White)
             .fillMaxSize()
-            .background(Color.LightGray)
     ) {
         Column(
             modifier = Modifier
@@ -38,19 +40,28 @@ fun OnBoardScreen(
             TopHeader(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.navigationBars))
+                    .padding(horizontal = 20.dp)
                     .fillMaxWidth()
-                    .height(48.dp)
-                    .background(Color.Gray),
+                    .height(48.dp),
                 onBackAction = {
                     navController.popBackStack()
                 },
                 title = state.step.title ?: ""
             )
 
+            OnBoardingProgressBar(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        horizontal = 26.dp,
+                        vertical = 12.dp
+                    ),
+                progress = state.step.getFloatProgress()
+            )
+
             OnboardNavHost(
                 modifier = modifier
-                    .fillMaxSize()
-                    .background(Color.White),
+                    .fillMaxSize(),
                 navController = navController,
                 state = state
             )
