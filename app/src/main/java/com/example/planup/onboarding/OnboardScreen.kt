@@ -44,14 +44,15 @@ fun OnBoardScreen(
                 onBackAction = {
                     navController.popBackStack()
                 },
-                title = state.dummy
+                title = state.step.title ?: ""
             )
 
             OnboardNavHost(
                 modifier = modifier
                     .fillMaxSize()
                     .background(Color.White),
-                navController = navController
+                navController = navController,
+                state = state
             )
         }
     }
