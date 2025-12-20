@@ -61,29 +61,16 @@ data class OnBoardingState(
 sealed class OnboardingStep(val step: Int, val title: String?) {
     private val totalStep: Int = 7
 
-    data object Term: OnboardingStep(step = 1, title = "")
-    data object Id: OnboardingStep(step = 2, title = "")
-    data object Password: OnboardingStep(step = 3, title = "")
-    data object Verification: OnboardingStep(step = 4, title = "")
-    data object Profile: OnboardingStep(step = 5, title = "")
-    data object ShareFriendCode: OnboardingStep(step = 6, title = "")
-    data object ShareInvite: OnboardingStep(step = 7, title = "")
-
-    fun getStep(step: Int): OnboardingStep {
-        return when(step) {
-            Term.step -> Term
-            Id.step -> Id
-            Password.step -> Password
-            Verification.step -> Verification
-            Profile.step -> Profile
-            ShareFriendCode.step -> ShareFriendCode
-            ShareInvite.step -> ShareInvite
-            else -> { throw Exception("알 수 없는 단계") }
-        }
-    }
+    data object Term: OnboardingStep(step = 1, title = null)
+    data object Id: OnboardingStep(step = 2, title = null)
+    data object Password: OnboardingStep(step = 3, title = null)
+    data object Verification: OnboardingStep(step = 4, title = null)
+    data object Profile: OnboardingStep(step = 5, title = "프로필 설정")
+    data object ShareFriendCode: OnboardingStep(step = 6, title = null)
+    data object ShareInvite: OnboardingStep(step = 7, title = null)
 
     fun getFloatProgress(): Float {
         val currentProgress = this.step
-        return  totalStep.toFloat() / currentProgress
+        return currentProgress / totalStep.toFloat()
     }
 }

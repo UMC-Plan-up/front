@@ -34,7 +34,6 @@ import com.example.planup.R
 import com.example.planup.component.PlanUpCheckbox
 import com.example.planup.component.PlanUpCheckboxDefault
 import com.example.planup.component.button.PlanUpButton
-import com.example.planup.onboarding.component.OnBoardingProgressBar
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.theme.Black100
 import com.example.planup.theme.Black250
@@ -51,15 +50,6 @@ fun OnBoardingTermScreen(
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
-
-        OnBoardingProgressBar(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    top = 12.dp
-                ),
-            progress = state.step.getFloatProgress()
-        )
 
         OnBoardingTermBody(
             modifier = Modifier.weight(1.0f),
