@@ -33,22 +33,19 @@ fun OnboardNavHost(
             OnBoardingTermScreen(
                 modifier = modifier,
                 state = state,
-                onNext = {}
+                onNext = {
+                    if(viewModel.verifyRequiredTerm(it))
+                        navController.navigate(OnBoardIdRoute)
+                }
             )
         }
 
         composable<OnBoardIdRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardPasswordRoute)
-                }
-            ) {
-                Text(text = "OnBoardIdRoute")
-            }
-
+            OnBoardingIdScreen(
+                modifier = modifier,
+                state = state,
+                onNext = {}
+            )
         }
 
         composable<OnBoardPasswordRoute> {
