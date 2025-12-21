@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -73,6 +74,7 @@ fun ProfileView(
                     .size(20.dp),
             ) {
                 Icon(
+                    modifier = Modifier.background(Color.White),
                     painter = painterResource(R.drawable.badge_rewrite),
                     contentDescription = null
                 )
