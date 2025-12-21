@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 sealed interface MyPagePasswordEvent {
     data object SuccessLogin : MyPagePasswordEvent
+    data object SuccessChange : MyPagePasswordEvent
     data class Error(val message: String) : MyPagePasswordEvent
 }
 
@@ -45,6 +46,20 @@ class MyPagePasswordChangeViewModel @Inject constructor(
                 )
                 .onSuccess {
                     _uiEvent.emit(MyPagePasswordEvent.SuccessLogin)
+                }
+                .onFailWithMessage { message ->
+                    _uiEvent.emit(MyPagePasswordEvent.Error(message))
+                }
+        }
+    }
+
+    fun changePassword() {
+        viewModelScope.launch {
+            userRepository.changePassword(
+                newPasswordInput.text.toString()
+            )
+                .onSuccess {
+                    _uiEvent.emit(MyPagePasswordEvent.SuccessChange)
                 }
                 .onFailWithMessage { message ->
                     _uiEvent.emit(MyPagePasswordEvent.Error(message))

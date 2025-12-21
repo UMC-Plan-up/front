@@ -8,6 +8,7 @@ import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
+import com.example.planup.password.data.PasswordChangeRequest
 import com.example.planup.password.data.PasswordUpdateRequest
 import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
@@ -122,12 +123,6 @@ interface UserApi {
         @Body body: PasswordChangeEmailRequestDto
     ): Response<PasswordChangeEmailResponseDto>
 
-    // 비밀번호 변경 요청 이메일 링크 클릭 처리
-    @GET("/users/password/change-link")
-    suspend fun verifyChangeLink(
-        @Query("token") token: String
-    ): Response<ChangeLinkVerifyResponseDto>
-
     // 카카오 소셜 인증
     @POST("/users/auth/kakao")
     suspend fun kakaoLogin(
@@ -161,7 +156,7 @@ interface UserApi {
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(
-        @Body request: PasswordUpdateRequest
+        @Body request: PasswordChangeRequest
     ): Response<PasswordUpdateResponse>
 
     // 유저 정보 조회

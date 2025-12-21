@@ -47,6 +47,10 @@ data class PasswordUpdateRequest(
     @SerializedName("newPassword") val newPassword: String
 )
 
+data class PasswordChangeRequest(
+    val newPassword: String
+)
+
 // 비밀번호 재설정 응답 Dto
 data class PasswordUpdateResponse(
     val isSuccess: Boolean,

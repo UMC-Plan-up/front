@@ -57,6 +57,11 @@ interface UserRepository {
     ): ApiResult<ProfileImageResponse.Result>
 
 
+    suspend fun changePassword(
+        newPassword : String
+    ) : ApiResult<Boolean>
+
+
     suspend fun getUserNickName() : String
     suspend fun getUserEmail() : String
     suspend fun getUserProfileImage() : String

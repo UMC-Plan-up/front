@@ -11,6 +11,7 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
+import com.example.planup.password.data.PasswordChangeRequest
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
@@ -257,6 +258,29 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun changePassword(
+        newPassword: String
+    ): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    val request = PasswordChangeRequest(
+                        newPassword
+                    )
+                    userApi.changePassword(request)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+
     override suspend fun getUserNickName(): String {
         return userInfoSaver.getNickName()
     }
@@ -277,37 +301,39 @@ class UserRepositoryImpl @Inject constructor(
         return userInfoSaver.getNotificationMarketing()
     }
 
-    override suspend fun updateUserNotificationService(isOnNotification: Boolean)  = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                userApi.patchNoticeService()
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val result = response.result
-                    userInfoSaver.saveNotificationService(result)
-                    ApiResult.Success(result)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun updateUserNotificationService(isOnNotification: Boolean) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.patchNoticeService()
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        userInfoSaver.saveNotificationService(result)
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
-    override suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                userApi.patchNoticeMarketing()
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val result = response.result
-                    userInfoSaver.saveNotificationMarketing(result)
-                    ApiResult.Success(result)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.patchNoticeMarketing()
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        userInfoSaver.saveNotificationMarketing(result)
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 }
