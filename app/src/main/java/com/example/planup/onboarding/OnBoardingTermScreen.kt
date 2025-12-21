@@ -45,15 +45,10 @@ import com.example.planup.theme.Typography
 fun OnBoardingTermScreen(
     modifier: Modifier = Modifier,
     state: OnBoardingState,
-    onNext: (List<Boolean>) -> Unit
+    onNext: () -> Unit,
+    onTermChecked: (TermModel) -> Unit,
+    onAllTermChecked: (Boolean) -> Unit
 ) {
-    // 약관 체크박스 상태
-    val termCheckedList = remember(state.terms) {
-        mutableStateListOf<Boolean>().apply {
-            repeat(state.terms.size) { add(false) }
-        }
-    }
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -63,22 +58,15 @@ fun OnBoardingTermScreen(
         OnBoardingTermBody(
             modifier = Modifier.weight(1.0f),
             terms = state.terms,
-            checkedList = termCheckedList,
-            onTermChecked = { idx ->
-                termCheckedList[idx] = !termCheckedList[idx]
-            },
-            onAllChecked = { checked ->
-                termCheckedList.replaceAll { checked }
-            }
+            onTermChecked = onTermChecked,
+            onAllTermChecked = onAllTermChecked
         )
 
         OnBoardingTermTail(
             modifier = Modifier
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(bottom = 12.dp),
-            onNext = {
-                onNext(termCheckedList)
-            }
+            onNext = onNext
         )
     }
 }
@@ -87,9 +75,8 @@ fun OnBoardingTermScreen(
 private fun OnBoardingTermBody(
     modifier: Modifier = Modifier,
     terms: List<TermModel>,
-    checkedList: List<Boolean>,
-    onTermChecked: (Int) -> Unit,
-    onAllChecked: (Boolean) -> Unit,
+    onTermChecked: (TermModel) -> Unit,
+    onAllTermChecked: (Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -115,9 +102,9 @@ private fun OnBoardingTermBody(
                     end = 4.dp
                 ),
             text = stringResource(R.string.agreement_select_all),
-            checked = checkedList.all { it },
+            checked = terms.all { it.isChecked },
             onCheckedChange = { checked ->
-                onAllChecked(!checked)
+                onAllTermChecked(!checked)
             },
             style = PlanUpCheckboxDefault.copy(
                 checkboxSize = 18.dp,
@@ -149,9 +136,9 @@ private fun OnBoardingTermBody(
                 OnBoardingTermItem(
                     title = term.title,
                     detail = term.content ?: "",
-                    checked = checkedList[idx],
+                    checked = term.isChecked,
                     onCheckedChange = {
-                        onTermChecked(idx)
+                        onTermChecked(term)
                     }
                 )
             }
@@ -274,7 +261,9 @@ private fun OnBoardingTermScreenPreview() {
                 )
             )
         ),
-        onNext = {}
+        onNext = {},
+        onTermChecked = {},
+        onAllTermChecked = {}
     )
 }
 

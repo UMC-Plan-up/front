@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,11 +27,31 @@ class OnBoardingViewModel @Inject constructor(
     private val _snackBarEvent: Channel<SnackBarEvent> = Channel(Channel.BUFFERED)
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
 
-    fun verifyRequiredTerm(checked: List<Boolean>): Boolean {
+    fun onTermChecked(checkedTerm: TermModel) {
+        _state.update {
+            it.copy(
+                terms = it.terms.map { term ->
+                    if(term.id == checkedTerm.id) term.copy(isChecked = !term.isChecked) else term
+                }
+            )
+        }
+    }
+
+    fun onAllTermChecked(checked: Boolean) {
+        _state.update {
+            it.copy(
+                terms = it.terms.map { term ->
+                    term.copy(isChecked = checked)
+                }
+            )
+        }
+    }
+
+    fun verifyRequiredTerm(): Boolean {
         val terms = state.value.terms
 
         val unCheckedRequiredTerms = terms.filterIndexed { idx, term ->
-            term.isRequired && !checked[idx]
+            term.isRequired && !term.isChecked
         }
 
         return unCheckedRequiredTerms.isEmpty().also { isEmpty ->
@@ -54,6 +75,7 @@ class OnBoardingViewModel @Inject constructor(
 
 data class OnBoardingState(
     val step: OnboardingStep = OnboardingStep.Term,
+    // TODO:: 약관 연결 후 임시 데이터 제거
     val terms: List<TermModel> = listOf(
         TermModel(
             id = 1,
@@ -62,29 +84,29 @@ data class OnBoardingState(
             isRequired = true
         ),
         TermModel(
-            id = 1,
+            id = 2,
             title = "선택이용약관2",
             content = "세부사항2세\n\n\n\n\n부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n\n세부사항2\n\n세부사\n\n\n\n항2세부사\n\n\n\n\n\n\n\n항aaasdasdasdasdasdasd2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2",
             isRequired = false
         ),                TermModel(
-            id = 1,
+            id = 3,
             title = "필수이용약관1",
             content = "세부사항1",
             isRequired = true
         ),
         TermModel(
-            id = 1,
+            id = 4,
             title = "선택이용약관2",
             content = "세부사항2",
             isRequired = false
         ),                TermModel(
-            id = 1,
+            id = 5,
             title = "필수이용약관1",
             content = "세부사항1",
             isRequired = true
         ),
         TermModel(
-            id = 1,
+            id = 6,
             title = "선택이용약관2",
             content = "세부사항2",
             isRequired = false

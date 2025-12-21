@@ -34,9 +34,11 @@ fun OnboardNavHost(
                 modifier = modifier,
                 state = state,
                 onNext = {
-                    if(viewModel.verifyRequiredTerm(it))
+                    if(viewModel.verifyRequiredTerm())
                         navController.navigate(OnBoardIdRoute)
-                }
+                },
+                onTermChecked = viewModel::onTermChecked,
+                onAllTermChecked = viewModel::onAllTermChecked
             )
         }
 

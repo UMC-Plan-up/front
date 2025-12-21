@@ -4,5 +4,6 @@ data class TermModel(
     val id: Int,
     val title: String,
     val content: String?,
-    val isRequired: Boolean
+    val isRequired: Boolean,
+    var isChecked: Boolean = false
 )
