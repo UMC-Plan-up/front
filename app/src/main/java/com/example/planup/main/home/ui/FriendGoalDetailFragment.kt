@@ -36,6 +36,7 @@ import retrofit2.HttpException
 import com.example.planup.R
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.home.adapter.PhotoAdapter
+import com.example.planup.network.ApiResult
 import com.example.planup.network.RetrofitInstance
 
 class FriendGoalDetailFragment : Fragment() {
@@ -205,10 +206,10 @@ class FriendGoalDetailFragment : Fragment() {
                     friendId = friendId,
                     goalId = goalId
                 )
-                if (response.isSuccess) {
-                    binding.goalDetailTodayTimerTv.text = response.result.formattedTime
+                if (response.isSuccessful) {
+                    binding.goalDetailTodayTimerTv.text = response.body()?.result?.formattedTime
                 } else {
-                    Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 실패: ${response.message}")
+                    Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 실패: ${response.message()}")
                 }
             } catch (e: Exception){
                 Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 오류: ${e.message}")

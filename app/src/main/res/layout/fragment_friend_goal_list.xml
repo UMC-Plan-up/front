@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="20dp"
@@ -105,28 +106,37 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friend_goal_list_rv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
+        android:layout_marginTop="12dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/friend_goal_more_btn"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_item_goal_list_rv"
+        android:text="더보기"
+        app:layout_constraintEnd_toEndOf="@+id/friend_goal_list_rv"
+        app:layout_constraintStart_toStartOf="@+id/friend_goal_list_rv"
+        app:layout_constraintTop_toBottomOf="@+id/friend_goal_list_rv"
+        android:layout_marginBottom="60dp"/>
+
     <LinearLayout
         android:id="@+id/friend_goal_list_rv_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_goal_list_recyclerview"
         android:orientation="vertical"
-        android:layout_marginTop="12dp"
         android:elevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/friend_goal_list_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/friend_goal_more_btn"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_item_goal_list_rv"
-            android:text="더보기" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     android:background="@color/white">
 
     <!-- Fragment가 들어갈 부분 -->

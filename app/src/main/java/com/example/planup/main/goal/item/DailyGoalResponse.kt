@@ -4,7 +4,7 @@ data class DailyGoalResponse(
     val isSuccess: Boolean,
     val code: String,
     val message: String,
-    val result: DailyGoalResult?
+    val result: DailyGoalResult
 )
 
 data class DailyGoalResult(

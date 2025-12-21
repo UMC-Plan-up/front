@@ -1,14 +1,14 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
     android:layout_marginTop="12dp"
-    card_view:cardCornerRadius="6dp"
-    card_view:cardElevation="2dp">
+    app:cardCornerRadius="6dp"
+    app:cardElevation="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:paddingTop="12dp"
@@ -28,9 +28,9 @@
             android:clipToOutline="true"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/linearLayout4"
@@ -38,9 +38,9 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:orientation="vertical"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/friend_challenge_profile"
-            card_view:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/friend_challenge_profile"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
                 android:id="@+id/friend_challenge_title_tv"
@@ -64,10 +64,10 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:layout_marginStart="14dp"
-            card_view:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/linearLayout4"
-            card_view:layout_constraintTop_toTopOf="@+id/linearLayout4">
+            app:layout_constraintBottom_toBottomOf="@+id/linearLayout4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout4"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout4">
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/friend_challenge_pc1"
