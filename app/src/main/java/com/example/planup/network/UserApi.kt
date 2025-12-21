@@ -4,6 +4,7 @@ import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -133,13 +134,13 @@ interface UserApi : MyPageApi {
     //이메일 변경 인증 메일 발송
     @POST("users/email/change/send")
     suspend fun emailLink(
-        @Body email: String
+        @Body email: EmailSendRequest
     ): Response<UserResponse<EmailLink>>
 
     //이메일 변경 인증 메일 재발송
     @POST("users/email/change/resend")
     suspend fun emailReLink(
-        @Body email: String
+        @Body email: EmailSendRequest
     ): Response<UserResponse<EmailLink>>
 
     // 카카오 소셜 인증
@@ -175,15 +176,6 @@ interface UserApi : MyPageApi {
     // 유저 정보 조회
     @GET("/users/info")
     suspend fun getUserInfo(): Response<UserInfoResponse>
-
-
-    //서비스 알림 동의 변경
-    @PATCH("mypage/notification/service")
-    suspend fun patchNoticeService(): Response<UserResponse<Boolean>>
-
-    //혜택 및 마케팅 동의 변경
-    @PATCH("mypage/notification/marketing")
-    suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
 }
 
 interface MyPageApi {
@@ -204,4 +196,12 @@ interface MyPageApi {
     @Multipart
     @POST("mypage/profile/image")
     suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
+
+    //서비스 알림 동의 변경
+    @PATCH("mypage/notification/service")
+    suspend fun patchNoticeService(): Response<UserResponse<Boolean>>
+
+    //혜택 및 마케팅 동의 변경
+    @PATCH("mypage/notification/marketing")
+    suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
 }

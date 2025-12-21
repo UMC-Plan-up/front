@@ -10,6 +10,7 @@ import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
@@ -104,7 +105,8 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
-                userApi.emailLink(email)
+                val request = EmailSendRequest(email)
+                userApi.emailLink(request)
             },
             onResponse = { response ->
                 if (response.isSuccess) {
@@ -120,7 +122,9 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
-                userApi.emailReLink(email)
+                val request = EmailSendRequest(email)
+                userApi
+                userApi.emailReLink(request)
             },
             onResponse = { response ->
                 if (response.isSuccess) {

@@ -62,6 +62,9 @@ data class SignupLink(
     @SerializedName("verificationToken") val token: String
 )
 
+data class EmailSendRequest(
+    val email : String
+)
 //이메일 변경 시 이메일 인증 발송, 재발송
 data class EmailLink(
     @SerializedName("email") val email: String,
