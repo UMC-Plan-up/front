@@ -107,7 +107,7 @@ fun EmailTextField(
                                 this.append(emailSuffix)
                             } else {
                                 val index = emailText.indexOf("@")
-                                this.replace(index, index + emailText.length, emailSuffix)
+                                this.replace(index, emailText.length, emailSuffix)
                             }
                         }
                     }
