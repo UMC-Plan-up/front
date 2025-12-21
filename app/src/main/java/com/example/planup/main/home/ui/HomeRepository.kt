@@ -60,7 +60,7 @@ class HomeRepository @Inject constructor(
             tokenSaver.checkToken { token ->
                 safeResult(
                     response = {
-                        friendApi.getFriendSummary(token)
+                        friendApi.getFriendSummary()
                     },
                     onResponse = { response ->
                         if(response.isSuccess) {

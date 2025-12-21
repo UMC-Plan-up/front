@@ -59,9 +59,9 @@ class FriendGoalListViewModel @Inject constructor(
         onCallBack: (result: ApiResult<List<FriendGoalWithAchievement>>) -> Unit
     ) {
         viewModelScope.launch {
+            val resultList = mutableListOf<FriendGoalWithAchievement>()
             try {
                 val response = repository.getFriendGoalList(friendId)
-                val resultList = mutableListOf<FriendGoalWithAchievement>()
                 if (response is ApiResult.Success) {
                     val goals = response.data
                     for(goal in goals) {
@@ -83,17 +83,20 @@ class FriendGoalListViewModel @Inject constructor(
                             onCallBack(ApiResult.Success(resultList))
                         }
                     }
-                    //더미
-                    resultList.add(sampleItems[0])
-                    resultList.add(sampleItems[1])
 
-                    _friendGoals.value = resultList
                 }
             } catch (e: CancellationException) {
             } catch (e: Exception) {
                 e.printStackTrace()
                 onCallBack(ApiResult.Exception(e))
             }
+            //더미
+            resultList.add(sampleItems[0])
+            resultList.add(sampleItems[1])
+            resultList.add(sampleItems[1])
+            resultList.add(sampleItems[1])
+
+            _friendGoals.value = resultList
         }
     }
 

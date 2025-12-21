@@ -113,6 +113,15 @@ class HomeViewModel @Inject constructor(
                 e.printStackTrace()
                 onCallBack(ApiResult.Exception(e))
             }
+            summaries.add(
+                FriendChallengeItem(
+                    0,
+                    "예시",
+                    "평균 목표 달성률 : ",
+                    R.drawable.profile_example,
+                    listOf(1f, 2f, 3f)
+                )
+            )
             _friendChallenges.value = summaries
         }
     }
