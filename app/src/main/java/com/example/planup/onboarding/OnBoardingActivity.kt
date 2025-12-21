@@ -11,15 +11,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class OnBoardingActivity: AppCompatActivity() {
 
-    private val viewmodel: OnBoardingViewModel by viewModels()
+    private val viewModel: OnBoardingViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val state by viewmodel.state.collectAsStateWithLifecycle()
+            val state by viewModel.state.collectAsStateWithLifecycle()
             OnBoardScreen(
-                state = state
+                step = state.step
             )
         }
     }

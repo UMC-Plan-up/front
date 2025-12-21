@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,8 +20,9 @@ import kotlinx.serialization.Serializable
 fun OnboardNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    state: OnBoardingState
+    viewModel: OnBoardingViewModel = hiltViewModel()
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     NavHost(
         modifier = modifier,
@@ -28,7 +32,8 @@ fun OnboardNavHost(
         composable<OnBoardTermRoute> {
             OnBoardingTermScreen(
                 modifier = modifier,
-                state = state
+                state = state,
+                onNext = {}
             )
         }
 

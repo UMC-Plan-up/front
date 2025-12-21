@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -43,8 +44,16 @@ import com.example.planup.theme.Typography
 @Composable
 fun OnBoardingTermScreen(
     modifier: Modifier = Modifier,
-    state: OnBoardingState
+    state: OnBoardingState,
+    onNext: (List<Boolean>) -> Unit
 ) {
+    // 약관 체크박스 상태
+    val termCheckedList = remember(state.terms) {
+        mutableStateListOf<Boolean>().apply {
+            repeat(state.terms.size) { add(false) }
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -53,14 +62,23 @@ fun OnBoardingTermScreen(
 
         OnBoardingTermBody(
             modifier = Modifier.weight(1.0f),
-            terms = state.terms
+            terms = state.terms,
+            checkedList = termCheckedList,
+            onTermChecked = { idx ->
+                termCheckedList[idx] = !termCheckedList[idx]
+            },
+            onAllChecked = { checked ->
+                termCheckedList.replaceAll { checked }
+            }
         )
-
 
         OnBoardingTermTail(
             modifier = Modifier
                 .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(bottom = 12.dp)
+                .padding(bottom = 12.dp),
+            onNext = {
+                onNext(termCheckedList)
+            }
         )
     }
 }
@@ -68,7 +86,10 @@ fun OnBoardingTermScreen(
 @Composable
 private fun OnBoardingTermBody(
     modifier: Modifier = Modifier,
-    terms: List<TermModel>
+    terms: List<TermModel>,
+    checkedList: List<Boolean>,
+    onTermChecked: (Int) -> Unit,
+    onAllChecked: (Boolean) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -94,7 +115,10 @@ private fun OnBoardingTermBody(
                     end = 4.dp
                 ),
             text = stringResource(R.string.agreement_select_all),
-            onCheckedChange = {},
+            checked = checkedList.all { it },
+            onCheckedChange = { checked ->
+                onAllChecked(!checked)
+            },
             style = PlanUpCheckboxDefault.copy(
                 checkboxSize = 18.dp,
                 textStyle = Typography.Regular_M
@@ -121,11 +145,14 @@ private fun OnBoardingTermBody(
         )
 
         Column {
-            terms.forEach { term ->
+            terms.forEachIndexed { idx, term ->
                 OnBoardingTermItem(
                     title = term.title,
                     detail = term.content ?: "",
-                    onCheckedChange = {}
+                    checked = checkedList[idx],
+                    onCheckedChange = {
+                        onTermChecked(idx)
+                    }
                 )
             }
         }
@@ -147,7 +174,10 @@ private fun OnBoardingTermBody(
 }
 
 @Composable
-private fun OnBoardingTermTail(modifier: Modifier = Modifier) {
+private fun OnBoardingTermTail(
+    onNext: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier = modifier
     ) {
@@ -156,7 +186,7 @@ private fun OnBoardingTermTail(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxWidth(),
             title = stringResource(R.string.btn_next),
-            onClick = {}
+            onClick = onNext
         )
     }
 }
@@ -167,6 +197,7 @@ private fun OnBoardingTermItem(
     detail: String,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    checked: Boolean = false
 ) {
     var showDetail by remember { mutableStateOf(false) }
 
@@ -181,6 +212,7 @@ private fun OnBoardingTermItem(
         ) {
             PlanUpCheckbox(
                 text = title,
+                checked = checked,
                 onCheckedChange = onCheckedChange,
                 style = PlanUpCheckboxDefault.copy(
                     checkboxSize = 12.dp
@@ -241,7 +273,8 @@ private fun OnBoardingTermScreenPreview() {
                     isRequired = false
                 )
             )
-        )
+        ),
+        onNext = {}
     )
 }
 
