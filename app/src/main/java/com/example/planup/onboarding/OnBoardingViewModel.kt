@@ -1,21 +1,55 @@
 package com.example.planup.onboarding
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.planup.onboarding.model.TermModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
 
 ): ViewModel() {
-
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
 
+
+    private val _event: Channel<Event> = Channel(Channel.BUFFERED)
+    val event = _event.receiveAsFlow()
+
+    private val _snackBarEvent: Channel<SnackBarEvent> = Channel(Channel.BUFFERED)
+    val snackBarEvent = _snackBarEvent.receiveAsFlow()
+
+    fun verifyRequiredTerm(checked: List<Boolean>): Boolean {
+        val terms = state.value.terms
+
+        val unCheckedRequiredTerms = terms.filterIndexed { idx, term ->
+            term.isRequired && !checked[idx]
+        }
+
+        return unCheckedRequiredTerms.isEmpty().also { isEmpty ->
+            if(!isEmpty) {
+                viewModelScope.launch {
+                    _snackBarEvent.send(SnackBarEvent.NotCheckedRequiredTerm)
+                }
+            }
+        }
+    }
+
+    sealed class Event {
+
+    }
+
+    sealed class SnackBarEvent {
+        data object NotCheckedRequiredTerm: SnackBarEvent()
+        data object InvalidInviteCode: SnackBarEvent()
+    }
 }
 
 data class OnBoardingState(
