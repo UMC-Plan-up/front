@@ -17,6 +17,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,13 +26,13 @@ import com.example.planup.R
 import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.adapter.GoalApi
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.example.planup.main.goal.data.GoalType
 import com.example.planup.main.goal.data.MyGoalListDto
-import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.network.RetrofitInstance
@@ -43,6 +44,7 @@ import com.github.mikephil.charting.data.PieEntry
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.time.LocalDate
+import kotlin.jvm.java
 
 class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var prefs : SharedPreferences
@@ -53,6 +55,9 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //    private lateinit var userController: UserController
     private lateinit var goalController: GoalController
     private var isEditMode: Boolean = false
+
+    private val viewModel: GoalViewModel by viewModels()
+
 
     companion object {
         private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
@@ -430,31 +435,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             val showDialog = result.data?.getBooleanExtra("SHOW_DIALOG", false) ?: false
             if (showDialog) {
                 GoalUpdateDialog().show(parentFragmentManager, "GoalUpdateDialog")
-            }
-        }
-    }
-
-    private fun loadMyGoalList(token: String?) {
-        if(token == null) {
-            Log.d("GoalFragment", "loadMyGoalList token null")
-            return
-        }
-        lifecycleScope.launch {
-            try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getMyGoalList(token = token)
-                if (response.isSuccess) {
-                    val goals = response.result
-                    for (goal in goals) {
-                        Log.d("GoalFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, percent = 82, criteria = "PHOTO", progress = 82)
-                    }
-                } else {
-                    Log.d("GoalFragmentApi","loadMyGoalList 실패")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("GoalFragmentApi","네트워크 오류")
             }
         }
     }

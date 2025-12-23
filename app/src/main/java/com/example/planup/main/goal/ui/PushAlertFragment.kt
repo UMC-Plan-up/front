@@ -16,9 +16,11 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentPushAlertBinding
 import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
@@ -29,15 +31,18 @@ import com.example.planup.goal.ui.ParticipantLimitFragment
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.home.ui.HomeFragment
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class PushAlertFragment : Fragment() {
     private var _binding: FragmentPushAlertBinding? = null
+    private val viewModel : GoalViewModel by viewModels()
     private val binding get() = _binding!!
-    private var isFirst = true
+    private var token:String = ""
 
+    private var isFirst = true
     private lateinit var hours: ArrayList<String> //시간
     private lateinit var minutes: ArrayList<String> //분
     private lateinit var times: ArrayList<String>
@@ -57,6 +62,7 @@ class PushAlertFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        token = TokenSaver(requireContext()).safeToken().toString()
         goalId = arguments?.getInt("goalId") ?: 0
         goalName = arguments?.getString("goalName") ?: ""
         goalAmount = arguments?.getString("goalAmount") ?: ""
@@ -115,29 +121,48 @@ class PushAlertFragment : Fragment() {
 
     private fun updateGoal(goalId: Int, request: EditGoalRequest) {
         lifecycleScope.launch {
-            try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val token = prefs.getString("accessToken", null)
-                val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
-                if (response.isSuccess){
+            viewModel.updateGoal(
+                token = token,
+                goalId = goalId,
+                request = request,
+                action = {
                     val nextfragment = EditGoalCompleteFragment()
                     requireActivity().supportFragmentManager.beginTransaction()
-                        .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
+                        .replace(R.id.edit_friend_goal_fragment_container,
+                            nextfragment
+                        )
                         .addToBackStack(null)
                         .commit()
-                } else {
-                    val errorMessage = response.message
-                    Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
                 }
-            } catch (e: Exception) {
-                if (e is HttpException) {
-                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
-                } else {
-                    Log.e("API", "Other error: ${e.message}", e)
-                }
-            }
+            )
         }
     }
+
+//    private fun updateGoal(goalId: Int, request: EditGoalRequest) {
+//        lifecycleScope.launch {
+//            try {
+//                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+//                val token = prefs.getString("accessToken", null)
+//                val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
+//                if (response.isSuccess){
+//                    val nextfragment = EditGoalCompleteFragment()
+//                    requireActivity().supportFragmentManager.beginTransaction()
+//                        .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
+//                        .addToBackStack(null)
+//                        .commit()
+//                } else {
+//                    val errorMessage = response.message
+//                    Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
+//                }
+//            } catch (e: Exception) {
+//                if (e is HttpException) {
+//                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+//                } else {
+//                    Log.e("API", "Other error: ${e.message}", e)
+//                }
+//            }
+//        }
+//    }
 
     private fun init() {
         hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList())
