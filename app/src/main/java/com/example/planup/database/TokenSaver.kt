@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
 import com.example.planup.network.ApiResult
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class TokenSaver(
-    context: Context
+class TokenSaver @Inject constructor(
+    @ApplicationContext context: Context
 ) {
     companion object {
         private const val PREF_TOKEN_NAME = "Token"

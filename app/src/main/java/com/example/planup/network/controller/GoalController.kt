@@ -9,6 +9,10 @@ import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
 
+@Deprecated(
+    message = "GoalRepository로 이관",
+    replaceWith = ReplaceWith("GoalRepository")
+)
 class GoalController {
     private lateinit var myGoalListDtoAdapter: MyGoalListDtoAdapter
     fun setMyGoalListAdapter(adapter: MyGoalListDtoAdapter){

@@ -12,6 +12,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GoalApiService {
+
     @PUT("/goals/{goalId}")
     suspend fun editGoal(
         @Header("Authorization") token: String,

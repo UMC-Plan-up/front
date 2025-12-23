@@ -7,12 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.planup.databinding.FragmentChallengeCompleteBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.main.MainActivity
 
 class ChallengeCompleteFragment : Fragment() {

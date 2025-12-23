@@ -1,6 +1,5 @@
 package com.example.planup.network
 
-import com.example.planup.main.goal.adapter.GoalApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor

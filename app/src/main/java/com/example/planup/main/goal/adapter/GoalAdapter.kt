@@ -27,8 +27,8 @@ class GoalAdapter(
     private val onEditClick: (Int) -> Unit,
     private val onDeactivateConfirmed: (Int) -> Unit,
     private val onActivateConfirmed: (Int) -> Unit,
-    private val onDeleteConfirmed: (Int) -> Unit) :
-    RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
+    private val onDeleteConfirmed: (Int) -> Unit
+) : RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
     private var isEditMode: Boolean = false
 
