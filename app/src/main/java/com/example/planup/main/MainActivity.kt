@@ -163,51 +163,52 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                friendViewModel.uiMessage.collect { uiMessage ->
-                    when (uiMessage) {
-                        is FriendUiMessage.Error -> {
-                            mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
-                        }
+                launch {
+                    friendViewModel.uiMessage.collect { uiMessage ->
+                        when (uiMessage) {
+                            is FriendUiMessage.Error -> {
+                                mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
+                            }
 
-                        is FriendUiMessage.ReportSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_report)
-                            )
-                        }
+                            is FriendUiMessage.ReportSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_report)
+                                )
+                            }
 
-                        is FriendUiMessage.BlockSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_block, uiMessage.friendName)
-                            )
-                        }
+                            is FriendUiMessage.BlockSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_block, uiMessage.friendName)
+                                )
+                            }
 
-                        is FriendUiMessage.DeleteSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_delete, uiMessage.friendName)
-                            )
-                        }
+                            is FriendUiMessage.DeleteSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_delete, uiMessage.friendName)
+                                )
+                            }
 
-                        is FriendUiMessage.AcceptSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_accept_friend, uiMessage.friendName)
-                            )
-                        }
-                        is FriendUiMessage.DeclineSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_decline_friend, uiMessage.friendName)
-                            )
+                            is FriendUiMessage.AcceptSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_accept_friend, uiMessage.friendName)
+                                )
+                            }
+
+                            is FriendUiMessage.DeclineSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_decline_friend, uiMessage.friendName)
+                                )
+                            }
                         }
                     }
                 }
-            }
-        }
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                myPageEmailChangeViewModel.showAlertEmail.collect { email ->
-                    Log.d("JWH","Show : $email")
-                    email?.let { email ->
-                        val dialog = EmailChangeSuccessDialog.getInstance(email)
-                        dialog.show(supportFragmentManager, "EmailChangeSuccessDialog")
+                launch {
+                    myPageEmailChangeViewModel.showAlertEmail.collect { email ->
+                        Log.d("JWH","Show : $email")
+                        email?.let { email ->
+                            val dialog = EmailChangeSuccessDialog.getInstance(email)
+                            dialog.show(supportFragmentManager, "EmailChangeSuccessDialog")
+                        }
                     }
                 }
             }
