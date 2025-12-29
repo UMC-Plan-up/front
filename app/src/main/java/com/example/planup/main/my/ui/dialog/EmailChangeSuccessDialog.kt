@@ -1,10 +1,13 @@
 package com.example.planup.main.my.ui.dialog
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.DialogFragment
 import com.example.planup.R
 import com.example.planup.databinding.PopupEmailChangedBinding
@@ -42,6 +45,10 @@ class EmailChangeSuccessDialog : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = PopupEmailChangedBinding.inflate(inflater, container, false)
+        dialog?.window?.let { window ->
+            window.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
+            window.requestFeature(Window.FEATURE_NO_TITLE)
+        }
         return binding.root
     }
 
@@ -55,9 +62,10 @@ class EmailChangeSuccessDialog : DialogFragment() {
     }
 
     private fun startToLogin() {
-        val intent = Intent(requireContext(), LoginActivityNew::class.java)
+        val intent = Intent(requireContext(), LoginActivityNew::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
         startActivity(intent)
-        requireActivity().finish()
     }
 
     override fun onDestroyView() {

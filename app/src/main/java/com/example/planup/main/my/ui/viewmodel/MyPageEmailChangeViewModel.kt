@@ -31,7 +31,9 @@ class MyPageEmailChangeViewModel @Inject constructor(
     val emailChangeUiMessage = _emailChangeUiMessage.asSharedFlow()
 
     //Token - email 매칭
-    private val verificationTokenMap: MutableMap<String, String> = mutableMapOf()
+    private val verificationTokenMap: MutableMap<String, String> = mutableMapOf(
+        "testToken" to "test@test.com"
+    )
 
     private suspend fun <T> ApiResult<T>.onFailWithMessageOnBlock() {
         this.onFailWithMessage { message ->

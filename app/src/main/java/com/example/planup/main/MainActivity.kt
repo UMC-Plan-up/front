@@ -31,8 +31,8 @@ import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.ui.dialog.EmailChangeSuccessDialog
 import com.example.planup.main.my.ui.MypageFragment
+import com.example.planup.main.my.ui.dialog.EmailChangeSuccessDialog
 import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -200,9 +200,11 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-
+        }
+        lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 myPageEmailChangeViewModel.showAlertEmail.collect { email ->
+                    Log.d("JWH","Show : $email")
                     email?.let { email ->
                         val dialog = EmailChangeSuccessDialog.getInstance(email)
                         dialog.show(supportFragmentManager, "EmailChangeSuccessDialog")
