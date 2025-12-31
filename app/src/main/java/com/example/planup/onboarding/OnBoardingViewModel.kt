@@ -36,6 +36,17 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun updatePassword(password: String) {
+        _state.update {
+            it.copy(
+                password = password
+            )
+        }
+        viewModelScope.launch {
+            _event.send(Event.Navigate(OnboardingStep.Verification))
+        }
+    }
+
     fun onTermChecked(checkedTerm: TermModel) {
         _state.update {
             it.copy(
@@ -62,7 +73,6 @@ class OnBoardingViewModel @Inject constructor(
         val unCheckedRequiredTerms = terms.filterIndexed { idx, term ->
             term.isRequired && !term.isChecked
         }
-        println(unCheckedRequiredTerms.map { "${it.title}, ${it.isChecked}, ${it.isRequired}" })
 
         if(unCheckedRequiredTerms.isEmpty()) {
             viewModelScope.launch {
@@ -105,6 +115,18 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun validatePasswordFormat(password: String) {
+        val isValidLength = password.length in 8..20
+
+        // TODO:: 비밀번호 특수문자 정책 문의
+        val isComplex = password.any { it.isDigit()} && password.any { it.isLetter() }
+
+        _state.update { it.copy(
+            isValidPasswordLength = isValidLength,
+            isComplexPassword = isComplex
+        ) }
+    }
+
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep): Event()
@@ -116,6 +138,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 }
 
+// TODO:: 화면 전환 시 step 값도 변경되어야 한다
 data class OnBoardingState(
     val step: OnboardingStep = OnboardingStep.Term,
     // TODO:: 약관 연결 후 임시 데이터 제거
@@ -158,6 +181,9 @@ data class OnBoardingState(
     val email: String = "",
     val isValidEmailFormat: Boolean = true,
     val isDuplicatedEmail: Boolean = false,
+    val password: String = "",
+    val isValidPasswordLength: Boolean = false,
+    val isComplexPassword: Boolean = false,
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {

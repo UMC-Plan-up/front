@@ -50,17 +50,12 @@ fun OnboardNavHost(
         }
 
         composable<OnBoardPasswordRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardVerificationRoute)
-                }
-            ) {
-                Text(text = "OnBoardPasswordRoute")
-            }
-
+            OnBoardingPasswordScreen(
+                modifier = modifier,
+                state = state,
+                onNext = viewModel::updatePassword,
+                validatePasswordFormat = viewModel::validatePasswordFormat
+            )
         }
         composable<OnBoardVerificationRoute> {
             Button(
