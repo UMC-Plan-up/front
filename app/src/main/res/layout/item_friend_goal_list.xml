@@ -103,7 +103,8 @@
                     android:background="@drawable/bg_friend_goal_btn_green"
                     android:gravity="center"
                     android:text="응원해요"
-                    android:textColor="@color/green_300" />
+                    android:textColor="@color/green_300"
+                    />
 
                 <TextView
                     android:id="@+id/motivatebtn_tv"

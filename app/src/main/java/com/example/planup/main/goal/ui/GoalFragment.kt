@@ -189,9 +189,9 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
                 // ⚠️ 서버 응답 데이터 클래스에 오타: 'reuslt'
                 if (res.isSuccess) {
-                    val friendGoals = res.result
-                    val items = friendGoals.toGoalItemsForFriend()
-                    setGoals(items)
+//                    val friendGoals = res.result
+//                    val items = friendGoals.toGoalItemsForFriend()
+//                    setGoals(items)
                 } else {
                     Toast.makeText(requireContext(), res.message, Toast.LENGTH_SHORT).show()
                 }
