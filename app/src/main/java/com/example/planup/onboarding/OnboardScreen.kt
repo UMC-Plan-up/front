@@ -4,11 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.exclude
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -17,16 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.component.TopHeader
 import com.example.planup.onboarding.component.OnBoardingProgressBar
 
 @Composable
 fun OnBoardScreen(
-    modifier: Modifier = Modifier,
     step: OnboardingStep,
+    modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
 ) {
-    val navController = rememberNavController()
 
     Box(
         modifier = modifier
@@ -39,7 +40,7 @@ fun OnBoardScreen(
         ) {
             TopHeader(
                 modifier = Modifier
-                    .windowInsetsPadding(WindowInsets.safeDrawing.exclude(WindowInsets.navigationBars))
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
                     .padding(horizontal = 20.dp)
                     .fillMaxWidth()
                     .height(48.dp),

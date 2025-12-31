@@ -103,7 +103,7 @@ class OnBoardingViewModel @Inject constructor(
             _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
 
             if(!isDuplicated) {
-                _event.send(Event.Navigate(OnboardingStep.Verification))
+                _event.send(Event.Navigate(OnboardingStep.Password))
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.planup.onboarding
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
@@ -20,7 +21,7 @@ import kotlinx.serialization.Serializable
 fun OnboardNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    viewModel: OnBoardingViewModel = hiltViewModel()
+    viewModel: OnBoardingViewModel = hiltViewModel(LocalActivity.current as OnBoardingActivity)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -33,10 +34,7 @@ fun OnboardNavHost(
             OnBoardingTermScreen(
                 modifier = modifier,
                 state = state,
-                onNext = {
-                    if(viewModel.verifyRequiredTerm())
-                        navController.navigate(OnBoardIdRoute)
-                },
+                onNext = viewModel::verifyRequiredTerm,
                 onTermChecked = viewModel::onTermChecked,
                 onAllTermChecked = viewModel::onAllTermChecked
             )
@@ -46,7 +44,8 @@ fun OnboardNavHost(
             OnBoardingIdScreen(
                 modifier = modifier,
                 state = state,
-                onNext = {}
+                onNext = viewModel::checkEmailDuplicated,
+                validateEmailFormat = viewModel::validateEmailFormat
             )
         }
 
