@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,9 +35,11 @@ class OnBoardingActivity: AppCompatActivity() {
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
             val errorSnackBarHost = remember { SnackbarHostState() }
+            val navController = rememberNavController()
 
             Box {
                 OnBoardScreen(
+                    navController = navController,
                     step = state.step
                 )
 
@@ -47,6 +50,16 @@ class OnBoardingActivity: AppCompatActivity() {
                         .padding(bottom = 60.dp),
                     hostState = errorSnackBarHost
                 )
+            }
+
+            LaunchedEffect(Unit) {
+                viewModel.event.collect { event ->
+                    when(event) {
+                        is OnBoardingViewModel.Event.Navigate -> {
+                            navController.navigate(event.step.getRoute())
+                        }
+                    }
+                }
             }
 
             LaunchedEffect(Unit) {
