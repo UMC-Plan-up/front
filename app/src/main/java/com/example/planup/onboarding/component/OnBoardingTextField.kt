@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -31,7 +32,8 @@ fun OnBoardingTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle = Typography.Medium_S,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    inputTransformation: InputTransformation? = null
 ) {
     BasicTextField(
         modifier = modifier
@@ -41,6 +43,7 @@ fun OnBoardingTextField(
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = textStyle,
+        inputTransformation = inputTransformation,
         lineLimits = TextFieldLineLimits.SingleLine,
         decorator = { innerTextField ->
             Row(
