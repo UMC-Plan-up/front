@@ -1,10 +1,14 @@
 package com.example.planup.component
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -24,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
@@ -36,12 +41,23 @@ fun ProfileView(
     onNewImageByPhotoPicker: (Uri) -> Unit,
     onNewImageByCamera: (Bitmap) -> Unit
 ) {
+    val context = LocalContext.current
+
     var openPopup by remember {
         mutableStateOf(false)
     }
+
     val pickMedia =
         rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
             uri?.let { onNewImageByPhotoPicker(it) }
+        }
+
+    val galleryLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let { onNewImageByPhotoPicker(it) }
+            }
         }
 
     val cameraLauncher =
@@ -73,6 +89,7 @@ fun ProfileView(
                     .size(20.dp),
             ) {
                 Icon(
+                    modifier = Modifier.background(Color.White),
                     painter = painterResource(R.drawable.badge_rewrite),
                     contentDescription = null
                 )
@@ -99,7 +116,18 @@ fun ProfileView(
                         )
                     },
                     onClick = {
-                        pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        if (ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(context = context)) {
+                            pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+                        } else {
+                            galleryLauncher.launch(
+                                Intent(
+                                    Intent.ACTION_PICK,
+                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                                ).apply {
+                                    type = "image/*"
+                                }
+                            )
+                        }
                         openPopup = false
                     }
                 )
