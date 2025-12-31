@@ -67,6 +67,7 @@ dependencies {
     implementation(libs.androidx.viewpager2)
     implementation("androidx.fragment:fragment-ktx:1.8.0")
     implementation("androidx.fragment:fragment-compose:1.8.0")
+    implementation("androidx.compose.ui:ui-viewbinding:1.7.0")
 
     implementation("com.kakao.sdk:v2-user:2.21.6")
     implementation("com.kakao.sdk:v2-share:2.21.6")

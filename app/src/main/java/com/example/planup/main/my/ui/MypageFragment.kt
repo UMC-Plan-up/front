@@ -46,6 +46,7 @@ import com.example.planup.main.my.ui.MyPageRoute.Account
 import com.example.planup.main.my.ui.MyPageRoute.NotificationMarketing
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageUiState
@@ -55,6 +56,7 @@ class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
 
     private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
+    private val myPageEmailChangeViewModel: MyPageEmailChangeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,18 +64,15 @@ class MypageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         return content {
-            MyPageNavView(mainSnackbarViewModel)
+            MyPageNavView(
+                mainSnackbarViewModel = mainSnackbarViewModel,
+                emailChangeViewModel = myPageEmailChangeViewModel
+            )
         }
     }
 
     private fun clickListener() {
 
-        /*이메일 변경*/
-        binding.mypageEmailIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailCheckFragment())
-                .commitAllowingStateLoss()
-        }
         /*비밀번호 변경*/
         binding.mypagePasswordIv.setOnClickListener {
             (context as MainActivity).supportFragmentManager.beginTransaction()
