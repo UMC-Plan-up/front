@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
+import com.example.planup.theme.Black250
 import com.example.planup.theme.SemanticB4
 import com.example.planup.theme.Typography
 
@@ -86,7 +87,7 @@ fun OnBoardingSecureTextField(
                                 .wrapContentWidth(),
                             imageVector = if(isVisible) ImageVector.vectorResource(R.drawable.ic_eye_on) else ImageVector.vectorResource(R.drawable.ic_eye_off),
                             contentDescription = null,
-                            tint = Color(0xFF4D4D4D)
+                            tint = Black250
                         )
                     }
                 }
