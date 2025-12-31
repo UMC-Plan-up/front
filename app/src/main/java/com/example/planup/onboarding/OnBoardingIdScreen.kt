@@ -66,7 +66,8 @@ fun OnBoardingIdScreen(
             state = textState,
             inputTransformation = InputTransformation {
                 validateEmailFormat(toString())
-            }
+            },
+            placeHolder = stringResource(R.string.planup_email)
         )
 
         Column(
