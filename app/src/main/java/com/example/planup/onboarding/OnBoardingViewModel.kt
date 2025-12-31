@@ -34,9 +34,6 @@ class OnBoardingViewModel @Inject constructor(
                 email = email
             )
         }
-        viewModelScope.launch {
-            _event.send(Event.Navigate(OnboardingStep.Password))
-        }
     }
 
     fun onTermChecked(checkedTerm: TermModel) {
@@ -99,10 +96,10 @@ class OnBoardingViewModel @Inject constructor(
             // TODO:: 이메일 중복 확인
             var isDuplicated = false
 
-
             _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
 
             if(!isDuplicated) {
+                updateEmail(email)
                 _event.send(Event.Navigate(OnboardingStep.Password))
             }
         }
