@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicSecureTextField
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +43,9 @@ fun OnBoardingSecureTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle = Typography.Medium_S,
+    placeHolder: String? = null,
+    placeHolderStyle: TextStyle = Typography.Medium_S.copy(color = Black250),
+    inputTransformation: InputTransformation? = null,
     useVisibility: Boolean = true
 ) {
     var isVisible by remember { mutableStateOf(false) }
@@ -67,10 +72,15 @@ fun OnBoardingSecureTextField(
                     modifier = Modifier
                         .weight(1.0f),
                 ) {
-                    innerTextField()
+                    if (!placeHolder.isNullOrBlank() && state.text.isEmpty()) {
+                        Text(text = placeHolder, style = placeHolderStyle)
+                    } else {
+
+                        innerTextField()
+                    }
                 }
 
-                if(useVisibility) {
+                if (useVisibility) {
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -85,7 +95,9 @@ fun OnBoardingSecureTextField(
                         Icon(
                             modifier = Modifier
                                 .wrapContentWidth(),
-                            imageVector = if(isVisible) ImageVector.vectorResource(R.drawable.ic_eye_on) else ImageVector.vectorResource(R.drawable.ic_eye_off),
+                            imageVector = if (isVisible) ImageVector.vectorResource(R.drawable.ic_eye_on) else ImageVector.vectorResource(
+                                R.drawable.ic_eye_off
+                            ),
                             contentDescription = null,
                             tint = Black250
                         )
@@ -95,7 +107,8 @@ fun OnBoardingSecureTextField(
         },
         enabled = enabled,
         textStyle = textStyle,
-        textObfuscationMode = if(isVisible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden
+        inputTransformation = inputTransformation,
+        textObfuscationMode = if (isVisible) TextObfuscationMode.Visible else TextObfuscationMode.Hidden
     )
 }
 

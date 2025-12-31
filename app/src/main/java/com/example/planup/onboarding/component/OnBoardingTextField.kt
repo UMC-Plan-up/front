@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.planup.theme.Black250
 import com.example.planup.theme.SemanticB4
 import com.example.planup.theme.Typography
 
@@ -32,6 +34,8 @@ fun OnBoardingTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     textStyle: TextStyle = Typography.Medium_S,
+    placeHolder: String? = null,
+    placeHolderStyle: TextStyle = Typography.Medium_S.copy(color = Black250),
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     inputTransformation: InputTransformation? = null
 ) {
@@ -62,7 +66,11 @@ fun OnBoardingTextField(
                         .weight(1.0f)
                         .padding(horizontal = 8.dp),
                 ) {
-                    innerTextField()
+                    if (!placeHolder.isNullOrBlank() && state.text.isEmpty()) {
+                        Text(text = placeHolder, style = placeHolderStyle)
+                    } else {
+                        innerTextField()
+                    }
                 }
             }
         }
@@ -80,6 +88,22 @@ private fun OnBoardingTextFieldPreview() {
         OnBoardingTextField(
             state = rememberTextFieldState(initialText = "테스트 텍스트"),
             modifier = Modifier
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun OnBoardingTextFieldEmptyPreview() {
+    Box(
+        modifier = Modifier
+            .size(height = 100.dp, width = 200.dp)
+            .background(color = Color.Gray)
+    ) {
+        OnBoardingTextField(
+            state = rememberTextFieldState(),
+            modifier = Modifier,
+            placeHolder = "플레이스 홀더"
         )
     }
 }
