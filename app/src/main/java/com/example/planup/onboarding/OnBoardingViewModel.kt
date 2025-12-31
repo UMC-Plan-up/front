@@ -1,5 +1,7 @@
 package com.example.planup.onboarding
 
+import android.util.Patterns
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.onboarding.model.TermModel
@@ -15,17 +17,27 @@ import javax.inject.Inject
 
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
-
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
-
 
     private val _event: Channel<Event> = Channel(Channel.BUFFERED)
     val event = _event.receiveAsFlow()
 
     private val _snackBarEvent: Channel<SnackBarEvent> = Channel(Channel.BUFFERED)
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
+
+    fun updateEmail(email: String) {
+        _state.update {
+            it.copy(
+                email = email
+            )
+        }
+        viewModelScope.launch {
+            _event.send(Event.Navigate(OnboardingStep.Password))
+        }
+    }
 
     fun onTermChecked(checkedTerm: TermModel) {
         _state.update {
@@ -53,6 +65,17 @@ class OnBoardingViewModel @Inject constructor(
         val unCheckedRequiredTerms = terms.filterIndexed { idx, term ->
             term.isRequired && !term.isChecked
         }
+        println(unCheckedRequiredTerms.map { "${it.title}, ${it.isChecked}, ${it.isRequired}" })
+
+        if(unCheckedRequiredTerms.isEmpty()) {
+            viewModelScope.launch {
+                _event.send(Event.Navigate(OnboardingStep.Id))
+            }
+        } else {
+            viewModelScope.launch {
+                _snackBarEvent.send(SnackBarEvent.NotCheckedRequiredTerm)
+            }
+        }
 
         return unCheckedRequiredTerms.isEmpty().also { isEmpty ->
             if(!isEmpty) {
@@ -63,8 +86,31 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    sealed class Event {
+    fun validateEmailFormat(email: String) {
+        _state.update {
+            it.copy(
+                isValidEmailFormat = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+            )
+        }
+    }
 
+    fun checkEmailDuplicated(email: String) {
+        viewModelScope.launch {
+            // TODO:: 이메일 중복 확인
+            var isDuplicated = false
+
+
+            _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
+
+            if(!isDuplicated) {
+                _event.send(Event.Navigate(OnboardingStep.Verification))
+            }
+        }
+    }
+
+
+    sealed class Event {
+        data class Navigate(val step: OnboardingStep): Event()
     }
 
     sealed class SnackBarEvent {
@@ -111,7 +157,10 @@ data class OnBoardingState(
             content = "세부사항2",
             isRequired = false
         ),
-    )
+    ),
+    val email: String = "",
+    val isValidEmailFormat: Boolean = true,
+    val isDuplicatedEmail: Boolean = false,
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {
@@ -128,5 +177,17 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
     fun getFloatProgress(): Float {
         val currentProgress = this.step
         return currentProgress / totalStep.toFloat()
+    }
+
+    fun getRoute(): Any {
+        return when(this) {
+            Term -> OnBoardTermRoute
+            Id -> OnBoardIdRoute
+            Password -> OnBoardPasswordRoute
+            Verification -> OnBoardVerificationRoute
+            Profile -> OnBoardProfileRoute
+            ShareFriendCode -> OnBoardShareFriendCodeRoute
+            ShareInvite -> OnBoardShareInviteRoute
+        }
     }
 }
