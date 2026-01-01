@@ -58,17 +58,13 @@ fun OnboardNavHost(
             )
         }
         composable<OnBoardVerificationRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardProfileRoute)
-                }
-            ) {
-                Text(text = "OnBoardVerificationRoute")
-            }
-
+            OnBoardingVerificationScreen(
+                modifier = modifier,
+                state = state,
+                onNext = viewModel::checkVerificationState,
+                onClickResend = viewModel::resendEmailVerification,
+                onClickKaKao = viewModel::kakaoLogin
+            )
         }
 
         composable<OnBoardProfileRoute> {

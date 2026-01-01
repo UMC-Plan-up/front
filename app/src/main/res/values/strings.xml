@@ -66,6 +66,8 @@
     <string name="signup_password_condition_match">비밀번호 일치</string>
     <string name="signup_verify_title">본인인증을\n진행해 주세요</string>
     <string name="signup_verify_email_sent">이메일로 링크를 보내드렸어요!</string>
+    <string name="signup_verify_email_complete">인증을 완료했어요</string>
+    <string name="signup_verify_email_lost">이메일을 받지 못하셨나요?</string>
 
     <string name="profile_setup_title">프로필 설정</string>
     <string name="profile_nickname_label">닉네임 설정</string>
