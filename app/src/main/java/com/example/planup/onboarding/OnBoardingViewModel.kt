@@ -127,6 +127,22 @@ class OnBoardingViewModel @Inject constructor(
         ) }
     }
 
+    fun checkVerificationState() {
+        viewModelScope.launch {
+            // TODO:: 이메일 인증 여부 확인
+
+            sendNavigateEvent(OnboardingStep.Profile)
+        }
+    }
+
+    fun resendEmailVerification() {
+        // TODO:: 이메일 재전송 로직
+    }
+
+    fun kakaoLogin() {
+        // TODO:: 카카오 로그인 로직
+    }
+
     private suspend fun sendNavigateEvent(step: OnboardingStep) {
         _event.send(Event.Navigate(step))
     }
