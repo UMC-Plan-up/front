@@ -28,7 +28,6 @@ fun OnBoardingProgressBar(
     modifier: Modifier = Modifier,
     animationSpec: AnimationSpec<Float> = tween(durationMillis = 100)
 ) {
-    var progress by remember { mutableFloatStateOf(progress) }
     val aniProgress by animateFloatAsState(
         targetValue = progress, animationSpec = animationSpec
     )

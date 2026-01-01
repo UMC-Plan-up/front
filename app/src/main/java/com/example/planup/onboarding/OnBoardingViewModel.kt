@@ -43,7 +43,7 @@ class OnBoardingViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            _event.send(Event.Navigate(OnboardingStep.Verification))
+            sendNavigateEvent(OnboardingStep.Verification)
         }
     }
 
@@ -76,7 +76,7 @@ class OnBoardingViewModel @Inject constructor(
 
         if(unCheckedRequiredTerms.isEmpty()) {
             viewModelScope.launch {
-                _event.send(Event.Navigate(OnboardingStep.Id))
+                sendNavigateEvent(OnboardingStep.Id)
             }
         } else {
             viewModelScope.launch {
@@ -110,7 +110,7 @@ class OnBoardingViewModel @Inject constructor(
 
             if(!isDuplicated) {
                 updateEmail(email)
-                _event.send(Event.Navigate(OnboardingStep.Password))
+                sendNavigateEvent(OnboardingStep.Password)
             }
         }
     }
@@ -127,6 +127,10 @@ class OnBoardingViewModel @Inject constructor(
         ) }
     }
 
+    private suspend fun sendNavigateEvent(step: OnboardingStep) {
+        _state.update { it.copy(step = step) }
+        _event.send(Event.Navigate(step))
+    }
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep): Event()
@@ -138,7 +142,6 @@ class OnBoardingViewModel @Inject constructor(
     }
 }
 
-// TODO:: 화면 전환 시 step 값도 변경되어야 한다
 data class OnBoardingState(
     val step: OnboardingStep = OnboardingStep.Term,
     // TODO:: 약관 연결 후 임시 데이터 제거
