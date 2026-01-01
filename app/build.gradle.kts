@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,7 +17,7 @@ android {
         minSdk = 26
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0.0"
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,14 +37,13 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
     buildFeatures {
         viewBinding = true
-    }
-}
-
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_11
+        dataBinding = true   // 추가
     }
 }
 
@@ -65,8 +62,7 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.androidx.viewpager2)
-    implementation("androidx.fragment:fragment-ktx:1.8.0")
-    implementation("androidx.fragment:fragment-compose:1.8.0")
+
 
     implementation("com.kakao.sdk:v2-user:2.21.6")
     implementation("com.kakao.sdk:v2-share:2.21.6")
@@ -75,6 +71,9 @@ dependencies {
     /*gson 사용하기 위한 라이브러리 다운*/
     implementation("com.google.code.gson:gson:2.13.1")
 
+    //Retrofit 사용을 위한 lib 추가
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.9.0")
+    //implementation(libs.kotlin.stdlib.v190)
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:3.0.0")
     implementation("com.squareup.retrofit2:converter-gson:3.0.0")
@@ -103,6 +102,8 @@ dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2025.09.01")
     implementation(composeBom)
     androidTestImplementation(composeBom)
+    // Compose
+    implementation(libs.androidx.fragment.compose)
 
     // Material Design 3
     implementation("androidx.compose.material3:material3")

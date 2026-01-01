@@ -54,6 +54,7 @@ import com.example.planup.theme.Black300
 import com.example.planup.theme.Blue100
 import com.example.planup.theme.Blue200
 import com.example.planup.theme.Typography
+import kotlinx.serialization.json.JsonNull.content
 
 /**
  * 친구 탭 메인
