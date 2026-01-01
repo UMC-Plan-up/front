@@ -128,7 +128,6 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     private suspend fun sendNavigateEvent(step: OnboardingStep) {
-        _state.update { it.copy(step = step) }
         _event.send(Event.Navigate(step))
     }
 
@@ -143,7 +142,6 @@ class OnBoardingViewModel @Inject constructor(
 }
 
 data class OnBoardingState(
-    val step: OnboardingStep = OnboardingStep.Term,
     // TODO:: 약관 연결 후 임시 데이터 제거
     val terms: List<TermModel> = listOf(
         TermModel(
@@ -214,6 +212,21 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
             Profile -> OnBoardProfileRoute
             ShareFriendCode -> OnBoardShareFriendCodeRoute
             ShareInvite -> OnBoardShareInviteRoute
+        }
+    }
+
+    companion object {
+        fun parseRoute(route: String): OnboardingStep {
+            return when {
+                route.contains(OnBoardTermRoute::class.qualifiedName.toString()) -> Term
+                route.contains(OnBoardIdRoute::class.qualifiedName.toString()) -> Id
+                route.contains(OnBoardPasswordRoute::class.qualifiedName.toString()) -> Password
+                route.contains(OnBoardVerificationRoute::class.qualifiedName.toString()) -> Verification
+                route.contains(OnBoardProfileRoute::class.qualifiedName.toString()) -> Profile
+                route.contains(OnBoardShareFriendCodeRoute::class.qualifiedName.toString()) -> ShareFriendCode
+                route.contains(OnBoardShareInviteRoute::class.qualifiedName.toString()) -> ShareInvite
+                else -> Term
+            }
         }
     }
 }
