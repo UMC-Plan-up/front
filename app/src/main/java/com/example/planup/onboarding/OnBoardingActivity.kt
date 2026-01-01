@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
@@ -37,10 +38,17 @@ class OnBoardingActivity: AppCompatActivity() {
             val errorSnackBarHost = remember { SnackbarHostState() }
             val navController = rememberNavController()
 
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentStep = remember(navBackStackEntry) {
+                navBackStackEntry?.destination?.route?.let { route ->
+                    OnboardingStep.parseRoute(route)
+                } ?: OnboardingStep.Term
+            }
+
             Box {
                 OnBoardScreen(
                     navController = navController,
-                    step = state.step
+                    step = currentStep
                 )
 
                 GraySnackbarHost(
