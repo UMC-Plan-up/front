@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <include
+                android:id="@+id/category_study_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_study}' />
+
+            <include
+                android:id="@+id/category_reading_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_reading}' />
+
+            <include
+                android:id="@+id/category_digitalDetox_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_meditation}' />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <include
+                android:id="@+id/category_meditation_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_sleep}' />
+
+            <include
+                android:id="@+id/category_sleep_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_diet}' />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            tools:ignore="UselessParent">
+
+            <include
+                android:id="@+id/edit_category_instrument_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_music}' />
+
+            <include
+                android:id="@+id/category_exercise_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_exercise}' />
+
+            <include
+                android:id="@+id/category_diary_layout"
+                layout="@layout/item_category_button"
+                app:label='@{@string/community_category_journal}' />
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

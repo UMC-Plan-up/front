@@ -26,15 +26,16 @@ import com.example.planup.R
 import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.domain.toGoalItems
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
-import com.example.planup.main.goal.adapter.GoalApi
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.example.planup.main.goal.data.GoalType
 import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.network.GoalApi
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.GoalController
 import com.github.mikephil.charting.charts.PieChart
@@ -127,8 +128,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         val token = tokenSaver.safeToken()
         val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
         Log.d("GoalFragment","token: $token")
-        loadMyGoalList(token)
-
+        viewModel.fetchMyGoals(token)
         binding.userGoalListTv.text = "${nickname?.removeSurrounding("\"")}의 목표 리스트"
 
         dailyPieChart = binding.dailyGoalCompletePc
@@ -175,7 +175,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         } else {
             // ✅ 내 모드
             binding.userGoalListTv.text = "${nickname}의 목표 리스트"
-            loadMyGoalList(token)
+            viewModel.fetchMyGoals(token)
             loadTodayAchievement(token)
         }
 
@@ -309,34 +309,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
                 }
         }
     }
-
-    /** 서버 DTO → 화면용 GoalItem으로 변환 */
-    private fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
-        map { dto ->
-            val typeLabel = when (dto.goalType) {
-                GoalType.FRIEND -> "매일"
-                GoalType.COMMUNITY -> "매주"
-                GoalType.CHALLENGE_PHOTO -> "매일"
-                GoalType.CHALLENGE_TIME -> "매주"
-            }
-            val criteria = "$typeLabel ${dto.frequency}번 이상"
-
-            GoalItem(
-                goalId     = dto.goalId,
-                title      = dto.goalName.orEmpty(),
-                description= criteria,
-                percent    = 0,
-                authType   = when (dto.goalType) {
-                    GoalType.CHALLENGE_PHOTO -> "camera"
-                    GoalType.CHALLENGE_TIME  -> "timer"
-                    else -> "none"
-                },
-                isEditMode = false,
-                isActive = !dto.isActive,
-                criteria   = criteria,
-                progress   = 0
-            )
-        }
 
     private fun setGoals(items: List<GoalItem>) {
         adapter.updateItems(items)        // ✅ 리스트만 교체

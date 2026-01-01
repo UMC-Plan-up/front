@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="label"
+            type="String" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/categoryLayout"
+        android:layout_width="72dp"
+        android:layout_height="40dp"
+        android:orientation="vertical"
+        android:layout_marginEnd="6dp"
+        android:background="@drawable/bg_category_white"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:id="@+id/categoryText"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text='@{label != null ? label : "none"}'
+            tools:text = "카테고리"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="center"
+            android:textColor="#448AF7"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+</layout>

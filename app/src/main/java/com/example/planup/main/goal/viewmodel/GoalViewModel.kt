@@ -1,10 +1,12 @@
 package com.example.planup.main.goal.viewmodel
 
+import android.R.id.message
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import com.example.planup.goal.domain.toGoalItems
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
@@ -40,6 +42,9 @@ class GoalViewModel @Inject constructor(
     private val _failMessage = MutableSharedFlow<String>()
     val failMessage = _failMessage.asSharedFlow()
 
+    /**
+     * 목표 리스트
+     */
     private val _goalState = MutableStateFlow<List<GoalItem>>(emptyList())
     val goalState = _goalState.asStateFlow()
 
@@ -63,6 +68,18 @@ class GoalViewModel @Inject constructor(
             if (success){
                 action()
             }
+        }
+    }
+
+    fun fetchMyGoals(token: String?) = viewModelScope.launch {
+        if (token.isNullOrEmpty()) {
+            _failMessage.emit("로그인이 필요합니다.")
+        }else{
+            goalRepository.fetchMyGoals(token)
+                .onSuccess { res -> _goalState.value = res.toGoalItems() }
+                .onFailure { e ->
+                    _failMessage.emit(e.message ?: "Unknown error")
+                }
         }
     }
 
