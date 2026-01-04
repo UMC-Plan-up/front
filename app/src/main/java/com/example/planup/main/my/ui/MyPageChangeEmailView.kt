@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,6 +57,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.Popup
 import com.example.planup.R
 import com.example.planup.component.button.PlanUpButton
+import com.example.planup.component.textfield.EmailTextField
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.common.MyPageDefault
 import com.example.planup.main.my.ui.viewmodel.EmailChangeUiMessage
@@ -128,9 +131,7 @@ fun MyPageChangeEmailContent(
     resendEmail: (email : String) -> Unit,
     showStep2: Boolean,
 ) {
-    val email = remember {
-        mutableStateOf(TextFieldValue(""))
-    }
+    val email = rememberTextFieldState()
 
     MyPageDefault(
         onBack = onBack,
@@ -141,15 +142,15 @@ fun MyPageChangeEmailContent(
             ChangeEmailStep1(
                 email = email,
                 sendEmail = {
-                    sendEmail(email.value.text)
+                    sendEmail(email.text.toString())
                 }
             )
         }
         AnimatedVisibility(showStep2) {
             ChangeEmailStep2(
-                emailString = email.value.text,
+                emailString = email.text.toString(),
                 resendEmail = {
-                    resendEmail(email.value.text)
+                    resendEmail(email.text.toString())
                 }
             )
         }
@@ -158,18 +159,18 @@ fun MyPageChangeEmailContent(
 
 @Composable
 private fun ChangeEmailStep1(
-    email: MutableState<TextFieldValue>,
+    email: TextFieldState,
     sendEmail: () -> Unit
 ) {
     val enableButton by remember(email) {
         derivedStateOf {
-            Patterns.EMAIL_ADDRESS.matcher(email.value.text).matches()
+            Patterns.EMAIL_ADDRESS.matcher(email.text).matches()
         }
     }
 
     val showPlaceholder by remember(email) {
         derivedStateOf {
-            email.value.text.isEmpty()
+            email.text.isEmpty()
         }
     }
 
@@ -190,108 +191,9 @@ private fun ChangeEmailStep1(
                     text = stringResource(R.string.new_email),
                     style = Typography.Medium_L
                 )
-                Box(
-                    contentAlignment = Alignment.BottomEnd
-                ) {
-                    var textFieldSize by remember { mutableStateOf(IntSize.Zero) }
-
-                    BasicTextField(
-                        modifier = Modifier
-                            .onGloballyPositioned { coordinates ->
-                                textFieldSize = coordinates.size
-                            },
-                        value = email.value,
-                        onValueChange = {
-                            email.value = it
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Email
-                        ),
-                        singleLine = true,
-                        textStyle = Typography.Medium_SM,
-                        decorationBox = { innerTextField ->
-                            Box(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(44.dp)
-                                    .border(1.dp, Blue300, RoundedCornerShape(6.dp))
-                                    .padding(
-                                        horizontal = 6.dp,
-                                        vertical = 2.dp
-                                    ),
-                                contentAlignment = Alignment.CenterStart
-                            ) {
-                                innerTextField()
-                                if (showPlaceholder) {
-                                    Text(
-                                        text = stringResource(R.string.email_enter),
-                                        style = Typography.Medium_SM,
-                                        color = Black300
-                                    )
-                                }
-                                IconButton(
-                                    modifier = Modifier.align(Alignment.CenterEnd),
-                                    onClick = {
-                                        showDropDownMenu = !showDropDownMenu
-                                    },
-                                ) {
-                                    Icon(
-                                        painter = painterResource(R.drawable.ic_arrow_down_email),
-                                        contentDescription = null
-                                    )
-                                }
-                            }
-                        }
-                    )
-
-                    if (showDropDownMenu) {
-                        Popup(
-                            offset = with(LocalDensity.current) {
-                                IntOffset(
-                                    x = textFieldSize.width - 200, // dropdown width 만큼 조정 가능
-                                    y = textFieldSize.height
-                                )
-                            },
-                            onDismissRequest = {
-                                showDropDownMenu = false
-                            }
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .border(1.dp, Black200, RoundedCornerShape(10.dp))
-                                    .clip(RoundedCornerShape(10.dp))
-                                    .background(Color.White)
-                                    .wrapContentWidth()
-                            ) {
-                                listOf(
-                                    stringResource(R.string.dropdown_gmail),
-                                    stringResource(R.string.dropdown_naver),
-                                    stringResource(R.string.dropdown_kakao),
-                                ).forEach { emailSuffix ->
-                                    TextButton(
-                                        onClick = {
-                                            val emailText = email.value.text
-                                            val newText = if (!emailText.contains("@")) {
-                                                emailText + emailSuffix
-                                            } else {
-                                                emailText.substringBefore("@") + emailSuffix
-                                            }
-                                            email.value = email.value.copy(
-                                                text = newText,
-                                                selection = TextRange(newText.length)
-                                            )
-                                        }
-                                    ) {
-                                        Text(
-                                            text = emailSuffix,
-                                            style = Typography.Medium_S,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+                EmailTextField(
+                    state = email
+                )
             }
         }
         PlanUpButton(

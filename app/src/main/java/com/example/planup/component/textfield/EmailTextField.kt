@@ -1,8 +1,11 @@
 package com.example.planup.component.textfield
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -45,7 +48,9 @@ fun EmailTextField(
         }
     }
     var showDropDown by remember { mutableStateOf(false) }
-    Box() {
+    Box(
+        contentAlignment = Alignment.BottomEnd
+    ) {
         BasicTextField(
             state = state,
             modifier = Modifier
@@ -79,7 +84,7 @@ fun EmailTextField(
                             }
                         ) {
                             Icon(
-                                painter = painterResource(R.drawable.arrow_down),
+                                painter = painterResource(R.drawable.ic_arrow_down_email),
                                 contentDescription = null,
                                 tint = Color.Unspecified
                             )
@@ -92,34 +97,42 @@ fun EmailTextField(
                 keyboardType = KeyboardType.Email
             )
         )
-        DropdownMenu(
-            modifier = Modifier.align(Alignment.BottomEnd),
-            expanded = showDropDown,
-            onDismissRequest = {
-                showDropDown = false
-            }
-        ) {
-            listOf(
-                stringResource(R.string.dropdown_gmail),
-                stringResource(R.string.dropdown_naver),
-                stringResource(R.string.dropdown_kakao),
-            ).forEach { emailSuffix ->
-                DropdownMenuItem(
-                    text = {
-                        Text(emailSuffix)
-                    },
-                    onClick = {
-                        state.edit {
-                            val emailText = this.originalText.toString()
-                            if (!emailText.contains("@")) {
-                                this.append(emailSuffix)
-                            } else {
-                                val index = emailText.indexOf("@")
-                                this.replace(index, emailText.length, emailSuffix)
+        Row(Modifier.align(Alignment.BottomEnd)) {
+            DropdownMenu(
+                expanded = showDropDown,
+                onDismissRequest = {
+                    showDropDown = false
+                },
+                shape = RoundedCornerShape(10.dp),
+                containerColor = Color.White,
+                border = BorderStroke(1.dp, Black200)
+            ) {
+                listOf(
+                    stringResource(R.string.dropdown_gmail),
+                    stringResource(R.string.dropdown_naver),
+                    stringResource(R.string.dropdown_kakao),
+                ).forEach { emailSuffix ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = emailSuffix,
+                                style = Typography.Medium_S,
+                            )
+                        },
+                        onClick = {
+                            state.edit {
+                                val emailText = this.originalText.toString()
+                                if (!emailText.contains("@")) {
+                                    this.append(emailSuffix)
+                                } else {
+                                    val index = emailText.indexOf("@")
+                                    this.replace(index, emailText.length, emailSuffix)
+                                }
                             }
+                            showDropDown = false
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -130,7 +143,9 @@ fun EmailTextField(
 private fun EmailTextFieldPreview() {
     val state = remember { TextFieldState() }
     Column(
-        modifier = Modifier.safeDrawingPadding()
+        modifier = Modifier
+            .fillMaxSize()
+            .safeDrawingPadding()
     ) {
         EmailTextField(
             state = state
