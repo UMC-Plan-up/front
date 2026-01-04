@@ -6,8 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -18,6 +16,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import kotlinx.serialization.Serializable
 
 sealed interface MyPageRoute {
@@ -98,7 +97,8 @@ private fun slideHorizontallyPopExitTransition(): ExitTransition = slideOutHoriz
 
 @Composable
 fun MyPageNavView(
-    mainSnackbarViewModel: MainSnackbarViewModel
+    mainSnackbarViewModel: MainSnackbarViewModel,
+    emailChangeViewModel : MyPageEmailChangeViewModel
 ) {
     val navController = rememberNavController()
     NavHost(
@@ -123,13 +123,11 @@ fun MyPageNavView(
             )
         }
         composable<MyPageRoute.Account.ChangeEmail> {
-            Button(
-                onClick = {
-                    mainSnackbarViewModel.updateErrorMessage("123")
-                }
-            ) {
-                Text(text = "test")
-            }
+            MyPageChangeEmailView(
+                onBack = navController::navigateUp,
+                emailChangeViewModel = emailChangeViewModel,
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
         }
         composable<MyPageRoute.Account.ChangePassword> {
 

@@ -3,6 +3,7 @@ package com.example.planup.main.user.domain
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
+import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.ProcessResult
@@ -24,6 +25,26 @@ interface UserRepository {
     suspend fun validateInviteCode(
         code: String
     ): ApiResult<ProcessResult>
+
+    /**
+     * 해당 이메일로 메일을 발송합니다.
+     *
+     * @param email 변경할 이메일 주소
+     * @return
+     */
+    suspend fun sendMailForChange(
+        email: String
+    ) : ApiResult<EmailLink>
+
+    /**
+     * 해당 이메일로 메일을 다시 발송합니다.
+     *
+     * @param email 변경할 이메일 주소
+     * @return
+     */
+    suspend fun reSendMailForChange(
+        email: String
+    ) : ApiResult<EmailLink>
 
 
     suspend fun changeNickName(

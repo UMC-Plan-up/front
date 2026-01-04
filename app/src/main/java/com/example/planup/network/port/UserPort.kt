@@ -1,6 +1,5 @@
 package com.example.planup.network.port
 
-import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.InviteCodeValidate
 import com.example.planup.network.data.KakaoLink
 import com.example.planup.network.data.Login
@@ -58,12 +57,7 @@ interface UserPort {
     //회원가입 시 이메일 인증 재발송
     @POST("users/email/resend")
     fun signupRelink(@Body email: String): Call<UserResponse<SignupLink>>
-    //이메일 변경 인증 메일 발송
-    @POST("users/email/change/send")
-    fun emailLink(@Body email: String): Call<UserResponse<EmailLink>>
-    //이메일 변경 인증 메일 재발송
-    @POST("users/email/change/resend")
-    fun emailReLink(@Body email: String): Call<UserResponse<EmailLink>>
+
      //비밀번호 변경
     @POST("/users/password/change")
     fun changePassword(@Body password: ChangePassword): Call<UserResponse<Boolean>>

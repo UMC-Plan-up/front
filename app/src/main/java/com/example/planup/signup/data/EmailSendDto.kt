@@ -8,11 +8,11 @@ data class EmailSendRequestDto(
 // 응답 Dto
 data class EmailSendResponseDto(
     val isSuccess: Boolean,
-    val code: String?,
-    val message: String?,
-    val result: Result?
+    val code: String,
+    val message: String,
+    val result: EmailSendResult
 ) {
-    data class Result(
+    data class EmailSendResult(
         val email: String,
         val message: String,
         val verificationToken: String
