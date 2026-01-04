@@ -39,7 +39,7 @@ class CheckGoalFragment : Fragment() {
             DailyToDo("운동", 50, 3)
         )
 
-        adapter = DailyToDoAdapter(dailyToDos)
+        adapter = DailyToDoAdapter()
         recyclerView.adapter = adapter
 
         val progressBar = binding.dailyTodoPb

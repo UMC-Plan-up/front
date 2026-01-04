@@ -3,7 +3,6 @@ package com.example.planup.main
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -13,6 +12,7 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.core.view.ViewCompat
@@ -32,8 +32,9 @@ import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.example.planup.main.goal.ui.GoalFragment
 import com.example.planup.main.goal.ui.SubscriptionPlanFragment
 import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.main.my.ui.MypageEmailLinkFragment
 import com.example.planup.main.my.ui.MypageFragment
+import com.example.planup.main.my.ui.dialog.EmailChangeSuccessDialog
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
 
     private val mainSnackbarViewModel : MainSnackbarViewModel by viewModels()
     private val friendViewModel : FriendViewModel by viewModels()
+    private val myPageEmailChangeViewModel : MyPageEmailChangeViewModel by viewModels()
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -162,39 +164,51 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                friendViewModel.uiMessage.collect { uiMessage ->
-                    when (uiMessage) {
-                        is FriendUiMessage.Error -> {
-                            mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
-                        }
+                launch {
+                    friendViewModel.uiMessage.collect { uiMessage ->
+                        when (uiMessage) {
+                            is FriendUiMessage.Error -> {
+                                mainSnackbarViewModel.updateErrorMessage(uiMessage.msg)
+                            }
 
-                        is FriendUiMessage.ReportSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_report)
-                            )
-                        }
+                            is FriendUiMessage.ReportSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_report)
+                                )
+                            }
 
-                        is FriendUiMessage.BlockSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_block, uiMessage.friendName)
-                            )
-                        }
+                            is FriendUiMessage.BlockSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_block, uiMessage.friendName)
+                                )
+                            }
 
-                        is FriendUiMessage.DeleteSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_delete, uiMessage.friendName)
-                            )
-                        }
+                            is FriendUiMessage.DeleteSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_delete, uiMessage.friendName)
+                                )
+                            }
 
-                        is FriendUiMessage.AcceptSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_accept_friend, uiMessage.friendName)
-                            )
+                            is FriendUiMessage.AcceptSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_accept_friend, uiMessage.friendName)
+                                )
+                            }
+
+                            is FriendUiMessage.DeclineSuccess -> {
+                                mainSnackbarViewModel.updateSuccessMessage(
+                                    getString(R.string.toast_decline_friend, uiMessage.friendName)
+                                )
+                            }
                         }
-                        is FriendUiMessage.DeclineSuccess -> {
-                            mainSnackbarViewModel.updateSuccessMessage(
-                                getString(R.string.toast_decline_friend, uiMessage.friendName)
-                            )
+                    }
+                }
+                launch {
+                    myPageEmailChangeViewModel.showAlertEmail.collect { email ->
+                        Log.d("JWH","Show : $email")
+                        email?.let { email ->
+                            val dialog = EmailChangeSuccessDialog.getInstance(email)
+                            dialog.show(supportFragmentManager, "EmailChangeSuccessDialog")
                         }
                     }
                 }
@@ -204,11 +218,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        val deeplinkFragment = when {
-            intent?.action == Intent.ACTION_VIEW -> {
-                val data: Uri? = intent?.data
-                Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
-                when {
+
+        when(intent.action) {
+            Intent.ACTION_VIEW -> {
+                val data = intent.data
+                Log.d("JWH",data.toString())
+                data ?: return
+                val host = data.host
+                when(host) {
+                    "mypage" -> {
+
+                    }
+                    "email" -> {
+                        if (data.path?.startsWith("/change") == true && data.getQueryParameter("verified") == "true") {
+                            //이메일 변경 완료 됨 검증
+                            val token = data.getQueryParameter("token")
+                            myPageEmailChangeViewModel.verifyScheme(token)
+                        }
+                    }
+                }
+            }
+        }
+//        val deeplinkFragment = when {
+//            intent?.action == Intent.ACTION_VIEW -> {
+//                val data: Uri? = intent?.data
+//                Log.d("okhttp", "sceme: ${data?.scheme} host: ${data?.host} path: ${data?.path}")
+//                when {
 //                    data?.host.equals("mypage") && data?.path?.startsWith("/password")!! && data.getQueryParameter(
 //                        "verified"
 //                    ).equals("true") -> {
@@ -220,23 +255,22 @@ class MainActivity : AppCompatActivity() {
 //                            }
 //                        }
 //                    }
+//
+//                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
+//                        "verified"
+//                    ).equals("true") -> {
+//                        MypageEmailLinkFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putBoolean("deepLink", true)
+//                            }
+//                        }
+//                    }
+//
+//                    else -> HomeFragment()
+//                }
+//            } else -> HomeFragment()
+//        }
 
-                    data?.host.equals("email") && data?.path?.startsWith("/change")!! && data.getQueryParameter(
-                        "verified"
-                    ).equals("true") -> {
-                        MypageEmailLinkFragment().apply {
-                            arguments = Bundle().apply {
-                                putBoolean("deepLink", true)
-                            }
-                        }
-                    }
-
-                    else -> HomeFragment()
-                }
-            } else -> HomeFragment()
-        }
-
-        navigateToFragment(deeplinkFragment)
     }
 
     fun navigateToFragment(fragment: Fragment) {

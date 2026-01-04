@@ -1,6 +1,5 @@
 package com.example.planup.main.my.ui
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -22,96 +21,54 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.compose.content
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.planup.R
 import com.example.planup.component.PlanUpSwitch
 import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
-import com.example.planup.goal.GoalActivity
-import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
+import com.example.planup.main.my.ui.MyPageRoute.Account
+import com.example.planup.main.my.ui.MyPageRoute.NotificationMarketing
 import com.example.planup.main.my.ui.common.RouteMenuItem
 import com.example.planup.main.my.ui.common.RouteMenuItemWithArrow
+import com.example.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageInfoViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPageProfileEditViewModel
+import com.example.planup.main.my.ui.viewmodel.MyPageUiState
 import com.example.planup.theme.Typography
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MypageFragment : Fragment() {
     lateinit var binding: FragmentMypageBinding
 
     private val mainSnackbarViewModel: MainSnackbarViewModel by activityViewModels()
+    private val myPageEmailChangeViewModel: MyPageEmailChangeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return ComposeView(requireContext()).apply {
-            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-            setContent {
-                MyPageNavView(mainSnackbarViewModel)
-            }
+    ): View {
+        return content {
+            MyPageNavView(
+                mainSnackbarViewModel = mainSnackbarViewModel,
+                emailChangeViewModel = myPageEmailChangeViewModel
+            )
         }
     }
-    private fun clickListener() {
-
-        binding.mypageMainImageCv.setOnClickListener {
-            val intent = Intent(context as MainActivity, GoalActivity::class.java)
-            startActivity(intent)
-        }
-
-        /*이메일 변경*/
-        binding.mypageEmailIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageEmailCheckFragment())
-                .commitAllowingStateLoss()
-        }
-        /*카카오톡 계정 연동*/
-        binding.mypageKakaoIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageKakaoFragment())
-                .commitAllowingStateLoss()
-        }
-        //서비스 알림 수신 토글 끄기
-        binding.mypageAlertServiceOnIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.GONE
-            binding.mypageAlertServiceOffIv.visibility = View.VISIBLE
-        }
-        //서비스 알림 수신 토글 켜기
-        binding.mypageAlertServiceOffIv.setOnClickListener {
-            binding.mypageAlertServiceOnIv.visibility = View.VISIBLE
-            binding.mypageAlertServiceOffIv.visibility = View.GONE
-        }
-    }
-
-
-//    //프로필 이미지 API 성공
-//    override fun successProfileImage(image: String) {
-//        //사용자 프로필 사진
-//        Glide.with(context as MainActivity).load(prefs.getString("profileImg", "no-data"))
-//            .into(binding.mypageMainImageIv)
-//    }
-//
-//    //프로필 이미지 API 오류
-//    override fun failProfileImage(message: String) {
-//        errorToast(message)
-//    }
 }
 
 @Composable
@@ -126,35 +83,63 @@ fun MyPageView(
 
     val context = LocalContext.current
 
-    val email by myPageInfoViewModel.email.collectAsState()
-    val nickName by myPageInfoViewModel.nickName.collectAsState()
-    val profileImage by myPageInfoViewModel.profileImage.collectAsState()
-    val serviceNotification by myPageInfoViewModel.notificationService.collectAsState()
-    val marketingNotification by myPageInfoViewModel.marketingNotification.collectAsState()
+    val email by myPageInfoViewModel.email.collectAsStateWithLifecycle()
+    val nickName by myPageInfoViewModel.nickName.collectAsStateWithLifecycle()
+    val profileImage by myPageInfoViewModel.profileImage.collectAsStateWithLifecycle()
+    val serviceNotification by myPageInfoViewModel.notificationService.collectAsStateWithLifecycle()
+    val marketingNotification by myPageInfoViewModel.marketingNotification.collectAsStateWithLifecycle()
 
-    val updateServiceNotification = { newNotification :Boolean ->
-        myPageInfoViewModel.updateNotificationService(
-            notificationService = newNotification,
-            onSuccess = {},
-            onFail = mainSnackbarViewModel::updateErrorMessage
-        )
+    val uiState by myPageInfoViewModel.uiState.collectAsStateWithLifecycle()
+
+    val showLoading by remember(uiState) {
+        derivedStateOf { uiState is MyPageUiState.Loading }
     }
-    val updateMarketingNotification = { newNotification :Boolean ->
-        myPageInfoViewModel.updateNotificationMarketing(
-            notificationMarketing = newNotification,
-            onSuccess = {
+
+    LaunchedEffect(uiState) {
+        when (uiState) {
+            MyPageUiState.Init -> {
+                //Nothing
+            }
+
+            MyPageUiState.Loading -> {
+
+            }
+
+            is MyPageUiState.Error -> {
+                val errorState = (uiState as MyPageUiState.Error)
+                mainSnackbarViewModel.updateErrorMessage(errorState.message)
+            }
+
+            is MyPageUiState.SuccessNotificationMarketing -> {
+                val notificationMarketingState =
+                    (uiState as MyPageUiState.SuccessNotificationMarketing)
+
                 navigateRoute(
-                    MyPageRoute.NotificationMarketing(
-                        isAgree = newNotification,
+                    NotificationMarketing(
+                        isAgree = notificationMarketingState.newNotification,
                         nickName = nickName,
-                        date = SimpleDateFormat("yyyy년 MM월 dd일", Locale.getDefault()).format(Date())
+                        date = notificationMarketingState.date
                     )
                 )
-            },
-            onFail = mainSnackbarViewModel::updateErrorMessage
-        )
-    }
+            }
 
+            is MyPageUiState.SuccessKakaoAccount -> {
+                val kakaoAccountState =
+                    (uiState as MyPageUiState.SuccessKakaoAccount)
+
+                navigateRoute(
+                    MyPageRoute.Account.LinkKakao(
+                        kakaoAccount = kakaoAccountState.kakaoEmail
+                    )
+                )
+            }
+
+            is MyPageUiState.FailKakaoAccount -> {
+                //TODO Launch Kakao Login
+                mainSnackbarViewModel.updateErrorMessage("(미구현)연동된 계정 없으므로 카카오 로그인 연결 시도 필요함")
+            }
+        }
+    }
 
     /**
      * 알림 권한 요청
@@ -162,7 +147,9 @@ fun MyPageView(
     val notificationPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             if (result) {
-                updateServiceNotification(true)
+                myPageInfoViewModel.updateNotificationService(
+                    notificationService = true
+                )
             } else {
                 Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
             }
@@ -171,7 +158,7 @@ fun MyPageView(
     val notificationMarketingPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { result ->
             if (result) {
-                updateMarketingNotification(true)
+                myPageInfoViewModel.updateNotificationMarketing(notificationMarketing = true)
             } else {
                 Toast.makeText(context, "알림 권한 설정이 필요합니다", Toast.LENGTH_SHORT).show()
             }
@@ -179,7 +166,13 @@ fun MyPageView(
 
 
     MyPageViewContent(
-        navigateRoute = navigateRoute,
+        navigateRoute = { route ->
+            if (route is Account.LinkKakao) {
+                myPageInfoViewModel.checkKakaoAccountLink()
+            } else {
+                navigateRoute(route)
+            }
+        },
         profileImage = profileImage,
         email = email,
         serviceNotification = serviceNotification,
@@ -191,13 +184,17 @@ fun MyPageView(
                 if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
-                    updateServiceNotification(newNotification)
+                    myPageInfoViewModel.updateNotificationService(
+                        notificationService = newNotification
+                    )
                 } else {
                     notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
             } else {
                 //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
-                updateServiceNotification(newNotification)
+                myPageInfoViewModel.updateNotificationService(
+                    notificationService = newNotification
+                )
             }
         },
         updateMarketingNotification = { newNotification ->
@@ -207,13 +204,17 @@ fun MyPageView(
                 if (context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED
                 ) {
-                    updateMarketingNotification(newNotification)
+                    myPageInfoViewModel.updateNotificationMarketing(
+                        notificationMarketing = newNotification
+                    )
                 } else {
                     notificationMarketingPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
                 }
             } else {
                 //33 미만은 별도 권한 없이 작동 하기 때문에,, 그냥 true,false만 처리해서, 받아주면 된다.
-                updateMarketingNotification(newNotification)
+                myPageInfoViewModel.updateNotificationMarketing(
+                    notificationMarketing = newNotification
+                )
             }
         },
         fetch = myPageInfoViewModel::fetchUserInfo,

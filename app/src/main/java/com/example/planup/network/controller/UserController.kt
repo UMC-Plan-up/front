@@ -1,12 +1,10 @@
 package com.example.planup.network.controller
 
-import com.example.planup.main.my.adapter.EmailLinkAdapter
 import com.example.planup.main.my.adapter.KakaoAdapter
 import com.example.planup.main.my.adapter.PasswordChangeAdapter
 import com.example.planup.main.my.adapter.PasswordLinkAdapter
 import com.example.planup.main.my.adapter.SignupLinkAdapter
 import com.example.planup.network.adapter.KakaoLinkAdapter
-import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.KakaoLink
 import com.example.planup.network.data.PasswordLink
 import com.example.planup.network.data.SignupLink
@@ -53,12 +51,6 @@ class UserController {
     private lateinit var passwordChangeAdapter: PasswordChangeAdapter
     fun setPasswordChangeAdapter(adapter: PasswordChangeAdapter) {
         this.passwordChangeAdapter = adapter
-    }
-
-    //이메일 변경 시 이메일 인증링크 발송
-    private lateinit var emailLinkAdapter: EmailLinkAdapter
-    fun setEmailLinkAdapter(adapter: EmailLinkAdapter) {
-        emailLinkAdapter = adapter
     }
 
     private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
@@ -204,60 +196,6 @@ class UserController {
             override fun onFailure(call: Call<UserResponse<UsingKakao>>, t: Throwable) {
                 kakaoAdapter.failKakao(t.toString())
             }
-        })
-    }
-
-    //이메일 변경 시 인증링크 발송
-    fun emailLinkService(email: String) {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.emailLink(email).enqueue(object : Callback<UserResponse<EmailLink>> {
-            override fun onResponse(
-                call: Call<UserResponse<EmailLink>>,
-                response: Response<UserResponse<EmailLink>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-
-                    emailLinkAdapter.successEmailLink(response.body()!!.result.email)
-
-
-                } else if (!response.isSuccessful && response.body() != null) {
-                    when (response.body()!!.code) {
-                        "USER403" -> emailLinkAdapter.failEmailLink("이미 존재하는 이메일입니다.")
-                    }
-                    emailLinkAdapter.failEmailLink(response.body()!!.message)
-                } else {
-                    emailLinkAdapter.failEmailLink("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<EmailLink>>, t: Throwable) {
-                emailLinkAdapter.failEmailLink(t.toString())
-            }
-
-        })
-    }
-
-    //이메일 변경 시 인증링크 재발송
-    fun emailRelinkService(email: String) {
-        val service = getRetrofit().create(UserPort::class.java)
-        service.emailReLink(email).enqueue(object : Callback<UserResponse<EmailLink>> {
-            override fun onResponse(
-                call: Call<UserResponse<EmailLink>>,
-                response: Response<UserResponse<EmailLink>>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    emailLinkAdapter.successEmailLink(response.body()!!.result.email)
-                } else if (!response.isSuccessful && response.body() != null) {
-                    emailLinkAdapter.failEmailLink(response.message())
-                } else {
-                    emailLinkAdapter.failEmailLink("null")
-                }
-            }
-
-            override fun onFailure(call: Call<UserResponse<EmailLink>>, t: Throwable) {
-                emailLinkAdapter.failEmailLink(t.toString())
-            }
-
         })
     }
 

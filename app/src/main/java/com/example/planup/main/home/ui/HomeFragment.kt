@@ -16,6 +16,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -45,77 +46,65 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
 import kotlin.coroutines.resume
+import kotlinx.coroutines.launch
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.Lifecycle
+import com.example.planup.main.home.data.CalendarEvent
+import com.example.planup.main.home.ui.viewmodel.HomeViewModel
+import com.example.planup.network.ApiResult
+import kotlin.collections.filter
 
 class HomeFragment : Fragment() {
+
+    private lateinit var binding: FragmentHomeBinding
+    private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var prefs: SharedPreferences
 
-    private lateinit var dailyRecyclerVIew: RecyclerView
     private lateinit var dailyAdapter: DailyToDoAdapter
-    private lateinit var friendRecyclerView: RecyclerView
-    private lateinit var friendAdapter: FriendChallengeAdapter
-    private lateinit var calendarCardView : CardView
+    private lateinit var friendChallengeAdapter: FriendChallengeAdapter
+
     private val today = LocalDate.now()
     private var selectedDate = today
     private var eventList = mutableListOf<CalendarEvent>(
-        // 더미 데이터
-//        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 8, 17)),
-//        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 8, 18)),
-//        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 8, 19)),
-//        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 8, 18))
-    )
-    private var dailyToDos = mutableListOf(
-        DailyToDo("공부", 75, 5),
-        DailyToDo("독서", 100, 5),
-        DailyToDo("운동", 50, 3)
-    )
-    private var friendChallengingList = mutableListOf(
-        FriendChallengeItem(1,"블루", "평균 목표 달성률 : 70%", R.drawable.profile_example_2, listOf(30f, 50f, 70f)),
-        FriendChallengeItem(2,"블루", "평균 목표 달성률 : 70%", R.drawable.profile_example_2, listOf(35f, 45f, 65f))
+        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 12, 11)),
+        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 12, 18)),
+        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 12, 19)),
+        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 12, 18))
     )
 
-    private lateinit var binding: FragmentHomeBinding
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
-        clickListener()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = prefs.getString("accessToken", null)
+        prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
         val nickname = prefs.getString("nickname","")
-        val profileImage = prefs.getString("profileImage","")
         binding.homeMainTv.text = getString(R.string.home_main_text,nickname?.removeSurrounding("\""))
-        Glide.with(this)
-            .load(profileImage)
-            .circleCrop()
-            .error(R.drawable.ic_profile)
-            .into(binding.homeMainProfileIv)
 
-        //온보딩
-        val prefs = requireActivity().getSharedPreferences("haveTutorial", Context.MODE_PRIVATE)
-        if (!prefs.getBoolean("haveTutorial", false)) {
-            TutorialManager(parentFragmentManager, requireContext()).startTutorial()
-            prefs.edit().putBoolean("haveTutorial", true).apply()
+        setupAdapters()
+        observeViewModel()
+        setupCalendar()
+        setupClickListeners()
+
+        // load data
+        viewModel.loadMyGoalList(createErrorHandler("loadMyGoalList"))
+        viewModel.loadFriendChallenges(createErrorHandler("loadFriendChallenges"))
+        viewModel.loadMonthEvents(YearMonth.now())
+    }
+
+    private fun setupAdapters() {
+        dailyAdapter = DailyToDoAdapter()
+        binding.dailyTodoRv.apply {
+            adapter = dailyAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         }
 
-        loadMyGoalList(token) //api 불러오기
-        viewLifecycleOwner.lifecycleScope.launch {
-            val summaries = loadFriendGoalSummaries(token)
-            Log.d("FriendGoalSummary","summaries: $summaries")
-            // friendChallengingList.clear()
-            for (summary in summaries) friendChallengingList.add(summary)
-            Log.d("FriendGoalSummary", "최종 summaries: $friendChallengingList")
-
-            friendAdapter = FriendChallengeAdapter(friendChallengingList.take(3)) { item ->
-                // 클릭 시 이동 처리
-                val fragment = FriendGoalListFragment()
+        friendChallengeAdapter = FriendChallengeAdapter() { item ->
+            // 클릭 처리
+            val fragment = FriendGoalListFragment()
                 val bundle = Bundle().apply {
                     putInt("friendId", item.friendId)
                     putString("friendName", item.name)
@@ -127,23 +116,65 @@ class HomeFragment : Fragment() {
                     .replace(R.id.main_container, fragment) // fragment_container는 activity/fragment에 맞게 수정
                     .addToBackStack(null)
                     .commit()
+        }
+        binding.homeFriendChallengeRv.apply {
+            adapter = friendChallengeAdapter
+            layoutManager = LinearLayoutManager(context)
+        }
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.dailyToDos.collect { list ->
+//                dailyAdapter = DailyToDoAdapter(list.toMutableList())
+//                dailyRecyclerVIew.adapter = dailyAdapter
+                    dailyAdapter.submitList(list)
+                }
             }
-            friendRecyclerView.adapter = friendAdapter
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.friendChallenges.collect { list ->
+//                    friendAdapter = FriendChallengeAdapter(list.take(3)) { item -> /* 클릭 처리 */ }
+//                    friendRecyclerView.adapter = friendAdapter
+                    friendChallengeAdapter.submitList(list.take(3))
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.calendarEvents.collect { _ ->
+//                    eventList = viewModel.calendarEvents.value.toMutableList()
+                    binding.homeCalendarView.notifyCalendarChanged()
+                }
+            }
+        }
+    }
+
+    private fun setupClickListeners() {
+        binding.homeFab.setOnClickListener {
+            val fragment = TimerFragment().apply {
+                arguments = Bundle().apply { putString("selectedDate", selectedDate.toString()) }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
-        dailyRecyclerVIew = binding.dailyTodoRv
-        dailyRecyclerVIew.layoutManager =
-            LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        binding.homeMainProfileIv.setOnClickListener {
+            showPopup()
+        }
 
+        val calendarCardView = binding.homeCalendarCardView
+        calendarCardView.setOnClickListener {
+            val intent = Intent(requireContext(), CalendarActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
-        val progressBar = binding.dailyTodoPb
-        progressBar.progress = 75
-
-        friendRecyclerView = binding.homeFriendChallengeRv
-        friendRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-
-        //---------------------달력---------------------
+    private fun setupCalendar() {
         val calendarView = binding.homeCalendarView
         val monthYearText = binding.homeMonthYearText
         val prevArrow = binding.homeCalendarArrowPrevIv
@@ -151,41 +182,35 @@ class HomeFragment : Fragment() {
 
         val daysOfWeek = daysOfWeekFromLocale()
         var currentMonth = YearMonth.now()
+
+        // CalendarView 초기화
         calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
         calendarView.scrollToMonth(currentMonth)
-
-
         monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
 
+        // 달 변경 시 텍스트 업데이트
         calendarView.monthScrollListener = { month ->
             monthYearText.text = month.yearMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
         }
 
-        val startDate = currentMonth.atDay(1)
-        val endDate = currentMonth.atEndOfMonth()
-        var currentDate = startDate
-        while (!currentDate.isAfter(endDate)) {
-            loadDailyGoals(token, currentDate) // 날짜 단위 API 호출
-            currentDate = currentDate.plusDays(1)
-        }
-
+        // 이전/다음 화살표 클릭
         prevArrow.setOnClickListener {
             currentMonth = currentMonth.minusMonths(1)
             calendarView.scrollToMonth(currentMonth)
-            loadMonthEvents(token, currentMonth)
+            viewModel.loadMonthEvents(currentMonth)
         }
 
-// 다음 달로 이동
         nextArrow.setOnClickListener {
             currentMonth = currentMonth.plusMonths(1)
             calendarView.scrollToMonth(currentMonth)
-            loadMonthEvents(token, currentMonth)
+            viewModel.loadMonthEvents(currentMonth)
         }
 
+        // dayBinder 설정
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
 
-            override fun bind(container: DayViewContainer, data: CalendarDay) {
+            override fun bind(container: DayViewContainer, data: com.kizitonwose.calendar.core.CalendarDay) {
                 val date = data.date
                 container.textView.text = date.dayOfMonth.toString()
 
@@ -194,53 +219,36 @@ class HomeFragment : Fragment() {
                     if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
                 container.textView.setTextColor(
-                    if (date == selectedDate) ContextCompat.getColor(container.textView.context, R.color.white)
-                    else ContextCompat.getColor(container.textView.context, R.color.black_400)
+                    if (date == selectedDate)
+                        ContextCompat.getColor(container.textView.context, R.color.white)
+                    else
+                        ContextCompat.getColor(container.textView.context, R.color.black_400)
                 )
 
-                // 해당 날짜 이벤트 가져오기
-                val events = getEventsForDate(date)
+                // 이벤트 가져오기 (ViewModel observe에서 업데이트된 값 사용)
+                val events = viewModel.calendarEvents.value.filter { it.date == date }
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
                 bars.forEach { it.visibility = View.GONE }
-
                 for (i in 0 until minOf(events.size, 3)) {
                     bars[i].visibility = View.VISIBLE
                 }
 
-                // 날짜 클릭 시 API 호출
+                // 날짜 클릭
                 container.view.setOnClickListener {
                     selectedDate = date
                     calendarView.notifyCalendarChanged()
-                    //loadDailyGoals(token = token, date = selectedDate)
+
+                    // 선택한 날짜 API 호출
+                    viewModel.loadDailyGoals(selectedDate, createErrorHandler("loadDailyGoals"))
                 }
             }
         }
-
-        calendarCardView = binding.homeCalendarCardView
-        calendarCardView.setOnClickListener {
-            val intent = Intent(requireContext(), CalendarActivity::class.java)
-            startActivity(intent)
-        }
-
-        val fab = binding.homeFab
-        Log.d("selectedDate", "selectedDate: ${selectedDate.toString()}")
-        fab.setOnClickListener {
-            val eventsForDate = getEventsForDate(selectedDate) // 선택한 날짜의 일정 리스트 가져오기
-
-            val bundle = Bundle().apply {
-                putString("selectedDate", selectedDate.toString())
-            }
-
-            val fragmentTimer = TimerFragment().apply {
-                arguments = bundle
-            }
-
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_container, fragmentTimer)
-                .addToBackStack(null)
-                .commit()
-        }
+    }
+    fun daysOfWeekFromLocale(): List<DayOfWeek> {
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val days = DayOfWeek.values().toList()
+        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
     }
     inner class DayViewContainer(view: View) : ViewContainer(view) {
         val binding = ItemCalendarDayBinding.bind(view)
@@ -251,19 +259,14 @@ class HomeFragment : Fragment() {
         val bar3: View = binding.eventBar3
     }
 
-    fun daysOfWeekFromLocale(): List<DayOfWeek> {
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        val days = DayOfWeek.values().toList()
-        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
-    }
-    private fun clickListener() {
-        binding.homeAlarmCl.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, HomeAlertFragment())
-                .commitAllowingStateLoss()
-        }
-        binding.homeMainProfileIv.setOnClickListener {
-            showPopup()
+    fun <T> createErrorHandler(tag: String): (ApiResult<T>) -> Unit {
+        return { result ->
+            when (result) {
+                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
+                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
+                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
+                else -> {}
+            }
         }
     }
 
@@ -314,214 +317,5 @@ class HomeFragment : Fragment() {
         }
         dialog.show()
     }
-
-    private suspend fun loadTotalAchievementSuspend(token: String, goalId: Int): Int? {
-        return suspendCancellableCoroutine { cont ->
-            loadTotalAchievement(token, goalId) { total ->
-                cont.resume( total)
-            }
-        }
     }
 
-    private fun loadMyGoalList(token: String?) {
-        if(token == null) return
-        lifecycleScope.launch {
-            try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getMyGoalList(token = "Bearer $token")
-                if (response.isSuccess) {
-                    Log.d("dailytodos update","loadMyGoalList 성공 : ${response.message}")
-                    val goals = response.result
-                    dailyToDos.clear() // 기존 데이터 초기화
-                    for (goal in goals) {
-                        val total = loadTotalAchievementSuspend(token, goal.goalId) ?: 0
-                        dailyToDos.add(DailyToDo(goal.goalName, total, goal.frequency))
-                    }
-                    dailyAdapter = DailyToDoAdapter(dailyToDos)
-                    dailyRecyclerVIew.adapter = dailyAdapter
-                } else {
-                    Log.d("dailytodos update","loadMyGoalList 실패 : ${response.message}")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if(e is HttpException) Log.e("dailytodos update","HttpException : ${e.code()}, ${e.response()?.errorBody()?.string()}")
-                else Log.e("dailytodos update","Exception : ${e.message}")
-            }
-        }
-    }
-
-    private fun loadDailyGoals(token: String?, date: LocalDate) {
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.goalApi.getDailyGoal(
-                    token = "Bearer $token",
-                    date = date.toString()
-                )
-
-                if (response.isSuccess) {
-                    val dailyGoals = response.result?.verifiedGoals ?: emptyList()
-
-
-                    // API 응답을 CalendarEvent로 변환
-                    dailyGoals.forEach { goal ->
-                        eventList.add(
-                            CalendarEvent(
-                                goalName = goal.goalName,
-                                period = goal.period ?: "NULL",
-                                frequency = goal.frequency,
-                                date = date
-                            )
-                        )
-                    }
-                    binding.homeCalendarView.notifyCalendarChanged()
-                    Log.d("HomeFragmentApi","calendar eventlist : $eventList")
-                } else {
-                    Log.d("CalendarActivity", "Error: ${response.message}")
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.e("CalendarActivity", "date : $date, Exception: $e")
-            }
-        }
-    }
-
-    private fun loadMonthEvents(token: String?, month: YearMonth){
-        lifecycleScope.launch {
-            eventList.clear() // 이전 달 이벤트 제거
-            var date = month.atDay(1)
-            val endDate = month.atEndOfMonth()
-            while (!date.isAfter(endDate)) {
-                loadDailyGoals(token, date)
-                date = date.plusDays(1)
-            }
-        }
-    }
-
-    private fun loadTotalAchievement(token: String?, goalId: Int, callback: (Int?) -> Unit) {
-        lifecycleScope.launch {
-            try {
-                val apiService = RetrofitInstance.goalApi
-                val response = apiService.getTotalAchievement("Bearer $token", goalId)
-                if (response.isSuccess) {
-                    Log.d("loadToTalAchievement", "totalAchievementRate: ${response.result.totalAchievementRate}")
-                    callback(response.result.totalAchievementRate)
-                } else {
-                    Log.d("loadTotalAchievement", "Error: ${response.message}")
-                    callback(null)
-                }
-            } catch (e: Exception) {
-                Log.e("loadTotalAchievement", "Error: ${e.message}", e)
-                callback(null)
-            }
-        }
-    }
-
-    suspend fun loadFriendGoalSummaries(token: String?): List<FriendChallengeItem> {
-        val summaries = mutableListOf<FriendChallengeItem>()
-
-        try {
-            // 1. 친구 목록 불러오기
-            val friendResponse = RetrofitInstance.friendApi.getFriendSummary()
-            Log.d("FriendGoalSummary", "getFriendSummary response: $friendResponse")
-
-            if (friendResponse.isSuccessful) {
-                val friendList = friendResponse.body()?.result
-                if (friendList == null) {
-                    return emptyList()
-                }
-                Log.d("FriendGoalSummary", "친구 수: ${friendList.cnt}")
-                val friendInfo = friendList.friendInfoSummaryList
-                for (friend in friendInfo) {
-                    val friendId = friend.id
-                    val nickname = friend.nickname
-                    val friendImg = friend.profileImage
-                    Log.d("FriendGoalSummary", "친구 처리 중: id=$friendId, nickname=$nickname")
-
-                    // 2. 친구의 목표 리스트 불러오기
-                    val goalService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                    val goalListResponse =
-                        goalService.getFriendGoalList("Bearer $token", friendId)
-                    Log.d("FriendGoalSummary", "getFriendGoalList(${friendId}) response: $goalListResponse")
-
-                    if (goalListResponse.isSuccess) {
-                        val goalList = goalListResponse.result
-                        Log.d("FriendGoalSummary", "friendId=$friendId 목표 개수: ${goalList.size}")
-
-                        val achievements = mutableListOf<Int>()
-
-                        // 3. 각 goalId의 달성률 불러오기
-                        for (goal in goalList) {
-                            try {
-                                val achievementResponse =
-                                    goalService.getFriendGoalAchievement(
-                                        "Bearer $token",
-                                        friendId,
-                                        goal.goalId
-                                    )
-                                Log.d(
-                                    "FriendGoalSummary",
-                                    "getFriendGoalAchievement(friendId=$friendId, goalId=${goal.goalId}) response: $achievementResponse"
-                                )
-
-                                if (achievementResponse.isSuccess) {
-                                    val achievement = achievementResponse.result.totalAchievement
-                                    Log.d(
-                                        "FriendGoalSummary",
-                                        "달성률 추가: friendId=$friendId, goalId=${goal.goalId}, achievement=$achievement"
-                                    )
-                                    achievements.add(achievement)
-                                } else {
-                                    Log.e(
-                                        "FriendGoalSummary",
-                                        "달성률 실패: friendId=$friendId, goalId=${goal.goalId}, message=${achievementResponse.message}"
-                                    )
-                                }
-                            } catch (e: Exception) {
-                                Log.e(
-                                    "FriendGoalSummary",
-                                    "달성률 API 예외: friendId=$friendId, goalId=${goal.goalId}, error=${e.message}"
-                                )
-                            }
-                        }
-                        val avg = achievements.average()
-                        val top3 = achievements.sortedDescending().take(3)
-                        val top3float = top3.map { it.toFloat() }
-                        summaries.add(
-                            FriendChallengeItem(
-                                friendId = friendId,
-                                name = nickname,
-                                description = "평균 목표 달성률 : $avg",
-                                profileResId = R.drawable.profile_example,
-                                pieValues = top3float
-                            )
-                        )
-
-                        Log.d(
-                            "FriendGoalSummary",
-                            "요약 추가: friendId=$friendId, nickname=$nickname, avg=$avg, top3=$top3"
-                        )
-
-                    } else {
-                        Log.e(
-                            "FriendGoalSummary",
-                            "목표 리스트 실패: friendId=$friendId, message=${goalListResponse.message}"
-                        )
-                    }
-                }
-            } else {
-                Log.e("FriendGoalSummary", "친구 목록 실패: code=${friendResponse.code()}, errorBody=${friendResponse.errorBody()?.string()}")
-            }
-        } catch (e: Exception) {
-            Log.e("FriendGoalSummary", "전체 처리 예외: ${e.message}")
-            e.printStackTrace()
-            if(e is HttpException) {
-                Log.e("FriendGoalSummary", "HTTP 에러: ${e.code()}, ${e.response()?.errorBody()?.string()}")
-            } else {
-                Log.e("FriendGoalSummary", "기타 에러: ${e.message}")
-            }
-        }
-
-        return summaries
-    }
-}

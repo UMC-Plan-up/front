@@ -22,6 +22,7 @@ import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.view.CalendarView
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -29,65 +30,104 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.*
+import androidx.activity.viewModels
+import com.example.planup.main.home.ui.viewmodel.CalendarViewModel
+import com.example.planup.network.ApiResult
 
+@AndroidEntryPoint
 class CalendarActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityCalendarBinding
+    private val viewModel: CalendarViewModel by viewModels()
+    private lateinit var eventAdapter: CalendarEventAdapter
 
     private val today = LocalDate.now()
     private var selectedDate = today
-    private lateinit var eventAdapter: CalendarEventAdapter
-    private lateinit var prefs: SharedPreferences
-
-
-    private val eventList = mutableListOf<CalendarEvent>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_calendar)
+        binding = ActivityCalendarBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val calendarView = findViewById<CalendarView>(R.id.calendarView)
-        val monthYearText = findViewById<TextView>(R.id.monthYearText)
-        val eventsRecyclerView = findViewById<RecyclerView>(R.id.eventsRecyclerView)
-        val backBtn = findViewById<ImageView>(R.id.calendar_back_home_iv)
-        val arrowNext = findViewById<ImageView>(R.id.calendar_arrow_next_iv)
-        val arrowBefore = findViewById<ImageView>(R.id.calendar_arrow_before_iv)
-        prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = prefs.getString("accessToken", null)
+        setupRecyclerView()
+        setupCalendar()
+        setupObservers()
+        setupClicks()
 
+        // 오늘 날짜 기준 데이터 요청
+        viewModel.loadMonthlyGoals(today,
+            onCallBack = { result ->
+                when(result) {
+                    is ApiResult.Error -> {
+                        Log.d("loadMonthlyGoals", "Error: ${result.message}")
+                    }
+
+                    is ApiResult.Exception -> {
+                        Log.d("loadMonthlyGoals", "Exception: ${result.error}")
+                    }
+
+                    is ApiResult.Fail -> {
+                        Log.d("loadMonthlyGoals", "Fail: ${result.message}")
+                    }
+
+                    else -> {}
+                }
+            })
+    }
+
+    private fun setupRecyclerView() {
         eventAdapter = CalendarEventAdapter()
-        eventsRecyclerView.adapter = eventAdapter
-        eventsRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.eventsRecyclerView.apply {
+            adapter = eventAdapter
+            layoutManager = LinearLayoutManager(this@CalendarActivity)
+        }
+    }
 
-        // 초기 오늘 날짜 목표 불러오기
-        loadDailyGoals(token = token, date = today)
-
+    private fun setupCalendar() {
+        val calendarView = binding.calendarView
         val daysOfWeek = daysOfWeekFromLocale()
         var currentMonth = YearMonth.now()
-        calendarView.setup(currentMonth.minusMonths(12), currentMonth.plusMonths(12), daysOfWeek.first())
+
+        calendarView.setup(
+            currentMonth.minusMonths(12),
+            currentMonth.plusMonths(12),
+            daysOfWeek.first()
+        )
         calendarView.scrollToMonth(currentMonth)
 
-        monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+        binding.monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
 
-        arrowBefore.setOnClickListener {
+        binding.calendarArrowBeforeIv.setOnClickListener {
             currentMonth = currentMonth.minusMonths(1)
             calendarView.scrollToMonth(currentMonth)
         }
 
-        arrowNext.setOnClickListener {
+        binding.calendarArrowNextIv.setOnClickListener {
             currentMonth = currentMonth.plusMonths(1)
             calendarView.scrollToMonth(currentMonth)
         }
 
         calendarView.monthScrollListener = { month ->
             currentMonth = month.yearMonth
-            monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
-        }
+            binding.monthYearText.text = currentMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy"))
+            viewModel.loadMonthlyGoals(month.yearMonth.atDay(1),
+                onCallBack = { result ->
+                    when(result) {
+                        is ApiResult.Error -> {
+                            Log.d("loadMonthlyGoals", "Error: ${result.message}")
+                        }
 
-        val startDate = currentMonth.atDay(1)
-        val endDate = currentMonth.atEndOfMonth()
-        var currentDate = startDate
-        while (!currentDate.isAfter(endDate)) {
-            loadDailyGoals(token, currentDate) // 날짜 단위 API 호출
-            currentDate = currentDate.plusDays(1)
+                        is ApiResult.Exception -> {
+                            Log.d("loadMonthlyGoals", "Exception: ${result.error}")
+                        }
+
+                        is ApiResult.Fail -> {
+                            Log.d("loadMonthlyGoals", "Fail: ${result.message}")
+                        }
+
+                        else -> {}
+                    }
+                })
         }
 
         calendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -97,91 +137,53 @@ class CalendarActivity : AppCompatActivity() {
                 val date = data.date
                 container.textView.text = date.dayOfMonth.toString()
 
-                // 선택 표시
                 container.textView.setBackgroundResource(
                     if (date == selectedDate) R.drawable.bg_calendar_select else 0
                 )
                 container.textView.setTextColor(
-                    if (date == selectedDate) ContextCompat.getColor(container.textView.context, R.color.white)
+                    if (date == selectedDate)
+                        ContextCompat.getColor(container.textView.context, R.color.white)
                     else ContextCompat.getColor(container.textView.context, R.color.black_400)
                 )
 
-                // 해당 날짜 이벤트 가져오기
-                val events = getEventsForDate(date)
+                val events = viewModel.getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
                 bars.forEach { it.visibility = View.GONE }
+                for (i in 0 until minOf(events.size, 3)) bars[i].visibility = View.VISIBLE
 
-                for (i in 0 until minOf(events.size, 3)) {
-                    bars[i].visibility = View.VISIBLE
-                }
-
-                // 날짜 클릭 시 API 호출
                 container.view.setOnClickListener {
                     selectedDate = date
                     calendarView.notifyCalendarChanged()
-                    updateEventList(date)
-                    //loadDailyGoals(token = token, date = selectedDate)
+                    viewModel.selectDate(date)
                 }
             }
         }
+    }
 
-        backBtn.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+    private fun setupObservers() {
+        // 선택된 날짜에 해당하는 이벤트 리스트 관찰
+        viewModel.selectedDateEvents.observe(this) { events ->
+            eventAdapter.submitList(events)
+        }
+
+        // 전체 이벤트 갱신 (날짜 표시용)
+        viewModel.allEvents.observe(this) {
+            binding.calendarView.notifyCalendarChanged()
+        }
+    }
+
+    private fun setupClicks() {
+        binding.calendarBackHomeIv.setOnClickListener {
+            startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
     }
 
-
-
-    private fun loadDailyGoals(token: String?, date: LocalDate) {
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.goalApi.getDailyGoal(
-                    token = "Bearer $token",
-                    date = date.toString()
-                )
-
-                if (response.isSuccess) {
-                    val dailyGoals = response.result?.verifiedGoals ?: emptyList()
-
-                    // 기존 이벤트 초기화
-                    //eventList.clear()
-
-                    // API 응답을 CalendarEvent로 변환
-                    dailyGoals.forEach { goal ->
-                        eventList.add(
-                            CalendarEvent(
-                                goalName = goal.goalName,
-                                period = goal.period ?: "NULL",
-                                frequency = goal.frequency,
-                                date = date
-                            )
-                        )
-                    }
-                    val calendarview = findViewById<CalendarView>(R.id.calendarView)
-                    calendarview.notifyCalendarChanged()
-                    // RecyclerView 갱신
-                    updateEventList(date)
-                } else {
-                    Log.d("CalendarActivity", "Error: ${response.message}")
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("CalendarActivity", "Exception: $e")
-            }
-        }
-    }
-
-    private fun updateEventList(date: LocalDate) {
-        val events = getEventsForDate(date)
-        eventAdapter.submitList(events)
-    }
-
-    private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
-        return eventList.filter { it.date == date }
+    private fun daysOfWeekFromLocale(): List<DayOfWeek> {
+        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
+        val days = DayOfWeek.values()
+        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
     }
 
     inner class DayViewContainer(view: View) : ViewContainer(view) {
@@ -191,18 +193,4 @@ class CalendarActivity : AppCompatActivity() {
         val bar2: View = view.findViewById(R.id.eventBar2)
         val bar3: View = view.findViewById(R.id.eventBar3)
     }
-
-    fun daysOfWeekFromLocale(): List<DayOfWeek> {
-        val firstDayOfWeek = WeekFields.of(Locale.getDefault()).firstDayOfWeek
-        val days = DayOfWeek.values()
-        return days.drop(firstDayOfWeek.ordinal) + days.take(firstDayOfWeek.ordinal)
-    }
 }
-
-// API 기반 CalendarEvent 데이터 클래스
-data class CalendarEvent(
-    val goalName: String,
-    val period: String,
-    val frequency: Int,
-    val date: LocalDate
-)

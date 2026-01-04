@@ -9,6 +9,9 @@ import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
+import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.password.data.PasswordChangeRequest
@@ -100,6 +103,40 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
+    override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                val request = EmailSendRequest(email)
+                userApi.emailLink(request)
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val emailSendResult = response.result
+                    ApiResult.Success(emailSendResult)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
+    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                val request = EmailSendRequest(email)
+                userApi
+                userApi.emailReLink(request)
+            },
+            onResponse = { response ->
+                if (response.isSuccess) {
+                    val emailSendResult = response.result
+                    ApiResult.Success(emailSendResult)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
 
     override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
         val prevName = userInfoSaver.getNickName()
@@ -250,6 +287,22 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         val result = response.result
                         userInfoSaver.saveProfileImage(result.imageUrl)
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+
+    override suspend fun getKakaoAccountLink(): ApiResult<UsingKakao> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = userApi::getKakaoAccountLink,
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
                         ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
