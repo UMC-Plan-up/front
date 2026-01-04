@@ -172,6 +172,8 @@
     <string name="mypage_account">계정 설정</string>
     <string name="mypage_email">이메일 변경</string>
     <string name="mypage_password">비밀번호 변경</string>
+    <string name="mypage_password_check">비밀번호 변경 전 본인확인</string>
+    <string name="mypage_password_check_sub">안전한 비밀번호 변경을 위해 한 번 더 로그인해 주세요.</string>
     <string name="mypage_kakao">카카오톡 계정 연동</string>
     <string name="mypage_other">기타 계정 관리</string>
     <string name="mypage_other_logout">로그아웃</string>

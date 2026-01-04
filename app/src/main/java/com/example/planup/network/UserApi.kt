@@ -11,7 +11,7 @@ import com.example.planup.network.data.WithDraw
 import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
-import com.example.planup.password.data.PasswordUpdateRequest
+import com.example.planup.password.data.PasswordChangeRequest
 import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse
@@ -170,7 +170,7 @@ interface UserApi : MyPageApi {
     // 비밀번호 재설정
     @POST("/users/password/change")
     suspend fun changePassword(
-        @Body request: PasswordUpdateRequest
+        @Body request: PasswordChangeRequest
     ): Response<PasswordUpdateResponse>
 
     // 유저 정보 조회

@@ -43,7 +43,8 @@ val Red200 = Color(0xffCA3535)
 val Red300 = Color(0xffF81E1E)
 
 val Green100 = Color(0xffD7EEEE)
-val Green200 = Color(0xff395A5A)
+val Green200 = Color(0xff2FAF7E)
+val Green300 = Color(0xff395A5A)
 
 val fontColor = Color(0xffFDFEFF)
 

@@ -130,7 +130,10 @@ fun MyPageNavView(
             )
         }
         composable<MyPageRoute.Account.ChangePassword> {
-
+            MyPagePasswordChangeView(
+                onBack = navController::navigateUp,
+                mainSnackbarViewModel = mainSnackbarViewModel
+            )
         }
         composable<MyPageRoute.Account.LinkKakao> {backstackEntry ->
             val linkKakao : MyPageRoute.Account.LinkKakao = backstackEntry.toRoute()
