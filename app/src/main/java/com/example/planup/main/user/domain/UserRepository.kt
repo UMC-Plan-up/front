@@ -89,6 +89,13 @@ interface UserRepository {
     ) : ApiResult<UsingKakao>
 
 
+    /**
+     * 비밀번호 변경
+     */
+    suspend fun changePassword(
+        newPassword: String
+    ): ApiResult<Boolean>
+
     suspend fun getUserNickName() : String
     suspend fun getUserEmail() : String
     suspend fun getUserProfileImage() : String

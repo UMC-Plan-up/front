@@ -8,6 +8,7 @@ import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
+import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
 import com.example.planup.password.data.PasswordChangeRequest

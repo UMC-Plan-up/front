@@ -303,7 +303,7 @@ private fun MyPageViewContent(
                 content = listOf(
                     MyPageRoute.Account.ChangeEmail to R.string.mypage_email,
                     MyPageRoute.Account.ChangePassword to R.string.mypage_password,
-                    MyPageRoute.Account.LinkKakao to R.string.mypage_kakao,
+                    MyPageRoute.Account.LinkKakao("") to R.string.mypage_kakao,
                     MyPageRoute.Account.Other to R.string.mypage_other,
                 )
             )
