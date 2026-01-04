@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -52,6 +53,10 @@ fun MyPagePasswordChangeView(
                     showStep2 = true
                 }
 
+                MyPagePasswordEvent.SuccessChange -> {
+
+                }
+
                 is MyPagePasswordEvent.Error -> {
                     mainSnackbarViewModel.updateErrorMessage(event.message)
                 }
@@ -70,7 +75,7 @@ fun MyPagePasswordChangeView(
             MyPagePasswordChangeContent(
                 newPasswordInput = myPagePasswordChangeViewModel.newPasswordInput,
                 newPasswordReInput = myPagePasswordChangeViewModel.newPasswordReInput,
-                changePassword = {}
+                changePassword = myPagePasswordChangeViewModel::changePassword
             )
         } else {
             MyPagePasswordCheckContent(
@@ -154,26 +159,22 @@ private fun MyPagePasswordCheckContent(
 private fun MyPagePasswordChangeContent(
     newPasswordInput: TextFieldState,
     newPasswordReInput: TextFieldState,
-    changePassword : () -> Unit
+    changePassword: () -> Unit
 ) {
 
-    var isCorrectLength by remember {
-        mutableStateOf(false)
+    val isCorrectLength by remember {
+        derivedStateOf { newPasswordInput.text.length in 8..20 }
     }
-    var isCorrectDigit by remember {
-        mutableStateOf(false)
+    val isCorrectDigit by remember {
+        derivedStateOf { newPasswordInput.text.any { it.isDigit() } }
     }
-    var isCorrectSpecial by remember {
-        mutableStateOf(false)
+    val isCorrectSpecial by remember {
+        derivedStateOf { newPasswordInput.text.any { !it.isLetterOrDigit() } }
     }
-    LaunchedEffect(newPasswordInput) {
-        isCorrectLength = newPasswordInput.text.length in 8..20
-        isCorrectDigit = newPasswordInput.text.any { it.isDigit() }
-        isCorrectSpecial = newPasswordInput.text.any { !it.isLetterOrDigit() }
-    }
+
     val enabledButton by remember {
         derivedStateOf {
-            isCorrectLength && isCorrectDigit && isCorrectSpecial && newPasswordInput == newPasswordReInput
+            isCorrectLength && isCorrectDigit && isCorrectSpecial && newPasswordInput.text == newPasswordReInput.text
         }
     }
     Column(

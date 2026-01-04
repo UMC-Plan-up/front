@@ -5,11 +5,9 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.WithDraw
-import com.example.planup.password.data.ChangeLinkVerifyResponseDto
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
 import com.example.planup.password.data.PasswordChangeEmailResponseDto
 import com.example.planup.password.data.PasswordChangeRequest
-import com.example.planup.password.data.PasswordUpdateRequest
 import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse

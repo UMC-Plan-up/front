@@ -1,6 +1,9 @@
 package com.example.planup.main.my.ui.viewmodel
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
@@ -32,6 +35,9 @@ class MyPagePasswordChangeViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<MyPagePasswordEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
+    var showLoading by mutableStateOf(false)
+        private set
+
     fun loginCheck() {
         viewModelScope.launch {
             val email = emailInput.text.toString()
@@ -39,15 +45,18 @@ class MyPagePasswordChangeViewModel @Inject constructor(
                 _uiEvent.emit(MyPagePasswordEvent.Error("본인의 이메일 주소를 확인해주세요."))
                 return@launch
             }
+            showLoading = true
             userRepository
                 .postLogin(
                     email = email,
                     password = passwordInput.text.toString()
                 )
                 .onSuccess {
+                    showLoading = false
                     _uiEvent.emit(MyPagePasswordEvent.SuccessLogin)
                 }
                 .onFailWithMessage { message ->
+                    showLoading = false
                     _uiEvent.emit(MyPagePasswordEvent.Error(message))
                 }
         }
@@ -55,13 +64,15 @@ class MyPagePasswordChangeViewModel @Inject constructor(
 
     fun changePassword() {
         viewModelScope.launch {
+            showLoading = true
             userRepository.changePassword(
                 newPasswordInput.text.toString()
-            )
-                .onSuccess {
-                    _uiEvent.emit(MyPagePasswordEvent.SuccessChange)
-                }
+            ).onSuccess {
+                showLoading = false
+                _uiEvent.emit(MyPagePasswordEvent.SuccessChange)
+            }
                 .onFailWithMessage { message ->
+                    showLoading = false
                     _uiEvent.emit(MyPagePasswordEvent.Error(message))
                 }
         }

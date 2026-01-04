@@ -23,7 +23,7 @@ import com.example.planup.databinding.FragmentResetPasswordBinding
 import com.example.planup.databinding.PopupResetBinding
 import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
-import com.example.planup.password.data.PasswordUpdateRequest
+import com.example.planup.password.data.PasswordChangeRequest
 import kotlinx.coroutines.launch
 
 class ResetPasswordFragment : Fragment() {
@@ -188,7 +188,7 @@ class ResetPasswordFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val req = PasswordUpdateRequest(token = token, newPassword = newPassword)
+                val req = PasswordChangeRequest(newPassword = newPassword)
                 val res = RetrofitInstance.userApi.changePassword(req)
                 val body = res.body()
 

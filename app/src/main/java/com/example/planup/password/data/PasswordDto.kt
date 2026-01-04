@@ -42,11 +42,6 @@ data class ChangeLinkResult(
 )
 
 // 비밀번호 재설정 요청 Dto
-data class PasswordUpdateRequest(
-    @SerializedName("token") val token: String,
-    @SerializedName("newPassword") val newPassword: String
-)
-
 data class PasswordChangeRequest(
     val newPassword: String
 )
