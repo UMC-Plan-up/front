@@ -210,7 +210,9 @@ private fun MyPagePasswordChangeContent(
                     PasswordTextField(
                         state = newPasswordInput
                     )
-                    Row() {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(9.dp)
+                    ) {
                         ValidateRow(
                             validateText = "8-20자 이내",
                             isValidate = isCorrectLength
