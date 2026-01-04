@@ -35,6 +35,15 @@ class MyPagePasswordChangeViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<MyPagePasswordEvent>()
     val uiEvent = _uiEvent.asSharedFlow()
 
+    /**
+     * 비밀번호 변경 요청시 최종 확인 알럿
+     */
+    var showReCheckAlert by mutableStateOf(false)
+        private set
+
+    /**
+     * 비밀번호 변경 진행 중 로딩 알럿,(액션 block)
+     */
     var showLoading by mutableStateOf(false)
         private set
 
@@ -62,9 +71,18 @@ class MyPagePasswordChangeViewModel @Inject constructor(
         }
     }
 
+    fun showCheckAlert() {
+        showReCheckAlert = true
+    }
+
+    fun hideCheckAlert() {
+        showReCheckAlert = false
+    }
+
     fun changePassword() {
         viewModelScope.launch {
             showLoading = true
+            hideCheckAlert()
             userRepository.changePassword(
                 newPasswordInput.text.toString()
             ).onSuccess {

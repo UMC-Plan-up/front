@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,14 +22,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.planup.R
+import com.example.planup.component.PlanUpAlertBaseContent
+import com.example.planup.component.PlanUpAlertBaseSingleContent
 import com.example.planup.component.ValidateRow
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.component.textfield.EmailTextField
@@ -37,6 +41,7 @@ import com.example.planup.main.my.ui.viewmodel.MyPagePasswordChangeViewModel
 import com.example.planup.main.my.ui.viewmodel.MyPagePasswordEvent
 import com.example.planup.theme.Typography
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyPagePasswordChangeView(
     onBack: () -> Unit,
@@ -44,6 +49,9 @@ fun MyPagePasswordChangeView(
     mainSnackbarViewModel: MainSnackbarViewModel
 ) {
     var showStep2 by rememberSaveable() {
+        mutableStateOf(false)
+    }
+    var showChangeFinishAlert by rememberSaveable() {
         mutableStateOf(false)
     }
     LaunchedEffect(myPagePasswordChangeViewModel) {
@@ -54,7 +62,7 @@ fun MyPagePasswordChangeView(
                 }
 
                 MyPagePasswordEvent.SuccessChange -> {
-
+                    showChangeFinishAlert = true
                 }
 
                 is MyPagePasswordEvent.Error -> {
@@ -75,7 +83,7 @@ fun MyPagePasswordChangeView(
             MyPagePasswordChangeContent(
                 newPasswordInput = myPagePasswordChangeViewModel.newPasswordInput,
                 newPasswordReInput = myPagePasswordChangeViewModel.newPasswordReInput,
-                changePassword = myPagePasswordChangeViewModel::changePassword
+                changePassword = myPagePasswordChangeViewModel::showCheckAlert
             )
         } else {
             MyPagePasswordCheckContent(
@@ -83,6 +91,45 @@ fun MyPagePasswordChangeView(
                 passwordInput = myPagePasswordChangeViewModel.passwordInput,
                 loginCheck = myPagePasswordChangeViewModel::loginCheck
             )
+        }
+    }
+    if (myPagePasswordChangeViewModel.showReCheckAlert) {
+        BasicAlertDialog(
+            onDismissRequest = myPagePasswordChangeViewModel::hideCheckAlert,
+            properties = DialogProperties()
+        ) {
+            PlanUpAlertBaseContent(
+                headerText = "비밀번호 재설정 확인",
+                title = "새로운 비밀번호로 변경하시겠어요?",
+                onDismissRequest = myPagePasswordChangeViewModel::hideCheckAlert,
+                onConfirm = myPagePasswordChangeViewModel::changePassword
+            )
+        }
+    }
+    if (showChangeFinishAlert) {
+        BasicAlertDialog(
+            onDismissRequest = {},
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            ),
+        ) {
+            PlanUpAlertBaseSingleContent(
+                headerText = "비밀번호 재설정 완료",
+                title = "%s 계정의 비밀번호가 변경되었어요".format(myPagePasswordChangeViewModel.emailInput.text),
+                onConfirm = onBack
+            )
+        }
+    }
+    if (myPagePasswordChangeViewModel.showLoading) {
+        BasicAlertDialog(
+            onDismissRequest = {},
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false
+            )
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
