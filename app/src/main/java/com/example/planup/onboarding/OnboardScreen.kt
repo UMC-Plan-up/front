@@ -63,6 +63,7 @@ fun OnBoardScreen(
             OnboardNavHost(
                 modifier = modifier
                     .fillMaxSize(),
+                currentStep = step,
                 navController = navController
             )
         }

@@ -19,12 +19,14 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun OnboardNavHost(
+    currentStep: OnboardingStep,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
     viewModel: OnBoardingViewModel = hiltViewModel(LocalActivity.current as OnBoardingActivity)
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    //TODO :: proceedNextStep 사용하도록 변경
     NavHost(
         modifier = modifier,
         navController = navController,
@@ -68,17 +70,19 @@ fun OnboardNavHost(
         }
 
         composable<OnBoardProfileRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardShareFriendCodeRoute)
-                }
-            ) {
-                Text(text = "OnBoardProfileRoute")
-            }
-
+            OnBoardingProfileScreen(
+                modifier = modifier,
+                state = state,
+                onNext = { viewModel.proceedNextStep(currentStep) },
+                onNameChanged = viewModel::updateName,
+                onNicknameChanged = viewModel::updateNickName,
+                onGenderChanged = viewModel::updateGender,
+                onNewImageByCamera = viewModel::foo,
+                onNewImageByPhotoPicker = viewModel::foo,
+                onYearChanged = viewModel::updateYear,
+                onMonthChanged = viewModel::updateMonth,
+                onDayChanged = viewModel::updateDay
+            )
         }
 
         composable<OnBoardShareFriendCodeRoute> {
