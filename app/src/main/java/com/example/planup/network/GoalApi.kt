@@ -40,7 +40,7 @@ interface GoalApi {
     @GET("/goals/mygoal/list")
     suspend fun getMyGoalList(
         @Header("Authorization") token: String
-    ): MyGoalListResponse
+    ): Response<MyGoalListResponse>
 
 
     // 목표 삭제 API
@@ -84,13 +84,13 @@ interface GoalApi {
     suspend fun getDailyGoal(
         @Header("Authorization") token: String,
         @Path("date") date: String
-    ): DailyGoalResponse
+    ): Response<DailyGoalResponse>
 
     @GET("/community/daily-achievement")
     suspend fun getDailyAchievement(
         @Header("Authorization") token: String,
         @Query("targetDate") targetDate: String
-    ): DailyAchievementResponse
+    ): Response<DailyAchievementResponse>
 
     @GET("/community/{goalId}/total-achievement")
     suspend fun getTotalAchievement(
@@ -103,7 +103,7 @@ interface GoalApi {
     suspend fun getFriendGoalList(
         @Header("Authorization") token: String,
         @Query("friendId") friendId: Int
-    ): ApiResponseListFriendGoalListDto
+    ): Response<FriendGoalListResponse>
 
     @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
     suspend fun getFriendPhotos(
@@ -177,7 +177,7 @@ interface GoalApi {
         @Header("Authorization") token: String,
         @Path("friendId") friendId: Int,
         @Path("goalId") goalId: Int
-    ): FriendGoalAchievementResponse
+    ): Response<FriendGoalAchievementResponse>
 
     @GET("/goals/{goalId}/photos")
     suspend fun getGoalPhotos(

@@ -9,8 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil3.util.CoilUtils.result
 import com.bumptech.glide.Glide
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendGoalListBinding
@@ -19,7 +23,9 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.adapter.FriendGoalListAdapter
+import com.example.planup.main.home.ui.viewmodel.FriendGoalListViewModel
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.onSuccess
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -38,6 +44,7 @@ class tempFriendGoalListFragment : Fragment() {
     private var friendId: Int = 0
     private lateinit var friendName: String
     private lateinit var friendProfileImage: String
+    private val viewModel: FriendGoalListViewModel by viewModels()
     private val sampleItems = mutableListOf(
         FriendGoalWithAchievement(
             goalId = 1,
@@ -87,7 +94,6 @@ class tempFriendGoalListFragment : Fragment() {
 
         Glide.with(this).load(friendProfileImage)
             .circleCrop().into(binding.friendGoalListProfileIv)
-
         loadTodayAchievement(token)
 
 
@@ -95,6 +101,13 @@ class tempFriendGoalListFragment : Fragment() {
         loadFriendGoalList(token = "Bearer $token", friendId = friendId.toInt())
 
         viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.achievementRate.collect { value ->
+                    val dailyPieChart = binding.friendDailyGoalCompletePc
+                    binding.friendDailyGoalPercentTv.text = "${value}%"
+                    setupPieChart(dailyPieChart, value!!)
+                }
+            }
             val goals = loadFriendGoalsWithAchievement(token, friendId)
             for (goal in goals) {
                 sampleItems.add(goal)
@@ -250,13 +263,18 @@ class tempFriendGoalListFragment : Fragment() {
                     targetDate = today.toString()
                 )
 
-                if (response.isSuccess) {
+                if (response.isSuccessful) {
                     val dailyPieChart = binding.friendDailyGoalCompletePc
-                    val achievementRate = response.result.achievementRate
-                    binding.friendDailyGoalPercentTv.text = "$achievementRate%"
-                    setupPieChart(dailyPieChart, achievementRate)
+                    if (response.body() != null && response.body()?.result != null){
+                        val result = response.body()?.result!!
+                        val achievementRate = result.achievementRate
+                        binding.friendDailyGoalPercentTv.text = "$achievementRate%"
+                        setupPieChart(dailyPieChart, achievementRate)
+                    }
+
+
                 } else {
-                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message}")
+                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message()}")
                 }
 
             } catch (e: Exception) {
