@@ -222,6 +222,10 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun acceptInviteCode(code: String) {
+        // TODO:: 코드 유효성 검증, 수락 로직
+    }
+
     fun proceedNextStep(current: OnboardingStep) {
         viewModelScope.launch {
             val next = current.getNextStep()
@@ -240,8 +244,10 @@ class OnBoardingViewModel @Inject constructor(
                     // 회원가입 여부 확인 후 inviteCode 초기화
                 }
 
-                OnboardingStep.ShareFriendCode -> TODO()
-                OnboardingStep.ShareInvite -> TODO()
+                OnboardingStep.ShareFriendCode -> sendNavigateEvent(OnboardingStep.ShareInvite)
+                OnboardingStep.ShareInvite -> {
+                    // 플로우 종료
+                }
             }
 
 
