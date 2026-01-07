@@ -33,6 +33,7 @@ fun OnBoardingTextField(
     state: TextFieldState,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    readOnly: Boolean = false,
     textStyle: TextStyle = Typography.Medium_S,
     placeHolder: String? = null,
     placeHolderStyle: TextStyle = Typography.Medium_S.copy(color = Black250),
@@ -44,6 +45,7 @@ fun OnBoardingTextField(
             .fillMaxWidth()
             .height(40.dp),
         state = state,
+        readOnly = readOnly,
         enabled = enabled,
         keyboardOptions = keyboardOptions,
         textStyle = textStyle,
