@@ -117,15 +117,15 @@
 
                     <ImageView
                         android:id="@+id/emptyIcon"
-                        android:layout_width="72dp"
-                        android:layout_height="72dp"
-                        android:src="@drawable/ic_common_empty" />
+                        android:layout_width="104.13dp"
+                        android:layout_height="27.39dp"
+                        android:src="@drawable/ic_common_empty_3circle" />
 
                     <TextView
                         android:id="@+id/emptyFriendText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="10.61dp"
                         android:gravity="center"
                         android:fontFamily="@font/pretendard_medium"
                         android:text="비슷한 목표를\n진행 중인 친구가 아직 없어요"
