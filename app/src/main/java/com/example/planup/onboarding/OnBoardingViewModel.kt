@@ -228,9 +228,24 @@ class OnBoardingViewModel @Inject constructor(
 
             if (next == null) {
                 Log.d("OnBoardingViewModel", "화면 전환 오류: 다음 화면이 존재하지 않음")
-            } else {
-                sendNavigateEvent(next)
+                return@launch
             }
+
+            when (current) {
+                OnboardingStep.Term -> TODO()
+                OnboardingStep.Id -> TODO()
+                OnboardingStep.Password -> TODO()
+                OnboardingStep.Verification -> TODO()
+                OnboardingStep.Profile -> {
+                    // 회원가입 여부 확인 후 inviteCode 초기화
+                }
+
+                OnboardingStep.ShareFriendCode -> TODO()
+                OnboardingStep.ShareInvite -> TODO()
+            }
+
+
+            sendNavigateEvent(next)
         }
     }
 
@@ -314,7 +329,8 @@ data class OnBoardingState(
     val days: List<Int> = listOf(),
     val year: Int = 0,
     val month: Int = 0,
-    val day: Int = 0
+    val day: Int = 0,
+    val inviteCode: String = ""
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {

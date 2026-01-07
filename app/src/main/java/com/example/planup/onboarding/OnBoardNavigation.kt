@@ -73,7 +73,9 @@ fun OnboardNavHost(
             OnBoardingProfileScreen(
                 modifier = modifier,
                 state = state,
-                onNext = { viewModel.proceedNextStep(currentStep) },
+                onNext = {
+                    viewModel.proceedNextStep(currentStep)
+                },
                 onNameChanged = viewModel::updateName,
                 onNicknameChanged = viewModel::updateNickName,
                 onGenderChanged = viewModel::updateGender,
@@ -86,31 +88,13 @@ fun OnboardNavHost(
         }
 
         composable<OnBoardShareFriendCodeRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardShareFriendCodeRoute)
-                }
-            ) {
-                Text(text = "OnBoardShareFriendCodeRoute")
-            }
-
-        }
-
-        composable<OnBoardShareFriendCodeRoute> {
-            Button(
-                modifier = modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
-                onClick = {
-                    navController.navigate(OnBoardShareInviteRoute)
-                }
-            ) {
-                Text(text = "OnBoardShareFriendCodeRoute")
-            }
-
+            OnBoardingShareCodeScreen(
+                modifier = modifier,
+                state = state,
+                onNext = {},
+                onShareKakao = {},
+                onShareSMS = {}
+            )
         }
 
         composable<OnBoardShareInviteRoute> {
