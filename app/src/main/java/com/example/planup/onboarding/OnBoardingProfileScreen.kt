@@ -4,12 +4,15 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +23,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -28,6 +32,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -328,7 +335,7 @@ private fun GenderRadioGroup(
         OutlinedButton(
             onClick = { onGenderChanged(GenderModel.Male) },
             modifier = Modifier
-                .wrapContentSize(),
+                .height(36.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = Color.White,
                 disabledContainerColor = SemanticB4,
@@ -350,7 +357,7 @@ private fun GenderRadioGroup(
         OutlinedButton(
             onClick = { onGenderChanged(GenderModel.Female) },
             modifier = Modifier
-                .wrapContentSize(),
+                .height(36.dp),
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = Color.White,
                 disabledContainerColor = SemanticB4,
@@ -396,6 +403,7 @@ private fun BirthDropBoxGroup(
         horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         BirthDropBox(
+            modifier = Modifier.width(80.dp),
             items = years,
             text = if (year == 0) "" else year.toString(),
             postfix = "년",
@@ -410,6 +418,7 @@ private fun BirthDropBoxGroup(
         )
 
         BirthDropBox(
+            modifier = Modifier.width(60.dp),
             items = months,
             text = if (month == 0) "" else month.toString(),
             postfix = "월",
@@ -424,6 +433,7 @@ private fun BirthDropBoxGroup(
         )
 
         BirthDropBox(
+            modifier = Modifier.width(60.dp),
             items = days,
             text = if (day == 0) "" else day.toString(),
             postfix = "일",
@@ -439,6 +449,7 @@ private fun BirthDropBoxGroup(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BirthDropBox(
     items: List<Int>,
@@ -451,11 +462,16 @@ private fun BirthDropBox(
     modifier: Modifier = Modifier,
     isExpended: Boolean = false
 ) {
-
-    Box(modifier = modifier) {
+    ExposedDropdownMenuBox(
+        modifier = modifier
+            .height(36.dp),
+        expanded = isExpended,
+        onExpandedChange = { },
+    ) {
         OutlinedButton(
             modifier = Modifier
-                .wrapContentSize(),
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                .wrapContentWidth(),
             onClick = onClickBox,
             colors = ButtonDefaults.outlinedButtonColors(
                 containerColor = Color.White,
@@ -468,14 +484,13 @@ private fun BirthDropBox(
             )
         ) {
             Row(
-                modifier = Modifier.width(80.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     modifier = Modifier.weight(1.0f),
-                    text = text.ifBlank { placeHolder },
-                    style = Typography.Medium_SM,
+                    text = if(text.isBlank()) placeHolder else "$text$postfix",
+                    style = Typography.Medium_S,
                 )
                 Icon(
                     modifier = Modifier.size(16.dp),
@@ -484,19 +499,20 @@ private fun BirthDropBox(
                 )
             }
         }
-        DropdownMenu(
-            modifier = Modifier
-                .height(200.dp)
-                .align(Alignment.BottomEnd),
+
+        ExposedDropdownMenu(
             expanded = isExpended,
             onDismissRequest = onDismissRequest,
-            containerColor = Black100
+            containerColor = Color.White,
+            border = BorderStroke(1.dp, Black200)
         ) {
             items.forEach {
                 DropdownMenuItem(
+                    modifier = Modifier
+                        .height(22.dp),
                     text = {
                         Text(
-                            text = "$it$postfix"
+                            text = "$it"
                         )
                     },
                     onClick = {
