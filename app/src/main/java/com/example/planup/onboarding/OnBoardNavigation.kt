@@ -1,6 +1,10 @@
 package com.example.planup.onboarding
 
 import androidx.activity.compose.LocalActivity
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -11,6 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
+
+// TODO:: 키보드 올라오면 버튼도 같이 올라오도록 수정
 
 @Composable
 fun OnboardNavHost(
@@ -23,7 +29,9 @@ fun OnboardNavHost(
 
     //TODO :: proceedNextStep 사용하도록 변경
     NavHost(
-        modifier = modifier,
+        modifier = modifier
+            .windowInsetsPadding(WindowInsets.ime)
+            .consumeWindowInsets(WindowInsets.ime),
         navController = navController,
         startDestination = OnBoardTermRoute::class,
     ) {

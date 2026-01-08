@@ -4,15 +4,11 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -30,7 +25,6 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -57,24 +51,12 @@ import com.example.planup.component.ProfileView
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.onboarding.component.OnBoardingTextField
 import com.example.planup.onboarding.model.GenderModel
-import com.example.planup.theme.Black100
 import com.example.planup.theme.Black200
 import com.example.planup.theme.Black300
 import com.example.planup.theme.Blue200
 import com.example.planup.theme.SemanticB4
 import com.example.planup.theme.Typography
-import kotlin.Boolean
 
-/**
- * onNext 에 전달되어야 하는 정보는
- * 1. 프로필 이미지
- * 2. 이름
- * 3. 성별
- * 4. 생년월일
- * 5. 유저 닉네임
- *
- * 스크롤 여부도 고려해야 함
- */
 @Composable
 fun OnBoardingProfileScreen(
     modifier: Modifier = Modifier,
@@ -98,7 +80,7 @@ fun OnBoardingProfileScreen(
     ) {
         ProfileBody(
             modifier = Modifier
-                .padding(top = 42.dp)
+                .padding(top = 42.dp, bottom = 12.dp)
                 .fillMaxWidth()
                 .weight(1.0f),
             state = state,
@@ -489,7 +471,7 @@ private fun BirthDropBox(
             ) {
                 Text(
                     modifier = Modifier.weight(1.0f),
-                    text = if(text.isBlank()) placeHolder else "$text$postfix",
+                    text = if (text.isBlank()) placeHolder else "$text$postfix",
                     style = Typography.Medium_S,
                 )
                 Icon(
