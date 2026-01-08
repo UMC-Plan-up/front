@@ -150,8 +150,14 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun updateName(name: String) {
-        val isValidNameLength = name.length <= 20
-        val isNameContainsSpecialChar = name.contains(nameRegex)
+        val isHangul = isHangulRegex.matches(name)
+        val isAlphabet = isAlphabetRegex.matches(name)
+
+        // 한글의 경우엔 최대 글자 수 15자, 영어의 경우 20자 이내
+        val lengthLimit = if(isHangul) 15 else if(isAlphabet) 20 else 100
+
+        val isValidNameLength = name.length <= lengthLimit
+        val isNameContainsSpecialChar = !isHangul && !isAlphabet
 
         _state.update {
             it.copy(
@@ -270,7 +276,8 @@ class OnBoardingViewModel @Inject constructor(
 
     private companion object {
         private val passwordRegex = Regex("""[!"#$%&'()*+,\-./:;<=>?@\[₩\]^_`{|}~]""")
-        private val nameRegex = Regex("[^a-zA-Z0-9가-힣 ]")
+        private val isAlphabetRegex = Regex("""^[a-zA-Z ]+$""")
+        private val isHangulRegex = Regex("""^[가-힣 ]+$""")
     }
 }
 
