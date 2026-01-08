@@ -82,7 +82,6 @@ fun OnBoardingVerificationScreen(
                 modifier = Modifier
                     .padding(top = 18.dp)
                     .clickable {
-                        println("lost")
                         scope.launch { sheetState.expand() }
                     },
                 text = stringResource(R.string.signup_verify_email_lost),

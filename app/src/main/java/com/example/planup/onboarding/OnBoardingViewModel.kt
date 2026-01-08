@@ -103,12 +103,11 @@ class OnBoardingViewModel @Inject constructor(
         return isDuplicated
     }
 
-    fun checkVerificationState() {
-        viewModelScope.launch {
-            // TODO:: 이메일 인증 여부 확인
+    suspend fun checkEmailVerification(): Boolean {
+        // TODO:: 이메일 인증 여부 확인
+        var isVerified = true
 
-            sendNavigateEvent(OnboardingStep.Profile)
-        }
+        return isVerified
     }
 
     fun resendEmailVerification() {
@@ -198,6 +197,18 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun shareWithKakao() {
+        // TODO:: 카카오 모듈 작성 후 추가
+        // InviteCodeFragment::showSharePopup 참조
+    }
+
+    fun shareWithSMS() {
+        // InviteCodeFragment::showSharePopup 참조
+        viewModelScope.launch {
+            _event.send(Event.SendCodeWithSMS)
+        }
+    }
+
     fun acceptInviteCode(code: String) {
         // TODO:: 코드 유효성 검증, 수락 로직
     }
@@ -226,13 +237,25 @@ class OnBoardingViewModel @Inject constructor(
                         sendNavigateEvent(next)
                 }
                 OnboardingStep.Verification -> {
-                    sendNavigateEvent(next)
+                    if(checkEmailVerification()) {
+                        sendNavigateEvent(next)
+                    } else {
+                        // TODO:: 인증이 되지 않은 경우
+                    }
                 }
                 OnboardingStep.Profile -> {
+                    // TODO:: 화면 넘어갈 때 조건 문의
+                    if(
+                        state.value.name.isNotEmpty() &&
+                        state.value.nickname.isNotEmpty() &&
+                        !state.value.isNameContainsSpecialChar &&
+                        state.value.isValidNameLength &&
+                        state.value.isValidNickNameLength &&
+                        !state.value.isDuplicateNickName
+                    )
                     // 회원가입 여부 확인 후 inviteCode 초기화
                     sendNavigateEvent(next)
                 }
-
                 OnboardingStep.ShareFriendCode ->
                     sendNavigateEvent(OnboardingStep.ShareInvite)
                 OnboardingStep.ShareInvite -> {
@@ -248,6 +271,7 @@ class OnBoardingViewModel @Inject constructor(
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
+        data object SendCodeWithSMS: Event()
     }
 
     sealed class SnackBarEvent {

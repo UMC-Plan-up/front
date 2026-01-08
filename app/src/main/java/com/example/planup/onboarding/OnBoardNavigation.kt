@@ -66,7 +66,7 @@ fun OnboardNavHost(
             OnBoardingVerificationScreen(
                 modifier = modifier,
                 state = state,
-                onNext = viewModel::checkVerificationState,
+                onNext = { viewModel.proceedNextStep(currentStep) },
                 onClickResend = viewModel::resendEmailVerification,
                 onClickKaKao = viewModel::kakaoLogin
             )
@@ -76,9 +76,7 @@ fun OnboardNavHost(
             OnBoardingProfileScreen(
                 modifier = modifier,
                 state = state,
-                onNext = {
-                    viewModel.proceedNextStep(currentStep)
-                },
+                onNext = { viewModel.proceedNextStep(currentStep) },
                 onNameChanged = viewModel::updateName,
                 onNicknameChanged = viewModel::updateNickName,
                 onGenderChanged = viewModel::updateGender,
@@ -94,11 +92,9 @@ fun OnboardNavHost(
             OnBoardingShareCodeScreen(
                 modifier = modifier,
                 state = state,
-                onNext = {
-                    viewModel.proceedNextStep(currentStep)
-                },
-                onShareKakao = {},
-                onShareSMS = {}
+                onNext = { viewModel.proceedNextStep(currentStep) },
+                onShareKakao = viewModel::shareWithKakao,
+                onShareSMS = viewModel::shareWithSMS
             )
         }
 
