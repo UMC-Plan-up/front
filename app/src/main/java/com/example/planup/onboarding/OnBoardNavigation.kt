@@ -82,8 +82,8 @@ fun OnboardNavHost(
                 onNameChanged = viewModel::updateName,
                 onNicknameChanged = viewModel::updateNickName,
                 onGenderChanged = viewModel::updateGender,
-                onNewImageByCamera = viewModel::foo,
-                onNewImageByPhotoPicker = viewModel::foo,
+                onNewImageByCamera = viewModel::updateProfileImage,
+                onNewImageByPhotoPicker = viewModel::updateProfileImage,
                 onYearChanged = viewModel::updateYear,
                 onMonthChanged = viewModel::updateMonth,
                 onDayChanged = viewModel::updateDay

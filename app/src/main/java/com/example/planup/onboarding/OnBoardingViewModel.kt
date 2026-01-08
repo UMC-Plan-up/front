@@ -200,12 +200,12 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun foo(some: Any) {
+    fun updateProfileImage(some: Any) {
         viewModelScope.launch {
-            val file = imageResizer.saveToTempFile(some)
-            println(file?.toURI())
+            val tempFile = imageResizer.saveToTempFile(some)
+
             _state.update {
-                it.copy(profileImage = file?.toURI().toString())
+                it.copy(profileImage = tempFile?.toURI().toString())
             }
         }
     }
