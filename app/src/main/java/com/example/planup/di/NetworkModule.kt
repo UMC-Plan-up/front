@@ -3,6 +3,7 @@ package com.example.planup.di
 import com.example.planup.database.TokenSaver
 import com.example.planup.network.FriendApi
 import com.example.planup.network.GoalApi
+import com.example.planup.network.TermsApi
 import com.example.planup.network.UserApi
 import com.example.planup.network.interceptor.AuthInterceptor
 import dagger.Module
@@ -87,4 +88,11 @@ class NetworkModule {
         return retrofit.create(GoalApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideTermApi(
+        retrofit: Retrofit
+    ): TermsApi {
+        return retrofit.create(TermsApi::class.java)
+    }
 }
