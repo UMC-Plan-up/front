@@ -32,9 +32,9 @@ fun OnBoardingIdScreen(
     modifier: Modifier = Modifier,
     state: OnBoardingState,
     onNext: (String) -> Unit,
-    validateEmailFormat: (String) -> Unit,
+    onEmailChanged: (String) -> Unit,
 ) {
-    val textState = rememberTextFieldState()
+    val textState = rememberTextFieldState(initialText = state.email)
 
     Column(
         modifier = modifier
@@ -65,7 +65,7 @@ fun OnBoardingIdScreen(
                 .padding(top = 8.dp),
             state = textState,
             inputTransformation = InputTransformation {
-                validateEmailFormat(toString())
+                onEmailChanged(toString())
             },
             placeHolder = stringResource(R.string.planup_email)
         )
@@ -121,6 +121,6 @@ private fun OnBoardingIdScreenPreview() {
         modifier = Modifier.background(Color.White),
         state = OnBoardingState(),
         onNext = {},
-        validateEmailFormat = {}
+        onEmailChanged = {}
     )
 }
