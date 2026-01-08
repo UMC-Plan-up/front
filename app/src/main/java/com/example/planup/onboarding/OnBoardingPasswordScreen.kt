@@ -40,8 +40,8 @@ fun OnBoardingPasswordScreen(
     onNext: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
 ) {
-    val passwordState = rememberTextFieldState("as")
-    val confirmState = rememberTextFieldState("asdf")
+    val passwordState = rememberTextFieldState(state.password)
+    val confirmState = rememberTextFieldState(state.password)
 
     Column(
         modifier = modifier
