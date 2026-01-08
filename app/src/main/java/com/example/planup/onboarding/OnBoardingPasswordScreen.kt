@@ -38,7 +38,7 @@ fun OnBoardingPasswordScreen(
     modifier: Modifier = Modifier,
     state: OnBoardingState,
     onNext: (String) -> Unit,
-    validatePasswordFormat: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
 ) {
     val passwordState = rememberTextFieldState("as")
     val confirmState = rememberTextFieldState("asdf")
@@ -75,7 +75,7 @@ fun OnBoardingPasswordScreen(
                     .padding(top = 8.dp),
                 state = passwordState,
                 inputTransformation = InputTransformation {
-                    validatePasswordFormat(toString())
+                    onPasswordChanged(toString())
                 },
                 placeHolder = stringResource(R.string.hint_password)
             )
@@ -184,6 +184,6 @@ private fun OnBoardingPasswordScreenPreview() {
             .background(Color.White),
         state = OnBoardingState(),
         onNext = {},
-        validatePasswordFormat = {}
+        onPasswordChanged = {}
     )
 }

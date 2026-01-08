@@ -39,7 +39,7 @@ fun OnboardNavHost(
             OnBoardingTermScreen(
                 modifier = modifier,
                 state = state,
-                onNext = viewModel::verifyRequiredTerm,
+                onNext = { viewModel.proceedNextStep(currentStep) },
                 onTermChecked = viewModel::onTermChecked,
                 onAllTermChecked = viewModel::onAllTermChecked
             )
@@ -49,8 +49,8 @@ fun OnboardNavHost(
             OnBoardingIdScreen(
                 modifier = modifier,
                 state = state,
-                onNext = viewModel::checkEmailDuplicated,
-                validateEmailFormat = viewModel::validateEmailFormat
+                onNext = { viewModel.proceedNextStep(currentStep) },
+                onEmailChanged = viewModel::updateEmail
             )
         }
 
@@ -58,8 +58,8 @@ fun OnboardNavHost(
             OnBoardingPasswordScreen(
                 modifier = modifier,
                 state = state,
-                onNext = viewModel::updatePassword,
-                validatePasswordFormat = viewModel::validatePasswordFormat
+                onNext = { viewModel.proceedNextStep(currentStep) },
+                onPasswordChanged = viewModel::updatePassword
             )
         }
         composable<OnBoardVerificationRoute> {

@@ -35,21 +35,26 @@ class OnBoardingViewModel @Inject constructor(
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
 
     fun updateEmail(email: String) {
+        val isValidEmailFormat = emailRegex.matches(email)
+
         _state.update {
             it.copy(
-                email = email
+                email = email,
+                isValidEmailFormat = isValidEmailFormat
             )
         }
     }
 
     fun updatePassword(password: String) {
+        val isValidLength = password.length in 8..20
+        val isComplex = password.contains(passwordRegex)
+
         _state.update {
             it.copy(
-                password = password
+                password = password,
+                isValidPasswordLength = isValidLength,
+                isComplexPassword = isComplex
             )
-        }
-        viewModelScope.launch {
-            sendNavigateEvent(OnboardingStep.Verification)
         }
     }
 
@@ -73,64 +78,29 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun verifyRequiredTerm(): Boolean {
+    private fun verifyRequiredTerm(): Boolean {
         val terms = state.value.terms
 
         val unCheckedRequiredTerms = terms.filterIndexed { idx, term ->
             term.isRequired && !term.isChecked
         }
 
-        if (unCheckedRequiredTerms.isEmpty()) {
-            viewModelScope.launch {
-                sendNavigateEvent(OnboardingStep.Id)
-            }
-        } else {
+        if (unCheckedRequiredTerms.isNotEmpty()) {
             viewModelScope.launch {
                 _snackBarEvent.send(SnackBarEvent.NotCheckedRequiredTerm)
             }
         }
 
-        return unCheckedRequiredTerms.isEmpty().also { isEmpty ->
-            if (!isEmpty) {
-                viewModelScope.launch {
-                    _snackBarEvent.send(SnackBarEvent.NotCheckedRequiredTerm)
-                }
-            }
-        }
+        return unCheckedRequiredTerms.isEmpty()
     }
 
-    fun validateEmailFormat(email: String) {
-        _state.update {
-            it.copy(
-                isValidEmailFormat = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-            )
-        }
-    }
+    suspend fun checkEmailDuplicated(): Boolean {
+        // TODO:: 이메일 중복 확인 API
+        var isDuplicated = false
 
-    fun checkEmailDuplicated(email: String) {
-        viewModelScope.launch {
-            // TODO:: 이메일 중복 확인 API
-            var isDuplicated = false
+        _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
 
-            _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
-
-            if (!isDuplicated) {
-                updateEmail(email)
-                sendNavigateEvent(OnboardingStep.Password)
-            }
-        }
-    }
-
-    fun validatePasswordFormat(password: String) {
-        val isValidLength = password.length in 8..20
-        val isComplex = password.contains(passwordRegex)
-
-        _state.update {
-            it.copy(
-                isValidPasswordLength = isValidLength,
-                isComplexPassword = isComplex
-            )
-        }
+        return isDuplicated
     }
 
     fun checkVerificationState() {
@@ -242,22 +212,33 @@ class OnBoardingViewModel @Inject constructor(
             }
 
             when (current) {
-                OnboardingStep.Term -> TODO()
-                OnboardingStep.Id -> TODO()
-                OnboardingStep.Password -> TODO()
-                OnboardingStep.Verification -> TODO()
+                OnboardingStep.Term -> {
+                    if (verifyRequiredTerm())
+                        sendNavigateEvent(next)
+                }
+                OnboardingStep.Id -> {
+                    if(!checkEmailDuplicated()) {
+                        sendNavigateEvent(next)
+                    }
+                }
+                OnboardingStep.Password -> {
+                    if(state.value.isValidPasswordLength && state.value.isComplexPassword)
+                        sendNavigateEvent(next)
+                }
+                OnboardingStep.Verification -> {
+                    sendNavigateEvent(next)
+                }
                 OnboardingStep.Profile -> {
                     // 회원가입 여부 확인 후 inviteCode 초기화
+                    sendNavigateEvent(next)
                 }
 
-                OnboardingStep.ShareFriendCode -> sendNavigateEvent(OnboardingStep.ShareInvite)
+                OnboardingStep.ShareFriendCode ->
+                    sendNavigateEvent(OnboardingStep.ShareInvite)
                 OnboardingStep.ShareInvite -> {
                     // 플로우 종료
                 }
             }
-
-
-            sendNavigateEvent(next)
         }
     }
 
@@ -275,6 +256,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     private companion object {
+        private val emailRegex = Patterns.EMAIL_ADDRESS.toRegex()
         private val passwordRegex = Regex("""[!"#$%&'()*+,\-./:;<=>?@\[₩\]^_`{|}~]""")
         private val isAlphabetRegex = Regex("""^[a-zA-Z ]+$""")
         private val isHangulRegex = Regex("""^[가-힣 ]+$""")
