@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +38,7 @@ import com.example.planup.component.button.PlanUpButton
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.theme.Black100
 import com.example.planup.theme.Black250
-import com.example.planup.theme.SemanticB4
+import com.example.planup.theme.Black300
 import com.example.planup.theme.Typography
 
 @Composable
@@ -119,19 +119,20 @@ private fun OnBoardingTermBody(
                     start = 26.dp
                 ),
             text = stringResource(R.string.agreement_optional_notice),
-            color = Black250,
+            color = Black300,
             style = Typography.Medium_S,
         )
 
-        Spacer(
+        HorizontalDivider(
             modifier = Modifier
-                .padding(top = 14.dp)
-                .height(1.dp)
-                .fillMaxWidth()
-                .background(Black100)
+                .padding(top = 14.dp, bottom = 24.dp),
+            thickness = 1.dp,
+            color = Black100
         )
 
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             terms.forEachIndexed { idx, term ->
                 OnBoardingTermItem(
                     title = term.title,
@@ -214,16 +215,15 @@ private fun OnBoardingTermItem(
                 )
             }
         }
-        if(showDetail) {
+        if (showDetail) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = 8.dp,
-                        start = 12.dp
+                        top = 16.dp,
+                        start = 24.dp
                     )
                     .wrapContentHeight()
-                    .background(SemanticB4)
             ) {
                 Text(
                     text = detail,
@@ -243,20 +243,14 @@ private fun OnBoardingTermScreenPreview() {
             terms = listOf(
                 TermModel(
                     id = 1,
-                    title = "필수이용약관1",
+                    title = "[필수] 이용약관1",
                     content = "세부사항1",
                     isRequired = true
                 ),
                 TermModel(
-                    id = 1,
-                    title = "선택이용약관2",
-                    content = "세부사항2",
-                    isRequired = false
-                ),
-                TermModel(
-                    id = 1,
-                    title = "세부사항 없는 이용약관",
-                    content = "세부사항",
+                    id = 2,
+                    title = "[선택] 이용약관2",
+                    content = "세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2",
                     isRequired = false
                 )
             )
@@ -270,11 +264,13 @@ private fun OnBoardingTermScreenPreview() {
 @Preview
 @Composable
 private fun OnBoardingTermItemPreview() {
-    Box(modifier = Modifier
-        .padding(12.dp)
-        .background(Color.White)) {
+    Box(
+        modifier = Modifier
+            .padding(12.dp)
+            .background(Color.White)
+    ) {
         OnBoardingTermItem(
-            title = "개인정보 처리방침",
+            title = "[필수] 개인정보 처리방침",
             detail = "약관 세부사항",
             onCheckedChange = {},
         )
