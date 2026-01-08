@@ -1,5 +1,6 @@
 package com.example.planup.onboarding
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -23,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
+import com.example.planup.signup.SignupActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -65,6 +67,22 @@ class OnBoardingActivity: AppCompatActivity() {
                     when(event) {
                         is OnBoardingViewModel.Event.Navigate -> {
                             navController.navigate(event.step.getRoute())
+                        }
+                        is OnBoardingViewModel.Event.SendCodeWithSMS -> {
+                            val shareMessage = """
+                                    ${state.nickname}님이 친구 신청을 보냈어요.
+                                    Plan-Up에서 함께 목표 달성에 참여해 보세요!
+                                    친구 코드: ${state.inviteCode}
+                                """.trimIndent()
+
+                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, shareMessage)
+                            }
+
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+
+                            startActivity(shareIntent)
                         }
                     }
                 }
