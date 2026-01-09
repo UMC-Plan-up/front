@@ -105,4 +105,14 @@ interface UserRepository {
     suspend fun updateUserNotificationService(isOnNotification: Boolean): ApiResult<Boolean>
     suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) : ApiResult<Boolean>
 
+    /**
+     * 이메일 중복을 여부를 확인합니다
+     *
+     * @param email
+     * @return 중복 여부
+     */
+    suspend fun checkEmailDuplicated(
+        email: String
+    ): ApiResult<Boolean>
+
 }

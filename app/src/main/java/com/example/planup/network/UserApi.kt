@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
+import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.UserResponse
@@ -15,9 +16,7 @@ import com.example.planup.password.data.PasswordChangeRequest
 import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse
-import com.example.planup.signup.data.ApiEnvelope
 import com.example.planup.signup.data.ApiResponse
-import com.example.planup.signup.data.EmailCheckResult
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeProcessResponse
@@ -111,7 +110,7 @@ interface UserApi : MyPageApi {
     @GET("/users/email/check-duplicate")
     suspend fun checkEmailDuplicate(
         @Query("email") email: String
-    ): ApiEnvelope<EmailCheckResult>
+    ): Response<UserResponse<EmailCheckDuplicated>>
 
     // 비밀번호 변경 확인 이메일 발송
     @POST("/users/password/change-email/send")

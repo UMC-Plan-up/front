@@ -5,6 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import com.example.planup.network.repository.TermRepository
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class OnBoardingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val imageResizer: ImageResizer,
-    private val termRepository: TermRepository
+    private val termRepository: TermRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     init {
@@ -132,7 +134,16 @@ class OnBoardingViewModel @Inject constructor(
         // TODO:: 이메일 중복 확인 API
         var isDuplicated = false
 
-        _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
+        userRepository.checkEmailDuplicated(state.value.email)
+            .onSuccess {
+                isDuplicated = true
+                _state.update { it.copy(isDuplicatedEmail = true) }
+            }
+            .onFailWithMessage {
+                //TODO :: 오류 메세지
+                Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
+                _state.update { it.copy(isDuplicatedEmail = false) }
+            }
 
         return isDuplicated
     }

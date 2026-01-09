@@ -84,3 +84,9 @@ data class KakaoUser(
     @SerializedName("nickname") val nickname: String,
     @SerializedName("profileImg") val profileImg: String
 )
+
+// 이메일 중복 검사
+data class EmailCheckDuplicated(
+    @SerializedName("available") val available: Boolean,
+    @SerializedName("message") val message: String
+)

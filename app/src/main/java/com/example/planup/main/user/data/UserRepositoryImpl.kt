@@ -103,40 +103,42 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                val request = EmailSendRequest(email)
-                userApi.emailLink(request)
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val emailSendResult = response.result
-                    ApiResult.Success(emailSendResult)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    val request = EmailSendRequest(email)
+                    userApi.emailLink(request)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val emailSendResult = response.result
+                        ApiResult.Success(emailSendResult)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
-    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                val request = EmailSendRequest(email)
-                userApi
-                userApi.emailReLink(request)
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val emailSendResult = response.result
-                    ApiResult.Success(emailSendResult)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    val request = EmailSendRequest(email)
+                    userApi
+                    userApi.emailReLink(request)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val emailSendResult = response.result
+                        ApiResult.Success(emailSendResult)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
     override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
         val prevName = userInfoSaver.getNickName()
@@ -383,6 +385,23 @@ class UserRepositoryImpl @Inject constructor(
                         val result = response.result
                         userInfoSaver.saveNotificationMarketing(result)
                         ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun checkEmailDuplicated(email: String): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.checkEmailDuplicate(email)
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result.available)
                     } else {
                         ApiResult.Fail(response.message)
                     }
