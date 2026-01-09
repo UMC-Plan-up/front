@@ -5,6 +5,7 @@ import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.util.ImageResizer
@@ -22,8 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val imageResizer: ImageResizer
-
+    private val imageResizer: ImageResizer,
+    private val termRepository: TermRepository
 ) : ViewModel() {
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()

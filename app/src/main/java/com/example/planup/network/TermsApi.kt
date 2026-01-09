@@ -1,7 +1,7 @@
 package com.example.planup.network
 
-import com.example.planup.signup.data.TermsDetailResponse
-import com.example.planup.signup.data.TermsListResponse
+import com.example.planup.network.dto.term.TermsDetailResponse
+import com.example.planup.network.dto.term.TermsListResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
