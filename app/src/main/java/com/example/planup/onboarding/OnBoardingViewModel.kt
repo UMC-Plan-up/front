@@ -5,6 +5,8 @@ import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
 import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
@@ -26,6 +28,37 @@ class OnBoardingViewModel @Inject constructor(
     private val imageResizer: ImageResizer,
     private val termRepository: TermRepository
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            termRepository.getTerms().onSuccess { terms ->
+
+                val termList = terms.sortedBy { it.order }.map { termItem ->
+                    var termDetail = ""
+                    termRepository.getTermsDetail(termItem.id)
+                        .onSuccess { termDetail = it.content }
+                        .onFailWithMessage {
+                            Log.e("OnBoardingViewModel", "약관 세부사항 불러오기 실패| id:${termItem.id}, $it")
+                            termDetail = ""
+                        }
+
+                    TermModel(
+                        id = termItem.id,
+                        title = "[${if (termItem.isRequired) "필수" else "선택"}] ${termItem.summary}",
+                        content = termDetail,
+                        isRequired = termItem.isRequired
+                    )
+                }
+
+                _state.update {
+                    it.copy(terms = termList)
+                }
+            }.onFailWithMessage {
+                Log.e("OnBoardingViewModel", "약관 불러오기 실패| $it")
+            }
+        }
+    }
+
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
 
@@ -124,7 +157,7 @@ class OnBoardingViewModel @Inject constructor(
         val isAlphabet = isAlphabetRegex.matches(name)
 
         // 한글의 경우엔 최대 글자 수 15자, 영어의 경우 20자 이내
-        val lengthLimit = if(isHangul) 15 else if(isAlphabet) 20 else 100
+        val lengthLimit = if (isHangul) 15 else if (isAlphabet) 20 else 100
 
         val isValidNameLength = name.length <= lengthLimit
         val isNameContainsSpecialChar = !isHangul && !isAlphabet
@@ -228,25 +261,29 @@ class OnBoardingViewModel @Inject constructor(
                     if (verifyRequiredTerm())
                         sendNavigateEvent(next)
                 }
+
                 OnboardingStep.Id -> {
-                    if(!checkEmailDuplicated()) {
+                    if (!checkEmailDuplicated()) {
                         sendNavigateEvent(next)
                     }
                 }
+
                 OnboardingStep.Password -> {
-                    if(state.value.isValidPasswordLength && state.value.isComplexPassword)
+                    if (state.value.isValidPasswordLength && state.value.isComplexPassword)
                         sendNavigateEvent(next)
                 }
+
                 OnboardingStep.Verification -> {
-                    if(checkEmailVerification()) {
+                    if (checkEmailVerification()) {
                         sendNavigateEvent(next)
                     } else {
                         // TODO:: 인증이 되지 않은 경우
                     }
                 }
+
                 OnboardingStep.Profile -> {
                     // TODO:: 화면 넘어갈 때 조건 문의
-                    if(
+                    if (
                         state.value.name.isNotEmpty() &&
                         state.value.nickname.isNotEmpty() &&
                         !state.value.isNameContainsSpecialChar &&
@@ -255,10 +292,12 @@ class OnBoardingViewModel @Inject constructor(
                         !state.value.isDuplicateNickName
                     )
                     // 회원가입 여부 확인 후 inviteCode 초기화
-                    sendNavigateEvent(next)
+                        sendNavigateEvent(next)
                 }
+
                 OnboardingStep.ShareFriendCode ->
                     sendNavigateEvent(OnboardingStep.ShareInvite)
+
                 OnboardingStep.ShareInvite -> {
                     // 플로우 종료
                 }
@@ -272,7 +311,7 @@ class OnBoardingViewModel @Inject constructor(
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
-        data object SendCodeWithSMS: Event()
+        data object SendCodeWithSMS : Event()
     }
 
     sealed class SnackBarEvent {
