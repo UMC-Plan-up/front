@@ -6,6 +6,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -18,7 +19,6 @@ import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse
 import com.example.planup.signup.data.ApiResponse
 import com.example.planup.signup.data.EmailSendRequestDto
-import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeProcessResponse
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeResponse
@@ -88,17 +88,17 @@ interface UserApi : MyPageApi {
         @Body body: InviteCodeRequest
     ): Response<InviteCodeProcessResponse>
 
-    // 이메일 인증 메일 발송
+    // 회원가입을 위한 이메일 인증 메일 발송
     @POST("/users/email/send")
     suspend fun sendEmail(
         @Body body: EmailSendRequestDto
-    ): Response<EmailSendResponseDto>
+    ): Response<UserResponse<SignupLink>>
 
-    // 이메일 인증 메일 재발송
+    // 회원가입을 위한 이메일 인증 메일 재발송
     @POST("/users/email/resend")
     suspend fun resendEmail(
         @Body body: ResendEmailRequest
-    ): Response<ResendEmailResponse>
+    ): Response<UserResponse<SignupLink>>
 
     // 이메일 인증 링크 검증
     @GET("/users/email/verify-link")

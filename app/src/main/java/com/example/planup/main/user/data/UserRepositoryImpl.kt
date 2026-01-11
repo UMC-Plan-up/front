@@ -11,14 +11,17 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.password.data.PasswordChangeRequest
+import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.example.planup.signup.data.ResendEmailRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -402,6 +405,40 @@ class UserRepositoryImpl @Inject constructor(
                     if(response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun sendMailForSignup(email: String): ApiResult<SignupLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.sendEmail(EmailSendRequestDto(email))
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun resendMailForSignup(email: String): ApiResult<SignupLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.resendEmail(ResendEmailRequest(email))
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
                     }

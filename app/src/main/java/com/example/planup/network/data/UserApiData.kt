@@ -55,7 +55,7 @@ data class InviteCodeValidate(
     @SerializedName("targetUserNickname") val targetUserNickname: String
 )
 
-//회원가입 시 이메일 인증 발송, 재발송
+// 회원가입 시 이메일 인증 발송, 재발송
 data class SignupLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
