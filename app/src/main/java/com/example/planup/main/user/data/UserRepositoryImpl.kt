@@ -463,4 +463,21 @@ class UserRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun checkNicknameDuplicated(nickname: String): ApiResult<Boolean> =
+        withContext(Dispatchers.IO){
+            safeResult(
+                response = {
+                    userApi.checkNicknameDuplicate(nickname)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
 }

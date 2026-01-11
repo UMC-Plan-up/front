@@ -234,6 +234,19 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun checkNicknameDuplication() {
+        viewModelScope.launch {
+            userRepository.checkNicknameDuplicated(state.value.nickname)
+                .onSuccess {
+                    _state.update { it.copy(isDuplicateNickName = true) }
+                }
+                .onFailWithMessage {
+                    // TODO:: 에러 메세지
+                    _state.update { it.copy(isDuplicateNickName = false) }
+                }
+        }
+    }
+
     fun updateGender(gender: GenderModel) {
         _state.update { it.copy(gender = gender) }
     }

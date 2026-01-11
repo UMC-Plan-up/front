@@ -145,4 +145,8 @@ interface UserRepository {
     suspend fun checkEmailVerificationStatus(
         verificationToken: String
     ): ApiResult<EmailVerificationStatus>
+
+    suspend fun checkNicknameDuplicated(
+        nickname: String
+    ): ApiResult<Boolean>
 }
