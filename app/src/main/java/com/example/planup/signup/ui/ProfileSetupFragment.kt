@@ -479,7 +479,7 @@ class ProfileSetupFragment : Fragment() {
 
     private suspend fun checkNicknameDuplicate(nickname: String) {
         try {
-            val res = RetrofitInstance.userApi.checkNickname(nickname)
+            val res = RetrofitInstance.userApi.checkNicknameDuplicate(nickname)
             if (res.isSuccessful && res.body()?.isSuccess == true) {
                 val available = res.body()!!.result?.available == true
                 isNicknameAvailable = available

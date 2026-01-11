@@ -97,3 +97,9 @@ data class EmailCheckDuplicated(
     @SerializedName("available") val available: Boolean,
     @SerializedName("message") val message: String
 )
+
+// 닉네임 중복 검사
+data class NicknameCheckDuplicated(
+    @SerializedName("available") val available: Boolean,
+    @SerializedName("message") val message: String
+)

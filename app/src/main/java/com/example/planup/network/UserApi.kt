@@ -7,6 +7,7 @@ import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
@@ -29,7 +30,6 @@ import com.example.planup.signup.data.KakaoCompleteRequest
 import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.KakaoLoginResponse
-import com.example.planup.signup.data.NicknameCheckResponse
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
@@ -168,9 +168,9 @@ interface UserApi : MyPageApi {
 
     // 닉네임 중복 확인
     @GET("users/nickname/check-duplicate")
-    suspend fun checkNickname(
+    suspend fun checkNicknameDuplicate(
         @Query("nickname") nickname: String
-    ): Response<NicknameCheckResponse>
+    ): Response<UserResponse<NicknameCheckDuplicated>>
 
     // 비밀번호 재설정
     @POST("/users/password/change")
