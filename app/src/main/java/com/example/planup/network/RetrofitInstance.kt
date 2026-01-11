@@ -57,7 +57,6 @@ object RetrofitInstance {
     val userApi: UserApi by lazy { retrofit.create(UserApi::class.java) }
     val goalApi: GoalApi by lazy { retrofit.create(GoalApi::class.java) }
     val friendApi: FriendApi by lazy { retrofit.create(FriendApi::class.java) }
-    val passwordApi: PasswordApi by lazy { retrofit.create(PasswordApi::class.java) }
     val weeklyReportApi: WeeklyReportApi by lazy { retrofit.create(WeeklyReportApi::class.java) }
     val verificationApi: VerificationApi by lazy { retrofit.create(VerificationApi::class.java) }
     val encourageMessageApi: EncourageMessageApi by lazy {

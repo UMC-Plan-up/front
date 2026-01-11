@@ -4,9 +4,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.OutlinedCard
@@ -24,15 +26,12 @@ import com.example.planup.component.button.PlanUpBorderButton
 import com.example.planup.component.button.PlanUpButton
 import com.example.planup.theme.Typography
 
-
 @Composable
-fun PlanUpAlertBaseContent(
-    leftButtonTitle: String = stringResource(R.string.btn_cancel),
-    rightButtonTitle: String = stringResource(R.string.btn_ok),
+private fun PlanUpAlertBase(
+    headerText: String? = null,
     title: String,
     subTitle: String? = null,
-    onDismissRequest: () -> Unit,
-    onConfirm: () -> Unit
+    buttonRows: @Composable () -> Unit
 ) {
     OutlinedCard(
         shape = RoundedCornerShape(10.dp),
@@ -47,6 +46,13 @@ fun PlanUpAlertBaseContent(
             verticalArrangement = Arrangement.SpaceBetween,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            headerText?.let { header ->
+                Text(
+                    modifier = Modifier,
+                    text = header,
+                    style = Typography.Semibold_L
+                )
+            }
             Column(
                 modifier = Modifier
                     .heightIn(96.dp),
@@ -71,6 +77,27 @@ fun PlanUpAlertBaseContent(
                     )
                 }
             }
+            buttonRows()
+        }
+    }
+}
+
+
+@Composable
+fun PlanUpAlertBaseContent(
+    leftButtonTitle: String = stringResource(R.string.btn_cancel),
+    rightButtonTitle: String = stringResource(R.string.btn_ok),
+    headerText: String? = null,
+    title: String,
+    subTitle: String? = null,
+    onDismissRequest: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    PlanUpAlertBase(
+        headerText = headerText,
+        title = title,
+        subTitle = subTitle,
+        buttonRows = {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -87,8 +114,36 @@ fun PlanUpAlertBaseContent(
                 )
             }
         }
-    }
+    )
 }
+
+@Composable
+fun PlanUpAlertBaseSingleContent(
+    buttonTitle: String = stringResource(R.string.btn_ok),
+    headerText : String? = null,
+    title: String,
+    subTitle: String? = null,
+    onConfirm: () -> Unit
+) {
+    PlanUpAlertBase(
+        headerText = headerText,
+        title = title,
+        subTitle = subTitle,
+        buttonRows = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                PlanUpButton(
+                    modifier = Modifier.width(92.dp),
+                    title = buttonTitle,
+                    onClick = onConfirm
+                )
+            }
+        }
+    )
+}
+
 
 @Preview
 @Composable
@@ -96,6 +151,15 @@ private fun PlanUpAlertBaseContentPreview() {
     PlanUpAlertBaseContent(
         title = "로그아웃 하시겠어요?",
         onDismissRequest = {},
+        onConfirm = {}
+    )
+}
+
+@Preview
+@Composable
+private fun PlanUpAlertBaseSingleContentPreview() {
+    PlanUpAlertBaseSingleContent(
+        title = "로그아웃 하시겠어요?",
         onConfirm = {}
     )
 }

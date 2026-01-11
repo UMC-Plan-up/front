@@ -40,7 +40,6 @@ import com.example.planup.component.PlanUpSwitch
 import com.example.planup.component.ProfileView
 import com.example.planup.databinding.FragmentMypageBinding
 import com.example.planup.extension.getAppVersion
-import com.example.planup.main.MainActivity
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.my.ui.MyPageRoute.Account
 import com.example.planup.main.my.ui.MyPageRoute.NotificationMarketing
@@ -68,22 +67,6 @@ class MypageFragment : Fragment() {
                 mainSnackbarViewModel = mainSnackbarViewModel,
                 emailChangeViewModel = myPageEmailChangeViewModel
             )
-        }
-    }
-
-    private fun clickListener() {
-
-        /*비밀번호 변경*/
-        binding.mypagePasswordIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypagePasswordEmailFragment())
-                .commitAllowingStateLoss()
-        }
-        /*카카오톡 계정 연동*/
-        binding.mypageKakaoIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, MypageKakaoFragment())
-                .commitAllowingStateLoss()
         }
     }
 }
