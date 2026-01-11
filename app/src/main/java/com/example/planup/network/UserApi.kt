@@ -6,6 +6,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
@@ -31,7 +32,6 @@ import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.NicknameCheckResponse
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
-import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
 import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
@@ -105,6 +105,12 @@ interface UserApi : MyPageApi {
     suspend fun verifyEmailLink(
         @Query("token") token: String
     ): Response<ApiResponse<VerifyLinkResult>>
+
+    // 이메일 인증 여부 확인
+    @GET("users/email/verification-status")
+    suspend fun checkEmailVerificationStatus(
+        @Query("token") token: String
+    ): Response<UserResponse<EmailVerificationStatus>>
 
     // 이메일 중복 확인
     @GET("/users/email/check-duplicate")

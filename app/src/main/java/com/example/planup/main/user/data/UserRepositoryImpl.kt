@@ -11,6 +11,7 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -402,7 +403,7 @@ class UserRepositoryImpl @Inject constructor(
                     userApi.checkEmailDuplicate(email)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result.available)
                     } else {
@@ -419,7 +420,7 @@ class UserRepositoryImpl @Inject constructor(
                     userApi.sendEmail(EmailSendRequestDto(email))
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {
@@ -436,7 +437,24 @@ class UserRepositoryImpl @Inject constructor(
                     userApi.resendEmail(ResendEmailRequest(email))
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun checkEmailVerificationStatus(verificationToken: String): ApiResult<EmailVerificationStatus> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.checkEmailVerificationStatus(verificationToken)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {

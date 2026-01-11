@@ -4,6 +4,7 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -134,4 +135,14 @@ interface UserRepository {
     suspend fun resendMailForSignup(
         email: String
     ): ApiResult<SignupLink>
+
+    /**
+     * 이메일 인증 토큰을 검사합니다
+     *
+     * @param verificationToken
+     * @return
+     */
+    suspend fun checkEmailVerificationStatus(
+        verificationToken: String
+    ): ApiResult<EmailVerificationStatus>
 }

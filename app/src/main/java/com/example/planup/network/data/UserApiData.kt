@@ -62,6 +62,13 @@ data class SignupLink(
     @SerializedName("verificationToken") val token: String
 )
 
+// 이메일 인증 토큰 검사 여부
+data class EmailVerificationStatus(
+    @SerializedName("verified") val verified: Boolean,
+    @SerializedName("email") val email: String,
+    @SerializedName("tokenStatus") val status: String
+)
+
 data class EmailSendRequest(
     val email : String
 )

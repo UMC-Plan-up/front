@@ -150,13 +150,49 @@ class OnBoardingViewModel @Inject constructor(
 
     suspend fun checkEmailVerification(): Boolean {
         // TODO:: 이메일 인증 여부 확인
-        var isVerified = true
+        var isVerified = false
+        val verificationToken = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
+
+        if(verificationToken == null) return false
+
+        userRepository.checkEmailVerificationStatus(verificationToken)
+            .onSuccess {
+                isVerified = true
+            }
+            .onFailWithMessage {
+                isVerified = false
+                 // TODO:: 오류 메세지
+            }
 
         return isVerified
     }
 
     fun resendEmailVerification() {
-        // TODO:: 이메일 재전송 로직
+        viewModelScope.launch {
+            val token = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
+
+            if (token == null) {
+                // 최초로 보낸 경우
+                userRepository.sendMailForSignup(state.value.email)
+                    .onSuccess {
+                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
+                    }
+                    .onFailWithMessage {
+                        // TODO:: 오류 메세지
+
+                    }
+            } else {
+                // 다시 보내는 경우
+                userRepository.resendMailForSignup(state.value.email)
+                    .onSuccess {
+                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
+                    }
+                    .onFailWithMessage {
+                        // TODO:: 오류 메세지
+
+                    }
+            }
+        }
     }
 
     fun kakaoLogin() {
@@ -335,6 +371,8 @@ class OnBoardingViewModel @Inject constructor(
         private val passwordRegex = Regex("""[!"#$%&'()*+,\-./:;<=>?@\[₩\]^_`{|}~]""")
         private val isAlphabetRegex = Regex("""^[a-zA-Z ]+$""")
         private val isHangulRegex = Regex("""^[가-힣 ]+$""")
+
+        private const val KEY_VERIFICATION_TOKEN = "key_verification_token"
     }
 }
 
