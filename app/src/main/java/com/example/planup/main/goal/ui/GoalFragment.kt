@@ -53,7 +53,7 @@ import java.time.LocalDate
 import kotlin.jvm.java
 
 
-class GoalFragment : Fragment(), MyGoalListDtoAdapter {
+class GoalFragment : Fragment(){
     private lateinit var prefs : SharedPreferences
     lateinit var binding: FragmentGoalBinding
     private lateinit var recyclerView: RecyclerView
@@ -89,7 +89,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
 
 //        userController = UserController()
-        goalController = GoalController()
+//        goalController = GoalController()
         // 사용자 정보 콜백 연결
 
 //        userController.setUserInfoAdapter(object : UserInfoAdapter {
@@ -114,7 +114,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //        userController.userInfoService()99063f
 
         // 나의 목표 리스트 콜백 연결
-        goalController.setMyGoalListAdapter(this)
+        goalController.setMyGoalListAdapter(viewModel)
         // 최초 진입 시 1회 로드
         // goalController.fetchMyGoals()
         targetUserIdArg = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
@@ -132,7 +132,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
 
         viewModel.fetchMyGoals()
-        binding.userGoalListTv.text = "${nickname?.removeSurrounding("\"")}의 목표 리스트"
+        binding.userGoalListTv.text = "${nickname.removeSurrounding("\"")}의 목표 리스트"
 
         dailyPieChart = binding.dailyGoalCompletePc
         loadTodayAchievement()
@@ -251,67 +251,107 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //            )
 //        }
 
-    private val goalEditApi by lazy{
-        GoalRetrofitInstance.api.create(GoalApi::class.java)
-    }
+//    private val goalEditApi by lazy{
+//        GoalRetrofitInstance.api.create(GoalApi::class.java)
+//    }
 
     // 삭제
     /** 삭제 */
+//    private fun requestDeleteGoal(goalId: Int) {
+//        val token = requireTokenOrNull() ?: run {
+//            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//        lifecycleScope.launch {
+//            runCatching {
+//                goalEditApi.deleteGoal(token = token, goalId = goalId)
+//            }.onSuccess { res ->
+//                if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+//                    showDeleteToast()
+//                    // 1) 즉시 UI에서 제거
+//                    adapter.removeItemById(goalId)
+//                    // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
+//                    goalController.fetchMyGoals()
+//                } else {
+//                    Toast.makeText(requireContext(),
+//                        "삭제 실패: ${res.body()?.message ?: res.code()}",
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    Log.w("GoalFragment", "deleteGoal fail body=${res.body()} code=${res.code()}")
+//                }
+//            }.onFailure {
+//                Toast.makeText(requireContext(), "삭제 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+//                Log.e("GoalFragment", "deleteGoal error", it)
+//            }
+//        }
+//    }
+
     private fun requestDeleteGoal(goalId: Int) {
-        val token = requireTokenOrNull() ?: run {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        lifecycleScope.launch {
-            runCatching {
-                goalEditApi.deleteGoal(token = token, goalId = goalId)
-            }.onSuccess { res ->
-                if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+        viewModel.deleteGoal(
+            goalId = goalId,
+            action = { id ->
                     showDeleteToast()
                     // 1) 즉시 UI에서 제거
-                    adapter.removeItemById(goalId)
+                    adapter.removeItemById(goalId = id)
                     // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
                     goalController.fetchMyGoals()
-                } else {
-                    Toast.makeText(requireContext(),
-                        "삭제 실패: ${res.body()?.message ?: res.code()}",
-                        Toast.LENGTH_SHORT
+            },
+            message = {message->
+                Toast.makeText(requireContext(),
+                       "삭제 실패: $message",
+                       Toast.LENGTH_SHORT
                     ).show()
-                    Log.w("GoalFragment", "deleteGoal fail body=${res.body()} code=${res.code()}")
-                }
-            }.onFailure {
-                Toast.makeText(requireContext(), "삭제 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-                Log.e("GoalFragment", "deleteGoal error", it)
             }
-        }
+
+        )
     }
 
     /** 활성/비활성 토글 (이번 클릭 의도 전달) */
+//    private fun requestToggleActive(goalId: Int, willActivate: Boolean) {
+//        val token = requireTokenOrNull() ?: return Toast.makeText(requireContext(),"로그인이 필요합니다.",Toast.LENGTH_SHORT).show()
+//        lifecycleScope.launch {
+//            runCatching { goalEditApi.setGoalActive(token, goalId) }
+//                .onSuccess { res ->
+//                    if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+//                        if (willActivate) showActivateToast() else showDeactivateToast()
+//
+//                        // 1) 즉시 해당 아이템만 UI 반영
+//                        adapter.updateItemActive(goalId, willActivate)
+//
+//                        // 2) 정확성 위해 서버 리스트 재조회(옵션)
+//                        goalController.fetchMyGoals()
+//                    } else {
+//                        Toast.makeText(requireContext(),
+//                            "활성 상태 변경 실패: ${res.body()?.message ?: res.code()}",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                }
+//                .onFailure {
+//                    Toast.makeText(requireContext(),"활성 상태 변경 중 오류가 발생했습니다.",Toast.LENGTH_SHORT).show()
+//                    Log.e("GoalFragment","setGoalActive error", it)
+//                }
+//        }
+//    }
     private fun requestToggleActive(goalId: Int, willActivate: Boolean) {
-        val token = requireTokenOrNull() ?: return Toast.makeText(requireContext(),"로그인이 필요합니다.",Toast.LENGTH_SHORT).show()
-        lifecycleScope.launch {
-            runCatching { goalEditApi.setGoalActive(token, goalId) }
-                .onSuccess { res ->
-                    if (res.isSuccessful && (res.body()?.isSuccess == true)) {
-                        if (willActivate) showActivateToast() else showDeactivateToast()
+        viewModel.setGoalActive(goalId = goalId,
+            action = {
+                if (willActivate) showActivateToast() else showDeactivateToast()
 
-                        // 1) 즉시 해당 아이템만 UI 반영
-                        adapter.updateItemActive(goalId, willActivate)
+                // 1) 즉시 해당 아이템만 UI 반영
+                adapter.updateItemActive(goalId, willActivate)
 
-                        // 2) 정확성 위해 서버 리스트 재조회(옵션)
-                        goalController.fetchMyGoals()
-                    } else {
-                        Toast.makeText(requireContext(),
-                            "활성 상태 변경 실패: ${res.body()?.message ?: res.code()}",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-                .onFailure {
-                    Toast.makeText(requireContext(),"활성 상태 변경 중 오류가 발생했습니다.",Toast.LENGTH_SHORT).show()
-                    Log.e("GoalFragment","setGoalActive error", it)
-                }
-        }
+                // 2) 정확성 위해 서버 리스트 재조회(옵션)
+                goalController.fetchMyGoals()
+            },
+            message = { message->
+                Toast.makeText(requireContext(),
+                    "활성 상태 변경 실패: $message",
+                    Toast.LENGTH_SHORT
+                ).show()
+
+            }
+            )
     }
 
     private fun setGoals(items: List<GoalItem>) {
@@ -444,15 +484,5 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             binding.dailyGoalCompletePercentTv.text = "$response%"
             setupPieChart(dailyPieChart, response)
         }
-    }
-
-
-    override fun successMyGoals(goals: List<MyGoalListDto>) {
-        val items = goals.toGoalItems()
-        setGoals(items)
-    }
-
-    override fun failMyGoals(message: String) {
-        Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
     }
 }

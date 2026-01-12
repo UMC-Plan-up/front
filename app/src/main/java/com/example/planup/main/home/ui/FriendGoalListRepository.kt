@@ -1,16 +1,12 @@
 package com.example.planup.main.home.data
 
-import android.util.Log
 import com.example.planup.database.TokenSaver
 import com.example.planup.database.checkToken
 import com.example.planup.main.goal.item.DailyAchievementResult
 import com.example.planup.main.goal.item.FriendGoalAchievementResult
 import com.example.planup.main.goal.item.FriendGoalListResult
-import com.example.planup.main.goal.item.GoalApiService
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

@@ -124,12 +124,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
-                <androidx.appcompat.widget.AppCompatButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/buttonMore"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
-                    android:background="@drawable/bg_item_goal_list_rv"
-                    android:text="더보기" />
+                    android:text="더보기"
+                    android:backgroundTint="@android:color/transparent"
+                    android:textColor="#666666"
+                    android:elevation="0dp" />
             </LinearLayout>
 
             <!-- 잠금 해제 텍스트 -->
