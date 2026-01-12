@@ -103,7 +103,6 @@ interface GoalApi {
 
     @GET("/goals/friendgoal/list")
     suspend fun getFriendGoalList(
-        @Header("Authorization") token: String,
         @Query ("friendId") friendId: Int
     ): Response<FriendGoalListResponse>
 
