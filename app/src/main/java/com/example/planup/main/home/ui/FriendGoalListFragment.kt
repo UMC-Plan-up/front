@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendGoalListBinding
@@ -16,6 +18,7 @@ import com.example.planup.extension.loadSafeProfile
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.home.adapter.FriendGoalListAdapter
 import com.example.planup.main.home.ui.viewmodel.FriendGoalListViewModel
+import com.example.planup.main.home.ui.viewmodel.FriendGoalUiMessage
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -113,16 +116,32 @@ class FriendGoalListFragment : Fragment() {
 
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.friendGoals.collectLatest { goals ->
-                goalAdapter.updateItems(goals)
+            launch {
+                repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    viewModel.friendGoals.collectLatest { goals ->
+                        goalAdapter.updateItems(goals)
+                    }
+                }
             }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.achievementRate.collectLatest { rate ->
-                rate?.let {
-                    binding.friendDailyGoalPercentTv.text = "$it%"
-                    setupPieChart(binding.friendDailyGoalCompletePc, it)
+            launch {
+                repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    viewModel.achievementRate.collectLatest { rate ->
+                        rate?.let {
+                            binding.friendDailyGoalPercentTv.text = "$it%"
+                            setupPieChart(binding.friendDailyGoalCompletePc, it)
+                        }
+                    }
+                }
+            }
+            launch {
+                repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    viewModel.friendGoalUiMessage.collect { uiMessage ->
+                        when (uiMessage) {
+                            is FriendGoalUiMessage.Error -> {
+                                snackbarViewModel.updateErrorMessage(uiMessage.message)
+                            }
+                        }
+                    }
                 }
             }
         }

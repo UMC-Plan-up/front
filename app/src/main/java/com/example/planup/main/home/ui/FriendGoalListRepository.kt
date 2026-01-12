@@ -23,7 +23,7 @@ class FriendGoalListRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                    goalApi.getFriendGoalList( friendId)
+                    goalApi.getFriendGoalList(friendId)
                 },
                 onResponse = { response ->
                     if (response.isSuccess) {
@@ -41,21 +41,19 @@ class FriendGoalListRepository @Inject constructor(
         goal: FriendGoalListResult
     ): ApiResult<FriendGoalAchievementResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalAchievement(token, friendId, goal.goalId)
-                    },
-                    onResponse = { response ->
-                        if(response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalAchievement(friendId, goal.goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 //    suspend fun getFriendGoalAchievements(
 //        token: String,

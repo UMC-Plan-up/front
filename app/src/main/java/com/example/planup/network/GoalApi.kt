@@ -152,7 +152,6 @@ interface GoalApi {
 
     @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
     suspend fun getFriendGoalAchievement(
-        @Header("Authorization") token: String,
         @Path("friendId") friendId: Int,
         @Path("goalId") goalId: Int
     ): Response<FriendGoalAchievementResponse>

@@ -3,9 +3,9 @@ package com.example.planup.main.home.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import com.example.planup.main.home.ui.FriendGoalListFragment
 import com.example.planup.main.home.ui.FriendGoalListRepository
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
@@ -45,29 +45,18 @@ class FriendGoalListViewModel @Inject constructor(
         viewModelScope.launch {
             repository.getFriendGoalList(friendId)
                 .onSuccess { goals ->
-                    for (goal in goals) {
-                        _friendGoals.update {
-                            goals
-                                .map {
-                                    repository.getFriendGoalAchievement(friendId, goal)
-                                }
-                                .filter { it is ApiResult.Success }
-                                .map {
-                                    val achieveRes = (it as ApiResult.Success).data
-                                    FriendGoalWithAchievement(
-                                        goalId = goal.goalId,
-                                        goalName = goal.goalName,
-                                        goalType = goal.goalType,
-                                        goalAmount = goal.goalAmount,
-                                        verificationType = goal.verificationType,
-                                        goalTime = goal.goalTime,
-                                        frequency = goal.frequency,
-                                        oneDose = goal.oneDose,
-                                        totalAchievement = achieveRes.totalAchievement
-                                    )
-                                }
-                        }
+                    val result = goals.map { goal ->
+                        val totalAchievement =
+                            when (val res = repository.getFriendGoalAchievement(friendId, goal)) {
+                                is ApiResult.Success -> res.data.totalAchievement
+                                else -> null
+                            }
+                        FriendGoalWithAchievement(
+                            goal = goal,
+                            totalAchievement = totalAchievement
+                        )
                     }
+                    _friendGoals.update { result }
                 }
                 .onFailWithMessage { message ->
                     _friendGoalUiMessage.emit(
