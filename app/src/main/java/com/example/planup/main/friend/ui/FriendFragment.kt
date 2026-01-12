@@ -87,7 +87,7 @@ class FriendFragment : FriendFragmentBase() {
                     goToFriendDepth2(FriendInviteFragment())
                 },
                 goFriendGoal = { friendInfo ->
-                    goToFriendGoal(friendInfo.id,friendInfo.nickname)
+                    goToFriendGoal(friendInfo.id,friendInfo.nickname,friendInfo.profileImage)
                 },
                 friendList = friendList,
                 showBadge = showBadge
