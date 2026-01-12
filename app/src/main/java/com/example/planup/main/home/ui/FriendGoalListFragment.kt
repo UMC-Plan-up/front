@@ -1,25 +1,25 @@
 package com.example.planup.main.home.ui
 
-import android.content.Context.MODE_PRIVATE
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
-import android.view.*
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.planup.R
 import com.example.planup.databinding.FragmentFriendGoalListBinding
-import com.example.planup.main.MainActivity
+import com.example.planup.extension.loadSafeProfile
+import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.home.adapter.FriendGoalListAdapter
 import com.example.planup.main.home.ui.viewmodel.FriendGoalListViewModel
-import com.example.planup.network.ApiResult
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,37 +30,53 @@ class FriendGoalListFragment : Fragment() {
     private var _binding: FragmentFriendGoalListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: FriendGoalListViewModel by viewModels()
+    private val snackbarViewModel: MainSnackbarViewModel by activityViewModels()
 
     private lateinit var goalAdapter: FriendGoalListAdapter
-    private var friendId: Int = 0
-    private lateinit var friendName: String
-    private lateinit var friendProfileImage: String
+
+    companion object {
+        const val FRIEND_ID = "friendId"
+        const val FRIEND_NAME = "friendName"
+        const val FRIEND_PROFILE_IMAGE = "friendResId"
+
+        fun newInstance(
+            friendId: Int,
+            friendName: String,
+            friendResId: String?
+        ): FriendGoalListFragment {
+            return FriendGoalListFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(FRIEND_ID, friendId)
+                    putString(FRIEND_NAME, friendName)
+                    putString(FRIEND_PROFILE_IMAGE, friendResId)
+                }
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         _binding = FragmentFriendGoalListBinding.inflate(inflater, container, false)
-        friendId = arguments?.getInt("friendId") ?: 0
-        friendName = arguments?.getString("friendName") ?: ""
-        friendProfileImage = arguments?.getString("friendResId") ?: ""
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Glide.with(this).load(friendProfileImage).circleCrop().into(binding.friendGoalListProfileIv)
-        binding.friendGoalListTv.text = "${friendName}의 목표 리스트"
+        binding.friendGoalListProfileIv.loadSafeProfile(viewModel.friendProfileImage)
+        binding.friendGoalListTv.text = "${viewModel.friendName}의 목표 리스트"
 
         setupRecyclerView()
 
-        viewModel.loadTodayAchievement(createErrorHandler("loadTodayAchievement"))
+        viewModel.loadTodayAchievement()
+        viewModel.loadFriendGoals()
+
         val dailyPieChart = binding.friendDailyGoalCompletePc
         val achievementRate = viewModel.achievementRate.value
         binding.friendDailyGoalPercentTv.text = "$achievementRate%"
         setupPieChart(dailyPieChart, achievementRate ?: 0)
 
-        viewModel.loadFriendGoals(friendId, createErrorHandler("loadFriendGoals"))
 
         observeViewModel()
 
@@ -73,7 +89,7 @@ class FriendGoalListFragment : Fragment() {
         goalAdapter = FriendGoalListAdapter(mutableListOf()) { item ->
             val detailFragment = FriendGoalDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putInt("friendId", friendId)
+                    putInt("friendId", viewModel.friendId)
                     putInt("goalId", item.goalId)
                     putString("title", item.goalName)
                 }
@@ -139,16 +155,5 @@ class FriendGoalListFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    fun <T> createErrorHandler(tag: String): (ApiResult<T>) -> Unit {
-        return { result ->
-            when (result) {
-                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
-                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
-                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
-                else -> {}
-            }
-        }
     }
 }
