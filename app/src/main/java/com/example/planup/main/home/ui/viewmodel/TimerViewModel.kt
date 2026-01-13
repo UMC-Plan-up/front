@@ -1,6 +1,7 @@
 package com.example.planup.main.home.ui.viewmodel
 
 import android.content.Context.MODE_PRIVATE
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -33,8 +34,8 @@ class TimerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _goals = MutableStateFlow<List<HomeTimer>>(emptyList())
-    val goals: StateFlow<List<HomeTimer>> = _goals
+    private val _goals = MutableStateFlow<List<MyGoalListItem>>(emptyList())
+    val goals: StateFlow<List<MyGoalListItem>> = _goals
 
     private val _friends = MutableStateFlow<List<FriendTimer>>(emptyList())
     val friends: StateFlow<List<FriendTimer>> = _friends
@@ -55,25 +56,11 @@ class TimerViewModel @Inject constructor(
     private var elapsedSeconds = 0
     private var timerId: Int = 0 //0: 타이머 없음
 
-    private val _cameraEvent = MutableSharedFlow<CameraEvent>()
-    val cameraEvent = _cameraEvent.asSharedFlow()
+    private val _imageUri = MutableStateFlow<Uri?>(null)
+    val imageUri: StateFlow<Uri?> = _imageUri
 
-    fun onCameraButtonClicked() {
-        viewModelScope.launch {
-            _cameraEvent.emit(CameraEvent.ShowCameraPopup)
-        }
-    }
-
-    fun onPickCamera() {
-        viewModelScope.launch {
-            _cameraEvent.emit(CameraEvent.OpenCamera)
-        }
-    }
-
-    fun onPickGallery() {
-        viewModelScope.launch {
-            _cameraEvent.emit(CameraEvent.OpenGallery)
-        }
+    fun setImage(uri: Uri) {
+        _imageUri.value = uri
     }
 
     fun loadGoals(
@@ -82,9 +69,12 @@ class TimerViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = repository.getMyGoalList()
-                if(result is ApiResult.Success) {
-                    _goals.value = result.data.map { HomeTimer(it.goalId, it.goalName) }
-                }
+                if(result is ApiResult.Success) { _goals.value = result.data }
+                val dummyList: List<MyGoalListItem> = listOf(
+                    MyGoalListItem(0,"목표1", "FRIEND", 10, 10),
+                    MyGoalListItem(-1, "목표2", "FRIEND", 11, 11)
+                ) //더미 데이터 << 목표 생성 가능해지면 지우기
+                _goals.value = dummyList
                 onCallBack(result)
             } catch (e: CancellationException) {
 

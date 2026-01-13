@@ -2,6 +2,7 @@ package com.example.planup.main.home.ui
 
 import android.R
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.databinding.FragmentTimerBinding
 import com.example.planup.databinding.PopupGoalListCameraBinding
+import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.home.adapter.FriendTimerAdapter
 import com.example.planup.main.home.data.HomeTimer
 import com.example.planup.main.home.ui.viewmodel.CameraEvent
@@ -27,24 +29,30 @@ import com.example.planup.network.ApiResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.FileProvider
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import java.io.File
 
 @AndroidEntryPoint
 class TimerFragment @Inject constructor() : Fragment() {
     private lateinit var binding: FragmentTimerBinding
     private val viewModel: TimerViewModel by viewModels()
     private var selectedSpinnerItem = 0
-
-//    private val pickImageLauncher = registerForActivityResult(
-//        ActivityResultContracts.GetContent()
-//    ) { uri: Uri? ->
-//        uri?.let { handlePickedImage(it) }
-//    } //갤러리 런처
-//
-//    private val requestCameraPermission =
-//        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-//            if (granted) launchCamera()
-//            else Toast.makeText(requireContext(), "카메라 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
-//        } //카메라 런처
+    private var cameraImageUri: Uri? = null
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            uri?.let {
+                viewModel.setImage(it)
+            }
+        }
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && cameraImageUri != null) {
+                viewModel.setImage(cameraImageUri!!)
+            }
+        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTimerBinding.inflate(inflater, container, false)
@@ -52,10 +60,11 @@ class TimerFragment @Inject constructor() : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.goalListBtnCameraIb.setOnClickListener {
-            viewModel.onCameraButtonClicked()
+        binding.goalListBackBtn.setOnClickListener {
+            parentFragmentManager.popBackStack()
         }
-        //observeCameraEvents()
+        initClickListener()
+        observeViewModel()
 
         viewModel.loadGoals(
             onCallBack = { result ->
@@ -147,7 +156,7 @@ class TimerFragment @Inject constructor() : Fragment() {
         }
     }
 
-    fun setupSpinner(events: List<HomeTimer>){
+    fun setupSpinner(events: List<MyGoalListItem>){
         Log.d("setupSpinner", "events: $events")
         val spinner: Spinner = binding.goalListSpinner
         val goalNames = events.map { it.goalName }
@@ -271,19 +280,24 @@ class TimerFragment @Inject constructor() : Fragment() {
         }
     }
 
-//    private fun observeCameraEvents() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewLifecycleOwner.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
-//                viewModel.cameraEvent.collect { event ->
-//                    when (event) {
-//                        is CameraEvent.ShowCameraPopup -> showCameraPopup()
-//                        is CameraEvent.OpenCamera -> launchCameraOrRequestPermission()
-//                        is CameraEvent.OpenGallery -> pickImageLauncher.launch("image/*")
-//                    }
-//                }
-//            }
-//        }
-//    }
+    private fun initClickListener() {
+        binding.goalListBtnCameraIb.setOnClickListener {
+            showImagePickerBottomSheet()
+        }
+    }
+
+    /* ------------------------------
+       ViewModel 관찰
+     ------------------------------ */
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            viewModel.imageUri.collect { uri ->
+                uri?.let {
+                    binding.goalListBtnCameraIb.setImageURI(it)
+                }
+            }
+        }
+    }
 
     private fun showCameraPopup() {
         val popupView = layoutInflater.inflate(com.example.planup.R.layout.popup_goal_list_camera, null)
@@ -313,6 +327,44 @@ class TimerFragment @Inject constructor() : Fragment() {
 //        }
 
         popupWindow.showAsDropDown(binding.goalListBtnCameraIb, 0, 10)
+    }
+
+    /* ------------------------------
+       BottomSheet
+     ------------------------------ */
+    private fun showImagePickerBottomSheet() {
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(com.example.planup.R.layout.bottom_sheet_image_camera, null)
+
+        view.findViewById<TextView>(com.example.planup.R.id.timer_bottom_camera_tv).setOnClickListener {
+            cameraImageUri = createCameraImageUri()
+            cameraLauncher.launch(cameraImageUri)
+            dialog.dismiss()
+        }
+
+        view.findViewById<TextView>(com.example.planup.R.id.timer_bottom_gallery_tv).setOnClickListener {
+            galleryLauncher.launch("image/*")
+            dialog.dismiss()
+        }
+
+        dialog.setContentView(view)
+        dialog.show()
+    }
+
+    /* ------------------------------
+       카메라 Uri 생성
+     ------------------------------ */
+    private fun createCameraImageUri(): Uri {
+        val file = File(
+            requireContext().cacheDir,
+            "camera_${System.currentTimeMillis()}.jpg"
+        )
+
+        return FileProvider.getUriForFile(
+            requireContext(),
+            "${requireContext().packageName}.fileprovider",
+            file
+        )
     }
 
 
