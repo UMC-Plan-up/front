@@ -8,7 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
-    private const val BASE_URL = "http://54.180.207.84:8080/"
+    private const val BASE_URL = "http://54.180.207.84/"
 
     private val authHeaderAdder = Interceptor { chain ->
         val original = chain.request()
