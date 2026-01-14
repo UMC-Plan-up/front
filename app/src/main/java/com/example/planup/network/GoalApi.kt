@@ -96,7 +96,7 @@ interface GoalApi {
     suspend fun getTotalAchievement(
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
-    ): TotalAchievementResponse
+    ): Response<TotalAchievementResponse>
 
     // 친구 목표 조회 리스트 API
     @GET("/goals/friendgoal/list")

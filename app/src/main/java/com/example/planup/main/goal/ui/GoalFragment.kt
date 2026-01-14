@@ -16,17 +16,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
+import androidx.compose.runtime.collectAsState
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.planup.R
-import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.domain.toGoalItems
@@ -40,31 +39,25 @@ import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.network.GoalApi
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.GoalController
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import retrofit2.adapter.rxjava2.Result.response
-import java.time.LocalDate
 import kotlin.jvm.java
 
 
-class GoalFragment : Fragment(){
+class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var prefs : SharedPreferences
     lateinit var binding: FragmentGoalBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: GoalAdapter
     private lateinit var dailyPieChart: PieChart
 //    private lateinit var userController: UserController
-    private lateinit var goalController: GoalController
     private var isEditMode: Boolean = false
 
     private val viewModel: GoalViewModel by viewModels()
-
 
     companion object {
         private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
@@ -114,7 +107,7 @@ class GoalFragment : Fragment(){
 //        userController.userInfoService()99063f
 
         // 나의 목표 리스트 콜백 연결
-        goalController.setMyGoalListAdapter(viewModel)
+//        goalController.setMyGoalListAdapter(this)
         // 최초 진입 시 1회 로드
         // goalController.fetchMyGoals()
         targetUserIdArg = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
@@ -132,7 +125,7 @@ class GoalFragment : Fragment(){
         val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
 
         viewModel.fetchMyGoals()
-        binding.userGoalListTv.text = "${nickname.removeSurrounding("\"")}의 목표 리스트"
+        binding.userGoalListTv.text = "${nickname?.removeSurrounding("\"")}의 목표 리스트"
 
         dailyPieChart = binding.dailyGoalCompletePc
         loadTodayAchievement()
@@ -180,6 +173,14 @@ class GoalFragment : Fragment(){
             binding.userGoalListTv.text = "${nickname}의 목표 리스트"
             viewModel.fetchMyGoals()
             loadTodayAchievement()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.goalState.collect { state ->
+                    setGoals(state)
+                }
+            }
         }
 
     }
@@ -290,17 +291,18 @@ class GoalFragment : Fragment(){
         viewModel.deleteGoal(
             goalId = goalId,
             action = { id ->
-                    showDeleteToast()
-                    // 1) 즉시 UI에서 제거
-                    adapter.removeItemById(goalId = id)
-                    // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
-                    goalController.fetchMyGoals()
+                showDeleteToast()
+                // 1) 즉시 UI에서 제거
+                adapter.removeItemById(goalId = id)
+                // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
+//                goalController.fetchMyGoals()
+                viewModel.fetchMyGoals()
             },
             message = {message->
                 Toast.makeText(requireContext(),
-                       "삭제 실패: $message",
-                       Toast.LENGTH_SHORT
-                    ).show()
+                    "삭제 실패: $message",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
 
         )
@@ -342,7 +344,8 @@ class GoalFragment : Fragment(){
                 adapter.updateItemActive(goalId, willActivate)
 
                 // 2) 정확성 위해 서버 리스트 재조회(옵션)
-                goalController.fetchMyGoals()
+//                goalController.fetchMyGoals()
+                viewModel.fetchMyGoals()
             },
             message = { message->
                 Toast.makeText(requireContext(),
@@ -351,8 +354,9 @@ class GoalFragment : Fragment(){
                 ).show()
 
             }
-            )
+        )
     }
+
 
     private fun setGoals(items: List<GoalItem>) {
         adapter.updateItems(items)        // ✅ 리스트만 교체
@@ -484,5 +488,19 @@ class GoalFragment : Fragment(){
             binding.dailyGoalCompletePercentTv.text = "$response%"
             setupPieChart(dailyPieChart, response)
         }
+    }
+
+
+    override fun successMyGoals(goals: List<MyGoalListDto>) {
+        val items = goals.toGoalItems()
+        setGoals(items)
+    }
+
+    override fun failMyGoals(message: String) {
+        Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
+    }
+
+    fun fetchGoals() {
+
     }
 }

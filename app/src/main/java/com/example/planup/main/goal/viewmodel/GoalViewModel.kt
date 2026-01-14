@@ -42,7 +42,7 @@ class GoalViewModel @Inject constructor(
     private val friendRepository: FriendRepository,
     private val goalRepository: GoalRepository,
     private val friendListRepository: FriendGoalListRepository
-) : ViewModel() , MyGoalListDtoAdapter{
+) : ViewModel() {
     var fromWhere = MutableLiveData<String>()
 
     private val _friendState = MutableStateFlow<List<Int>>(emptyList())
@@ -81,7 +81,7 @@ class GoalViewModel @Inject constructor(
                 token = token,
                 goalId = goalId,
                 request = request
-                )
+            )
             if (success){
                 action()
             }
@@ -179,20 +179,5 @@ class GoalViewModel @Inject constructor(
                     message(message)
                 }
         }
-    }
-
-    override fun successMyGoals(goals: List<MyGoalListDto>) {
-        val items = goals.toGoalItems()
-        setGoals(items)
-    }
-
-    override fun failMyGoals(message: String) {
-        Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
-    }
-
-    private fun setGoals(adapter: GoalAdapter, items: List<GoalItem>) {
-        adapter.updateItems(items)        // ✅ 리스트만 교체
-        adapter.setEditMode(isEditMode)   // 편집 모드 유지
-        binding.manageButton.text = if (isEditMode) "완료" else "관리"
     }
 }
