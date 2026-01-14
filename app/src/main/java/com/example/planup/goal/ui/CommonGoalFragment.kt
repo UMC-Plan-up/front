@@ -19,6 +19,8 @@ import android.util.Log
 import androidx.core.graphics.toColorInt
 import com.example.planup.databinding.FragmentCommonGoalBinding
 import com.example.planup.databinding.ItemGoalCardBinding
+import com.example.planup.main.goal.ui.GoalDescriptionFragment
+import com.example.planup.main.goal.ui.GoalDescriptionFragment.Companion.ARG_GOAL_ID
 
 class CommonGoalFragment : Fragment() {
 
@@ -232,7 +234,15 @@ class CommonGoalFragment : Fragment() {
             val period = periodKoFromGoalType(goal.goalType)
             card.goalFrequency.text = "$period ${goal.frequency}번 이상"
             card.goalDescription.text = goal.oneDose.toString()
-
+            card.root.setOnClickListener {
+                val goalDetailFragment = GoalDescriptionFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt(ARG_GOAL_ID, goal.goalId)
+                    }
+                }
+                (requireActivity() as GoalActivity)
+                    .navigateToFragment(goalDetailFragment)
+            }
             binding.goalCardContainer.addView(card.root)
         }
     }
