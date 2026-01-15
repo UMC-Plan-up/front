@@ -22,7 +22,7 @@ import javax.inject.Singleton
 class NetworkModule {
 
     companion object {
-        private const val BASE_URL = "http://54.180.207.84:8080/"
+        private const val BASE_URL = "http://54.180.207.84/"
     }
 
     @Provides

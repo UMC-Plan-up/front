@@ -98,6 +98,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".onboarding.OnBoardingActivity" />
+
         <activity
             android:name=".goal.GoalActivity"
             android:windowSoftInputMode="stateHidden|adjustNothing" />

@@ -27,9 +27,8 @@ fun PlanUpButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier
-            .height(44.dp)
-            .then(modifier),
+        modifier = modifier
+            .height(44.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = Blue200,
             disabledContainerColor = Black200
