@@ -3,6 +3,8 @@ package com.example.planup.network
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
+import com.example.planup.main.friend.data.ApiResponseListFriendGoalListDto
+import com.example.planup.main.goal.data.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.data.GoalEditResponse
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.goal.item.CreateCommentResponse
@@ -10,6 +12,7 @@ import com.example.planup.main.goal.item.DailyAchievementResponse
 import com.example.planup.main.goal.item.DailyGoalResponse
 import com.example.planup.main.goal.item.DateMemoResponse
 import com.example.planup.main.goal.item.EditGoalApiResponse
+import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.FriendGoalAchievementResponse
 import com.example.planup.main.goal.item.FriendGoalListResponse
 import com.example.planup.main.goal.item.FriendPhotosResponse
@@ -28,10 +31,19 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GoalApi {
+
+    @GET("/goals/mygoal/list")
+    suspend fun getMyGoalList(
+        @Header("Authorization") token: String
+    ): Response<MyGoalListResponse>
+
+
+    // 목표 삭제 API
     @DELETE("/goals/{goalId}")
     suspend fun deleteGoal(
         @Header("Authorization") token: String,
@@ -68,6 +80,17 @@ interface GoalApi {
         @Query("goalCategory") goalCategory: String
     ): Response<GoalListResponseDto>
 
+    @GET("/goals/daily/{date}")
+    suspend fun getDailyGoal(
+        @Header("Authorization") token: String,
+        @Path("date") date: String
+    ): Response<DailyGoalResponse>
+
+    @GET("/community/daily-achievement")
+    suspend fun getDailyAchievement(
+        @Header("Authorization") token: String,
+        @Query("targetDate") targetDate: String
+    ): Response<DailyAchievementResponse>
 
     @GET("/community/{goalId}/total-achievement")
     suspend fun getTotalAchievement(
@@ -75,20 +98,34 @@ interface GoalApi {
         @Path("goalId") goalId: Int
     ): Response<TotalAchievementResponse>
 
+    // 친구 목표 조회 리스트 API
+    @GET("/goals/friendgoal/list")
+    suspend fun getFriendGoalList(
+        @Header("Authorization") token: String,
+        @Query("friendId") friendId: Int
+    ): Response<FriendGoalListResponse>
+
     @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
     suspend fun getFriendPhotos(
         @Header("Authorization") token: String,
         @Path("friendId") friendId: Int,
         @Path("goalId") goalId: Int,
         @Query("userId") userId: Int
-    ): Response<FriendPhotosResponse>
+    ): FriendPhotosResponse
 
     @POST("/goals/{goalId}/comment")
     suspend fun createComment(
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int,
         @Body comment: CreateCommentRequest
-    ): Response<CreateCommentResponse>
+    ): CreateCommentResponse
+
+    @PUT("/goals/{goalId}")
+    suspend fun editGoal(
+        @Header("Authorization") token: String,
+        @Query("goalId") goalId: Int,
+        @Body editGoalRequest: EditGoalRequest
+    ): EditGoalApiResponse
 
     @GET("/goals/{goalId}/edit")
     suspend fun getEditGoal(
@@ -96,34 +133,24 @@ interface GoalApi {
         @Query("goalId") goalId: Int
     ): Response<EditGoalApiResponse>
 
-    @GET("/goals/mygoal/list")
-    suspend fun getMyGoalList(
-        @Header("Authorization") token: String
-    ): Response<MyGoalListResponse>
-
-    @GET("/goals/friendgoal/list")
-    suspend fun getFriendGoalList(
+    // 내 목표 상세 조회 API
+    @GET("/goals/mygoal/{goalId}")
+    suspend fun getMySpecificGoalList(
         @Header("Authorization") token: String,
-        @Query ("friendId") friendId: Int
-    ): Response<FriendGoalListResponse>
+        @Query("goalId") goalId: Int
+    ): ApiResponseListMyGoalListDto
 
     @GET("/goals/mygoal/{goalId}")
     suspend fun getGoalDetail(
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
-    ): Response<GoalDetailResponse>
+    ): GoalDetailResponse
 
     @GET("/goals/{goalId}/friendstimer")
     suspend fun getFriendsTimer(
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
     ): Response<FriendsTimerResponse>
-
-    @GET("/goals/daily/{date}")
-    suspend fun getDailyGoal(
-        @Header("Authorization") token: String,
-        @Path("date") date: String
-    ): Response<DailyGoalResponse>
 
     @GET("/goals/{goalId}/memo/{date}")
     suspend fun getDateMemo(
@@ -143,13 +170,7 @@ interface GoalApi {
     suspend fun getComments(
         @Header("Authorization") token: String,
         @Path("goalId") goalId: Int
-    ): Response<GetCommentsResponse>
-
-    @GET("/community/daily-achievement")
-    suspend fun getDailyAchievement(
-        @Header("Authorization") token: String,
-        @Query("targetDate") targetDate: String
-    ): Response<DailyAchievementResponse>
+    ): GetCommentsResponse
 
     @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
     suspend fun getFriendGoalAchievement(
@@ -162,5 +183,5 @@ interface GoalApi {
     suspend fun getGoalPhotos(
         @Header("Authorization") token: String,
         @Query("goalId") goalId: Int
-    ): Response<GoalPhotosResponse>
+    ): GoalPhotosResponse
 }

@@ -10,10 +10,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalCompleteBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.data.GoalViewModel
 import com.example.planup.main.MainActivity
+import com.example.planup.main.goal.data.Goal
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +35,7 @@ class GoalCompleteFragment : Fragment() {
     private val ISO_UTC_MILLIS: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(ZoneOffset.UTC)
-
+    
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
