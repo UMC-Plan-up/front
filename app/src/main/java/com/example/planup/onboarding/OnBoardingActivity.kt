@@ -97,6 +97,9 @@ class OnBoardingActivity: AppCompatActivity() {
                         is OnBoardingViewModel.SnackBarEvent.InvalidInviteCode -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_invite_invalid))
                         }
+                        is OnBoardingViewModel.SnackBarEvent.ProfileNotFilled -> {
+                            errorSnackBarHost.showSnackbar(getString(R.string.toast_profile_not_filled))
+                        }
                     }
                 }
             }

@@ -160,14 +160,18 @@ class OnBoardingViewModel @Inject constructor(
 
         if (verificationToken == null) return false
 
-        userRepository.checkEmailVerificationStatus(verificationToken)
-            .onSuccess {
-                isVerified = true
-            }
-            .onFailWithMessage {
-                isVerified = false
-                // TODO:: 오류 메세지
-            }
+        viewModelScope.async {
+            userRepository.checkEmailVerificationStatus(verificationToken)
+                .onSuccess { status ->
+                    isVerified = status.verified
+                    Log.e("OnBoardingViewModel", "이메일 인증 호출 성공 $status")
+                }
+                .onFailWithMessage {
+                    isVerified = false
+                    // TODO:: 오류 메세지
+                    Log.e("OnBoardingViewModel", "이메일 인증 실패 $it")
+                }
+        }.await()
 
         return isVerified
     }
@@ -347,10 +351,14 @@ class OnBoardingViewModel @Inject constructor(
                 }
 
                 OnboardingStep.Profile -> {
-                    // TODO:: 화면 넘어갈 때 조건 문의
+                    // 이름, 닉네임, 성별, 생년월일이 모두 올바르게 입력된 경우 전환
                     if (
                         state.value.name.isNotEmpty() &&
                         state.value.nickname.isNotEmpty() &&
+                        state.value.gender != GenderModel.Unknown &&
+                        state.value.year != 0 &&
+                        state.value.month != 0 &&
+                        state.value.day != 0 &&
                         !state.value.isNameContainsSpecialChar &&
                         state.value.isValidNameLength &&
                         state.value.isValidNickNameLength &&
@@ -358,6 +366,10 @@ class OnBoardingViewModel @Inject constructor(
                     )
                     // 회원가입 여부 확인 후 inviteCode 초기화
                         sendNavigateEvent(next)
+                    else {
+                        _snackBarEvent.send(SnackBarEvent.ProfileNotFilled)
+
+                    }
                 }
 
                 OnboardingStep.ShareFriendCode ->
@@ -382,6 +394,7 @@ class OnBoardingViewModel @Inject constructor(
     sealed class SnackBarEvent {
         data object NotCheckedRequiredTerm : SnackBarEvent()
         data object InvalidInviteCode : SnackBarEvent()
+        data object ProfileNotFilled : SnackBarEvent()
     }
 
     private companion object {

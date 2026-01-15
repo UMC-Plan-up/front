@@ -496,6 +496,7 @@
     <string name="toast_report">신고가 완료되었습니다.</string>
     <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
+    <string name="toast_profile_not_filled">프로필 설정을 완료해 주세요.</string>
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     <string name="toast_block">%1$s님을 차단했습니다.</string>
