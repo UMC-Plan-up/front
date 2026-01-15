@@ -4,7 +4,9 @@ import com.example.planup.main.friend.data.FriendRepositoryImpl
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.user.data.UserRepositoryImpl
 import com.example.planup.main.user.domain.UserRepository
+import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
+import com.example.planup.network.repository.impl.ProfileRepositoryImpl
 import com.example.planup.network.repository.impl.TermRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -32,4 +34,10 @@ abstract class RepositoryModule {
     abstract fun bindTermRepository(
         impl: TermRepositoryImpl
     ): TermRepository
+
+    @Binds
+    abstract fun bindProfileRepository(
+        impl: ProfileRepositoryImpl
+    ): ProfileRepository
+
 }
