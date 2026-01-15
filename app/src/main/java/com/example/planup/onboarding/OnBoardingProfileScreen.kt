@@ -317,6 +317,15 @@ private fun ProfileBody(
                         color = Blue200
                     )
                 }
+                if (state.isAvailableNickName) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 4.dp),
+                        text = stringResource(R.string.profile_nickname_available),
+                        style = Typography.Medium_XS,
+                        color = Blue200
+                    )
+                }
             }
         }
     }

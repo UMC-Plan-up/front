@@ -261,7 +261,7 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.checkNicknameDuplicated(state.value.nickname)
                 .onSuccess { available ->
-                    _state.update { it.copy(isDuplicateNickName = !available) }
+                    _state.update { it.copy(isDuplicateNickName = !available, isAvailableNickName = available) }
                 }
                 .onFailWithMessage {
                     // TODO:: 에러 메세지
@@ -384,7 +384,8 @@ class OnBoardingViewModel @Inject constructor(
                         !state.value.isNameContainsSpecialChar &&
                         state.value.isValidNameLength &&
                         state.value.isValidNickNameLength &&
-                        !state.value.isDuplicateNickName
+                        !state.value.isDuplicateNickName &&
+                        state.value.isAvailableNickName
                     )
                         signup()
                     else {
@@ -436,6 +437,7 @@ data class OnBoardingState(
     val nickname: String = "",
     val isValidNickNameLength: Boolean = true,
     val isDuplicateNickName: Boolean = false,
+    val isAvailableNickName: Boolean = false,
     val profileImage: String = "",
     val gender: GenderModel = GenderModel.Unknown,
     val years: List<Int> = YearMonth.now().year.let {

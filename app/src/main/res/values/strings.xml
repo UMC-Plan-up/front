@@ -85,6 +85,7 @@
     <string name="profile_birth_day">일</string>
     <string name="profile_nickname_label">닉네임 설정</string>
     <string name="profile_nickname_error_duplicate">* 이미 사용 중인 닉네임입니다.</string>
+    <string name="profile_nickname_available">* 사용 가능한 닉네임입니다.</string>
     <string name="profile_nickname_error_length">* 20자 이내로 입력해 주세요.</string>
 
     <string name="invite_code_share">초대코드를 공유해\n친구와 팔로우하세요!</string>
