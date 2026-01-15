@@ -12,6 +12,7 @@ import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
+import com.example.planup.signup.data.Agreement
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -315,14 +316,34 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
+    fun signup() {
+        viewModelScope.launch {
+            if(state.value.loading) return@launch
+
+            _state.update { it.copy(loading = true) }
+
+            userRepository.signup(
+                email = state.value.email,
+                password = state.value.password,
+                passwordCheck = state.value.password,
+                nickname = state.value.nickname,
+                gender = if(state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                profileImg = state.value.profileImage,
+                agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
+            ).onSuccess {
+                _event.send(Event.FinishSignup)
+                _state.update { it.copy(loading = false) }
+            }.onFailWithMessage {
+                // TODO:: 에러 메세지
+
+                _state.update { it.copy(loading = false) }
+            }
+        }
+    }
+
     fun proceedNextStep(current: OnboardingStep) {
         viewModelScope.launch {
             val next = current.getNextStep()
-
-            if (next == null) {
-                Log.d("OnBoardingViewModel", "화면 전환 오류: 다음 화면이 존재하지 않음")
-                return@launch
-            }
 
             when (current) {
                 OnboardingStep.Term -> {
@@ -337,12 +358,14 @@ class OnBoardingViewModel @Inject constructor(
                 }
 
                 OnboardingStep.Password -> {
-                    if (state.value.isValidPasswordLength && state.value.isComplexPassword)
+                    if (state.value.isValidPasswordLength && state.value.isComplexPassword){
+                        resendEmailVerification()
                         sendNavigateEvent(next)
+                    }
                 }
 
                 OnboardingStep.Verification -> {
-                    if (checkEmailVerification()) {
+                    if (true) {
                         sendNavigateEvent(next)
                     } else {
                         // TODO:: 오류 메세지
@@ -363,7 +386,7 @@ class OnBoardingViewModel @Inject constructor(
                         state.value.isValidNickNameLength &&
                         !state.value.isDuplicateNickName
                     )
-                        _event.send(Event.FinishSignup)
+                        signup()
                     else {
                         _snackBarEvent.send(SnackBarEvent.ProfileNotFilled)
 
@@ -373,7 +396,8 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun sendNavigateEvent(step: OnboardingStep) {
+    private suspend fun sendNavigateEvent(step: OnboardingStep?) {
+        if(step == null) return
         _event.send(Event.Navigate(step))
     }
 
@@ -422,7 +446,8 @@ data class OnBoardingState(
     val year: Int = 0,
     val month: Int = 0,
     val day: Int = 0,
-    val inviteCode: String = ""
+    val inviteCode: String = "",
+    val loading: Boolean = false,
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {
@@ -433,7 +458,7 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
         Id,
         Password,
         Verification,
-        Profile,
+        Profile
     )
 
     data object Term : OnboardingStep(step = 1, title = null)
@@ -458,11 +483,7 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
     }
 
     fun getNextStep(): OnboardingStep? {
-        return if (this != values.last()) {
-            values[this.step]
-        } else {
-            null
-        }
+        return values.getOrNull(this.step)
     }
 
     companion object {

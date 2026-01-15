@@ -13,16 +13,19 @@ import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.password.data.PasswordChangeRequest
+import com.example.planup.signup.data.Agreement
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
+import com.example.planup.signup.data.SignupRequestDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -406,6 +409,39 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun signup(
+        email: String,
+        password: String,
+        passwordCheck: String,
+        nickname: String,
+        gender: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<SignupResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.signup(SignupRequestDto(
+                        email = email,
+                        password = password,
+                        passwordCheck = passwordCheck,
+                        nickname = nickname,
+                        gender = gender,
+                        profileImg = profileImg,
+                        agreements = agreements
+                    ))
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
                     }

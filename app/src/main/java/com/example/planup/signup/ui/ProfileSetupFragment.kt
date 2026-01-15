@@ -258,7 +258,8 @@ class ProfileSetupFragment : Fragment() {
                         passwordCheck = restoredPw ?: "",
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList()
+                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList(),
+                        gender = ""
                     )
 
                     val response = RetrofitInstance.userApi.signup(request)

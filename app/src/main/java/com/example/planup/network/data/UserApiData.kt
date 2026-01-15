@@ -103,3 +103,18 @@ data class NicknameCheckDuplicated(
     @SerializedName("available") val available: Boolean,
     @SerializedName("message") val message: String
 )
+
+data class SignupResult(
+    @SerializedName("id") val id: Int,
+    @SerializedName("email") val email: String,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("userInfo") val userInfo: UserInfo?
+)
+
+data class UserInfo(
+    @SerializedName("id") val id: Int,
+    @SerializedName("email") val email: String,
+    @SerializedName("nickname") val nickname: String,
+    @SerializedName("profileImg") val profileImg: String
+)

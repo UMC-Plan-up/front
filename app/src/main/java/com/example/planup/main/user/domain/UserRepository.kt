@@ -6,10 +6,13 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
+import com.example.planup.signup.data.Agreement
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.example.planup.signup.data.SignupRequestDto
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -116,6 +119,20 @@ interface UserRepository {
     suspend fun checkEmailAvailable(
         email: String
     ): ApiResult<Boolean>
+
+    /**
+     * 회원가입
+     */
+    suspend fun signup(
+        email: String,
+        password: String,
+        passwordCheck: String,
+        nickname: String,
+        gender: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<SignupResult>
+
 
     /**
      * 회원가입을 하기 위해 해당 이메일로 메일을 발송합니다.

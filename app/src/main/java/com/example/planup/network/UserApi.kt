@@ -9,6 +9,7 @@ import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -33,7 +34,6 @@ import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
-import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -52,7 +52,7 @@ interface UserApi : MyPageApi {
     @POST("/users/signup")
     suspend fun signup(
         @Body request: SignupRequestDto
-    ): Response<SignupResponseDto>
+    ): Response<UserResponse<SignupResult>>
 
     //로그아웃
     @POST("users/logout")
