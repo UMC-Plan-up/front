@@ -484,6 +484,7 @@
     <string name="btn_delete">삭제</string>
     <string name="btn_block">차단</string>
     <string name="btn_report">신고</string>
+    <string name="btn_duplication_check">중복 확인</string>
 
 
     <!-- 토스트 메시지 -->

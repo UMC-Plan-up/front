@@ -154,7 +154,6 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     suspend fun checkEmailVerification(): Boolean {
-        // TODO:: 이메일 인증 여부 확인
         var isVerified = false
         val verificationToken = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
 
@@ -245,6 +244,8 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun checkNicknameDuplication() {
+        if(state.value.nickname.isBlank()) return
+
         viewModelScope.launch {
             userRepository.checkNicknameDuplicated(state.value.nickname)
                 .onSuccess {

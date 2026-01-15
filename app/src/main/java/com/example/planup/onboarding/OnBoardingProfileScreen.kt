@@ -69,6 +69,7 @@ fun OnBoardingProfileScreen(
     onYearChanged: (Int) -> Unit,
     onMonthChanged: (Int) -> Unit,
     onDayChanged: (Int) -> Unit,
+    onClickNicknameDuplication: () -> Unit,
     onNext: () -> Unit
 ) {
     val nameState = rememberTextFieldState(state.name)
@@ -93,7 +94,8 @@ fun OnBoardingProfileScreen(
             onNewImageByPhotoPicker = onNewImageByPhotoPicker,
             onYearChanged = onYearChanged,
             onMonthChanged = onMonthChanged,
-            onDayChanged = onDayChanged
+            onDayChanged = onDayChanged,
+            onClickDuplication = onClickNicknameDuplication
         )
         ProfileTail(
             modifier = Modifier
@@ -117,6 +119,7 @@ private fun ProfileBody(
     onYearChanged: (Int) -> Unit,
     onMonthChanged: (Int) -> Unit,
     onDayChanged: (Int) -> Unit,
+    onClickDuplication: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isNameFocused by remember { mutableStateOf(false) }
@@ -246,16 +249,48 @@ private fun ProfileBody(
                 style = Typography.Regular_L
             )
 
-            OnBoardingTextField(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-                state = nicknameState,
-                placeHolder = stringResource(R.string.profile_name_input_hint),
-                inputTransformation = {
-                    validateNickNameFormat(toString())
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                OnBoardingTextField(
+                    modifier = Modifier
+                        .weight(1.0f),
+                    state = nicknameState,
+                    placeHolder = stringResource(R.string.profile_name_input_hint),
+                    inputTransformation = {
+                        validateNickNameFormat(toString())
+                    }
+                )
+
+                OutlinedButton(
+                    modifier = Modifier
+                        .wrapContentWidth()
+                        .height(40.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = Color.White,
+                        disabledContainerColor = SemanticB4,
+                    ),
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = Blue200
+                    ),
+                    shape = RoundedCornerShape(6.dp),
+                    contentPadding = PaddingValues(
+                        horizontal = 8.dp,
+                        vertical = 6.dp
+                    ),
+                    onClick = onClickDuplication
+                ) {
+                    Text(
+                        text = stringResource(R.string.btn_duplication_check),
+                        style = Typography.Medium_S.copy(color = Blue200)
+                    )
                 }
-            )
+
+            }
 
             Column(
                 modifier = Modifier
@@ -522,6 +557,7 @@ private fun OnBoardingProfileScreenPreview() {
         onYearChanged = {},
         onMonthChanged = {},
         onDayChanged = {},
+        onClickNicknameDuplication = {},
         onNext = {},
     )
 }
