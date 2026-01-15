@@ -13,6 +13,7 @@ import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -130,20 +131,24 @@ class OnBoardingViewModel @Inject constructor(
         return unCheckedRequiredTerms.isEmpty()
     }
 
-    suspend fun checkEmailDuplicated(): Boolean {
-        // TODO:: 이메일 중복 확인 API
-        var isDuplicated = false
 
-        userRepository.checkEmailDuplicated(state.value.email)
-            .onSuccess {
-                isDuplicated = true
-                _state.update { it.copy(isDuplicatedEmail = true) }
-            }
-            .onFailWithMessage {
-                //TODO :: 오류 메세지
-                Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
-                _state.update { it.copy(isDuplicatedEmail = false) }
-            }
+    suspend fun checkEmailDuplicated(): Boolean {
+        var isDuplicated = true
+
+        viewModelScope.async {
+            userRepository.checkEmailAvailable(state.value.email)
+                .onSuccess { available ->
+                    isDuplicated = !available
+                    _state.update { it.copy(isDuplicatedEmail = !available) }
+                }
+                .onFailWithMessage {
+                    //TODO :: 오류 메세지
+                    Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
+
+                    isDuplicated = true
+                    _state.update { it.copy(isDuplicatedEmail = true) }
+                }
+        }.await()
 
         return isDuplicated
     }
@@ -153,7 +158,7 @@ class OnBoardingViewModel @Inject constructor(
         var isVerified = false
         val verificationToken = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
 
-        if(verificationToken == null) return false
+        if (verificationToken == null) return false
 
         userRepository.checkEmailVerificationStatus(verificationToken)
             .onSuccess {
@@ -161,7 +166,7 @@ class OnBoardingViewModel @Inject constructor(
             }
             .onFailWithMessage {
                 isVerified = false
-                 // TODO:: 오류 메세지
+                // TODO:: 오류 메세지
             }
 
         return isVerified
@@ -391,44 +396,7 @@ class OnBoardingViewModel @Inject constructor(
 
 data class OnBoardingState(
     // TODO:: 약관 연결 후 임시 데이터 제거
-    val terms: List<TermModel> = listOf(
-        TermModel(
-            id = 1,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 2,
-            title = "선택이용약관2",
-            content = "세부사항2세\n\n\n\n\n부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n\n세부사항2\n\n세부사\n\n\n\n항2세부사\n\n\n\n\n\n\n\n항aaasdasdasdasdasdasd2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2",
-            isRequired = false
-        ),
-        TermModel(
-            id = 3,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 4,
-            title = "선택이용약관2",
-            content = "세부사항2",
-            isRequired = false
-        ),
-        TermModel(
-            id = 5,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 6,
-            title = "선택이용약관2",
-            content = "세부사항2",
-            isRequired = false
-        ),
-    ),
+    val terms: List<TermModel> = listOf(),
     val email: String = "",
     val isValidEmailFormat: Boolean = true,
     val isDuplicatedEmail: Boolean = false,

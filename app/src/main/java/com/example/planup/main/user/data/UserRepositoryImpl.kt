@@ -396,7 +396,7 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun checkEmailDuplicated(email: String): ApiResult<Boolean> =
+    override suspend fun checkEmailAvailable(email: String): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {

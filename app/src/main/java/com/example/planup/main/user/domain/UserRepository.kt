@@ -111,9 +111,9 @@ interface UserRepository {
      * 이메일 중복을 여부를 확인합니다
      *
      * @param email
-     * @return 중복 여부
+     * @return 사용 가능하면 true, 아니라면 false
      */
-    suspend fun checkEmailDuplicated(
+    suspend fun checkEmailAvailable(
         email: String
     ): ApiResult<Boolean>
 
