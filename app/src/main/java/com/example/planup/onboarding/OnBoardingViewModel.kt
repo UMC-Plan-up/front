@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
+import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
@@ -29,7 +30,8 @@ class OnBoardingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val imageResizer: ImageResizer,
     private val termRepository: TermRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
 
     init {
@@ -60,6 +62,7 @@ class OnBoardingViewModel @Inject constructor(
                 Log.e("OnBoardingViewModel", "약관 불러오기 실패| $it")
             }
         }
+        fetchRandomNickname()
     }
 
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
@@ -206,6 +209,18 @@ class OnBoardingViewModel @Inject constructor(
 
     fun kakaoLogin() {
         // TODO:: 카카오 로그인 로직
+    }
+
+    fun fetchRandomNickname() {
+        viewModelScope.launch {
+            profileRepository.getRandomNickname()
+                .onSuccess { randomNickname ->
+                    _state.update { it.copy(nickname = randomNickname) }
+                }
+                .onFailWithMessage {
+                    Log.e("OnBoardingViewModel", "랜덤 닉네임 받아오기 오류 :$it")
+                }
+        }
     }
 
     fun updateName(name: String) {
