@@ -180,6 +180,7 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             val token = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
 
+            // TODO:: API 변경되면 수정
             if (token == null) {
                 // 최초로 보낸 경우
                 userRepository.sendMailForSignup(state.value.email)
