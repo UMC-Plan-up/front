@@ -308,7 +308,7 @@ private fun ProfileBody(
                         color = Blue200
                     )
                 }
-                if (state.isDuplicateNickName) {
+                if (state.isDuplicateNickName && nicknameState.text.isNotBlank()) {
                     Text(
                         modifier = Modifier
                             .padding(top = 4.dp),

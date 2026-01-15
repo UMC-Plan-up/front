@@ -243,32 +243,30 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun updateNickName(nickname: String) {
-        // TODO:: 닉네임 중복 확인 API
-
-        val isDuplicateNickName = false
         // 닉네임 길이는 1 ~ 20 글자 제한
         val isValidNickNameLength = nickname.length <= 20
 
         _state.update {
             it.copy(
                 nickname = nickname,
-                isDuplicateNickName = isDuplicateNickName,
                 isValidNickNameLength = isValidNickNameLength,
             )
         }
     }
 
     fun checkNicknameDuplication() {
-        if(state.value.nickname.isBlank()) return
+        if (state.value.nickname.isBlank()) return
 
         viewModelScope.launch {
             userRepository.checkNicknameDuplicated(state.value.nickname)
-                .onSuccess {
-                    _state.update { it.copy(isDuplicateNickName = true) }
+                .onSuccess { available ->
+                    _state.update { it.copy(isDuplicateNickName = !available) }
                 }
                 .onFailWithMessage {
                     // TODO:: 에러 메세지
-                    _state.update { it.copy(isDuplicateNickName = false) }
+                    Log.e("OnBoardingViewModel", "닉네임 중복 확인 실패| $it")
+
+                    _state.update { it.copy(isDuplicateNickName = true) }
                 }
         }
     }
@@ -381,8 +379,7 @@ class OnBoardingViewModel @Inject constructor(
                         state.value.isValidNickNameLength &&
                         !state.value.isDuplicateNickName
                     )
-                    // 회원가입 여부 확인 후 inviteCode 초기화
-                        sendNavigateEvent(next)
+                        _event.send(Event.FinishSignup)
                     else {
                         _snackBarEvent.send(SnackBarEvent.ProfileNotFilled)
 
@@ -406,6 +403,7 @@ class OnBoardingViewModel @Inject constructor(
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
         data object SendCodeWithSMS : Event()
+        data object FinishSignup : Event()
     }
 
     sealed class SnackBarEvent {
