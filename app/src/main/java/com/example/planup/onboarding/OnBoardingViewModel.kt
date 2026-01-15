@@ -385,13 +385,6 @@ class OnBoardingViewModel @Inject constructor(
 
                     }
                 }
-
-                OnboardingStep.ShareFriendCode ->
-                    sendNavigateEvent(OnboardingStep.ShareInvite)
-
-                OnboardingStep.ShareInvite -> {
-                    // 플로우 종료
-                }
             }
         }
     }
@@ -451,7 +444,7 @@ data class OnBoardingState(
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {
-    private val totalStep: Int = 7
+    private val totalStep: Int = 5
 
     private val values: List<OnboardingStep> = listOf(
         Term,
@@ -459,8 +452,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
         Password,
         Verification,
         Profile,
-        ShareFriendCode,
-        ShareInvite
     )
 
     data object Term : OnboardingStep(step = 1, title = null)
@@ -468,8 +459,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
     data object Password : OnboardingStep(step = 3, title = null)
     data object Verification : OnboardingStep(step = 4, title = null)
     data object Profile : OnboardingStep(step = 5, title = "프로필 설정")
-    data object ShareFriendCode : OnboardingStep(step = 6, title = null)
-    data object ShareInvite : OnboardingStep(step = 7, title = null)
 
     fun getFloatProgress(): Float {
         val currentProgress = this.step
@@ -483,8 +472,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
             Password -> OnBoardPasswordRoute
             Verification -> OnBoardVerificationRoute
             Profile -> OnBoardProfileRoute
-            ShareFriendCode -> OnBoardShareFriendCodeRoute
-            ShareInvite -> OnBoardShareInviteRoute
         }
     }
 
@@ -504,8 +491,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
                 route.contains(OnBoardPasswordRoute::class.qualifiedName.toString()) -> Password
                 route.contains(OnBoardVerificationRoute::class.qualifiedName.toString()) -> Verification
                 route.contains(OnBoardProfileRoute::class.qualifiedName.toString()) -> Profile
-                route.contains(OnBoardShareFriendCodeRoute::class.qualifiedName.toString()) -> ShareFriendCode
-                route.contains(OnBoardShareInviteRoute::class.qualifiedName.toString()) -> ShareInvite
                 else -> Term
             }
         }
