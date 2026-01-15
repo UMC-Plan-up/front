@@ -244,13 +244,20 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun updateNickName(nickname: String) {
+        val isHangul = isHangulRegex.matches(nickname)
+        val isAlphabet = isAlphabetRegex.matches(nickname)
+
         // 닉네임 길이는 1 ~ 20 글자 제한
         val isValidNickNameLength = nickname.length <= 20
+
+        // 닉네임은 특수문자 허용x
+        val isNickNameContainsSpecialChar = !isHangul && !isAlphabet
 
         _state.update {
             it.copy(
                 nickname = nickname,
                 isValidNickNameLength = isValidNickNameLength,
+                isNickNameContainsSpecialChar = isNickNameContainsSpecialChar
             )
         }
     }
@@ -436,6 +443,7 @@ data class OnBoardingState(
     val isNameContainsSpecialChar: Boolean = false,
     val nickname: String = "",
     val isValidNickNameLength: Boolean = true,
+    val isNickNameContainsSpecialChar: Boolean = false,
     val isDuplicateNickName: Boolean = false,
     val isAvailableNickName: Boolean = false,
     val profileImage: String = "",
