@@ -68,6 +68,7 @@
     <string name="signup_verify_email_sent">이메일로 링크를 보내드렸어요!</string>
     <string name="signup_verify_email_complete">인증을 완료했어요</string>
     <string name="signup_verify_email_lost">이메일을 받지 못하셨나요?</string>
+    <string name="signup_finish">회원가입이 완료되었어요!</string>
 
     <string name="profile_setup_title">프로필 설정</string>
     <string name="profile_name_label">이름</string>
