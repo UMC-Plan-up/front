@@ -87,22 +87,6 @@ class OnBoardingActivity: AppCompatActivity() {
                         is OnBoardingViewModel.Event.Navigate -> {
                             navController.navigate(event.step.getRoute())
                         }
-                        is OnBoardingViewModel.Event.SendCodeWithSMS -> {
-                            val shareMessage = """
-                                    ${state.nickname}님이 친구 신청을 보냈어요.
-                                    Plan-Up에서 함께 목표 달성에 참여해 보세요!
-                                    친구 코드: ${state.inviteCode}
-                                """.trimIndent()
-
-                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                                type = "text/plain"
-                                putExtra(Intent.EXTRA_TEXT, shareMessage)
-                            }
-
-                            val shareIntent = Intent.createChooser(sendIntent, null)
-
-                            startActivity(shareIntent)
-                        }
                         is OnBoardingViewModel.Event.FinishSignup -> {
                             isFinishDialogVisible = true
                         }

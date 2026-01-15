@@ -315,22 +315,6 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun shareWithKakao() {
-        // TODO:: 카카오 모듈 작성 후 추가
-        // InviteCodeFragment::showSharePopup 참조
-    }
-
-    fun shareWithSMS() {
-        // InviteCodeFragment::showSharePopup 참조
-        viewModelScope.launch {
-            _event.send(Event.SendCodeWithSMS)
-        }
-    }
-
-    fun acceptInviteCode(code: String) {
-        // TODO:: 코드 유효성 검증, 수락 로직
-    }
-
     fun proceedNextStep(current: OnboardingStep) {
         viewModelScope.launch {
             val next = current.getNextStep()
@@ -361,7 +345,7 @@ class OnBoardingViewModel @Inject constructor(
                     if (checkEmailVerification()) {
                         sendNavigateEvent(next)
                     } else {
-                        // TODO:: 인증이 되지 않은 경우
+                        // TODO:: 오류 메세지
                     }
                 }
 
@@ -395,7 +379,6 @@ class OnBoardingViewModel @Inject constructor(
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
-        data object SendCodeWithSMS : Event()
         data object FinishSignup : Event()
     }
 
@@ -416,7 +399,6 @@ class OnBoardingViewModel @Inject constructor(
 }
 
 data class OnBoardingState(
-    // TODO:: 약관 연결 후 임시 데이터 제거
     val terms: List<TermModel> = listOf(),
     val email: String = "",
     val isValidEmailFormat: Boolean = true,
