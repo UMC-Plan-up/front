@@ -67,10 +67,10 @@ class GoalDetailFragment : Fragment() {
         }
 
         // GoalActivity를 통해 유료 결제하고 돌아온 경우
-        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
-        if (isPlanSelected) {
-            binding.goalContainer.visibility = View.GONE
-        }
+//        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
+//        if (isPlanSelected) {
+//            binding.goalContainer.visibility = View.GONE
+//        }
 
         val isUnlocked = isUnlockedFromSubscription || isPlanSelected
 
