@@ -234,15 +234,18 @@ class CommonGoalFragment : Fragment() {
             val period = periodKoFromGoalType(goal.goalType)
             card.goalFrequency.text = "$period ${goal.frequency}번 이상"
             card.goalDescription.text = goal.oneDose.toString()
-            card.root.setOnClickListener {
-                val goalDetailFragment = GoalDescriptionFragment().apply {
-                    arguments = Bundle().apply {
-                        putInt(ARG_GOAL_ID, goal.goalId)
-                    }
-                }
-                (requireActivity() as GoalActivity)
-                    .navigateToFragment(goalDetailFragment)
-            }
+            /*
+            목표 생성 되는 지 확인하고 주석 해제 필요
+             */
+//            card.root.setOnClickListener {
+//                val goalDetailFragment = GoalDescriptionFragment().apply {
+//                    arguments = Bundle().apply {
+//                        putInt(ARG_GOAL_ID, goal.goalId)
+//                    }
+//                }
+//                (requireActivity() as GoalActivity)
+//                    .navigateToFragment(goalDetailFragment)
+//            }
             binding.goalCardContainer.addView(card.root)
         }
     }
