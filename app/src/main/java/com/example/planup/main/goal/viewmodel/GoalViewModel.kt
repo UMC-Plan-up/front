@@ -1,4 +1,4 @@
-package com.example.planup.main.goal
+package com.example.planup.main.goal.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

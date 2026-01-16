@@ -16,7 +16,7 @@ import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalCompleteBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.data.GoalCreateRequest
-import com.example.planup.main.goal.GoalViewModel
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.data.Goal
 import com.example.planup.network.RetrofitInstance

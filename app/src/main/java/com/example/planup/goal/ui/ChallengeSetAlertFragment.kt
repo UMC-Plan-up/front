@@ -26,7 +26,7 @@ import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.ViewModelProvider
 import com.example.planup.goal.GoalActivity
-import com.example.planup.main.goal.GoalViewModel
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 
 class ChallengeSetAlertFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetAlertBinding
