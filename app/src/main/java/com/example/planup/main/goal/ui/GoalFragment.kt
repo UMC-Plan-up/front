@@ -24,6 +24,7 @@ import com.example.planup.R
 import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.domain.toGoalItems
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.adapter.GoalApi
@@ -208,32 +209,32 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 // import com.example.planup.main.friend.data.GoalType as FriendGoalType
 
     // ⬇️ 새로 추가: 친구 리스트 변환
-    private fun List<com.example.planup.main.friend.data.FriendGoalListDto>.toGoalItemsForFriend(): List<GoalItem> =
-        map { dto ->
-            val typeLabel = when (dto.goalType) {
-                com.example.planup.main.friend.data.GoalType.FRIEND -> "매일"
-                com.example.planup.main.friend.data.GoalType.COMMUNITY -> "매주"
-                com.example.planup.main.friend.data.GoalType.CHALLENGE_PHOTO -> "매일"
-                com.example.planup.main.friend.data.GoalType.CHALLENGE_TIME -> "매주"
-            }
-            val criteria = "$typeLabel ${dto.frequency}번 이상"
-            val auth = when (dto.verificationType) {
-                com.example.planup.main.friend.data.VerificationType.PHOTO -> "camera"
-                com.example.planup.main.friend.data.VerificationType.TIMER -> "timer"
-            }
-
-            GoalItem(
-                goalId      = dto.goalId,
-                title       = dto.goalName,
-                description = criteria,
-                percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
-                authType    = auth,
-                isEditMode  = false,
-                isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
-                criteria    = criteria,
-                progress    = 0            // 필요 시 서버 값 매핑
-            )
-        }
+//    private fun List<com.example.planup.main.friend.data.FriendGoalListDto>.toGoalItemsForFriend(): List<GoalItem> =
+//        map { dto ->
+//            val typeLabel = when (dto.goalType) {
+//                com.example.planup.main.friend.data.GoalType.FRIEND -> "매일"
+//                com.example.planup.main.friend.data.GoalType.COMMUNITY -> "매주"
+//                com.example.planup.main.friend.data.GoalType.CHALLENGE_PHOTO -> "매일"
+//                com.example.planup.main.friend.data.GoalType.CHALLENGE_TIME -> "매주"
+//            }
+//            val criteria = "$typeLabel ${dto.frequency}번 이상"
+//            val auth = when (dto.verificationType) {
+//                com.example.planup.main.friend.data.VerificationType.PHOTO -> "camera"
+//                com.example.planup.main.friend.data.VerificationType.TIMER -> "timer"
+//            }
+//
+//            GoalItem(
+//                goalId      = dto.goalId,
+//                title       = dto.goalName,
+//                description = criteria,
+//                percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
+//                authType    = auth,
+//                isEditMode  = false,
+//                isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
+//                criteria    = criteria,
+//                progress    = 0            // 필요 시 서버 값 매핑
+//            )
+//        }
 
     private val goalEditApi by lazy{
         GoalRetrofitInstance.api.create(GoalApi::class.java)
@@ -304,32 +305,32 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     }
 
     /** 서버 DTO → 화면용 GoalItem으로 변환 */
-    private fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
-        map { dto ->
-            val typeLabel = when (dto.goalType) {
-                GoalType.FRIEND -> "매일"
-                GoalType.COMMUNITY -> "매주"
-                GoalType.CHALLENGE_PHOTO -> "매일"
-                GoalType.CHALLENGE_TIME -> "매주"
-            }
-            val criteria = "$typeLabel ${dto.frequency}번 이상"
-
-            GoalItem(
-                goalId     = dto.goalId,
-                title      = dto.goalName.orEmpty(),
-                description= criteria,
-                percent    = 0,
-                authType   = when (dto.goalType) {
-                    GoalType.CHALLENGE_PHOTO -> "camera"
-                    GoalType.CHALLENGE_TIME  -> "timer"
-                    else -> "none"
-                },
-                isEditMode = false,
-                isActive = !dto.isActive,
-                criteria   = criteria,
-                progress   = 0
-            )
-        }
+//    private fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
+//        map { dto ->
+//            val typeLabel = when (dto.goalType) {
+//                GoalType.FRIEND -> "매일"
+//                GoalType.COMMUNITY -> "매주"
+//                GoalType.CHALLENGE_PHOTO -> "매일"
+//                GoalType.CHALLENGE_TIME -> "매주"
+//            }
+//            val criteria = "$typeLabel ${dto.frequency}번 이상"
+//
+//            GoalItem(
+//                goalId     = dto.goalId,
+//                title      = dto.goalName.orEmpty(),
+//                description= criteria,
+//                percent    = 0,
+//                authType   = when (dto.goalType) {
+//                    GoalType.CHALLENGE_PHOTO -> "camera"
+//                    GoalType.CHALLENGE_TIME  -> "timer"
+//                    else -> "none"
+//                },
+//                isEditMode = false,
+//                isActive = !dto.isActive,
+//                criteria   = criteria,
+//                progress   = 0
+//            )
+//        }
 
     private fun setGoals(items: List<GoalItem>) {
         adapter.updateItems(items)        // ✅ 리스트만 교체
