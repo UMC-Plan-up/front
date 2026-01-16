@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.database.TokenSaver
@@ -35,7 +36,8 @@ class GoalCompleteFragment : Fragment() {
     private val ISO_UTC_MILLIS: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(ZoneOffset.UTC)
-    
+//    private val viewModel: GoalViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
