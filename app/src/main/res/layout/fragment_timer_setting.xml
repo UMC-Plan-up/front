@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -115,15 +116,16 @@
 
     <TextView
         android:id="@+id/error_tv"
+        style="@style/Typography_XS_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/error_more_thirty_second"
-        style="@style/Typography_XS_Medium"
-        android:textColor="@color/red_300"
         android:layout_marginTop="7dp"
+        android:text="@string/error_more_thirty_second"
+        android:textColor="@color/red_300"
         android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/challenge_timer_hour_tv"
-        app:layout_constraintStart_toStartOf="parent" />
+        tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/challenge_timer_next_btn"
