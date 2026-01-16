@@ -19,7 +19,7 @@ import androidx.fragment.app.activityViewModels
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalSelectBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalViewModel
+import com.example.planup.main.goal.GoalViewModel
 import com.example.planup.main.MainActivity
 
 class GoalSelectFragment : Fragment() {

@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.planup.databinding.FragmentChallengeCompleteBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalViewModel
+import com.example.planup.main.goal.GoalViewModel
 import com.example.planup.main.MainActivity
 
 class ChallengeCompleteFragment : Fragment() {
