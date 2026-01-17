@@ -1,6 +1,8 @@
 package com.example.planup.util
 
 import android.content.Context
+import android.content.Intent
+import android.util.Log
 import com.kakao.sdk.auth.AuthCodeClient
 import com.kakao.sdk.common.model.AuthError
 import com.kakao.sdk.common.model.ClientError
@@ -17,8 +19,11 @@ object KakaoServiceHandler {
     private val userApiClient get() = UserApiClient.instance
     private val shareClient get() = ShareClient.instance
 
+    // 초대코드 공유 템플릿
+    private const val SHARE_INVITE_TEMPLATE_CODE = 125174L
+
     /**
-     * 카카오 로그인으로 인가코드를 받아온다
+     * 카카오 로그인으로 인가코드를 반환한다
      *
      * @param context
      * @return 인가코드
@@ -66,6 +71,40 @@ object KakaoServiceHandler {
                     context = context,
                     callback = authorizeWithKakaoAccountCallback
                 )
+            }
+        }
+    }
+
+    /**
+     * 초대코드 공유 인텐트를 반환한다
+     *
+     * @param context
+     * @param inviteCode 공유할 초대코드
+     * @param nickname 사용자 닉네임
+     * @return 카카오톡 공유하기 Intent
+     */
+    suspend fun shareInviteCode(
+        context: Context,
+        inviteCode: String,
+        nickname: String
+    ): Result<Intent> = safeRunCatching {
+        suspendCancellableCoroutine { continuation ->
+            shareClient.shareCustom(
+                context = context,
+                templateId = SHARE_INVITE_TEMPLATE_CODE,
+                templateArgs = mapOf(
+                    "CODE" to inviteCode,
+                    "NAME" to nickname
+                )
+            ) { result, error ->
+                if (result != null) {
+                    Log.d(LOG_TAG, "초대코드 공유 성공| warning message: ${result.warningMsg}")
+                    continuation.resume(result.intent)
+                }
+                if (error != null) {
+                    Log.e(LOG_TAG, "초대코드 공유 실패| error: $error")
+                    continuation.resumeWithException(KakaoHandlerError.UnHandledError(error))
+                }
             }
         }
     }
