@@ -1,4 +1,4 @@
-package com.example.planup.network
+package com.example.planup
 
 import android.app.Application
 import android.content.Context
@@ -9,8 +9,8 @@ import android.util.Log
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.request.crossfade
-import com.example.planup.BuildConfig
 import com.example.planup.database.TokenSaver
+import com.example.planup.network.TokenManager
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 import java.security.MessageDigest

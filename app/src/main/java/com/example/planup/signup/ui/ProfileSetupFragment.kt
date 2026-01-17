@@ -28,7 +28,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import com.bumptech.glide.Glide
-import com.example.planup.network.App
+import com.example.planup.App
 import com.example.planup.signup.data.*
 
 class ProfileSetupFragment : Fragment() {

@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.planup.App
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWeeklyReportBinding
 import com.example.planup.main.MainActivity
@@ -191,7 +192,7 @@ class RecordWeeklyReportFragment : Fragment() {
     private fun buildAuthHeader(): String? {
         val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
         val prefsToken: String? = prefs.getString("accessToken", null)
-        val appToken: String? = com.example.planup.network.App.jwt.token
+        val appToken: String? = App.jwt.token
         val raw = when {
             !prefsToken.isNullOrBlank() -> prefsToken
             !appToken.isNullOrBlank() -> appToken
