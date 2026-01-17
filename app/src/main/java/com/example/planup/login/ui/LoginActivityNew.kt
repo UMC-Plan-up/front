@@ -56,16 +56,6 @@ class LoginActivityNew: AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val abc = CoroutineScope(Dispatchers.Main).launch {
-            val ret = KakaoServiceHandler.shareInviteCode(this@LoginActivityNew, "초대코드욤", "닉네임이여")
-            ret.onSuccess {
-                println("LoginActivityNew|intent :${it}")
-                startActivity(it)
-            }.onFailure {
-                println("LoginActivityNew| error :${it.cause}")
-            }
-        }
-
         init()
         clickListener()
         initObservers()
