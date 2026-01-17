@@ -1,4 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -22,6 +27,11 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "KAKAO_NATIVE_KEY",
+            localProperties["KAKAO_NATIVE_KEY"].toString()
+        )
+        manifestPlaceholders.put("kakao_scheme", "kakao${localProperties["KAKAO_NATIVE_KEY"].toString()}")
     }
 
     buildTypes {
@@ -41,6 +51,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

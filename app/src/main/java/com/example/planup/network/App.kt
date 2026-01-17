@@ -5,7 +5,7 @@ import android.content.Context
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.request.crossfade
-import com.example.planup.R
+import com.example.planup.BuildConfig
 import com.example.planup.database.TokenSaver
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
@@ -26,7 +26,7 @@ class App : Application() , SingletonImageLoader.Factory {
         jwt = TokenManager(tokenSaver)
 
         // TODO:: 상수화
-        com.kakao.sdk.common.KakaoSdk.init(this, getString(R.string.kakao_app_key))
+        com.kakao.sdk.common.KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_KEY)
     }
 
     override fun newImageLoader(context: Context): ImageLoader {
