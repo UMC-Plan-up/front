@@ -99,6 +99,7 @@
         </activity>
 
         <activity android:name=".onboarding.OnBoardingActivity" />
+        <activity android:name=".onboarding.InviteCodeActivity" />
         <activity android:name=".onboarding.CommunityIntroActivity" />
 
         <activity
