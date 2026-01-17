@@ -99,6 +99,7 @@
         </activity>
 
         <activity android:name=".onboarding.OnBoardingActivity" />
+        <activity android:name=".onboarding.CommunityIntroActivity" />
 
         <activity
             android:name=".goal.GoalActivity"

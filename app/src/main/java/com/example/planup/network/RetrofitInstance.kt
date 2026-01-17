@@ -51,6 +51,7 @@ object RetrofitInstance {
             .build()
     }
 
+    @Deprecated("Repository 에서 주입 받아 사용")
     val termsApi: TermsApi by lazy { retrofit.create(TermsApi::class.java) }
     val profileApi: ProfileApi by lazy { retrofit.create(ProfileApi::class.java) }
     @Deprecated("Repository 에서 주입 받아 사용")

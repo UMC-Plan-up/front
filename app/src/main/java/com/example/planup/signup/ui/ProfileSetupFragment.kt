@@ -258,7 +258,8 @@ class ProfileSetupFragment : Fragment() {
                         passwordCheck = restoredPw ?: "",
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList()
+                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList(),
+                        gender = ""
                     )
 
                     val response = RetrofitInstance.userApi.signup(request)
@@ -479,7 +480,7 @@ class ProfileSetupFragment : Fragment() {
 
     private suspend fun checkNicknameDuplicate(nickname: String) {
         try {
-            val res = RetrofitInstance.userApi.checkNickname(nickname)
+            val res = RetrofitInstance.userApi.checkNicknameDuplicate(nickname)
             if (res.isSuccessful && res.body()?.isSuccess == true) {
                 val available = res.body()!!.result?.available == true
                 isNicknameAvailable = available

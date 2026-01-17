@@ -27,17 +27,16 @@ fun OnboardNavHost(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    //TODO :: proceedNextStep 사용하도록 변경
     NavHost(
-        modifier = modifier
-            .windowInsetsPadding(WindowInsets.ime)
-            .consumeWindowInsets(WindowInsets.ime),
+        modifier = modifier,
         navController = navController,
         startDestination = OnBoardTermRoute::class,
     ) {
         composable<OnBoardTermRoute> {
             OnBoardingTermScreen(
-                modifier = modifier,
+                modifier = modifier
+                    .windowInsetsPadding(WindowInsets.ime)
+                    .consumeWindowInsets(WindowInsets.ime),
                 state = state,
                 onNext = { viewModel.proceedNextStep(currentStep) },
                 onTermChecked = viewModel::onTermChecked,
@@ -47,7 +46,9 @@ fun OnboardNavHost(
 
         composable<OnBoardIdRoute> {
             OnBoardingIdScreen(
-                modifier = modifier,
+                modifier = modifier
+                    .windowInsetsPadding(WindowInsets.ime)
+                    .consumeWindowInsets(WindowInsets.ime),
                 state = state,
                 onNext = { viewModel.proceedNextStep(currentStep) },
                 onEmailChanged = viewModel::updateEmail
@@ -56,7 +57,9 @@ fun OnboardNavHost(
 
         composable<OnBoardPasswordRoute> {
             OnBoardingPasswordScreen(
-                modifier = modifier,
+                modifier = modifier
+                    .windowInsetsPadding(WindowInsets.ime)
+                    .consumeWindowInsets(WindowInsets.ime),
                 state = state,
                 onNext = { viewModel.proceedNextStep(currentStep) },
                 onPasswordChanged = viewModel::updatePassword
@@ -64,7 +67,9 @@ fun OnboardNavHost(
         }
         composable<OnBoardVerificationRoute> {
             OnBoardingVerificationScreen(
-                modifier = modifier,
+                modifier = modifier
+                    .windowInsetsPadding(WindowInsets.ime)
+                    .consumeWindowInsets(WindowInsets.ime),
                 state = state,
                 onNext = { viewModel.proceedNextStep(currentStep) },
                 onClickResend = viewModel::resendEmailVerification,
@@ -84,28 +89,8 @@ fun OnboardNavHost(
                 onNewImageByPhotoPicker = viewModel::updateProfileImage,
                 onYearChanged = viewModel::updateYear,
                 onMonthChanged = viewModel::updateMonth,
-                onDayChanged = viewModel::updateDay
-            )
-        }
-
-        composable<OnBoardShareFriendCodeRoute> {
-            OnBoardingShareCodeScreen(
-                modifier = modifier,
-                state = state,
-                onNext = { viewModel.proceedNextStep(currentStep) },
-                onShareKakao = viewModel::shareWithKakao,
-                onShareSMS = viewModel::shareWithSMS
-            )
-        }
-
-        composable<OnBoardShareInviteRoute> {
-            OnBoardingInputCodeScreen(
-                modifier = modifier,
-                state = state,
-                onNext = {
-                    viewModel.proceedNextStep(currentStep)
-                },
-                onCodeSubmitted = viewModel::acceptInviteCode
+                onDayChanged = viewModel::updateDay,
+                onClickNicknameDuplication = viewModel::checkNicknameDuplication
             )
         }
     }

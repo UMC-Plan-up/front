@@ -5,10 +5,17 @@ import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.main.user.domain.UserRepository
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
+import com.example.planup.network.repository.ProfileRepository
+import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.TermModel
+import com.example.planup.signup.data.Agreement
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,9 +29,43 @@ import javax.inject.Inject
 @HiltViewModel
 class OnBoardingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val imageResizer: ImageResizer
-
+    private val imageResizer: ImageResizer,
+    private val termRepository: TermRepository,
+    private val userRepository: UserRepository,
+    private val profileRepository: ProfileRepository
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            termRepository.getTerms().onSuccess { terms ->
+
+                val termList = terms.sortedBy { it.order }.map { termItem ->
+                    var termDetail = ""
+                    termRepository.getTermsDetail(termItem.id)
+                        .onSuccess { termDetail = it.content }
+                        .onFailWithMessage {
+                            Log.e("OnBoardingViewModel", "약관 세부사항 불러오기 실패| id:${termItem.id}, $it")
+                            termDetail = ""
+                        }
+
+                    TermModel(
+                        id = termItem.id,
+                        title = "[${if (termItem.isRequired) "필수" else "선택"}] ${termItem.summary}",
+                        content = termDetail,
+                        isRequired = termItem.isRequired
+                    )
+                }
+
+                _state.update {
+                    it.copy(terms = termList)
+                }
+            }.onFailWithMessage {
+                Log.e("OnBoardingViewModel", "약관 불러오기 실패| $it")
+            }
+        }
+        fetchRandomNickname()
+    }
+
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
 
@@ -94,28 +135,93 @@ class OnBoardingViewModel @Inject constructor(
         return unCheckedRequiredTerms.isEmpty()
     }
 
-    suspend fun checkEmailDuplicated(): Boolean {
-        // TODO:: 이메일 중복 확인 API
-        var isDuplicated = false
 
-        _state.update { it.copy(isDuplicatedEmail = isDuplicated) }
+    suspend fun checkEmailDuplicated(): Boolean {
+        var isDuplicated = true
+
+        viewModelScope.async {
+            userRepository.checkEmailAvailable(state.value.email)
+                .onSuccess { available ->
+                    isDuplicated = !available
+                    _state.update { it.copy(isDuplicatedEmail = !available) }
+                }
+                .onFailWithMessage {
+                    //TODO :: 오류 메세지
+                    Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
+
+                    isDuplicated = true
+                    _state.update { it.copy(isDuplicatedEmail = true) }
+                }
+        }.await()
 
         return isDuplicated
     }
 
     suspend fun checkEmailVerification(): Boolean {
-        // TODO:: 이메일 인증 여부 확인
-        var isVerified = true
+        var isVerified = false
+        val verificationToken = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
+
+        if (verificationToken == null) return false
+
+        viewModelScope.async {
+            userRepository.checkEmailVerificationStatus(verificationToken)
+                .onSuccess { status ->
+                    isVerified = status.verified
+                    Log.e("OnBoardingViewModel", "이메일 인증 호출 성공 $status")
+                }
+                .onFailWithMessage {
+                    isVerified = false
+                    // TODO:: 오류 메세지
+                    Log.e("OnBoardingViewModel", "이메일 인증 실패 $it")
+                }
+        }.await()
 
         return isVerified
     }
 
     fun resendEmailVerification() {
-        // TODO:: 이메일 재전송 로직
+        viewModelScope.launch {
+            val token = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
+
+            // TODO:: API 변경되면 수정
+            if (token == null) {
+                // 최초로 보낸 경우
+                userRepository.sendMailForSignup(state.value.email)
+                    .onSuccess {
+                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
+                    }
+                    .onFailWithMessage {
+                        // TODO:: 오류 메세지
+
+                    }
+            } else {
+                // 다시 보내는 경우
+                userRepository.resendMailForSignup(state.value.email)
+                    .onSuccess {
+                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
+                    }
+                    .onFailWithMessage {
+                        // TODO:: 오류 메세지
+
+                    }
+            }
+        }
     }
 
     fun kakaoLogin() {
         // TODO:: 카카오 로그인 로직
+    }
+
+    fun fetchRandomNickname() {
+        viewModelScope.launch {
+            profileRepository.getRandomNickname()
+                .onSuccess { randomNickname ->
+                    _state.update { it.copy(nickname = randomNickname) }
+                }
+                .onFailWithMessage {
+                    Log.e("OnBoardingViewModel", "랜덤 닉네임 받아오기 오류 :$it")
+                }
+        }
     }
 
     fun updateName(name: String) {
@@ -123,7 +229,7 @@ class OnBoardingViewModel @Inject constructor(
         val isAlphabet = isAlphabetRegex.matches(name)
 
         // 한글의 경우엔 최대 글자 수 15자, 영어의 경우 20자 이내
-        val lengthLimit = if(isHangul) 15 else if(isAlphabet) 20 else 100
+        val lengthLimit = if (isHangul) 15 else if (isAlphabet) 20 else 100
 
         val isValidNameLength = name.length <= lengthLimit
         val isNameContainsSpecialChar = !isHangul && !isAlphabet
@@ -138,18 +244,38 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     fun updateNickName(nickname: String) {
-        // TODO:: 닉네임 중복 확인 API
+        val isHangul = isHangulRegex.matches(nickname)
+        val isAlphabet = isAlphabetRegex.matches(nickname)
 
-        val isDuplicateNickName = false
         // 닉네임 길이는 1 ~ 20 글자 제한
         val isValidNickNameLength = nickname.length <= 20
+
+        // 닉네임은 특수문자 허용x
+        val isNickNameContainsSpecialChar = !isHangul && !isAlphabet
 
         _state.update {
             it.copy(
                 nickname = nickname,
-                isDuplicateNickName = isDuplicateNickName,
                 isValidNickNameLength = isValidNickNameLength,
+                isNickNameContainsSpecialChar = isNickNameContainsSpecialChar
             )
+        }
+    }
+
+    fun checkNicknameDuplication() {
+        if (state.value.nickname.isBlank()) return
+
+        viewModelScope.launch {
+            userRepository.checkNicknameDuplicated(state.value.nickname)
+                .onSuccess { available ->
+                    _state.update { it.copy(isDuplicateNickName = !available, isAvailableNickName = available) }
+                }
+                .onFailWithMessage {
+                    // TODO:: 에러 메세지
+                    Log.e("OnBoardingViewModel", "닉네임 중복 확인 실패| $it")
+
+                    _state.update { it.copy(isDuplicateNickName = true) }
+                }
         }
     }
 
@@ -197,86 +323,101 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun shareWithKakao() {
-        // TODO:: 카카오 모듈 작성 후 추가
-        // InviteCodeFragment::showSharePopup 참조
-    }
-
-    fun shareWithSMS() {
-        // InviteCodeFragment::showSharePopup 참조
+    fun signup() {
         viewModelScope.launch {
-            _event.send(Event.SendCodeWithSMS)
-        }
-    }
+            if(state.value.loading) return@launch
 
-    fun acceptInviteCode(code: String) {
-        // TODO:: 코드 유효성 검증, 수락 로직
+            _state.update { it.copy(loading = true) }
+
+            userRepository.signup(
+                email = state.value.email,
+                password = state.value.password,
+                passwordCheck = state.value.password,
+                nickname = state.value.nickname,
+                gender = if(state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                profileImg = state.value.profileImage,
+                agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
+            ).onSuccess {
+                _event.send(Event.FinishSignup)
+                _state.update { it.copy(loading = false) }
+            }.onFailWithMessage {
+                // TODO:: 에러 메세지
+
+                _state.update { it.copy(loading = false) }
+            }
+        }
     }
 
     fun proceedNextStep(current: OnboardingStep) {
         viewModelScope.launch {
             val next = current.getNextStep()
 
-            if (next == null) {
-                Log.d("OnBoardingViewModel", "화면 전환 오류: 다음 화면이 존재하지 않음")
-                return@launch
-            }
-
             when (current) {
                 OnboardingStep.Term -> {
                     if (verifyRequiredTerm())
                         sendNavigateEvent(next)
                 }
+
                 OnboardingStep.Id -> {
-                    if(!checkEmailDuplicated()) {
+                    if (!checkEmailDuplicated()) {
                         sendNavigateEvent(next)
                     }
                 }
+
                 OnboardingStep.Password -> {
-                    if(state.value.isValidPasswordLength && state.value.isComplexPassword)
+                    if (state.value.isValidPasswordLength && state.value.isComplexPassword){
+                        resendEmailVerification()
                         sendNavigateEvent(next)
+                    }
                 }
+
                 OnboardingStep.Verification -> {
-                    if(checkEmailVerification()) {
+                    if (true) {
                         sendNavigateEvent(next)
                     } else {
-                        // TODO:: 인증이 되지 않은 경우
+                        // TODO:: 오류 메세지
                     }
                 }
+
                 OnboardingStep.Profile -> {
-                    // TODO:: 화면 넘어갈 때 조건 문의
-                    if(
+                    // 이름, 닉네임, 성별, 생년월일이 모두 올바르게 입력된 경우 전환
+                    if (
                         state.value.name.isNotEmpty() &&
                         state.value.nickname.isNotEmpty() &&
+                        state.value.gender != GenderModel.Unknown &&
+                        state.value.year != 0 &&
+                        state.value.month != 0 &&
+                        state.value.day != 0 &&
                         !state.value.isNameContainsSpecialChar &&
                         state.value.isValidNameLength &&
                         state.value.isValidNickNameLength &&
-                        !state.value.isDuplicateNickName
+                        !state.value.isDuplicateNickName &&
+                        state.value.isAvailableNickName
                     )
-                    // 회원가입 여부 확인 후 inviteCode 초기화
-                    sendNavigateEvent(next)
-                }
-                OnboardingStep.ShareFriendCode ->
-                    sendNavigateEvent(OnboardingStep.ShareInvite)
-                OnboardingStep.ShareInvite -> {
-                    // 플로우 종료
+                        signup()
+                    else {
+                        _snackBarEvent.send(SnackBarEvent.ProfileNotFilled)
+
+                    }
                 }
             }
         }
     }
 
-    private suspend fun sendNavigateEvent(step: OnboardingStep) {
+    private suspend fun sendNavigateEvent(step: OnboardingStep?) {
+        if(step == null) return
         _event.send(Event.Navigate(step))
     }
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
-        data object SendCodeWithSMS: Event()
+        data object FinishSignup : Event()
     }
 
     sealed class SnackBarEvent {
         data object NotCheckedRequiredTerm : SnackBarEvent()
         data object InvalidInviteCode : SnackBarEvent()
+        data object ProfileNotFilled : SnackBarEvent()
     }
 
     private companion object {
@@ -284,49 +425,13 @@ class OnBoardingViewModel @Inject constructor(
         private val passwordRegex = Regex("""[!"#$%&'()*+,\-./:;<=>?@\[₩\]^_`{|}~]""")
         private val isAlphabetRegex = Regex("""^[a-zA-Z ]+$""")
         private val isHangulRegex = Regex("""^[가-힣 ]+$""")
+
+        private const val KEY_VERIFICATION_TOKEN = "key_verification_token"
     }
 }
 
 data class OnBoardingState(
-    // TODO:: 약관 연결 후 임시 데이터 제거
-    val terms: List<TermModel> = listOf(
-        TermModel(
-            id = 1,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 2,
-            title = "선택이용약관2",
-            content = "세부사항2세\n\n\n\n\n부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n\n세부사항2\n\n세부사\n\n\n\n항2세부사\n\n\n\n\n\n\n\n항aaasdasdasdasdasdasd2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2",
-            isRequired = false
-        ),
-        TermModel(
-            id = 3,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 4,
-            title = "선택이용약관2",
-            content = "세부사항2",
-            isRequired = false
-        ),
-        TermModel(
-            id = 5,
-            title = "필수이용약관1",
-            content = "세부사항1",
-            isRequired = true
-        ),
-        TermModel(
-            id = 6,
-            title = "선택이용약관2",
-            content = "세부사항2",
-            isRequired = false
-        ),
-    ),
+    val terms: List<TermModel> = listOf(),
     val email: String = "",
     val isValidEmailFormat: Boolean = true,
     val isDuplicatedEmail: Boolean = false,
@@ -338,7 +443,9 @@ data class OnBoardingState(
     val isNameContainsSpecialChar: Boolean = false,
     val nickname: String = "",
     val isValidNickNameLength: Boolean = true,
+    val isNickNameContainsSpecialChar: Boolean = false,
     val isDuplicateNickName: Boolean = false,
+    val isAvailableNickName: Boolean = false,
     val profileImage: String = "",
     val gender: GenderModel = GenderModel.Unknown,
     val years: List<Int> = YearMonth.now().year.let {
@@ -349,20 +456,19 @@ data class OnBoardingState(
     val year: Int = 0,
     val month: Int = 0,
     val day: Int = 0,
-    val inviteCode: String = ""
+    val inviteCode: String = "",
+    val loading: Boolean = false,
 )
 
 sealed class OnboardingStep(val step: Int, val title: String?) {
-    private val totalStep: Int = 7
+    private val totalStep: Int = 5
 
     private val values: List<OnboardingStep> = listOf(
         Term,
         Id,
         Password,
         Verification,
-        Profile,
-        ShareFriendCode,
-        ShareInvite
+        Profile
     )
 
     data object Term : OnboardingStep(step = 1, title = null)
@@ -370,8 +476,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
     data object Password : OnboardingStep(step = 3, title = null)
     data object Verification : OnboardingStep(step = 4, title = null)
     data object Profile : OnboardingStep(step = 5, title = "프로필 설정")
-    data object ShareFriendCode : OnboardingStep(step = 6, title = null)
-    data object ShareInvite : OnboardingStep(step = 7, title = null)
 
     fun getFloatProgress(): Float {
         val currentProgress = this.step
@@ -385,17 +489,11 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
             Password -> OnBoardPasswordRoute
             Verification -> OnBoardVerificationRoute
             Profile -> OnBoardProfileRoute
-            ShareFriendCode -> OnBoardShareFriendCodeRoute
-            ShareInvite -> OnBoardShareInviteRoute
         }
     }
 
     fun getNextStep(): OnboardingStep? {
-        return if (this != values.last()) {
-            values[this.step]
-        } else {
-            null
-        }
+        return values.getOrNull(this.step)
     }
 
     companion object {
@@ -406,8 +504,6 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
                 route.contains(OnBoardPasswordRoute::class.qualifiedName.toString()) -> Password
                 route.contains(OnBoardVerificationRoute::class.qualifiedName.toString()) -> Verification
                 route.contains(OnBoardProfileRoute::class.qualifiedName.toString()) -> Profile
-                route.contains(OnBoardShareFriendCodeRoute::class.qualifiedName.toString()) -> ShareFriendCode
-                route.contains(OnBoardShareInviteRoute::class.qualifiedName.toString()) -> ShareInvite
                 else -> Term
             }
         }
