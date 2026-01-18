@@ -28,10 +28,12 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
+        val kakaoNativeKey = localProperties["KAKAO_NATIVE_KEY"].toString()
+
         buildConfigField("String", "KAKAO_NATIVE_KEY",
-            localProperties["KAKAO_NATIVE_KEY"].toString()
+            kakaoNativeKey
         )
-        manifestPlaceholders.put("kakao_scheme", "kakao${localProperties["KAKAO_NATIVE_KEY"].toString()}")
+        manifestPlaceholders.put("kakao_scheme", "kakao${kakaoNativeKey.trim('"')}")
     }
 
     buildTypes {
