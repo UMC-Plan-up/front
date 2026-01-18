@@ -99,8 +99,15 @@ fun OnBoardingVerificationScreen(
                         .wrapContentSize(),
                     state = sheetState,
                     scope = scope,
-                    onClickResend = onClickResend,
-                    onClickKaKao = onClickKaKao
+                    onClickResend = {
+                        scope.launch { sheetState.hide() }
+                        onClickResend()
+                    },
+
+                    onClickKaKao = {
+                        scope.launch { sheetState.hide() }
+                        onClickKaKao()
+                    }
                 )
             }
         }
