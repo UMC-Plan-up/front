@@ -15,26 +15,23 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 class CalendarRepository @Inject constructor(
-    private val tokenSaver: TokenSaver,
     private val goalApi: GoalApi
 ) {
     suspend fun loadDailyGoal(date: String): ApiResult<DailyGoalResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getDailyGoal(token, date)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getDailyGoal(date)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 }
 
