@@ -16,7 +16,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -25,6 +29,7 @@ import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.domain.toGoalItems
+import com.example.planup.goal.domain.toGoalItemsForFriend
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.adapter.GoalApi
@@ -34,6 +39,8 @@ import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.main.goal.item.MyGoalListItem
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.GoalController
 import com.github.mikephil.charting.charts.PieChart
@@ -51,9 +58,10 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var adapter: GoalAdapter
     private lateinit var dailyPieChart: PieChart
 //    private lateinit var userController: UserController
-    private lateinit var goalController: GoalController
+//    private lateinit var goalController: GoalController
     private var isEditMode: Boolean = false
 
+    private val viewModel: GoalViewModel by viewModels()
     companion object {
         private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
         private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
@@ -68,7 +76,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
     lateinit var tokenSaver : TokenSaver
 
-    private var targetUserIdArg: Int = -1
     private var targetNicknameArg: String = ""
 
     override fun onCreateView(
@@ -79,7 +86,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
 
 //        userController = UserController()
-        goalController = GoalController()
+//        goalController = GoalController()
         // 사용자 정보 콜백 연결
 
 //        userController.setUserInfoAdapter(object : UserInfoAdapter {
@@ -104,29 +111,31 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //        userController.userInfoService()99063f
 
         // 나의 목표 리스트 콜백 연결
-        goalController.setMyGoalListAdapter(this)
+//        goalController.setMyGoalListAdapter(this)
         // 최초 진입 시 1회 로드
         // goalController.fetchMyGoals()
-        targetUserIdArg = arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1
-        targetNicknameArg = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
+        viewModel.setTargetUserId(arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1)
 
+        targetNicknameArg = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.goalState.collect { state ->
+                    setGoals(state)
+                }
+            }
+        }
 
         clickListener()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        tokenSaver = TokenSaver(requireContext())
         prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = tokenSaver.safeToken()
-        val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
-        Log.d("GoalFragment","token: $token")
-        loadMyGoalList(token)
 
-        binding.userGoalListTv.text = nickname?.removeSurrounding("\"") + "의 목표 리스트"
+        val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
 
         dailyPieChart = binding.dailyGoalCompletePc
-        loadTodayAchievement(token)
+        loadTodayAchievement()
 
         recyclerView = binding.goalListRv
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -156,52 +165,76 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         )
         recyclerView.adapter = adapter
 
-        if (targetUserIdArg > 0) {
+        viewModel.loadGoalList(
+            friendAction = {
+                // ✅ 친구 모드
+                binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+
+                // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
+                binding.manageButton.visibility = View.GONE
+            },
+            action = {
+                // ✅ 내 모드
+                binding.userGoalListTv.text = "${nickname}의 목표 리스트"
+
+                viewModel.fetchMyGoals()
+            }
+        )
+//        if (targetUserId > 0) {
             // ✅ 친구 모드
-            binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+//            binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
 
             // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
-            binding.manageButton.visibility = View.GONE
+//            binding.manageButton.visibility = View.GONE
             // (친구 달성률 UI도 없다면 숨겨도 됨)
             // binding.dailyGoalCompleteGroup.isVisible = false  // 레이아웃 구조에 맞춰 선택
 
-            loadFriendGoalList(token, targetUserIdArg)
-        } else {
+//            loadFriendGoalList(targetUserId)
+//        } else {
             // ✅ 내 모드
-            binding.userGoalListTv.text = "${nickname}의 목표 리스트"
-            loadMyGoalList(token)
-            loadTodayAchievement(token)
-        }
+//            binding.userGoalListTv.text = "${nickname}의 목표 리스트"
+
+//            viewModel.fetchMyGoals()
+//            loadTodayAchievement()
+//        }
+
 
     }
     // ⬇️ 새로 추가
-    private fun loadFriendGoalList(token: String?, friendUserId: Int) {
-        if (token.isNullOrBlank()) {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-        lifecycleScope.launch {
-            try {
-                // GoalApi 는 네가 준 인터페이스(아래에 있음). 이미 RetrofitInstance.goalApi 쓰고 있으니 동일 사용.
-                val res = RetrofitInstance.goalApi.getFriendGoalList(
-                    token = token,
-                    friendId = friendUserId
-                )
+//    // ⬇️ 새로 추가
+//    private fun loadFriendGoalList(token: String?, friendUserId: Int) {
+//        if (token.isNullOrBlank()) {
+//            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+//        lifecycleScope.launch {
+//            try {
+//                // GoalApi 는 네가 준 인터페이스(아래에 있음). 이미 RetrofitInstance.goalApi 쓰고 있으니 동일 사용.
+//                val res = RetrofitInstance.goalApi.getFriendGoalList(
+//                    token = token,
+//                    friendId = friendUserId
+//                )
+//
+//                // ⚠️ 서버 응답 데이터 클래스에 오타: 'reuslt'
+//                if (res.isSuccess) {
+////                    val friendGoals = res.result
+////                    val items = friendGoals.toGoalItemsForFriend()
+////                    setGoals(items)
+//                } else {
+//                    Toast.makeText(requireContext(), res.message, Toast.LENGTH_SHORT).show()
+//                }
+//            } catch (e: Exception) {
+//                Log.e("GoalFragment", "loadFriendGoalList error", e)
+//                Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
-                // ⚠️ 서버 응답 데이터 클래스에 오타: 'reuslt'
-                if (res.isSuccess) {
-//                    val friendGoals = res.result
-//                    val items = friendGoals.toGoalItemsForFriend()
-//                    setGoals(items)
-                } else {
-                    Toast.makeText(requireContext(), res.message, Toast.LENGTH_SHORT).show()
-                }
-            } catch (e: Exception) {
-                Log.e("GoalFragment", "loadFriendGoalList error", e)
-                Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-            }
+    private fun loadFriendGoalList(friendUserId: Int) =
+        viewModel.loadFriendGoalList(friendUserId) { response ->
+            val items = response.toGoalItemsForFriend()
+            setGoals(items)
         }
-    }
 
     // 파일 상단 import에 추가
 // import com.example.planup.main.friend.data.FriendGoalListDto
@@ -261,7 +294,12 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
                     // 1) 즉시 UI에서 제거
                     adapter.removeItemById(goalId)
                     // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
-                    goalController.fetchMyGoals()
+                    viewModel.loadGoalList(
+                        friendAction = {},
+                        action = {
+                            viewModel.fetchMyGoals()
+                        }
+                    )
                 } else {
                     Toast.makeText(requireContext(),
                         "삭제 실패: ${res.body()?.message ?: res.code()}",
@@ -289,7 +327,12 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
                         adapter.updateItemActive(goalId, willActivate)
 
                         // 2) 정확성 위해 서버 리스트 재조회(옵션)
-                        goalController.fetchMyGoals()
+                        viewModel.loadGoalList(
+                            friendAction = {},
+                            action = {
+                                viewModel.fetchMyGoals()
+                            }
+                        )
                     } else {
                         Toast.makeText(requireContext(),
                             "활성 상태 변경 실패: ${res.body()?.message ?: res.code()}",
@@ -433,30 +476,30 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         }
     }
 
-    private fun loadMyGoalList(token: String?) {
-        if(token == null) {
-            Log.d("GoalFragment", "loadMyGoalList token null")
-            return
-        }
-        lifecycleScope.launch {
-            try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getMyGoalList(token = token)
-                if (response.isSuccess) {
-                    val goals = response.result
-                    for (goal in goals) {
-                        Log.d("GoalFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
-                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, percent = 82, criteria = "PHOTO", progress = 82)
-                    }
-                } else {
-                    Log.d("GoalFragmentApi","loadMyGoalList 실패")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.d("GoalFragmentApi","네트워크 오류")
-            }
-        }
-    }
+//    private fun loadMyGoalList(token: String?) {
+//        if(token == null) {
+//            Log.d("GoalFragment", "loadMyGoalList token null")
+//            return
+//        }
+//        lifecycleScope.launch {
+//            try {
+//                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
+//                val response = apiService.getMyGoalList(token = token)
+//                if (response.isSuccess) {
+//                    val goals = response.result
+//                    for (goal in goals) {
+//                        Log.d("GoalFragmentApi","Goal: ${goal.goalName} / type: ${goal.goalType}")
+//                        goals+GoalItem(goal.goalId, goal.goalName, goal.goalType, percent = 82, criteria = "PHOTO", progress = 82)
+//                    }
+//                } else {
+//                    Log.d("GoalFragmentApi","loadMyGoalList 실패")
+//                }
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                Log.d("GoalFragmentApi","네트워크 오류")
+//            }
+//        }
+//    }
 
     private fun loadProfileInto(urlOrBase64: String?){
         if(!urlOrBase64.isNullOrBlank() && !urlOrBase64.startsWith("data:image")){
@@ -482,42 +525,48 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         }
     }
 
-    private fun loadTodayAchievement(token: String?) {
-        if(token.isNullOrEmpty()) {
-            Log.e("loadTodayAchievement", "Token is null or empty")
-            return
-        }
-
-        lifecycleScope.launch {
-            try {
-                val apiService = RetrofitInstance.goalApi
-                val today = LocalDate.now() // yyyy-MM-dd
-
-                val response = apiService.getDailyAchievement(
-                    token = token,
-                    targetDate = today.toString()
-                )
-
-                if (response.isSuccess) {
-                    val achievementRate = response.result.achievementRate
-                    binding.dailyGoalCompletePercentTv.text = "$achievementRate%"
-                    setupPieChart(dailyPieChart, achievementRate)
-                } else {
-                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message}")
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                if (e is HttpException) {
-                    Log.e("todayachievement", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
-                } else {
-                    Log.e("todayachievement", "Other error: ${e.message}", e)
-                }
-            }
+//    private fun loadTodayAchievement(token: String?) {
+//        if(token.isNullOrEmpty()) {
+//            Log.e("loadTodayAchievement", "Token is null or empty")
+//            return
+//        }
+//
+//        lifecycleScope.launch {
+//            try {
+//                val apiService = RetrofitInstance.goalApi
+//                val today = LocalDate.now() // yyyy-MM-dd
+//
+//                val response = apiService.getDailyAchievement(
+//                    token = token,
+//                    targetDate = today.toString()
+//                )
+//
+//                if (response.isSuccess) {
+//                    val achievementRate = response.result.achievementRate
+//                    binding.dailyGoalCompletePercentTv.text = "$achievementRate%"
+//                    setupPieChart(dailyPieChart, achievementRate)
+//                } else {
+//                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message}")
+//                }
+//
+//            } catch (e: Exception) {
+//                e.printStackTrace()
+//                if (e is HttpException) {
+//                    Log.e("todayachievement", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+//                } else {
+//                    Log.e("todayachievement", "Other error: ${e.message}", e)
+//                }
+//            }
+//        }
+//    }
+    private fun loadTodayAchievement() {
+        viewModel.loadTodayAchievement { response ->
+            binding.dailyGoalCompletePercentTv.text = "$response%"
+            setupPieChart(dailyPieChart, response)
         }
     }
 
-    override fun successMyGoals(goals: List<MyGoalListDto>) {
+    override fun successMyGoals(goals: List<MyGoalListItem>) {
         val items = goals.toGoalItems()
         setGoals(items)
     }
