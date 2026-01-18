@@ -75,38 +75,35 @@ class HomeRepository @Inject constructor(
 
     suspend fun getFriendGoalList(friendId: Int) =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalList(token, friendId)
-                    },
-                    onResponse = { response ->
-                        if(response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
-                    })
-            }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalList(friendId)
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                })
         }
 
     suspend fun getFriendGoalAchievement(friendId: Int, goalId: Int) =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalAchievement(token, friendId, goalId)
-                    },
-                    onResponse = { response ->
-                        if(response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
-                    })
-            }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalAchievement(friendId, goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                })
+
         }
 
     suspend fun getDailyGoal(date: LocalDate) =

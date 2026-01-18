@@ -1,16 +1,12 @@
-package com.example.planup.main.home.data
+package com.example.planup.main.home.ui
 
-import android.util.Log
 import com.example.planup.database.TokenSaver
 import com.example.planup.database.checkToken
 import com.example.planup.main.goal.item.DailyAchievementResult
 import com.example.planup.main.goal.item.FriendGoalAchievementResult
 import com.example.planup.main.goal.item.FriendGoalListResult
-import com.example.planup.main.goal.item.GoalApiService
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -25,21 +21,19 @@ class FriendGoalListRepository @Inject constructor(
 ) {
     suspend fun getFriendGoalList(friendId: Int) =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalList(token, friendId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalList(friendId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     suspend fun getFriendGoalAchievement(
@@ -47,21 +41,19 @@ class FriendGoalListRepository @Inject constructor(
         goal: FriendGoalListResult
     ): ApiResult<FriendGoalAchievementResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalAchievement(token, friendId, goal.goalId)
-                    },
-                    onResponse = { response ->
-                        if(response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalAchievement(friendId, goal.goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 //    suspend fun getFriendGoalAchievements(
 //        token: String,

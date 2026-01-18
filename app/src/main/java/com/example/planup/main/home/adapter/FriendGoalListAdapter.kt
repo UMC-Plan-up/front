@@ -8,11 +8,38 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.ItemFriendGoalListBinding
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
+import com.example.planup.main.goal.item.FriendGoalListResult
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+
+data class FriendGoalWithAchievement(
+    val goalId: Int,
+    val goalName: String,
+    val goalType: String,
+    val goalAmount: String,
+    val verificationType: String,
+    val goalTime: Int,
+    val frequency: Int,
+    val oneDose: Int,
+    val totalAchievement: Int
+) {
+    constructor(
+        goal: FriendGoalListResult,
+        totalAchievement: Int?
+    ) : this(
+        goal.goalId,
+        goal.goalName,
+        goal.goalType,
+        goal.goalAmount,
+        goal.verificationType,
+        goal.goalTime,
+        goal.frequency,
+        goal.oneDose,
+        totalAchievement ?: 0
+    )
+}
 
 class FriendGoalListAdapter(
     private val paramItems: List<FriendGoalWithAchievement>,
