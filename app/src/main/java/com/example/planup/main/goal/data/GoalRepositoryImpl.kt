@@ -16,13 +16,12 @@ import javax.inject.Singleton
 
 @Singleton
 class GoalRepositoryImpl @Inject constructor(
-    private val goalApi: GoalApi,
-    private val tokenSaver: TokenSaver
+    private val goalApi: GoalApi
 ) : GoalRepository {
 
-    override suspend fun updateGoal(token: String, goalId: Int, request: EditGoalRequest): Boolean {
+    override suspend fun updateGoal(goalId: Int, request: EditGoalRequest): Boolean {
         try {
-            val response = goalApi.editGoal(token = token, goalId = goalId, editGoalRequest = request)
+            val response = goalApi.editGoal(goalId = goalId, editGoalRequest = request)
 
             if (response.isSuccess){
                 Log.d("EditGoalFragment", "성공 메시지: ${response.message}")
@@ -44,40 +43,36 @@ class GoalRepositoryImpl @Inject constructor(
 
     override suspend fun fetchMyGoals() =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getMyGoalList(token)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getMyGoalList()
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     override suspend fun deleteGoal(goalId: Int) =
         withContext(Dispatchers.IO){
-            tokenSaver.checkToken { token->
-                safeResult(
-                    response = {
-                        goalApi.deleteGoal(token, goalId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess){
-                            ApiResult.Success(response.result)
-                        }else{
-                            Log.w("GoalFragment", "deleteGoal fail body=${response} code=${response.code}")
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.deleteGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess){
+                        ApiResult.Success(response.result)
+                    }else{
+                        Log.w("GoalFragment", "deleteGoal fail body=${response} code=${response.code}")
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     override suspend fun setGoalActive(goalId: Int) =
