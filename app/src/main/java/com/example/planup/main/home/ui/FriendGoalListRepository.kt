@@ -11,6 +11,7 @@ import com.example.planup.main.home.ui.FriendGoalWithAchievement
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.RetrofitInstance.goalApi
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,25 +22,22 @@ import javax.inject.Singleton
 @Singleton
 class FriendGoalListRepository @Inject constructor(
     private val goalApi: GoalApi,
-    private val tokenSaver: TokenSaver
 ) {
     suspend fun getFriendGoalList(friendId: Int) =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalList(token, friendId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalList(friendId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     suspend fun getFriendGoalAchievement(
@@ -47,21 +45,19 @@ class FriendGoalListRepository @Inject constructor(
         goal: FriendGoalListResult
     ): ApiResult<FriendGoalAchievementResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendGoalAchievement(token, friendId, goal.goalId)
-                    },
-                    onResponse = { response ->
-                        if(response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendGoalAchievement(friendId, goal.goalId)
+                },
+                onResponse = { response ->
+                    if(response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 //    suspend fun getFriendGoalAchievements(
 //        token: String,
@@ -96,20 +92,18 @@ class FriendGoalListRepository @Inject constructor(
 
     suspend fun getTodayAchievement() : ApiResult<DailyAchievementResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getDailyAchievement(token, LocalDate.now().toString())
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getDailyAchievement(LocalDate.now().toString())
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 }
