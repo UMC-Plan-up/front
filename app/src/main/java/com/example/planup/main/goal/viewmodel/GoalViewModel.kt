@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.domain.toGoalItems
+import com.example.planup.goal.domain.toGoalItemsForFriend
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.goal.adapter.GoalAdapter
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
@@ -44,6 +45,11 @@ class GoalViewModel @Inject constructor(
     private val friendListRepository: FriendGoalListRepository
 ) : ViewModel() {
     var fromWhere = MutableLiveData<String>()
+    private var _targetUserId = MutableLiveData(-1)
+    val targetUserId: MutableLiveData<Int>
+        get() = _targetUserId
+
+
 
     private val _friendState = MutableStateFlow<List<Int>>(emptyList())
     val friendState = _friendState.asStateFlow()
@@ -65,6 +71,21 @@ class GoalViewModel @Inject constructor(
     private val _goalState = MutableStateFlow<List<GoalItem>>(emptyList())
     val goalState = _goalState.asStateFlow()
 
+    fun setTargetUserId(userId: Int) {
+        _targetUserId.value = userId
+    }
+
+    fun updateGoal(token: String, goalId: Int, request: EditGoalRequest, action: () -> Unit){
+        viewModelScope.launch {
+            val success = goalRepository.updateGoal(
+                goalId = goalId,
+                request = request
+            )
+            if (success){
+                action()
+            }
+        }
+    }
     fun fetchFriendList() = viewModelScope.launch {
         friendRepository.fetchFriendList()
             // 친구의 아이디만 적용
@@ -73,19 +94,6 @@ class GoalViewModel @Inject constructor(
                 _failMessage.emit(message)
                 _friendState.value = emptyList()
             }
-    }
-
-    fun updateGoal(token: String, goalId: Int, request: EditGoalRequest, action: () -> Unit){
-        viewModelScope.launch {
-            val success = goalRepository.updateGoal(
-                token = token,
-                goalId = goalId,
-                request = request
-            )
-            if (success){
-                action()
-            }
-        }
     }
 
     fun fetchMyGoals() = viewModelScope.launch {
@@ -98,7 +106,7 @@ class GoalViewModel @Inject constructor(
 
     fun loadFriendGoals(
         friendId: Int,
-        onCallBack: (result: ApiResult<List<FriendGoalWithAchievement>>) -> Unit
+        onCallBack: (result: ApiResult<List<GoalItem>>) -> Unit
     ) {
         viewModelScope.launch {
             val resultList = mutableListOf<FriendGoalWithAchievement>()
@@ -122,7 +130,7 @@ class GoalViewModel @Inject constructor(
                                     totalAchievement = achieveRes.data.totalAchievement
                                 )
                             )
-                            onCallBack(ApiResult.Success(resultList))
+                            onCallBack(ApiResult.Success(resultList.toGoalItemsForFriend()))
                         }
                     }
 
@@ -134,6 +142,21 @@ class GoalViewModel @Inject constructor(
             }
 
             _friendGoals.value = resultList
+        }
+    }
+
+    fun loadGoalList(friendAction: () -> Unit, action: () -> Unit) {
+        viewModelScope.launch {
+            if (targetUserId.value>0){
+                friendAction()
+                loadFriendGoals(targetUserId.value) {
+                    if (it is ApiResult.Success) {
+                        _goalState.value = it.data
+                    }
+                }
+            }else{
+                action()
+            }
         }
     }
 
