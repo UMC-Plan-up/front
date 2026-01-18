@@ -26,7 +26,6 @@ import com.example.planup.theme.Typography
 
 @Composable
 fun OnBoardingInputCodeScreen(
-    state: OnBoardingState,
     onNext: () -> Unit,
     onCodeSubmitted: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -94,7 +93,6 @@ private fun OnBoardingInputCodeScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
-        state = OnBoardingState(),
         onNext = {},
         onCodeSubmitted = {}
     )

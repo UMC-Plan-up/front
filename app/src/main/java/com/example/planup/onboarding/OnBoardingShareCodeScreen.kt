@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun OnBoardingShareCodeScreen(
-    state: OnBoardingState,
+    inviteCode: String,
     onNext: () -> Unit,
     onShareKakao: () -> Unit,
     onShareSMS: () -> Unit,
@@ -57,7 +57,7 @@ fun OnBoardingShareCodeScreen(
 ) {
     val clipBoard = LocalClipboard.current
 
-    val codeState = rememberTextFieldState(state.inviteCode)
+    val codeState = rememberTextFieldState(inviteCode)
     val shareTypes = remember { ShareTypeModel.entries.toList() }
     var isShareMenuOpen by remember { mutableStateOf(false) }
 
@@ -202,7 +202,7 @@ private fun OnBoardingShareCodeScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
-        state = OnBoardingState(inviteCode = "PLANUPDEMODAY"),
+        inviteCode = "PLANUPDEMODAY",
         onNext = {},
         onShareKakao = {},
         onShareSMS = {}
