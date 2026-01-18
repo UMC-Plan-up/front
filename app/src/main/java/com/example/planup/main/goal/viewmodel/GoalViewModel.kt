@@ -1,19 +1,11 @@
 package com.example.planup.main.goal.viewmodel
 
-import android.R.id.message
-import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.domain.toGoalItems
 import com.example.planup.goal.domain.toGoalItemsForFriend
 import com.example.planup.main.friend.domain.FriendRepository
-import com.example.planup.main.goal.adapter.GoalAdapter
-import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.FriendGoalListResult
@@ -21,7 +13,6 @@ import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.home.data.FriendGoalListRepository
 import com.example.planup.main.home.ui.FriendGoalWithAchievement
 import com.example.planup.network.ApiResult
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import javax.inject.Inject;
