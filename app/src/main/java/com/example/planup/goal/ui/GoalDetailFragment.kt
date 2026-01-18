@@ -72,13 +72,13 @@ class GoalDetailFragment : Fragment() {
 //            binding.goalContainer.visibility = View.GONE
 //        }
 
-        val isUnlocked = isUnlockedFromSubscription || isPlanSelected
-
-        if (!isUnlocked) {
-            binding.goalContainer.setOnClickListener {
-                (activity as? GoalActivity)?.startSubscriptionActivity()
-            }
-        }
+//        val isUnlocked = isUnlockedFromSubscription || isPlanSelected
+//
+//        if (!isUnlocked) {
+//            binding.goalContainer.setOnClickListener {
+//                (activity as? GoalActivity)?.startSubscriptionActivity()
+//            }
+//        }
 
         setupBackButton()
         setupPeriodButtons()
