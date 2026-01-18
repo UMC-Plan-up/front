@@ -77,73 +77,64 @@ fun OnBoardingShareCodeScreen(
             style = Typography.Medium_2XL
         )
 
-        Row(
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OnBoardingTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+                .height(40.dp),
+            state = codeState,
+            enabled = false,
+            textStyle = Typography.Medium_SM.copy(color = Black300)
+        )
+
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(top = 12.dp)
         ) {
-            OnBoardingTextField(
+            PlanUpButton(
                 modifier = Modifier
-                    .height(40.dp)
-                    .weight(1.0f),
-                state = codeState,
-                enabled = false,
-                textStyle = Typography.Medium_SM.copy(color = Black300)
+                    .fillMaxWidth(),
+                title = stringResource(R.string.btn_share),
+                onClick = { isShareMenuOpen = !isShareMenuOpen }
             )
 
-            Spacer(modifier = Modifier.width(10.dp))
+            ShareDropBox(
+                modifier = Modifier,
+                items = shareTypes,
+                isExpended = isShareMenuOpen,
+                onClickItem = {
+                    when (it) {
+                        ShareTypeModel.Kakao -> {
+                            onShareKakao()
+                        }
 
-            Box(
-                modifier = Modifier
-                    .wrapContentSize()
-            ) {
-                PlanUpButton(
-                    modifier = Modifier
-                        .size(
-                            width = 80.dp,
-                            height = 40.dp
-                        ),
-                    title = stringResource(R.string.btn_share),
-                    onClick = { isShareMenuOpen = !isShareMenuOpen }
-                )
+                        ShareTypeModel.Sms -> {
+                            onShareSMS()
+                        }
 
-                ShareDropBox(
-                    modifier = Modifier,
-                    items = shareTypes,
-                    isExpended = isShareMenuOpen,
-                    onClickItem = {
-                        when (it) {
-                            ShareTypeModel.Kakao -> {
-                                onShareKakao()
-                            }
-
-                            ShareTypeModel.Sms -> {
-                                onShareSMS()
-                            }
-
-                            ShareTypeModel.Copy -> {
-                                // 클립보드로 복사
-                                scope.launch {
-                                    clipBoard.setClipEntry(
-                                        ClipEntry(
-                                            ClipData.newPlainText(
-                                                "plain text",
-                                                state.inviteCode
-                                            )
+                        ShareTypeModel.Copy -> {
+                            // 클립보드로 복사
+                            scope.launch {
+                                clipBoard.setClipEntry(
+                                    ClipEntry(
+                                        ClipData.newPlainText(
+                                            "plain text",
+                                            inviteCode
                                         )
                                     )
-                                }
+                                )
                             }
                         }
-                        isShareMenuOpen = false
-                    },
-                    onDismissRequest = {
-                        isShareMenuOpen = false
-                    },
-                )
-            }
+                    }
+                    isShareMenuOpen = false
+                },
+                onDismissRequest = {
+                    isShareMenuOpen = false
+                },
+            )
+
         }
 
         Spacer(modifier = Modifier.weight(1.0f))
