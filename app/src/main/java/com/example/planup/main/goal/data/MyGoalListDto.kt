@@ -17,10 +17,3 @@ enum class GoalType {
     @SerializedName("CHALLENGE_PHOTO") CHALLENGE_PHOTO,
     @SerializedName("CHALLENGE_TIME") CHALLENGE_TIME
 }
-
-data class ApiResponseListMyGoalListDto(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: List<MyGoalListDto>
-)
