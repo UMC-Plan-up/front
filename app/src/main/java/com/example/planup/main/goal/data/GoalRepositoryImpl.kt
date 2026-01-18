@@ -77,20 +77,18 @@ class GoalRepositoryImpl @Inject constructor(
 
     override suspend fun setGoalActive(goalId: Int) =
         withContext(Dispatchers.IO){
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.setGoalActive(token,goalId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess){
-                            ApiResult.Success(response.result)
-                        }else{
-                            Log.w("GoalFragment", "setGoalActive fail body=${response} code=${response.code}")
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.setGoalActive(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess){
+                        ApiResult.Success(response.result)
+                    }else{
+                        Log.w("GoalFragment", "setGoalActive fail body=${response} code=${response.code}")
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 }
