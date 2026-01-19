@@ -32,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.component.TopHeader
+import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -59,12 +60,13 @@ class InviteCodeActivity : AppCompatActivity() {
                 onFinishShare = {}
             )
 
+
             LaunchedEffect(Unit) {
                 viewModel.event.collect { event ->
                     when (event) {
                         is InviteCodeViewModel.Event.SendCodeWithSMS -> {
                             val shareMessage = """
-                                    ${event.nickname}님이 친구 신청을 보냈어요.
+                                    ${event.nickname ?: "사용자"}님이 친구 신청을 보냈어요.
                                     Plan-Up에서 함께 목표 달성에 참여해 보세요!
                                     친구 코드: ${event.inviteCode}
                                 """.trimIndent()
@@ -77,6 +79,14 @@ class InviteCodeActivity : AppCompatActivity() {
                             val shareIntent = Intent.createChooser(sendIntent, null)
 
                             startActivity(shareIntent)
+                        }
+
+                        is InviteCodeViewModel.Event.SendCodeWithKakao -> {
+                            KakaoServiceHandler.shareInviteCode(
+                                this@InviteCodeActivity,
+                                inviteCode = event.inviteCode,
+                                nickname = event.nickname ?: "사용자"
+                            )
                         }
                     }
                 }

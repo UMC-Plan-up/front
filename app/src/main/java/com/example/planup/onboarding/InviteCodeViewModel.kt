@@ -34,6 +34,7 @@ class InviteCodeViewModel @Inject constructor(
     fun shareCodeWithSMS() {
         viewModelScope.launch {
             val nickname = userRepository.getUserNickName()
+                .let { it.ifBlank { null } }
 
             _event.send(
                 Event.SendCodeWithSMS(
@@ -45,10 +46,21 @@ class InviteCodeViewModel @Inject constructor(
     }
 
     fun shareCodeWithKakao() {
+        viewModelScope.launch {
+            val nickname = userRepository.getUserNickName()
+                .let { it.ifBlank { null } }
 
+            _event.send(
+                Event.SendCodeWithKakao(
+                    nickname = nickname,
+                    inviteCode = inviteCode.value
+                )
+            )
+        }
     }
 
     sealed class Event {
         data class SendCodeWithSMS(val nickname: String?, val inviteCode: String) : Event()
+        data class SendCodeWithKakao(val nickname: String?, val inviteCode: String) : Event()
     }
 }
