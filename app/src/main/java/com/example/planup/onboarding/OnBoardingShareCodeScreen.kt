@@ -24,12 +24,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.component.button.PlanUpButton
@@ -55,6 +60,7 @@ fun OnBoardingShareCodeScreen(
     val codeState = rememberTextFieldState(inviteCode)
     val shareTypes = remember { ShareTypeModel.entries.toList() }
     var isShareMenuOpen by remember { mutableStateOf(false) }
+    var shareBoxSize by remember { mutableStateOf(IntSize.Zero) }
 
     Column(
         modifier = modifier
@@ -87,6 +93,9 @@ fun OnBoardingShareCodeScreen(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(top = 12.dp)
+                .onSizeChanged {
+                    shareBoxSize = it
+                }
         ) {
             PlanUpButton(
                 modifier = Modifier
@@ -96,9 +105,11 @@ fun OnBoardingShareCodeScreen(
             )
 
             ShareDropBox(
-                modifier = Modifier,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd),
                 items = shareTypes,
                 isExpended = isShareMenuOpen,
+                parentSize = shareBoxSize,
                 onClickItem = {
                     when (it) {
                         ShareTypeModel.Kakao -> {
@@ -154,12 +165,25 @@ fun ShareDropBox(
     items: List<ShareTypeModel>,
     onClickItem: (ShareTypeModel) -> Unit,
     onDismissRequest: () -> Unit,
+    parentSize: IntSize? = null,
     modifier: Modifier = Modifier,
     isExpended: Boolean = false,
 ) {
+    var dropBoxSize by remember { mutableStateOf(IntSize.Zero) }
+    val dropBoxOffset = with(LocalDensity.current) {
+        if (parentSize != null)
+            DpOffset((parentSize.width - dropBoxSize.width).toDp(), 0.dp)
+        else
+            DpOffset.Zero
+    }
+
     DropdownMenu(
-        modifier = modifier,
+        modifier = modifier
+            .onSizeChanged {
+                dropBoxSize = it
+            },
         expanded = isExpended,
+        offset = dropBoxOffset,
         containerColor = Color.White,
         border = BorderStroke(1.dp, SemanticB4),
         onDismissRequest = onDismissRequest
