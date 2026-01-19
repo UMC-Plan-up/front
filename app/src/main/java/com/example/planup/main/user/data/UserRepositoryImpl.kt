@@ -440,6 +440,7 @@ class UserRepositoryImpl @Inject constructor(
                 },
                 onResponse = { response ->
                     if (response.isSuccess) {
+                        // TODO:: 유저 정보, 토큰 정보 저장하는 로직 추가
                         val result = response.result
                         ApiResult.Success(result)
                     } else {

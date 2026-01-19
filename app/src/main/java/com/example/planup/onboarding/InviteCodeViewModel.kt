@@ -10,6 +10,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,12 +26,11 @@ class InviteCodeViewModel @Inject constructor(
     val event = _event.receiveAsFlow()
 
     init {
-        // TODO:: 테스트 할 때 주석 풀기
-//        viewModelScope.launch {
-//            val code = userRepository.getInviteCode()
-//            println("inviteCode = $code")
-//            _inviteCode.update { code }
-//        }
+        viewModelScope.launch {
+            val code = userRepository.getInviteCode()
+            println("inviteCode = $code")
+            _inviteCode.update { code }
+        }
     }
 
     fun shareCodeWithSMS() {

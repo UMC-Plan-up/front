@@ -70,10 +70,7 @@ class OnBoardingActivity: AppCompatActivity() {
                         onClick = {
                             // 메인 화면을 백스택에 추가하고 이동할지 고려해볼 것
                             isFinishDialogVisible = false
-                            startActivity(Intent(this@OnBoardingActivity, CommunityIntroActivity::class.java)
-                                .apply {
-                                    putExtra("nickname", state.nickname)
-                                })
+                            startActivity(Intent(this@OnBoardingActivity, InviteCodeActivity::class.java))
                             finish()
                         }
                     )
