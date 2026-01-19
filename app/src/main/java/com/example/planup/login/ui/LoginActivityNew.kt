@@ -24,14 +24,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.main.MainActivity
-import com.example.planup.network.App
+import com.example.planup.App
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.UserController
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.KakaoLoginRequest
+import com.example.planup.util.KakaoServiceHandler
 import com.kakao.sdk.auth.AuthCodeClient
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -52,6 +55,7 @@ class LoginActivityNew: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         init()
         clickListener()
         initObservers()

@@ -16,7 +16,7 @@
     </queries>
 
     <application
-        android:name=".network.App"
+        android:name=".App"
         android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -117,7 +117,7 @@
 
                 <data
                     android:host="oauth"
-                    android:scheme="kakaod457e1de9a930076ef76a74e0bb30b6b" />
+                    android:scheme="${kakao_scheme}" />
 
             </intent-filter>
         </activity>

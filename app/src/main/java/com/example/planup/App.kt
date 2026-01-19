@@ -1,20 +1,44 @@
 package com.example.planup
 
 import android.app.Application
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Base64
 import android.util.Log
+import coil3.ImageLoader
+import coil3.SingletonImageLoader
+import coil3.request.crossfade
+import com.example.planup.database.TokenSaver
+import com.example.planup.network.TokenManager
 import com.kakao.sdk.common.KakaoSdk
+import dagger.hilt.android.HiltAndroidApp
 import java.security.MessageDigest
+import javax.inject.Inject
 
-class MyApplication : Application() {
+@HiltAndroidApp
+class App : Application() , SingletonImageLoader.Factory {
+
+    companion object {
+        @Deprecated(message = "TokenSaver 사용")
+        lateinit var jwt: TokenManager
+    }
+
+    @Inject
+    lateinit var tokenSaver: TokenSaver
+
     override fun onCreate() {
         super.onCreate()
+        jwt = TokenManager(tokenSaver)
 
-        KakaoSdk.init(this, getString(R.string.kakao_app_key))
-
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_KEY)
         printKeyHash()
+    }
+
+    override fun newImageLoader(context: Context): ImageLoader {
+        return ImageLoader.Builder(context)
+            .crossfade(true)
+            .build()
     }
 
     private fun printKeyHash() {
