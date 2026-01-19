@@ -88,7 +88,7 @@
     <string name="profile_nickname_available">* 사용 가능한 닉네임입니다.</string>
     <string name="profile_nickname_error_length">* 20자 이내로 입력해 주세요.</string>
 
-    <string name="invite_code_share">초대코드를 공유해\n친구와 팔로우하세요!</string>
+    <string name="invite_code_share">누구와 첫 목표를 공유할까요?\n초대코드를 공유해\n친구와 팔로우하세요!</string>
     <string name="invite_code_input">친구에게\n초대받으셨다면,\n받은 코드를 입력해주세요!</string>
     <string name="invite_code_input_hint">초대코드 입력란</string>
     <string name="invite_code_input_caption">* 상대방이 친구 신청을 수락하면 팔로우가 완료됩니다.</string>

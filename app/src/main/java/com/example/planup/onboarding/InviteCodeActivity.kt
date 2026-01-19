@@ -1,5 +1,6 @@
 package com.example.planup.onboarding
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -16,18 +17,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.component.TopHeader
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -46,8 +52,35 @@ class InviteCodeActivity : AppCompatActivity() {
                     .fillMaxSize()
                     .background(Color.White),
                 navController = navController,
-                inviteCode = inviteCode
+                inviteCode = inviteCode,
+                onShareKakao = viewModel::shareCodeWithKakao,
+                onShareSMS = viewModel::shareCodeWithSMS,
+                onSubmitCode = {},
+                onFinishShare = {}
             )
+
+            LaunchedEffect(Unit) {
+                viewModel.event.collect { event ->
+                    when (event) {
+                        is InviteCodeViewModel.Event.SendCodeWithSMS -> {
+                            val shareMessage = """
+                                    ${event.nickname}님이 친구 신청을 보냈어요.
+                                    Plan-Up에서 함께 목표 달성에 참여해 보세요!
+                                    친구 코드: ${event.inviteCode}
+                                """.trimIndent()
+
+                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "text/plain"
+                                putExtra(Intent.EXTRA_TEXT, shareMessage)
+                            }
+
+                            val shareIntent = Intent.createChooser(sendIntent, null)
+
+                            startActivity(shareIntent)
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -55,6 +88,10 @@ class InviteCodeActivity : AppCompatActivity() {
 @Composable
 fun InviteCodeScreen(
     inviteCode: String,
+    onShareKakao: () -> Unit,
+    onShareSMS: () -> Unit,
+    onSubmitCode: (String) -> Unit,
+    onFinishShare: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController()
 ) {
@@ -73,12 +110,8 @@ fun InviteCodeScreen(
                         onNext = {
                             navController.navigate(OnBoardInputCodeRoute)
                         },
-                        onShareKakao = {
-                            // 카카오톡 공유
-                        },
-                        onShareSMS = {
-
-                        }
+                        onShareKakao = onShareKakao,
+                        onShareSMS = onShareSMS
                     )
                 }
             }
@@ -101,12 +134,8 @@ fun InviteCodeScreen(
                     )
                     OnBoardingInputCodeScreen(
                         modifier = Modifier,
-                        onNext = {
-
-                        },
-                        onCodeSubmitted = {
-
-                        }
+                        onNext = onFinishShare,
+                        onCodeSubmitted = onSubmitCode
                     )
                 }
             }
@@ -121,7 +150,11 @@ private fun InviteCodeScreenPreview() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.White),
-        inviteCode = "초대코드"
+        inviteCode = "초대코드",
+        onShareKakao = {},
+        onShareSMS = {},
+        onSubmitCode = {},
+        onFinishShare = {}
     )
 }
 
