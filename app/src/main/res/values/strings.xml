@@ -538,6 +538,7 @@
     <string name="error_already_nickname">이미 사용 중인 닉네임 입니다</string>
     <string name="error_category">1개의 카테고리를 필수로 선택해 주세요.</string>
     <string name="error_category_name">1글자 이상 카테고리명을 입력해 주세요.</string>
+    <string name="error_invalid_invite_code">유효하지 않은 초대코드입니다.</string>
 
     <!-- 팝업 메시지 -->
     <string name="popup_ask_logout">로그아웃 하시겠어요?</string>

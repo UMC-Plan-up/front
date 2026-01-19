@@ -3,6 +3,8 @@ package com.example.planup.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,7 +61,22 @@ class InviteCodeViewModel @Inject constructor(
         }
     }
 
+    fun sendFriendRequest(input: String) {
+        viewModelScope.launch {
+            userRepository.validateInviteCode(input)
+                .onSuccess {
+                    _event.send(Event.AcceptFriendRequest)
+                }
+                .onFailWithMessage {
+                    // 네트워크 오류는 어떻게 표시?
+                    _event.send(Event.InvalidInviteCode)
+                }
+        }
+    }
+
     sealed class Event {
+        data object InvalidInviteCode : Event()
+        data object AcceptFriendRequest : Event()
         data class SendCodeWithSMS(val nickname: String?, val inviteCode: String) : Event()
         data class SendCodeWithKakao(val nickname: String?, val inviteCode: String) : Event()
     }

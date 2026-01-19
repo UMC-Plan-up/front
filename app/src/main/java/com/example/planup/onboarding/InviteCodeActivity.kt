@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -16,25 +17,26 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.planup.R
 import com.example.planup.component.TopHeader
+import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
@@ -46,20 +48,30 @@ class InviteCodeActivity : AppCompatActivity() {
 
         setContent {
             val navController = rememberNavController()
+            val errorSnackBarHost = remember { SnackbarHostState() }
             val inviteCode by viewModel.inviteCode.collectAsStateWithLifecycle()
 
-            InviteCodeScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White),
-                navController = navController,
-                inviteCode = inviteCode,
-                onShareKakao = viewModel::shareCodeWithKakao,
-                onShareSMS = viewModel::shareCodeWithSMS,
-                onSubmitCode = {},
-                onFinishShare = {}
-            )
+            Box {
+                InviteCodeScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
+                    navController = navController,
+                    inviteCode = inviteCode,
+                    onShareKakao = viewModel::shareCodeWithKakao,
+                    onShareSMS = viewModel::shareCodeWithSMS,
+                    onSubmitCode = viewModel::sendFriendRequest,
+                    onFinishShare = {}
+                )
 
+                GraySnackbarHost(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+                        .padding(bottom = 60.dp),
+                    hostState = errorSnackBarHost
+                )
+            }
 
             LaunchedEffect(Unit) {
                 viewModel.event.collect { event ->
@@ -87,6 +99,16 @@ class InviteCodeActivity : AppCompatActivity() {
                                 inviteCode = event.inviteCode,
                                 nickname = event.nickname ?: "사용자"
                             )
+                        }
+
+                        is InviteCodeViewModel.Event.InvalidInviteCode -> {
+                            errorSnackBarHost.showSnackbar(
+                                getString(R.string.error_invalid_invite_code)
+                            )
+                        }
+
+                        InviteCodeViewModel.Event.AcceptFriendRequest -> {
+                            // 성공 다이얼로그 보이기
                         }
                     }
                 }
