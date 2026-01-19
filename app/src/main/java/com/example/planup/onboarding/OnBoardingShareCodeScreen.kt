@@ -41,6 +41,7 @@ import com.example.planup.component.button.PlanUpButton
 import com.example.planup.onboarding.component.OnBoardingTextField
 import com.example.planup.onboarding.model.ShareTypeModel
 import com.example.planup.theme.Black300
+import com.example.planup.theme.Blue200
 import com.example.planup.theme.SemanticB4
 import com.example.planup.theme.Typography
 import kotlinx.coroutines.CoroutineScope
@@ -142,6 +143,14 @@ fun OnBoardingShareCodeScreen(
             )
 
         }
+
+        Text(
+            modifier = Modifier
+                .padding(top = 10.dp),
+            text = stringResource(R.string.invite_code_input_caption),
+            style = Typography.Medium_XS,
+            color = Blue200
+        )
 
         Spacer(modifier = Modifier.weight(1.0f))
 
