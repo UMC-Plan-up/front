@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.TopHeader
 import com.example.planup.component.snackbar.GraySnackbarHost
+import com.example.planup.goal.GoalActivity
 import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
@@ -61,7 +62,10 @@ class InviteCodeActivity : AppCompatActivity() {
                     onShareKakao = viewModel::shareCodeWithKakao,
                     onShareSMS = viewModel::shareCodeWithSMS,
                     onSubmitCode = viewModel::sendFriendRequest,
-                    onFinishShare = {}
+                    onFinishShare = {
+                        // 다른 화면으로 이동
+                        startActivity(Intent(this@InviteCodeActivity, GoalActivity::class.java))
+                    }
                 )
 
                 GraySnackbarHost(
