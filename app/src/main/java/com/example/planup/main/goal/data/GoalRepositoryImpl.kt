@@ -1,8 +1,6 @@
 package com.example.planup.main.goal.data
 
 import android.util.Log
-import com.example.planup.database.TokenSaver
-import com.example.planup.database.checkToken
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.network.ApiResult

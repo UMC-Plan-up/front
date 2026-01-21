@@ -124,11 +124,6 @@ interface GoalApi {
         @Path("goalId") goalId: Int
     ): ApiResponseListMyGoalListDto
 
-    @GET("/goals/mygoal/list")
-    suspend fun getMyGoalList(
-        @Header("Authorization") token: String
-    ): Response<MyGoalListResponse>
-
     @GET("/goals/mygoal/{goalId}")
     suspend fun getGoalDetail(
         @Path("goalId") goalId: Int
