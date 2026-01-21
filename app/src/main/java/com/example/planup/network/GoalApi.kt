@@ -3,7 +3,6 @@ package com.example.planup.network
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
-import com.example.planup.main.friend.data.ApiResponseListFriendGoalListDto
 import com.example.planup.main.goal.data.GoalEditResponse
 import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.item.CreateCommentRequest
@@ -28,7 +27,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
