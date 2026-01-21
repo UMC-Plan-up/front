@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
@@ -199,6 +200,8 @@ private fun OnBoardingTermItem(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             PlanUpCheckbox(
+                modifier = Modifier
+                    .weight(1.0f),
                 text = title,
                 checked = checked,
                 onCheckedChange = onCheckedChange,
@@ -209,6 +212,7 @@ private fun OnBoardingTermItem(
             if (detail.isNotBlank()) {
                 Text(
                     modifier = Modifier
+                        .wrapContentSize()
                         .clickable(onClick = { showDetail = !showDetail }),
                     text = "자세히",
                     style = Typography.Regular_S.copy(textDecoration = TextDecoration.Underline)
@@ -249,7 +253,7 @@ private fun OnBoardingTermScreenPreview() {
                 ),
                 TermModel(
                     id = 2,
-                    title = "[선택] 이용약관2",
+                    title = "[선택] 엄청나게엄청나게엄청나게엄청나게엄청나게엄청나게긴약관이라면어떻게보이는지확인하는용도",
                     content = "세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2세부사항2\n세부사항2세부사항2세부사항2세부사항2세부사항2",
                     isRequired = false
                 )

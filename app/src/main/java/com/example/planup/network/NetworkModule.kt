@@ -1,5 +1,6 @@
 package com.example.planup.network
 
+import com.example.planup.App
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response

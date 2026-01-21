@@ -4,10 +4,15 @@ import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
+import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
+import com.example.planup.signup.data.Agreement
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.example.planup.signup.data.SignupRequestDto
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -27,7 +32,7 @@ interface UserRepository {
     ): ApiResult<ProcessResult>
 
     /**
-     * 해당 이메일로 메일을 발송합니다.
+     * 이메일을 변경하기 위해 해당 이메일로 메일을 발송합니다.
      *
      * @param email 변경할 이메일 주소
      * @return
@@ -37,7 +42,7 @@ interface UserRepository {
     ) : ApiResult<EmailLink>
 
     /**
-     * 해당 이메일로 메일을 다시 발송합니다.
+     * 이메일을 변경하기 위해 해당 이메일로 메일을 다시 발송합니다.
      *
      * @param email 변경할 이메일 주소
      * @return
@@ -105,4 +110,60 @@ interface UserRepository {
     suspend fun updateUserNotificationService(isOnNotification: Boolean): ApiResult<Boolean>
     suspend fun updateUserNotificationMarketing(isOnNotification: Boolean) : ApiResult<Boolean>
 
+    /**
+     * 이메일 중복을 여부를 확인합니다
+     *
+     * @param email
+     * @return 사용 가능하면 true, 아니라면 false
+     */
+    suspend fun checkEmailAvailable(
+        email: String
+    ): ApiResult<Boolean>
+
+    /**
+     * 회원가입
+     */
+    suspend fun signup(
+        email: String,
+        password: String,
+        passwordCheck: String,
+        nickname: String,
+        gender: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<SignupResult>
+
+
+    /**
+     * 회원가입을 하기 위해 해당 이메일로 메일을 발송합니다.
+     *
+     * @param email
+     */
+    suspend fun sendMailForSignup(
+        email: String
+    ): ApiResult<SignupLink>
+
+
+    /**
+     * 회원가입을 하기 위해 해당 이메일로 메일을 다시 발송합니다.
+     *
+     * @param email
+     */
+    suspend fun resendMailForSignup(
+        email: String
+    ): ApiResult<SignupLink>
+
+    /**
+     * 이메일 인증 토큰을 검사합니다
+     *
+     * @param verificationToken
+     * @return
+     */
+    suspend fun checkEmailVerificationStatus(
+        verificationToken: String
+    ): ApiResult<EmailVerificationStatus>
+
+    suspend fun checkNicknameDuplicated(
+        nickname: String
+    ): ApiResult<Boolean>
 }

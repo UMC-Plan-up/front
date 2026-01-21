@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.planup.App
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
 import com.example.planup.main.MainActivity
@@ -85,7 +86,7 @@ class RecordFragment : Fragment() {
     private fun buildAuthHeader(): String? {
         val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
         val prefToken = prefs.getString("accessToken", null)
-        val appToken = com.example.planup.network.App.jwt.token
+        val appToken = App.jwt.token
         val raw = when {
             !prefToken.isNullOrBlank() -> prefToken
             !appToken.isNullOrBlank() -> appToken

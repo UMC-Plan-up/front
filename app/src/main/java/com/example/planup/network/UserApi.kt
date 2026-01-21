@@ -3,8 +3,13 @@ package com.example.planup.network
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
+import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.NicknameCheckDuplicated
+import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -15,11 +20,8 @@ import com.example.planup.password.data.PasswordChangeRequest
 import com.example.planup.password.data.PasswordUpdateResponse
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.AlternativeLoginResponse
-import com.example.planup.signup.data.ApiEnvelope
 import com.example.planup.signup.data.ApiResponse
-import com.example.planup.signup.data.EmailCheckResult
 import com.example.planup.signup.data.EmailSendRequestDto
-import com.example.planup.signup.data.EmailSendResponseDto
 import com.example.planup.signup.data.InviteCodeProcessResponse
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeResponse
@@ -29,12 +31,9 @@ import com.example.planup.signup.data.KakaoCompleteRequest
 import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.KakaoLoginResponse
-import com.example.planup.signup.data.NicknameCheckResponse
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
-import com.example.planup.signup.data.ResendEmailResponse
 import com.example.planup.signup.data.SignupRequestDto
-import com.example.planup.signup.data.SignupResponseDto
 import com.example.planup.signup.data.VerifyLinkResult
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -53,7 +52,7 @@ interface UserApi : MyPageApi {
     @POST("/users/signup")
     suspend fun signup(
         @Body request: SignupRequestDto
-    ): Response<SignupResponseDto>
+    ): Response<UserResponse<SignupResult>>
 
     //로그아웃
     @POST("users/logout")
@@ -89,17 +88,17 @@ interface UserApi : MyPageApi {
         @Body body: InviteCodeRequest
     ): Response<InviteCodeProcessResponse>
 
-    // 이메일 인증 메일 발송
+    // 회원가입을 위한 이메일 인증 메일 발송
     @POST("/users/email/send")
     suspend fun sendEmail(
         @Body body: EmailSendRequestDto
-    ): Response<EmailSendResponseDto>
+    ): Response<UserResponse<SignupLink>>
 
-    // 이메일 인증 메일 재발송
+    // 회원가입을 위한 이메일 인증 메일 재발송
     @POST("/users/email/resend")
     suspend fun resendEmail(
         @Body body: ResendEmailRequest
-    ): Response<ResendEmailResponse>
+    ): Response<UserResponse<SignupLink>>
 
     // 이메일 인증 링크 검증
     @GET("/users/email/verify-link")
@@ -107,11 +106,17 @@ interface UserApi : MyPageApi {
         @Query("token") token: String
     ): Response<ApiResponse<VerifyLinkResult>>
 
+    // 이메일 인증 여부 확인
+    @GET("users/email/verification-status")
+    suspend fun checkEmailVerificationStatus(
+        @Query("token") token: String
+    ): Response<UserResponse<EmailVerificationStatus>>
+
     // 이메일 중복 확인
     @GET("/users/email/check-duplicate")
     suspend fun checkEmailDuplicate(
         @Query("email") email: String
-    ): ApiEnvelope<EmailCheckResult>
+    ): Response<UserResponse<EmailCheckDuplicated>>
 
     // 비밀번호 변경 확인 이메일 발송
     @POST("/users/password/change-email/send")
@@ -163,9 +168,9 @@ interface UserApi : MyPageApi {
 
     // 닉네임 중복 확인
     @GET("users/nickname/check-duplicate")
-    suspend fun checkNickname(
+    suspend fun checkNicknameDuplicate(
         @Query("nickname") nickname: String
-    ): Response<NicknameCheckResponse>
+    ): Response<UserResponse<NicknameCheckDuplicated>>
 
     // 비밀번호 재설정
     @POST("/users/password/change")
