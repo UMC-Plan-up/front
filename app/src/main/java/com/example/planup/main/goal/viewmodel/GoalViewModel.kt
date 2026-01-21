@@ -1,27 +1,18 @@
 package com.example.planup.main.goal.viewmodel
 
-import android.R.id.message
-import android.util.Log
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.domain.toGoalItems
 import com.example.planup.goal.domain.toGoalItemsForFriend
 import com.example.planup.main.friend.domain.FriendRepository
-import com.example.planup.main.goal.adapter.GoalAdapter
-import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.home.data.FriendGoalListRepository
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
+import com.example.planup.main.home.adapter.FriendGoalWithAchievement
+import com.example.planup.main.home.ui.FriendGoalListRepository
 import com.example.planup.network.ApiResult
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import javax.inject.Inject;
@@ -49,17 +40,9 @@ class GoalViewModel @Inject constructor(
     val targetUserId: MutableLiveData<Int>
         get() = _targetUserId
 
-
-
-    private val _friendState = MutableStateFlow<List<Int>>(emptyList())
-    val friendState = _friendState.asStateFlow()
-
     private val _friendGoals = MutableStateFlow<List<FriendGoalWithAchievement>>(emptyList())
     val friendGoals: StateFlow<List<FriendGoalWithAchievement>> = _friendGoals
 
-    val friendCnt = friendState
-        .map { it.size }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
 
     // ✅ UI 요청 실패 메시지 전용 (이벤트)
     private val _failMessage = MutableSharedFlow<String>()
@@ -85,15 +68,6 @@ class GoalViewModel @Inject constructor(
                 action()
             }
         }
-    }
-    fun fetchFriendList() = viewModelScope.launch {
-        friendRepository.fetchFriendList()
-            // 친구의 아이디만 적용
-            .onSuccess { res -> _friendState.value = res.map { it.id } }
-            .onFailWithMessage {  message ->
-                _failMessage.emit(message)
-                _friendState.value = emptyList()
-            }
     }
 
     fun fetchMyGoals() = viewModelScope.launch {

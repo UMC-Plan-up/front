@@ -6,7 +6,7 @@ import com.example.planup.main.goal.data.MyGoalListDto
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.MyGoalListItem
-import com.example.planup.main.home.ui.FriendGoalWithAchievement
+import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */

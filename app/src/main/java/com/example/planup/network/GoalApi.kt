@@ -3,9 +3,8 @@ package com.example.planup.network
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
-import com.example.planup.main.friend.data.ApiResponseListFriendGoalListDto
-import com.example.planup.main.goal.data.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.goal.item.CreateCommentResponse
 import com.example.planup.main.goal.item.DailyAchievementResponse
@@ -28,7 +27,6 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -123,16 +121,6 @@ interface GoalApi {
     suspend fun getMySpecificGoalList(
         @Path("goalId") goalId: Int
     ): ApiResponseListMyGoalListDto
-
-    @GET("/goals/mygoal/list")
-    suspend fun getMyGoalList(
-        @Header("Authorization") token: String
-    ): Response<MyGoalListResponse>
-
-    @GET("/goals/friendgoal/list")
-    suspend fun getFriendGoalList(
-        @Query ("friendId") friendId: Int
-    ): Response<FriendGoalListResponse>
 
     @GET("/goals/mygoal/{goalId}")
     suspend fun getGoalDetail(
