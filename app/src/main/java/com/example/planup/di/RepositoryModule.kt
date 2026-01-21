@@ -2,6 +2,8 @@ package com.example.planup.di
 
 import com.example.planup.main.friend.data.FriendRepositoryImpl
 import com.example.planup.main.friend.domain.FriendRepository
+import com.example.planup.main.goal.data.GoalRepositoryImpl
+import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.user.data.UserRepositoryImpl
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.repository.ProfileRepository
@@ -30,6 +32,11 @@ abstract class RepositoryModule {
         impl: UserRepositoryImpl
     ): UserRepository
 
+    @Binds
+    abstract fun bindGoalRepository(
+        impl: GoalRepositoryImpl
+    ): GoalRepository
+  
     @Binds
     abstract fun bindTermRepository(
         impl: TermRepositoryImpl
