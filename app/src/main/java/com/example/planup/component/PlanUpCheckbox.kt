@@ -44,7 +44,7 @@ fun PlanUpCheckbox(
 
     Row(
         modifier = modifier
-            .wrapContentSize()
+//            .wrapContentSize()
             .clickable(
                 enabled = enabled,
                 onClick = {

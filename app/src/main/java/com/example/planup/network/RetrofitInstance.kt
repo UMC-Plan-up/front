@@ -1,5 +1,6 @@
 package com.example.planup.network
 
+import com.example.planup.App
 import com.example.planup.main.goal.adapter.GoalApi
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -51,6 +52,7 @@ object RetrofitInstance {
             .build()
     }
 
+    @Deprecated("Repository 에서 주입 받아 사용")
     val termsApi: TermsApi by lazy { retrofit.create(TermsApi::class.java) }
     val profileApi: ProfileApi by lazy { retrofit.create(ProfileApi::class.java) }
     @Deprecated("Repository 에서 주입 받아 사용")

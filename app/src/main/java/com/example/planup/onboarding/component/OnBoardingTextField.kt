@@ -58,7 +58,7 @@ fun OnBoardingTextField(
                     .border(
                         width = 1.dp,
                         color = SemanticB4,
-                        shape = RoundedCornerShape(4.dp)
+                        shape = RoundedCornerShape(6.dp)
                     ),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween

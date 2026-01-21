@@ -70,7 +70,7 @@ class LoginEmailFragment : Fragment() {
                 delay(400)
                 runCatching { api.checkEmailDuplicate(email) }
                     .onSuccess { res ->
-                        if (res.result.available) {
+                        if (res.body()?.result?.available == true) {
                             // (3) 정상 입력 → 에러 숨기고 버튼 활성화
                             hideAllErrors()
                             enableNextButton()
