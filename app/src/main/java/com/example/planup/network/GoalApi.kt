@@ -4,8 +4,8 @@ import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalListResponseDto
 import com.example.planup.main.friend.data.ApiResponseListFriendGoalListDto
-import com.example.planup.main.goal.data.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.goal.item.CreateCommentResponse
 import com.example.planup.main.goal.item.DailyAchievementResponse
@@ -128,11 +128,6 @@ interface GoalApi {
     suspend fun getMyGoalList(
         @Header("Authorization") token: String
     ): Response<MyGoalListResponse>
-
-    @GET("/goals/friendgoal/list")
-    suspend fun getFriendGoalList(
-        @Query ("friendId") friendId: Int
-    ): Response<FriendGoalListResponse>
 
     @GET("/goals/mygoal/{goalId}")
     suspend fun getGoalDetail(
