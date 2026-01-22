@@ -45,6 +45,13 @@ jobs:
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
+      - name: Access KAKAO_NATIVE_KEY
+        run: |
+          echo KAKAO_NATIVE_KEY=\"$API_KEY\" > local.properties
+        shell: bash
+        env:
+          API_KEY: ${{ secrets.KAKAO_NATIVE_KEY }}
+
       - name: Build Debug APK
         run: ./gradlew assembleDebug
 
