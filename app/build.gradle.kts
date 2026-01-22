@@ -33,12 +33,13 @@ android {
         buildConfigField("String", "KAKAO_NATIVE_KEY",
             kakaoNativeKey
         )
-        manifestPlaceholders.put("kakao_scheme", "kakao${kakaoNativeKey.trim('"')}")
+        manifestPlaceholders["kakao_scheme"] = "kakao${kakaoNativeKey.trim('"')}"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            //운영은 난독화 켜주세요.
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

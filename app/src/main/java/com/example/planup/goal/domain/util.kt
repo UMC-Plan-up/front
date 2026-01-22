@@ -58,6 +58,7 @@ fun List<MyGoalListItem>.toGoalItems(): List<GoalItem> =
     }
 
 // ⬇️ 새로 추가: 친구 리스트 변환
+@JvmName("friendGoalListResultToGoalItems")
 fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
     map { dto ->
         val typeLabel = dto.goalType.toCriteria()
@@ -75,6 +76,7 @@ fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
         )
     }
 
+@JvmName("friendGoalWithAchievementToGoalItems")
 fun List<FriendGoalWithAchievement>.toGoalItemsForFriend(): List<GoalItem> =
     map { dto ->
         val typeLabel = dto.goalType.toCriteria()
