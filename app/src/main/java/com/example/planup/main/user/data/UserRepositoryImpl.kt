@@ -442,6 +442,14 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         // TODO:: 유저 정보, 토큰 정보 저장하는 로직 추가
                         val result = response.result
+
+                        tokenSaver.saveToken(result.accessToken)
+                        tokenSaver.saveRefreshToken(result.refreshToken)
+
+                        // 유저 정보도 바로 업데이트
+                        userInfoSaver.clearAllUserInfo()
+                        getUserInfo()
+
                         ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)

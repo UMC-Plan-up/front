@@ -11,6 +11,7 @@ class TokenSaver(
     companion object {
         private const val PREF_TOKEN_NAME = "Token"
         private const val TOKEN_KEY = "token"
+        private const val REFRESH_TOKEN_KEY = "refresh_token"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
@@ -21,8 +22,18 @@ class TokenSaver(
         }
     }
 
+    fun saveRefreshToken(refreshToken: String?) {
+        prefs.edit {
+            putString(REFRESH_TOKEN_KEY, refreshToken)
+        }
+    }
+
     fun getToken() : String? {
         return prefs.getString(TOKEN_KEY,null)
+    }
+
+    fun getRefreshToken(): String? {
+        return prefs.getString(REFRESH_TOKEN_KEY, null)
     }
 
     /**

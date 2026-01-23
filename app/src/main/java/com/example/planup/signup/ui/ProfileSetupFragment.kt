@@ -278,7 +278,6 @@ class ProfileSetupFragment : Fragment() {
                                 putLong("userId", result.id.toLong())
                                 putString("email", result.email)
                                 putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
-                                putString("profileImg", result.userInfo?.profileImg ?: activity.profileImgUrl ?: "")
                             }.apply()
 
                             App.jwt.token = "Bearer $accessToken"
