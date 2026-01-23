@@ -13,7 +13,7 @@ import com.example.planup.main.goal.item.GoalItemAlt
 import com.example.planup.signup.SignupActivity
 import com.example.planup.databinding.FragmentCommunityIntroBinding
 import com.example.planup.databinding.ItemGoalAltBinding
-import com.example.planup.goal.data.GoalViewModel
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 
 class CommunityIntroFragment : Fragment() {
 

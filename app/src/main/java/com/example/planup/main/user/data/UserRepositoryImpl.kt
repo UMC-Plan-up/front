@@ -11,14 +11,21 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
+import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.SignupLink
+import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
 import com.example.planup.password.data.PasswordChangeRequest
+import com.example.planup.signup.data.Agreement
+import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.example.planup.signup.data.ResendEmailRequest
+import com.example.planup.signup.data.SignupRequestDto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -103,40 +110,42 @@ class UserRepositoryImpl @Inject constructor(
             )
         }
 
-    override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                val request = EmailSendRequest(email)
-                userApi.emailLink(request)
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val emailSendResult = response.result
-                    ApiResult.Success(emailSendResult)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun sendMailForChange(email: String): ApiResult<EmailLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    val request = EmailSendRequest(email)
+                    userApi.emailLink(request)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val emailSendResult = response.result
+                        ApiResult.Success(emailSendResult)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
-    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> = withContext(Dispatchers.IO) {
-        safeResult(
-            response = {
-                val request = EmailSendRequest(email)
-                userApi
-                userApi.emailReLink(request)
-            },
-            onResponse = { response ->
-                if (response.isSuccess) {
-                    val emailSendResult = response.result
-                    ApiResult.Success(emailSendResult)
-                } else {
-                    ApiResult.Fail(response.message)
+    override suspend fun reSendMailForChange(email: String): ApiResult<EmailLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    val request = EmailSendRequest(email)
+                    userApi
+                    userApi.emailReLink(request)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val emailSendResult = response.result
+                        ApiResult.Success(emailSendResult)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
-            }
-        )
-    }
+            )
+        }
 
     override suspend fun changeNickName(newNickName: String) = withContext(Dispatchers.IO) {
         val prevName = userInfoSaver.getNickName()
@@ -383,6 +392,133 @@ class UserRepositoryImpl @Inject constructor(
                         val result = response.result
                         userInfoSaver.saveNotificationMarketing(result)
                         ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun checkEmailAvailable(email: String): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.checkEmailDuplicate(email)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun signup(
+        email: String,
+        password: String,
+        passwordCheck: String,
+        nickname: String,
+        gender: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<SignupResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.signup(SignupRequestDto(
+                        email = email,
+                        password = password,
+                        passwordCheck = passwordCheck,
+                        nickname = nickname,
+                        gender = gender,
+                        profileImg = profileImg,
+                        agreements = agreements
+                    ))
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        // TODO:: 유저 정보, 토큰 정보 저장하는 로직 추가
+                        val result = response.result
+
+                        tokenSaver.saveToken(result.accessToken)
+                        tokenSaver.saveRefreshToken(result.refreshToken)
+
+                        // 유저 정보도 바로 업데이트
+                        userInfoSaver.clearAllUserInfo()
+                        getUserInfo()
+
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun sendMailForSignup(email: String): ApiResult<SignupLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.sendEmail(EmailSendRequestDto(email))
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun resendMailForSignup(email: String): ApiResult<SignupLink> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.resendEmail(ResendEmailRequest(email))
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun checkEmailVerificationStatus(verificationToken: String): ApiResult<EmailVerificationStatus> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.checkEmailVerificationStatus(verificationToken)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun checkNicknameDuplicated(nickname: String): ApiResult<Boolean> =
+        withContext(Dispatchers.IO){
+            safeResult(
+                response = {
+                    userApi.checkNicknameDuplicate(nickname)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result.available)
                     } else {
                         ApiResult.Fail(response.message)
                     }

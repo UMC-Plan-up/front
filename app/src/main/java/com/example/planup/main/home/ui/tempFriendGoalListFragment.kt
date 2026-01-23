@@ -19,6 +19,7 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.home.adapter.FriendGoalListAdapter
+import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import com.example.planup.network.RetrofitInstance
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
@@ -198,14 +199,7 @@ class tempFriendGoalListFragment : Fragment() {
                             // 3. 결과 리스트에 추가
                             results.add(
                                 FriendGoalWithAchievement(
-                                    goalId = goal.goalId,
-                                    goalName = goal.goalName,
-                                    goalType = goal.goalType,
-                                    goalAmount = goal.goalAmount,
-                                    verificationType = goal.verificationType,
-                                    goalTime = goal.goalTime,
-                                    frequency = goal.frequency,
-                                    oneDose = goal.oneDose,
+                                    goal = goal,
                                     totalAchievement = achievement
                                 )
                             )
@@ -295,14 +289,3 @@ class tempFriendGoalListFragment : Fragment() {
         }
     }
 }
-data class FriendGoalWithAchievement(
-    val goalId: Int,
-    val goalName: String,
-    val goalType: String,
-    val goalAmount: String,
-    val verificationType: String,
-    val goalTime: Int,
-    val frequency: Int,
-    val oneDose: Int,
-    val totalAchievement: Int
-)

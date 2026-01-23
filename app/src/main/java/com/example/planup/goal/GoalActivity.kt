@@ -16,7 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
-import com.example.planup.goal.data.GoalViewModel
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment

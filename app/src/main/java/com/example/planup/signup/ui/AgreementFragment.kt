@@ -18,7 +18,7 @@ import com.example.planup.login.ui.LoginActivityNew
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.adapter.TermItemAdapter
-import com.example.planup.signup.data.TermItem
+import com.example.planup.network.dto.term.TermItem
 import kotlinx.coroutines.launch
 import com.example.planup.databinding.FragmentAgreementBinding
 import com.example.planup.databinding.PopupTermsBinding

@@ -28,7 +28,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 import com.bumptech.glide.Glide
-import com.example.planup.network.App
+import com.example.planup.App
 import com.example.planup.signup.data.*
 
 class ProfileSetupFragment : Fragment() {
@@ -258,7 +258,8 @@ class ProfileSetupFragment : Fragment() {
                         passwordCheck = restoredPw ?: "",
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList()
+                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList(),
+                        gender = ""
                     )
 
                     val response = RetrofitInstance.userApi.signup(request)
@@ -277,7 +278,6 @@ class ProfileSetupFragment : Fragment() {
                                 putLong("userId", result.id.toLong())
                                 putString("email", result.email)
                                 putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
-                                putString("profileImg", result.userInfo?.profileImg ?: activity.profileImgUrl ?: "")
                             }.apply()
 
                             App.jwt.token = "Bearer $accessToken"
@@ -479,7 +479,7 @@ class ProfileSetupFragment : Fragment() {
 
     private suspend fun checkNicknameDuplicate(nickname: String) {
         try {
-            val res = RetrofitInstance.userApi.checkNickname(nickname)
+            val res = RetrofitInstance.userApi.checkNicknameDuplicate(nickname)
             if (res.isSuccessful && res.body()?.isSuccess == true) {
                 val available = res.body()!!.result?.available == true
                 isNicknameAvailable = available

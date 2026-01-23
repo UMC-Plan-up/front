@@ -1,5 +1,6 @@
 package com.example.planup.network
 
+import com.example.planup.App
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -7,7 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-const val BASE_URL = "http://54.180.207.84:8080/"
+const val BASE_URL = "http://54.180.207.84/"
 
 
 //fun getRetrofit(): Retrofit {

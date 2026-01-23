@@ -11,6 +11,7 @@ import com.example.planup.main.goal.item.PostMemoResult
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.RetrofitInstance.goalApi
 import com.example.planup.network.data.TimerStartResult
 import com.example.planup.network.data.TimerStopResult
 import com.example.planup.network.data.TodayTotalTimeResult
@@ -30,41 +31,38 @@ class TimerRepository @Inject constructor(
 
     suspend fun getMyGoalList() : ApiResult<List<MyGoalListItem>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getMyGoalList(token)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getMyGoalList()
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
 
     suspend fun getFriendsTimer(goalId: Int) : ApiResult<List<FriendsTimerResult>> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getFriendsTimer(token, goalId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            val result = response.result
-                            ApiResult.Success(result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getFriendsTimer(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+                        ApiResult.Success(result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
+
         }
 
 
@@ -129,50 +127,44 @@ class TimerRepository @Inject constructor(
 
     suspend fun saveMemo(goalId: Int, date: String, memo: String): ApiResult<PostMemoResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.saveMemo(
-                            token,
-                            goalId,
-                            MemoRequest(memo, date, memo.isEmpty(), memo.trim())
-                        )
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            ApiResult.Success(response.result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.saveMemo(
+                        goalId,
+                        MemoRequest(memo, date, memo.isEmpty(), memo.trim())
+                    )
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     suspend fun getDateMemo(goalId: Int, date: String): ApiResult<DateMemoResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getDateMemo(token, goalId, date)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            ApiResult.Success(response.result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+            safeResult(
+                response = {
+                    goalApi.getDateMemo(goalId, date)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
-            }
+                }
+            )
         }
 
     suspend fun getEditGoal(goalId: Int): ApiResult<EditGoalResponse> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
-                safeResult(
-                    response = {
-                        goalApi.getEditGoal(token, goalId)
+            safeResult(
+                response = {
+                        goalApi.getEditGoal(goalId)
                     },
                     onResponse = { response ->
                         if (response.isSuccess) {
@@ -182,7 +174,7 @@ class TimerRepository @Inject constructor(
                         }
                     }
                 )
-            }
+
         }
 
 }

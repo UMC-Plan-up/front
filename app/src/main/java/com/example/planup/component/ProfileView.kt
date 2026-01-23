@@ -29,7 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.example.planup.R
 import com.example.planup.theme.Typography
@@ -43,6 +47,7 @@ fun ProfileView(
 ) {
     val context = LocalContext.current
 
+    var profileSize by remember { mutableStateOf(IntSize.Zero) }
     var openPopup by remember {
         mutableStateOf(false)
     }
@@ -66,9 +71,11 @@ fun ProfileView(
         }
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .size(60.dp)
-            .then(modifier)
+            .onSizeChanged { size ->
+                profileSize = size
+            }
     ) {
         CircleProfileImageView(
             modifier = Modifier
@@ -77,19 +84,22 @@ fun ProfileView(
             profileImage = profileUrl
         )
         Box(
-            modifier = Modifier
-                .size(20.dp)
-                .align(Alignment.BottomEnd),
+            modifier = with(LocalDensity.current) {
+                    Modifier.size((profileSize.width / 3).toDp())
+                }
+                .align(Alignment.BottomEnd)
         ) {
             IconButton(
                 onClick = {
                     openPopup = true
                 },
                 modifier = Modifier
-                    .size(20.dp),
+                    .fillMaxSize(),
             ) {
                 Icon(
-                    modifier = Modifier.background(Color.White),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.White),
                     painter = painterResource(R.drawable.badge_rewrite),
                     contentDescription = null
                 )
@@ -106,7 +116,7 @@ fun ProfileView(
                     text = {
                         Text(
                             text = "사진 보관함",
-                            style = com.example.planup.theme.Typography.Medium_SM
+                            style = Typography.Medium_SM
                         )
                     },
                     trailingIcon = {
@@ -153,4 +163,15 @@ fun ProfileView(
         }
 
     }
+}
+
+@Preview
+@Composable
+private fun ProfileViewPreview() {
+    ProfileView(
+        modifier = Modifier,
+        profileUrl = "",
+        onNewImageByPhotoPicker = {},
+        onNewImageByCamera = {}
+    )
 }

@@ -48,4 +48,11 @@ object Typography {
     val Medium_S   = style(14.sp)
     val Medium_XS  = style(12.sp)
     val Medium_2XS = style(11.sp)
+
+    // Regular
+    val Regular_XL  = style(18.sp)
+    val Regular_L   = style(16.sp)
+    val Regular_M  = style(14.sp)
+    val Regular_S   = style(12.sp)
+    val Regular_XS  = style(11.sp)
 }

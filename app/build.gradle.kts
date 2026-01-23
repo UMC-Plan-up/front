@@ -1,4 +1,9 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+val localProperties = Properties().apply {
+    load(rootProject.file("local.properties").inputStream())
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -22,11 +27,19 @@ android {
         versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val kakaoNativeKey = localProperties["KAKAO_NATIVE_KEY"].toString()
+
+        buildConfigField("String", "KAKAO_NATIVE_KEY",
+            kakaoNativeKey
+        )
+        manifestPlaceholders["kakao_scheme"] = "kakao${kakaoNativeKey.trim('"')}"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            //운영은 난독화 켜주세요.
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,6 +54,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 

@@ -13,7 +13,7 @@ import com.example.planup.R
 import com.example.planup.main.MainSnackbarViewModel
 import com.example.planup.main.friend.ui.FriendFragment
 import com.example.planup.main.friend.ui.viewmodel.FriendViewModel
-import com.example.planup.main.goal.ui.GoalFragment
+import com.example.planup.main.home.ui.FriendGoalListFragment
 
 
 /**
@@ -64,11 +64,13 @@ abstract class FriendFragmentBase() : Fragment() {
 
     protected fun goToFriendGoal(
         friendId: Int,
-        friendName: String
+        friendName: String,
+        friendProfile : String?
     ) {
-        val gaolFragment = GoalFragment.newInstance(
-            targetUserId = friendId,
-            targetNickname = friendName
+        val gaolFragment = FriendGoalListFragment.newInstance(
+            friendId = friendId,
+            friendName = friendName,
+            friendResId = friendProfile
         )
         parentFragmentManager.beginTransaction()
             .replace(R.id.main_container, gaolFragment)

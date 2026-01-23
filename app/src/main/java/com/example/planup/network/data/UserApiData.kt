@@ -55,11 +55,18 @@ data class InviteCodeValidate(
     @SerializedName("targetUserNickname") val targetUserNickname: String
 )
 
-//회원가입 시 이메일 인증 발송, 재발송
+// 회원가입 시 이메일 인증 발송, 재발송
 data class SignupLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
     @SerializedName("verificationToken") val token: String
+)
+
+// 이메일 인증 토큰 검사 여부
+data class EmailVerificationStatus(
+    @SerializedName("verified") val verified: Boolean,
+    @SerializedName("email") val email: String,
+    @SerializedName("tokenStatus") val status: String
 )
 
 data class EmailSendRequest(
@@ -83,4 +90,28 @@ data class KakaoUser(
     @SerializedName("email") val email: String,
     @SerializedName("nickname") val nickname: String,
     @SerializedName("profileImg") val profileImg: String
+)
+
+// 이메일 중복 검사
+data class EmailCheckDuplicated(
+    @SerializedName("available") val available: Boolean,
+    @SerializedName("message") val message: String
+)
+
+// 닉네임 중복 검사
+data class NicknameCheckDuplicated(
+    @SerializedName("available") val available: Boolean,
+    @SerializedName("message") val message: String
+)
+
+data class SignupResult(
+    @SerializedName("id") val id: Int,
+    @SerializedName("email") val email: String,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("userInfo") val userInfo: UserInfo?
+)
+
+data class UserInfo(
+    @SerializedName("nickname") val nickname: String
 )

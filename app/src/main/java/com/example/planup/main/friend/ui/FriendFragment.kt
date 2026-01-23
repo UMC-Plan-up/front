@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -87,7 +89,7 @@ class FriendFragment : FriendFragmentBase() {
                     goToFriendDepth2(FriendInviteFragment())
                 },
                 goFriendGoal = { friendInfo ->
-                    goToFriendGoal(friendInfo.id,friendInfo.nickname)
+                    goToFriendGoal(friendInfo.id,friendInfo.nickname,friendInfo.profileImage)
                 },
                 friendList = friendList,
                 showBadge = showBadge
@@ -130,7 +132,8 @@ private fun FriendHomeView(
                         .padding(top = 20.dp)
                 ) {
                     TopHeader(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .height(36.dp),
                         title = stringResource(R.string.friend_title),
                         onBackAction = null,
@@ -173,23 +176,29 @@ private fun FriendHomeView(
                     )
                 }
                 Spacer(Modifier.height(24.dp))
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(
-                        friendList,
-                        key = FriendInfo::id
-                    ) { friendInfo ->
-                        FriendItem(
-                            friendInfo = friendInfo,
-                            onClick = {
-                                goFriendGoal(friendInfo)
-                            }
-                        )
+                if (friendList.isNotEmpty()) {
+                    //친구 목록이 있는 경우
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        items(
+                            friendList,
+                            key = FriendInfo::id
+                        ) { friendInfo ->
+                            FriendItem(
+                                friendInfo = friendInfo,
+                                onClick = {
+                                    goFriendGoal(friendInfo)
+                                }
+                            )
+                        }
+                        item {
+                            Spacer(Modifier.height(20.dp))
+                        }
                     }
-                    item {
-                        Spacer(Modifier.height(20.dp))
-                    }
+                } else {
+                    //친구 목록이 없는 경우
+                    FriendNoDataView()
                 }
             }
             Box(
@@ -356,5 +365,31 @@ private fun FriendItemPreview(
             friendInfo = friendInfo,
             onClick = {}
         )
+    }
+}
+
+
+@Preview(showBackground = true)
+@Composable
+private fun FriendNoDataView() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.friend_no_data_icon),
+                contentDescription = null
+            )
+
+            Text(
+                text = "함께 목표를 달성할\n친구를 추가해 보세요!",
+                style = Typography.Medium_SM,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }

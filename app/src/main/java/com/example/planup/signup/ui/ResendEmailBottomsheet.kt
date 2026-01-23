@@ -18,7 +18,7 @@ import com.kakao.sdk.auth.AuthCodeClient
 import com.kakao.sdk.user.UserApiClient
 import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.KakaoLoginRequest
-import com.example.planup.network.App
+import com.example.planup.App
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 

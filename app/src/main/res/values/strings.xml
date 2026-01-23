@@ -66,17 +66,33 @@
     <string name="signup_password_condition_match">비밀번호 일치</string>
     <string name="signup_verify_title">본인인증을\n진행해 주세요</string>
     <string name="signup_verify_email_sent">이메일로 링크를 보내드렸어요!</string>
+    <string name="signup_verify_email_complete">인증을 완료했어요</string>
+    <string name="signup_verify_email_lost">이메일을 받지 못하셨나요?</string>
+    <string name="signup_finish">회원가입이 완료되었어요!</string>
 
     <string name="profile_setup_title">프로필 설정</string>
+    <string name="profile_name_label">이름</string>
+    <string name="profile_name_input_hint">이름을 입력하세요</string>
+    <string name="profile_name_error_required">* 필수 입력란입니다.</string>
+    <string name="profile_name_error_length">* 공백 포함 한글 15자, 영어 20자 이내로 입력해 주세요.</string>
+    <string name="profile_name_error_special_char">* 숫자, 특수문자는 사용할 수 없습니다.</string>
+    <string name="profile_gender_label">성별</string>
+    <string name="profile_gender_male">남성</string>
+    <string name="profile_gender_female">여성</string>
+    <string name="profile_birth_label">생년월일</string>
+    <string name="profile_birth_year">연도</string>
+    <string name="profile_birth_month">월</string>
+    <string name="profile_birth_day">일</string>
     <string name="profile_nickname_label">닉네임 설정</string>
     <string name="profile_nickname_error_duplicate">* 이미 사용 중인 닉네임입니다.</string>
+    <string name="profile_nickname_available">* 사용 가능한 닉네임입니다.</string>
     <string name="profile_nickname_error_length">* 20자 이내로 입력해 주세요.</string>
 
-    <string name="invite_code_share">초대코드를 공유해\n친구와 팔로우하세요!</string>
+    <string name="invite_code_share">누구와 첫 목표를 공유할까요?\n초대코드를 공유해\n친구와 팔로우하세요!</string>
     <string name="invite_code_input">친구에게\n초대받으셨다면,\n받은 코드를 입력해주세요!</string>
     <string name="invite_code_input_hint">초대코드 입력란</string>
+    <string name="invite_code_input_caption">* 상대방이 친구 신청을 수락하면 팔로우가 완료됩니다.</string>
 
-    <string name="friend_added_message">____님과 친구가 되었어요!</string>
     <string name="friend_description">%s님과 친구가 되었어요!</string>
     <string name="friend_new">새로운 친구</string>
 
@@ -159,6 +175,7 @@
     <string name="agreement_optional_notice">선택 사항에 대한 동의를 거부하는 경우에도 서비스는 이용이 가능합니다.</string>
     <string name="agreement_required_age">[필수] 만 14세 이상입니다</string>
     <string name="agreement_required_terms">[필수] 이용약관 동의</string>
+    <string name="agreement_required_privacy">[필수] 개인정보 수집 및 이용 동의</string>
     <string name="agreement_optional_marketing">[선택] 마케팅 목적의 개인정보 수집 및 이용 동의</string>
     <string name="agreement_optional_ad">[선택] 광고성 정보 수신 동의</string>
     <string name="privacy_notice">정보주체의 개인정보 및 권리 보호를 위해 「개인정보 보호법」 및 관계 법령이 정한 바를 준수하여 안전하게 관리하고 있습니다. 자세한 사항은 개인정보처리방침에서 확인할 수 있습니다.</string>
@@ -469,6 +486,7 @@
     <string name="btn_delete">삭제</string>
     <string name="btn_block">차단</string>
     <string name="btn_report">신고</string>
+    <string name="btn_duplication_check">중복 확인</string>
 
 
     <!-- 토스트 메시지 -->
@@ -481,6 +499,7 @@
     <string name="toast_report">신고가 완료되었습니다.</string>
     <string name="toast_alert_setting">알림 설정 내역이 저장되었어요.</string>
     <string name="toast_invite_invalid">유효하지 않은 초대코드입니다.</string>'
+    <string name="toast_profile_not_filled">프로필 설정을 완료해 주세요.</string>
     <string name="toast_participant_limit">1이상의 숫자를 입력해 주세요.</string>
     <string name="toast_unblock">%1$s님을 차단 해제했습니다.</string>
     <string name="toast_block">%1$s님을 차단했습니다.</string>
@@ -518,6 +537,7 @@
     <string name="error_already_nickname">이미 사용 중인 닉네임 입니다</string>
     <string name="error_category">1개의 카테고리를 필수로 선택해 주세요.</string>
     <string name="error_category_name">1글자 이상 카테고리명을 입력해 주세요.</string>
+    <string name="error_invalid_invite_code">유효하지 않은 초대코드입니다.</string>
 
     <!-- 팝업 메시지 -->
     <string name="popup_ask_logout">로그아웃 하시겠어요?</string>
