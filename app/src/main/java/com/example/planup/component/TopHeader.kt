@@ -3,6 +3,7 @@ package com.example.planup.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -19,9 +20,16 @@ import com.example.planup.theme.Typography
 @Composable
 fun TopHeader(
     modifier: Modifier = Modifier,
+    useNavigation: Boolean = true,
+    navigationIcon: @Composable () -> Unit = {
+        Icon(
+            painter = painterResource(R.drawable.ic_arrow_left),
+            null
+        )
+    },
     onBackAction: (() -> Unit)? = null,
     otherActionContent: @Composable RowScope.() -> Unit = {},
-    textStyle : TextStyle = Typography.Medium_2XL,
+    textStyle: TextStyle = Typography.Medium_2XL,
     title: String,
 ) {
     Row(
@@ -33,14 +41,11 @@ fun TopHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            onBackAction?.let { onBack ->
+            if (useNavigation) {
                 IconButton(
-                    onClick = onBack
+                    onClick = onBackAction ?: {},
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
-                        null
-                    )
+                    navigationIcon()
                 }
             }
             Text(

@@ -75,7 +75,7 @@
     <string name="profile_name_input_hint">이름을 입력하세요</string>
     <string name="profile_name_error_required">* 필수 입력란입니다.</string>
     <string name="profile_name_error_length">* 공백 포함 한글 15자, 영어 20자 이내로 입력해 주세요.</string>
-    <string name="profile_name_error_special_char">* 특수문자는 사용할 수 없습니다.</string>
+    <string name="profile_name_error_special_char">* 숫자, 특수문자는 사용할 수 없습니다.</string>
     <string name="profile_gender_label">성별</string>
     <string name="profile_gender_male">남성</string>
     <string name="profile_gender_female">여성</string>
@@ -88,11 +88,11 @@
     <string name="profile_nickname_available">* 사용 가능한 닉네임입니다.</string>
     <string name="profile_nickname_error_length">* 20자 이내로 입력해 주세요.</string>
 
-    <string name="invite_code_share">초대코드를 공유해\n친구와 팔로우하세요!</string>
+    <string name="invite_code_share">누구와 첫 목표를 공유할까요?\n초대코드를 공유해\n친구와 팔로우하세요!</string>
     <string name="invite_code_input">친구에게\n초대받으셨다면,\n받은 코드를 입력해주세요!</string>
     <string name="invite_code_input_hint">초대코드 입력란</string>
+    <string name="invite_code_input_caption">* 상대방이 친구 신청을 수락하면 팔로우가 완료됩니다.</string>
 
-    <string name="friend_added_message">____님과 친구가 되었어요!</string>
     <string name="friend_description">%s님과 친구가 되었어요!</string>
     <string name="friend_new">새로운 친구</string>
 
@@ -537,6 +537,7 @@
     <string name="error_already_nickname">이미 사용 중인 닉네임 입니다</string>
     <string name="error_category">1개의 카테고리를 필수로 선택해 주세요.</string>
     <string name="error_category_name">1글자 이상 카테고리명을 입력해 주세요.</string>
+    <string name="error_invalid_invite_code">유효하지 않은 초대코드입니다.</string>
 
     <!-- 팝업 메시지 -->
     <string name="popup_ask_logout">로그아웃 하시겠어요?</string>

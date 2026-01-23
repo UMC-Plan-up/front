@@ -27,14 +27,11 @@ import com.example.planup.main.MainActivity
 import com.example.planup.App
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.UserController
+import com.example.planup.onboarding.OnBoardingActivity
 import com.example.planup.password.ResetPasswordActivity
-import com.example.planup.signup.SignupActivity
 import com.example.planup.signup.data.KakaoLoginRequest
-import com.example.planup.util.KakaoServiceHandler
 import com.kakao.sdk.auth.AuthCodeClient
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -87,7 +84,7 @@ class LoginActivityNew: AppCompatActivity() {
 
         // 회원가입 화면 전환
         binding.signupButton.setOnClickListener {
-            val intent = Intent(this, SignupActivity::class.java)
+            val intent = Intent(this, OnBoardingActivity::class.java)
             startActivity(intent)
         }
 
@@ -271,7 +268,7 @@ class LoginActivityNew: AppCompatActivity() {
 
                     if (r.newUser) {
                         startActivity(
-                            Intent(this@LoginActivityNew, SignupActivity::class.java).apply {
+                            Intent(this@LoginActivityNew, OnBoardingActivity::class.java).apply {
                                 putExtra("provider", "KAKAO")
                                 putExtra("tempUserId", r.tempUserId ?: "")
                                 putExtra("email", r.userInfo?.email)

@@ -372,7 +372,7 @@ class OnBoardingViewModel @Inject constructor(
                 }
 
                 OnboardingStep.Verification -> {
-                    if (true) {
+                    if (checkEmailVerification()) {
                         sendNavigateEvent(next)
                     } else {
                         // TODO:: 오류 메세지

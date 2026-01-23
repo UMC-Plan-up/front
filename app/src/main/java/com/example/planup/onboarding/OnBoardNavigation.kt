@@ -16,8 +16,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import kotlinx.serialization.Serializable
 
-// TODO:: 키보드 올라오면 버튼도 같이 올라오도록 수정
-
 @Composable
 fun OnboardNavHost(
     currentStep: OnboardingStep,
@@ -110,9 +108,3 @@ object OnBoardVerificationRoute
 
 @Serializable
 object OnBoardProfileRoute
-
-@Serializable
-object OnBoardShareFriendCodeRoute
-
-@Serializable
-object OnBoardShareInviteRoute
