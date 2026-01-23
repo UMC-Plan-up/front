@@ -96,6 +96,11 @@ interface GoalApi {
         @Body comment: CreateCommentRequest
     ): CreateCommentResponse
 
+    @PUT("/goals/{goalId}")
+    suspend fun editGoal(
+        @Path("goalId") goalId: Int,
+        @Body editGoalRequest: EditGoalRequest
+    ): EditGoalApiResponse
     @GET("/goals/{goalId}/edit")
     suspend fun getEditGoal(
         @Header("Authorization") token: String,
