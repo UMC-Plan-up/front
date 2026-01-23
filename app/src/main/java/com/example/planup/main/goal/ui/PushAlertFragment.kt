@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
@@ -29,9 +30,14 @@ import com.example.planup.goal.ui.ParticipantLimitFragment
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.main.goal.item.GoalRetrofitInstance.api
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.network.GoalApi
+import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import kotlin.getValue
 
 class PushAlertFragment : Fragment() {
     private var _binding: FragmentPushAlertBinding? = null
@@ -54,6 +60,7 @@ class PushAlertFragment : Fragment() {
     private var verificationType: String = ""
     private var limitFriendCount: Int = 0
     private var goalTime: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,15 +106,6 @@ class PushAlertFragment : Fragment() {
             )
             Log.d("EditGoalFragment", "$request")
             updateGoal(goalId = goalId, request = request)
-            val nextfragment = EditGoalCompleteFragment()
-            val bundle = Bundle().apply {
-                putString("goalId", goalId.toString())
-            }
-            nextfragment.arguments = bundle
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
-                .addToBackStack(null)
-                .commit()
         }
 
         return binding.root
@@ -116,11 +114,14 @@ class PushAlertFragment : Fragment() {
     private fun updateGoal(goalId: Int, request: EditGoalRequest) {
         lifecycleScope.launch {
             try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val token = prefs.getString("accessToken", null)
-                val response = apiService.editGoal(token = "Bearer $token", goalId = goalId, request)
+//                val token = prefs.getString("accessToken", null)
+                val response = RetrofitInstance.goalApi.editGoal(goalId = goalId, request)
                 if (response.isSuccess){
                     val nextfragment = EditGoalCompleteFragment()
+                    val bundle = Bundle().apply {
+                        putString("goalId", goalId.toString())
+                    }
+                    nextfragment.arguments = bundle
                     requireActivity().supportFragmentManager.beginTransaction()
                         .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
                         .addToBackStack(null)

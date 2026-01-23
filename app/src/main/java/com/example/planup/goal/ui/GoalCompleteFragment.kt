@@ -20,6 +20,7 @@ import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.data.Goal
 import com.example.planup.network.RetrofitInstance
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -29,6 +30,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
+@AndroidEntryPoint
 class GoalCompleteFragment : Fragment() {
 
     private var _binding: FragmentGoalCompleteBinding? = null
@@ -36,7 +38,7 @@ class GoalCompleteFragment : Fragment() {
     private val ISO_UTC_MILLIS: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(ZoneOffset.UTC)
-//    private val viewModel: GoalViewModel by viewModels()
+    private val viewModel: GoalViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -140,43 +142,57 @@ class GoalCompleteFragment : Fragment() {
         Log.d("GoalDebug", "Final API Request GoalName: ${req.goalName}")
         Log.d("GoalDebug", "Final API Request Body: $req")
 
-        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val token = prefs.getString("accessToken", "") ?: ""
-        if (token.isBlank()) {
-            return
-        }
+//        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+//        val token = prefs.getString("accessToken", "") ?: ""
+//        if (token.isBlank()) {
+//            return
+//        }
 
-        val authHeader = "Bearer $token"
+//        val authHeader = "Bearer $token"
         binding.startPlanUpButton.isEnabled = false
+        viewModel.createGoal(req,
+            action = {
+                (requireActivity() as GoalActivity).saveGoalData()
 
-        lifecycleScope.launch {
-            runCatching {
-                withContext(Dispatchers.IO) {
-                    RetrofitInstance.goalApi.createGoal(authHeader, req)
-                }
-            }.onSuccess { resp ->
-                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
-                    (requireActivity() as GoalActivity).saveGoalData()
-
-                    goHome()
-                } else {
-                    val msg = resp.body()?.message ?: resp.errorBody()?.string().orEmpty()
-                    Toast.makeText(
-                        requireContext(),
-                        msg.ifBlank { "요청 실패" },
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    binding.startPlanUpButton.isEnabled = true
-                }
-            }.onFailure { e ->
+                goHome()
+            },
+            message = {
                 Toast.makeText(
                     requireContext(),
-                    "네트워크 오류: ${e.message}",
+                    it.ifBlank { "요청 실패" },
                     Toast.LENGTH_SHORT
                 ).show()
                 binding.startPlanUpButton.isEnabled = true
             }
-        }
+        )
+//        lifecycleScope.launch {
+//            runCatching {
+//                withContext(Dispatchers.IO) {
+//                    RetrofitInstance.goalApi.createGoal(authHeader, req)
+//                }
+//            }.onSuccess { resp ->
+//                if (resp.isSuccessful && resp.body()?.isSuccess == true) {
+//                    (requireActivity() as GoalActivity).saveGoalData()
+//
+//                    goHome()
+//                } else {
+//                    val msg = resp.body()?.message ?: resp.errorBody()?.string().orEmpty()
+//                    Toast.makeText(
+//                        requireContext(),
+//                        msg.ifBlank { "요청 실패" },
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                    binding.startPlanUpButton.isEnabled = true
+//                }
+//            }.onFailure { e ->
+//                Toast.makeText(
+//                    requireContext(),
+//                    "네트워크 오류: ${e.message}",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                binding.startPlanUpButton.isEnabled = true
+//            }
+//        }
     }
 
 
