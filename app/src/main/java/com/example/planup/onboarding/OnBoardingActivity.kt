@@ -1,7 +1,10 @@
 package com.example.planup.onboarding
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -106,6 +109,45 @@ class OnBoardingActivity: AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    companion object {
+        private const val QUERY_NAME = "name"
+        private const val QUERY_VERIFIED = "verified"
+        private const val QUERY_TOKEN = "token"
+
+        fun getIntent(context: Context, deeplink: Uri): Intent {
+            val parameters = getQueryParameters(deeplink)
+
+            val intent = Intent(context, OnBoardingActivity::class.java)
+                .apply {
+                    parameters.forEach { key, value ->
+                        putExtra(key, value)
+                    }
+                }
+            return intent
+        }
+
+        private fun getQueryParameters(deeplink: Uri): Map<String, String> {
+            val parameters = deeplink.queryParameterNames.also {
+                // 딥링크에 요구하는 파라미터가 다 들어왔는지 확인
+                if(it.contains(QUERY_NAME) || it.contains(QUERY_VERIFIED) || it.contains(QUERY_TOKEN)) {
+                    Log.e("OnBoardingActivity", "Deeplink parameter is missing $deeplink")
+                }
+            }.associateWith { name ->
+                // 데이터 추출
+                deeplink.getQueryParameter(name).let {
+                    if (it.isNullOrBlank()) {
+                        Log.e("OnBoardingActivity", "Deeplink parameter is empty: $name")
+                        ""
+                    } else {
+                        it
+                    }
+                }
+            }
+
+            return parameters
         }
     }
 }

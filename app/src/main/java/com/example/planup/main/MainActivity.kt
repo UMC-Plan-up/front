@@ -1,5 +1,6 @@
 package com.example.planup.main
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
@@ -12,7 +13,6 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.core.view.ViewCompat
@@ -318,5 +318,14 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    companion object {
+        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+            .apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                )
+            }
     }
 }
