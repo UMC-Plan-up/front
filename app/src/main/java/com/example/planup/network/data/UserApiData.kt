@@ -113,8 +113,5 @@ data class SignupResult(
 )
 
 data class UserInfo(
-    @SerializedName("id") val id: Int,
-    @SerializedName("email") val email: String,
-    @SerializedName("nickname") val nickname: String,
-    @SerializedName("profileImg") val profileImg: String
+    @SerializedName("nickname") val nickname: String
 )
