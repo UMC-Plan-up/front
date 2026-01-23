@@ -11,6 +11,7 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -21,12 +22,14 @@ import com.example.planup.goal.ui.GoalDetailFragment
 import com.example.planup.goal.ui.PushAlertFragment
 import com.example.planup.goal.ui.GoalSelectFragment
 import com.example.planup.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GoalActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityGoalBinding
     lateinit var goalOwnerName: String
-
+    val goalViewModel : GoalViewModel by viewModels()
     var goalName: String = ""
     var goalAmount: String = ""
     var goalCategory: String = ""
@@ -103,7 +106,6 @@ class GoalActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val goalViewModel = ViewModelProvider(this).get(GoalViewModel::class.java)
         goalViewModel.fromWhere.value = intent.getStringExtra("TO_CHALLENGE_FROM")
         //Log.d("okhttpasdfdsfdassssss", goalViewModel.fromWhere.value.toString())
         binding = ActivityGoalBinding.inflate(layoutInflater)
