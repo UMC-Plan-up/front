@@ -18,10 +18,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,6 +39,7 @@ import com.example.planup.R
 import com.example.planup.component.TopHeader
 import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.goal.GoalActivity
+import com.example.planup.onboarding.component.AcceptFriendRequestDialog
 import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
@@ -51,6 +55,7 @@ class InviteCodeActivity : AppCompatActivity() {
             val navController = rememberNavController()
             val errorSnackBarHost = remember { SnackbarHostState() }
             val inviteCode by viewModel.inviteCode.collectAsStateWithLifecycle()
+            var isAcceptDialogVisible by remember { mutableStateOf(false) }
 
             Box {
                 InviteCodeScreen(
@@ -75,6 +80,16 @@ class InviteCodeActivity : AppCompatActivity() {
                         .padding(bottom = 60.dp),
                     hostState = errorSnackBarHost
                 )
+
+                if(isAcceptDialogVisible) {
+                    AcceptFriendRequestDialog(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        nickname = "사용자",
+                        onConfirm = { isAcceptDialogVisible = false },
+                        onDismissRequest = { isAcceptDialogVisible = false }
+                    )
+                }
             }
 
             LaunchedEffect(Unit) {
@@ -112,7 +127,7 @@ class InviteCodeActivity : AppCompatActivity() {
                         }
 
                         InviteCodeViewModel.Event.AcceptFriendRequest -> {
-                            // 성공 다이얼로그 보이기
+                            isAcceptDialogVisible = true
                         }
                     }
                 }

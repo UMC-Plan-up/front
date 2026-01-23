@@ -93,7 +93,6 @@
     <string name="invite_code_input_hint">초대코드 입력란</string>
     <string name="invite_code_input_caption">* 상대방이 친구 신청을 수락하면 팔로우가 완료됩니다.</string>
 
-    <string name="friend_added_message">____님과 친구가 되었어요!</string>
     <string name="friend_description">%s님과 친구가 되었어요!</string>
     <string name="friend_new">새로운 친구</string>
 

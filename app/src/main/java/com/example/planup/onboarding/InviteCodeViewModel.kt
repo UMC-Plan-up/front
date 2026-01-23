@@ -1,5 +1,6 @@
 package com.example.planup.onboarding
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
@@ -63,12 +64,13 @@ class InviteCodeViewModel @Inject constructor(
 
     fun sendFriendRequest(input: String) {
         viewModelScope.launch {
-            userRepository.validateInviteCode(input)
+            userRepository.validateInviteCode(input.trim())
                 .onSuccess {
                     _event.send(Event.AcceptFriendRequest)
                 }
                 .onFailWithMessage {
                     // 네트워크 오류는 어떻게 표시?
+                    Log.e("InviteCodeViewModel", "sendFriendRequest failed: $it")
                     _event.send(Event.InvalidInviteCode)
                 }
         }
