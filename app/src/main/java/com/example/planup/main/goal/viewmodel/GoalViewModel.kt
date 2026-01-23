@@ -3,8 +3,10 @@ package com.example.planup.main.goal.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.data.GoalResult
 import com.example.planup.goal.domain.toGoalItems
-import com.example.planup.goal.domain.toGoalItemsForFriend
+import com.example.planup.goal.domain.toGoalItemsForFriendAchieve
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
@@ -104,7 +106,7 @@ class GoalViewModel @Inject constructor(
                                     totalAchievement = achieveRes.data.totalAchievement
                                 )
                             )
-                            onCallBack(ApiResult.Success(resultList.toGoalItemsForFriend()))
+                            onCallBack(ApiResult.Success(resultList.toGoalItemsForFriendAchieve()))
                         }
                     }
 
@@ -151,6 +153,18 @@ class GoalViewModel @Inject constructor(
             }.onFailWithMessage {
 
             }
+        }
+    }
+
+    fun createGoal(goalCreateRequest: GoalCreateRequest, action: (GoalResult) -> Unit, message: (String)-> Unit){
+        viewModelScope.launch {
+            goalRepository.createGoal(goalCreateRequest)
+                .onSuccess {
+                    action(it)
+                }
+                .onFailWithMessage {
+                    message(it)
+                }
         }
     }
 
