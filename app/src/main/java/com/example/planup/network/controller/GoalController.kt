@@ -1,7 +1,6 @@
 package com.example.planup.network.controller
 
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.network.getRetrofit
 import com.example.planup.network.port.GoalPort
 import retrofit2.Callback
 import retrofit2.Call
