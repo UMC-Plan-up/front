@@ -77,7 +77,7 @@ fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
     }
 
 @JvmName("friendGoalWithAchievementToGoalItems")
-fun List<FriendGoalWithAchievement>.toGoalItemsForFriend(): List<GoalItem> =
+fun List<FriendGoalWithAchievement>.toGoalItemsForFriendAchieve(): List<GoalItem> =
     map { dto ->
         val typeLabel = dto.goalType.toCriteria()
         val criteria = "$typeLabel ${dto.frequency}번 이상"
