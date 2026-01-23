@@ -75,7 +75,7 @@
     <string name="profile_name_input_hint">이름을 입력하세요</string>
     <string name="profile_name_error_required">* 필수 입력란입니다.</string>
     <string name="profile_name_error_length">* 공백 포함 한글 15자, 영어 20자 이내로 입력해 주세요.</string>
-    <string name="profile_name_error_special_char">* 특수문자는 사용할 수 없습니다.</string>
+    <string name="profile_name_error_special_char">* 숫자, 특수문자는 사용할 수 없습니다.</string>
     <string name="profile_gender_label">성별</string>
     <string name="profile_gender_male">남성</string>
     <string name="profile_gender_female">여성</string>
