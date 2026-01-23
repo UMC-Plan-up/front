@@ -47,10 +47,12 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.time.LocalDate
 
+@AndroidEntryPoint
 class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private lateinit var prefs : SharedPreferences
     lateinit var binding: FragmentGoalBinding
@@ -130,7 +132,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        prefs = (context as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+        prefs = (requireActivity() as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
 
         val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
 
