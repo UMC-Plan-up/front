@@ -7,15 +7,23 @@ import android.util.Log
 import com.example.planup.main.MainActivity
 import com.example.planup.onboarding.OnBoardingActivity
 
-// planup://profile/setup?email=signuptest1%40test.com&verified=true&token=0db96b11-d499-4dd1-bd1b-06664eba43f5&from=email_verification
-
-enum class DeeplinkInfo(host: String) {
-    PROFILE_SETUP(host = "profile") {
+enum class DeeplinkInfo(val host: String, val path: String) {
+    PROFILE_SETUP(host = "profile", path = "/setup") {
+        override val needMainForParents: Boolean = false
         override fun getIntent(context: Context, deeplink: Uri): Intent {
             return OnBoardingActivity.getIntent(context, deeplink)
         }
+    },
+
+    EMAIL_CHANGE(host = "email", path = "/change") {
+        override val needMainForParents: Boolean = false
+        override fun getIntent(context: Context, deeplink: Uri): Intent {
+            return MainActivity.getIntent(context, deeplink)
+        }
     };
 
+
+    open val needMainForParents = true
     abstract fun getIntent(context: Context, deeplink: Uri): Intent
 
     companion object {
@@ -27,14 +35,20 @@ enum class DeeplinkInfo(host: String) {
             val path = deeplink.path
 
             if (host == null || path == null) {
-                Log.e("DeePlinkInfo", "Deeplink host or path is null: $host, $path")
+                Log.e("DeeplinkInfo", "Deeplink host or path is null: $host, $path")
             }
 
             // host, path 에 따른 딥링크 연결 정보
-            return if (host == "profile" && path == "setup")
-                PROFILE_SETUP
-            else
-                null
+            Log.d("DeeplinkInfo", "host: $host, path: $path")
+            DeeplinkInfo.entries.forEach { it ->
+                if (it.host == host && it.path == path) {
+                    return it
+                }
+            }
+
+            // DeeplinkInfo 에 저장된 딥링크가 아닌 경우 핸들링하지 않음
+            Log.e("DeeplinkInfo", "The deeplink does not match any DeeplinkInfo: $host, $path")
+            return null
         }
     }
 }
