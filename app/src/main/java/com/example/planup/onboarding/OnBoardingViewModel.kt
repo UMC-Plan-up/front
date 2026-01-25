@@ -66,6 +66,11 @@ class OnBoardingViewModel @Inject constructor(
         fetchRandomNickname()
     }
 
+    val verifiedEmail: StateFlow<String?> =
+        savedStateHandle.getStateFlow(KEY_VERIFIED_EMAIL, null)
+    val verificationToken: StateFlow<String?> =
+        savedStateHandle.getStateFlow(KEY_VERIFICATION_TOKEN, null)
+
     private val _state: MutableStateFlow<OnBoardingState> = MutableStateFlow(OnBoardingState())
     val state: StateFlow<OnBoardingState> = _state.asStateFlow()
 
@@ -146,8 +151,8 @@ class OnBoardingViewModel @Inject constructor(
                     _state.update { it.copy(isDuplicatedEmail = !available) }
                 }
                 .onFailWithMessage {
-                    //TODO :: 오류 메세지
                     Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
+                    _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
 
                     isDuplicated = true
                     _state.update { it.copy(isDuplicatedEmail = true) }
@@ -157,54 +162,82 @@ class OnBoardingViewModel @Inject constructor(
         return isDuplicated
     }
 
+    // 이메일 인증 여부 검사
     suspend fun checkEmailVerification(): Boolean {
         var isVerified = false
-        val verificationToken = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
-
-        if (verificationToken == null) return false
 
         viewModelScope.async {
-            userRepository.checkEmailVerificationStatus(verificationToken)
+            if (verificationToken.value == null) {
+                isVerified = false
+                return@async
+            } else if (verifiedEmail.value == state.value.email) {
+                // 메일을 인증받고 다른 메일로 변경하여 다시 인증하는 경우
+                isVerified = true
+                return@async
+            }
+
+            userRepository.checkEmailVerificationStatus(verificationToken.value ?: "")
                 .onSuccess { status ->
                     isVerified = status.verified
-                    Log.e("OnBoardingViewModel", "이메일 인증 호출 성공 $status")
+                    Log.d("OnBoardingViewModel", "이메일 인증 호출 성공 $status")
                 }
                 .onFailWithMessage {
                     isVerified = false
-                    // TODO:: 오류 메세지
                     Log.e("OnBoardingViewModel", "이메일 인증 실패 $it")
+                    _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
                 }
         }.await()
+
+        if (isVerified) {
+            savedStateHandle[KEY_VERIFIED_EMAIL] = state.value.email
+        }
 
         return isVerified
     }
 
+    // 인증 이메일 발송
     fun resendEmailVerification() {
+        // 이미 인증받은 메일이라면 바로 다음 단계로 진행
+        if (verifiedEmail.value == state.value.email) {
+            proceedNextStep(OnboardingStep.Verification)
+            return
+        }
+
         viewModelScope.launch {
-            val token = savedStateHandle.get<String>(KEY_VERIFICATION_TOKEN)
+            userRepository.sendMailForSignup(state.value.email)
+                .onSuccess {
+                    // 인증 유무를 확인하기 위한 토큰 저장
+                    savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
+                }
+                .onFailWithMessage { msg ->
+                    if (msg == "이미 인증된 이메일입니다.") {
+                        proceedNextStep(OnboardingStep.Verification)
+                    }
+                    Log.e("OnBoardingViewModel", "resendEmailVerification| $msg")
+                    _snackBarEvent.send(SnackBarEvent.UndefinedError("resendEmailVerification| $msg"))
+                }
+        }
+    }
 
-            // TODO:: API 변경되면 수정
-            if (token == null) {
-                // 최초로 보낸 경우
-                userRepository.sendMailForSignup(state.value.email)
-                    .onSuccess {
-                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
-                    }
-                    .onFailWithMessage {
-                        // TODO:: 오류 메세지
+    // 딥링크로 전달된 이메일, 토큰을 비교
+    fun validateDeeplink(verifiedEmail: String, verifiedToken: String) {
+        if (verifiedEmail != state.value.email || verifiedToken != verificationToken.value) {
+            // 이메일을 변경하고 메일 인증을 진행했거나 가장 최근에 보낸 메일로 인증하지 않은 경우
 
-                    }
-            } else {
-                // 다시 보내는 경우
-                userRepository.resendMailForSignup(state.value.email)
-                    .onSuccess {
-                        savedStateHandle[KEY_VERIFICATION_TOKEN] = it.token
-                    }
-                    .onFailWithMessage {
-                        // TODO:: 오류 메세지
+            Log.e(
+                "OnBoardingViewModel", "메일 인증 실패: " +
+                        "\n\tverifiedEmail: $verifiedEmail" +
+                        "\n\tcurrentEmail: ${state.value.email}" +
+                        "\n\tverifiedToken: $verifiedToken" +
+                        "\n\tcurrentToken: ${verificationToken.value}"
+            )
 
-                    }
+            viewModelScope.launch {
+                _snackBarEvent.send(SnackBarEvent.UndefinedError(""))
             }
+
+        } else {
+            proceedNextStep(OnboardingStep.Verification)
         }
     }
 
@@ -268,10 +301,14 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.checkNicknameDuplicated(state.value.nickname)
                 .onSuccess { available ->
-                    _state.update { it.copy(isDuplicateNickName = !available, isAvailableNickName = available) }
+                    _state.update {
+                        it.copy(
+                            isDuplicateNickName = !available,
+                            isAvailableNickName = available
+                        )
+                    }
                 }
                 .onFailWithMessage {
-                    // TODO:: 에러 메세지
                     Log.e("OnBoardingViewModel", "닉네임 중복 확인 실패| $it")
 
                     _state.update { it.copy(isDuplicateNickName = true) }
@@ -325,7 +362,7 @@ class OnBoardingViewModel @Inject constructor(
 
     fun signup() {
         viewModelScope.launch {
-            if(state.value.loading) return@launch
+            if (state.value.loading) return@launch
 
             _state.update { it.copy(loading = true) }
 
@@ -334,15 +371,14 @@ class OnBoardingViewModel @Inject constructor(
                 password = state.value.password,
                 passwordCheck = state.value.password,
                 nickname = state.value.nickname,
-                gender = if(state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                gender = if (state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
                 profileImg = state.value.profileImage,
                 agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
             ).onSuccess {
                 _event.send(Event.FinishSignup)
                 _state.update { it.copy(loading = false) }
             }.onFailWithMessage {
-                // TODO:: 에러 메세지
-
+                _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
                 _state.update { it.copy(loading = false) }
             }
         }
@@ -365,7 +401,7 @@ class OnBoardingViewModel @Inject constructor(
                 }
 
                 OnboardingStep.Password -> {
-                    if (state.value.isValidPasswordLength && state.value.isComplexPassword){
+                    if (state.value.isValidPasswordLength && state.value.isComplexPassword) {
                         resendEmailVerification()
                         sendNavigateEvent(next)
                     }
@@ -374,8 +410,6 @@ class OnBoardingViewModel @Inject constructor(
                 OnboardingStep.Verification -> {
                     if (checkEmailVerification()) {
                         sendNavigateEvent(next)
-                    } else {
-                        // TODO:: 오류 메세지
                     }
                 }
 
@@ -405,7 +439,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     private suspend fun sendNavigateEvent(step: OnboardingStep?) {
-        if(step == null) return
+        if (step == null) return
         _event.send(Event.Navigate(step))
     }
 
@@ -415,6 +449,7 @@ class OnBoardingViewModel @Inject constructor(
     }
 
     sealed class SnackBarEvent {
+        data class UndefinedError(val message: String) : SnackBarEvent()
         data object NotCheckedRequiredTerm : SnackBarEvent()
         data object InvalidInviteCode : SnackBarEvent()
         data object ProfileNotFilled : SnackBarEvent()
@@ -427,6 +462,7 @@ class OnBoardingViewModel @Inject constructor(
         private val isHangulRegex = Regex("""^[가-힣 ]+$""")
 
         private const val KEY_VERIFICATION_TOKEN = "key_verification_token"
+        private const val KEY_VERIFIED_EMAIL = "key_verification_email"
     }
 }
 

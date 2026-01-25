@@ -98,6 +98,9 @@ class OnBoardingActivity: AppCompatActivity() {
             LaunchedEffect(Unit) {
                 viewModel.snackBarEvent.collect { event ->
                     when(event) {
+                        is OnBoardingViewModel.SnackBarEvent.UndefinedError -> {
+                            errorSnackBarHost.showSnackbar(event.message)
+                        }
                         is OnBoardingViewModel.SnackBarEvent.NotCheckedRequiredTerm -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_required_terms))
                         }
@@ -117,7 +120,12 @@ class OnBoardingActivity: AppCompatActivity() {
         super.onNewIntent(intent, caller)
         setIntent(intent)
 
-        // TODO:: 화면 이동 로직 추가
+        val email = intent.getStringExtra(QUERY_EMAIL) ?: ""
+        val verified = intent.getStringExtra(QUERY_VERIFIED) ?: ""
+        val token = intent.getStringExtra(QUERY_TOKEN) ?: ""
+
+        if(email.isNotEmpty() && token.isNotEmpty() && verified == "true")
+            viewModel.validateDeeplink(email, token)
     }
 
     companion object {
@@ -143,7 +151,7 @@ class OnBoardingActivity: AppCompatActivity() {
         private fun getQueryParameters(deeplink: Uri): Map<String, String> {
             val parameters = deeplink.queryParameterNames.also {
                 // 딥링크에 요구하는 파라미터가 다 들어왔는지 확인
-                if(it.contains(QUERY_EMAIL) || it.contains(QUERY_VERIFIED) || it.contains(QUERY_TOKEN)) {
+                if(!it.contains(QUERY_EMAIL) || !it.contains(QUERY_VERIFIED) || !it.contains(QUERY_TOKEN)) {
                     Log.e("OnBoardingActivity", "Deeplink parameter is missing $deeplink")
                 }
             }.associateWith { name ->
