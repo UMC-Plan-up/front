@@ -19,7 +19,7 @@ class TermRepositoryImpl @Inject constructor(
             response = { termsApi.getTermsList() },
             onResponse = {
                 if (it.isSuccess) {
-                    ApiResult.Success(it.result)
+                    ApiResult.Success(it.result.termsList)
                 } else {
                     ApiResult.Fail(it.message)
                 }
