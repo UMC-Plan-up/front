@@ -1,5 +1,6 @@
 package com.example.planup.onboarding
 
+import android.app.ComponentCaller
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -112,8 +113,15 @@ class OnBoardingActivity: AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        setIntent(intent)
+
+        // TODO:: 화면 이동 로직 추가
+    }
+
     companion object {
-        private const val QUERY_NAME = "name"
+        private const val QUERY_EMAIL = "email"
         private const val QUERY_VERIFIED = "verified"
         private const val QUERY_TOKEN = "token"
 
@@ -125,6 +133,9 @@ class OnBoardingActivity: AppCompatActivity() {
                     parameters.forEach { key, value ->
                         putExtra(key, value)
                     }
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    )
                 }
             return intent
         }
@@ -132,7 +143,7 @@ class OnBoardingActivity: AppCompatActivity() {
         private fun getQueryParameters(deeplink: Uri): Map<String, String> {
             val parameters = deeplink.queryParameterNames.also {
                 // 딥링크에 요구하는 파라미터가 다 들어왔는지 확인
-                if(it.contains(QUERY_NAME) || it.contains(QUERY_VERIFIED) || it.contains(QUERY_TOKEN)) {
+                if(it.contains(QUERY_EMAIL) || it.contains(QUERY_VERIFIED) || it.contains(QUERY_TOKEN)) {
                     Log.e("OnBoardingActivity", "Deeplink parameter is missing $deeplink")
                 }
             }.associateWith { name ->

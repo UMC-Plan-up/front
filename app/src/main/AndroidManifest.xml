@@ -51,30 +51,12 @@
                     android:host="mypage"
                     android:pathPrefix="/password" />
             </intent-filter>
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="planup"
-                    android:host="email"
-                    android:pathPrefix="/change" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".signup.SignupActivity"
             android:exported="true"
             android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="planup"
-                    android:host="profile"
-                    android:path="/setup" />
-            </intent-filter>
         </activity>
 
         <activity
@@ -98,8 +80,10 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".onboarding.OnBoardingActivity" />
+        <activity android:name=".onboarding.OnBoardingActivity"
+            android:launchMode="singleTop" />
         <activity android:name=".onboarding.InviteCodeActivity" />
+
         <activity android:name=".onboarding.CommunityIntroActivity" />
 
         <activity
@@ -125,7 +109,8 @@
 
         <activity
             android:name=".deeplink.SchemeActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
