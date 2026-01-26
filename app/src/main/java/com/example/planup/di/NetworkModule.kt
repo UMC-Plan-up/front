@@ -7,6 +7,7 @@ import com.example.planup.network.ProfileApi
 import com.example.planup.network.TermsApi
 import com.example.planup.network.UserApi
 import com.example.planup.network.interceptor.AuthInterceptor
+import com.example.planup.network.interceptor.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -35,11 +36,19 @@ class NetworkModule {
         return AuthInterceptor(tokenSaver)
     }
 
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        tokenSaver: TokenSaver
+    ): TokenAuthenticator {
+        return TokenAuthenticator(tokenSaver)
+    }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        authenticator: TokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient
             .Builder()
@@ -49,6 +58,7 @@ class NetworkModule {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
+            .authenticator(authenticator)
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)
