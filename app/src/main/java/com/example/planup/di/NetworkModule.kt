@@ -39,9 +39,10 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTokenAuthenticator(
-        tokenSaver: TokenSaver
+        tokenSaver: TokenSaver,
+        userApi: dagger.Lazy<UserApi>
     ): TokenAuthenticator {
-        return TokenAuthenticator(tokenSaver)
+        return TokenAuthenticator(tokenSaver, userApi)
     }
 
     @Provides
