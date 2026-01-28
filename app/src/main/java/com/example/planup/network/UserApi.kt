@@ -8,6 +8,7 @@ import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.NicknameCheckDuplicated
+import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UserResponse
@@ -63,6 +64,9 @@ interface UserApi : MyPageApi {
     suspend fun login(
         @Body request: LoginRequest
     ): Response<LoginResponse>
+
+    @POST("users/refresh")
+    suspend fun refreshToken(): Response<UserResponse<Tokens>>
 
     //회원 탈퇴
     @POST("users/withdraw")

@@ -14,6 +14,7 @@ import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
@@ -519,6 +520,27 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun refreshToken(): ApiResult<Tokens> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.refreshToken()
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+
+                        tokenSaver.saveToken(result.accessToken)
+                        tokenSaver.saveRefreshToken(result.refreshToken)
+
+                        ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
                     }
