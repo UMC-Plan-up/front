@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -108,6 +109,9 @@ class OnBoardingActivity: AppCompatActivity() {
                         }
                         is OnBoardingViewModel.SnackBarEvent.NotCheckedRequiredTerm -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_required_terms))
+                        }
+                        is OnBoardingViewModel.SnackBarEvent.FailedEmailValidation -> {
+                            errorSnackBarHost.showSnackbar(getString(R.string.toast_failed_email_validation))
                         }
                         is OnBoardingViewModel.SnackBarEvent.InvalidInviteCode -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_invite_invalid))

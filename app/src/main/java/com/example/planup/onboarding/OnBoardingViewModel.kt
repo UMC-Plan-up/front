@@ -214,7 +214,7 @@ class OnBoardingViewModel @Inject constructor(
                         proceedNextStep(OnboardingStep.Verification)
                     }
                     Log.e("OnBoardingViewModel", "resendEmailVerification| $msg")
-                    _snackBarEvent.send(SnackBarEvent.UndefinedError("resendEmailVerification| $msg"))
+                    _snackBarEvent.send(SnackBarEvent.UndefinedError("$msg"))
                 }
         }
     }
@@ -233,7 +233,7 @@ class OnBoardingViewModel @Inject constructor(
             )
 
             viewModelScope.launch {
-                _snackBarEvent.send(SnackBarEvent.UndefinedError(""))
+                _snackBarEvent.send(SnackBarEvent.UndefinedError())
             }
 
         } else {
@@ -451,6 +451,7 @@ class OnBoardingViewModel @Inject constructor(
     sealed class SnackBarEvent {
         data class UndefinedError(val message: String) : SnackBarEvent()
         data object NotCheckedRequiredTerm : SnackBarEvent()
+        data object FailedEmailValidation : SnackBarEvent()
         data object InvalidInviteCode : SnackBarEvent()
         data object ProfileNotFilled : SnackBarEvent()
     }
