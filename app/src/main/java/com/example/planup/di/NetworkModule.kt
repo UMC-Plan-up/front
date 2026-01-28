@@ -1,6 +1,7 @@
 package com.example.planup.di
 
 import com.example.planup.database.TokenSaver
+import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.FriendApi
 import com.example.planup.network.GoalApi
 import com.example.planup.network.ProfileApi
@@ -39,10 +40,9 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTokenAuthenticator(
-        tokenSaver: TokenSaver,
-        userApi: dagger.Lazy<UserApi>
+        userRepository: dagger.Lazy<UserRepository>
     ): TokenAuthenticator {
-        return TokenAuthenticator(tokenSaver, userApi)
+        return TokenAuthenticator(userRepository)
     }
 
     @Provides
