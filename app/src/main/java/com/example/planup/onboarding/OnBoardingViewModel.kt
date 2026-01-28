@@ -233,7 +233,7 @@ class OnBoardingViewModel @Inject constructor(
             )
 
             viewModelScope.launch {
-                _snackBarEvent.send(SnackBarEvent.UndefinedError())
+                _snackBarEvent.send(SnackBarEvent.FailedEmailValidation)
             }
 
         } else {
