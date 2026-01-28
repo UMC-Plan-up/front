@@ -22,32 +22,33 @@ class TokenAuthenticator @Inject constructor(
         mutex.withLock {
             val request = response.request
             val retryCount = response.retryCount()
+            var newAccessToken = ""
+
             Log.i(TAG, "토큰 갱신 시도($retryCount)")
 
             if (request.header(HEADER_TOKEN).isNullOrBlank()) {
-                // 헤더에 토큰이 없는 요청인 경우
+                // 헤더에 토큰이 없는 요청인 경우 추가 요청 X
                 return@withLock null
             }
 
             if (retryCount > MAX_RETRY) {
-                // 최대 시도 횟수를 넘은 경우
+                // 최대 시도 횟수를 넘은 경우 추가 요청 X
                 return@withLock null
             }
 
             val refreshResult = userRepository.get().refreshToken()
 
             refreshResult.onSuccess {
-                Log.e(TAG, "토큰 갱신 요청 성공: it")
-                return@withLock request.newBuilder()
-                    .removeHeader(HEADER_TOKEN)
-                    .addHeader(HEADER_TOKEN, it.accessToken)
-                    .build()
+                Log.i(TAG, "토큰 갱신 요청 성공: $it")
+                newAccessToken = it.accessToken
             }.onFailWithMessage {
-                Log.e(TAG, "토큰 갱신 요청 실패: it")
-                return@withLock null
+                Log.e(TAG, "토큰 갱신 요청 실패: $it")
             }
 
-            null
+            request.newBuilder()
+                .removeHeader(HEADER_TOKEN)
+                .addHeader(HEADER_TOKEN, "Bearer $newAccessToken")
+                .build()
         }
     }
 
