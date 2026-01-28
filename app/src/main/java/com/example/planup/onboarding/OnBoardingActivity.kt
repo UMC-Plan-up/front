@@ -57,7 +57,12 @@ class OnBoardingActivity: AppCompatActivity() {
             Box {
                 OnBoardScreen(
                     navController = navController,
-                    step = currentStep
+                    step = currentStep,
+                    onBackAction = {
+                        if (!navController.popBackStack()) {
+                            finish()
+                        }
+                    }
                 )
 
                 GraySnackbarHost(
