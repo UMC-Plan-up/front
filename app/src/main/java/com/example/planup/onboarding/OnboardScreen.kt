@@ -41,7 +41,7 @@ fun OnBoardScreen(
             TopHeader(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 12.dp)
                     .fillMaxWidth()
                     .height(48.dp),
                 onBackAction = {
