@@ -25,6 +25,7 @@ import com.example.planup.onboarding.component.OnBoardingProgressBar
 @Composable
 fun OnBoardScreen(
     step: OnboardingStep,
+    onBackAction: () -> Unit,
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
 ) {
@@ -41,12 +42,10 @@ fun OnBoardScreen(
             TopHeader(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Top))
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 12.dp)
                     .fillMaxWidth()
                     .height(48.dp),
-                onBackAction = {
-                    navController.popBackStack()
-                },
+                onBackAction = onBackAction,
                 title = step.title ?: ""
             )
 
@@ -74,6 +73,7 @@ fun OnBoardScreen(
 @Composable
 private fun OnBoardFramePreview() {
     OnBoardScreen(
-        step = OnboardingStep.Term
+        step = OnboardingStep.Term,
+        onBackAction = {}
     )
 }

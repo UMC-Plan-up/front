@@ -1,7 +1,11 @@
 package com.example.planup.onboarding
 
+import android.app.ComponentCaller
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,7 +58,12 @@ class OnBoardingActivity: AppCompatActivity() {
             Box {
                 OnBoardScreen(
                     navController = navController,
-                    step = currentStep
+                    step = currentStep,
+                    onBackAction = {
+                        if (!navController.popBackStack()) {
+                            finish()
+                        }
+                    }
                 )
 
                 GraySnackbarHost(
@@ -94,8 +104,14 @@ class OnBoardingActivity: AppCompatActivity() {
             LaunchedEffect(Unit) {
                 viewModel.snackBarEvent.collect { event ->
                     when(event) {
+                        is OnBoardingViewModel.SnackBarEvent.UndefinedError -> {
+                            errorSnackBarHost.showSnackbar(event.message)
+                        }
                         is OnBoardingViewModel.SnackBarEvent.NotCheckedRequiredTerm -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_required_terms))
+                        }
+                        is OnBoardingViewModel.SnackBarEvent.FailedEmailValidation -> {
+                            errorSnackBarHost.showSnackbar(getString(R.string.toast_failed_email_validation))
                         }
                         is OnBoardingViewModel.SnackBarEvent.InvalidInviteCode -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_invite_invalid))
@@ -106,6 +122,60 @@ class OnBoardingActivity: AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
+        setIntent(intent)
+
+        val email = intent.getStringExtra(QUERY_EMAIL) ?: ""
+        val verified = intent.getStringExtra(QUERY_VERIFIED) ?: ""
+        val token = intent.getStringExtra(QUERY_TOKEN) ?: ""
+
+        if(email.isNotEmpty() && token.isNotEmpty() && verified == "true")
+            viewModel.validateDeeplink(email, token)
+    }
+
+    companion object {
+        private const val QUERY_EMAIL = "email"
+        private const val QUERY_VERIFIED = "verified"
+        private const val QUERY_TOKEN = "token"
+
+        fun getIntent(context: Context, deeplink: Uri): Intent {
+            val parameters = getQueryParameters(deeplink)
+
+            val intent = Intent(context, OnBoardingActivity::class.java)
+                .apply {
+                    parameters.forEach { key, value ->
+                        putExtra(key, value)
+                    }
+                    addFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    )
+                }
+            return intent
+        }
+
+        private fun getQueryParameters(deeplink: Uri): Map<String, String> {
+            val parameters = deeplink.queryParameterNames.also {
+                // 딥링크에 요구하는 파라미터가 다 들어왔는지 확인
+                if(!it.contains(QUERY_EMAIL) || !it.contains(QUERY_VERIFIED) || !it.contains(QUERY_TOKEN)) {
+                    Log.e("OnBoardingActivity", "Deeplink parameter is missing $deeplink")
+                }
+            }.associateWith { name ->
+                // 데이터 추출
+                deeplink.getQueryParameter(name).let {
+                    if (it.isNullOrBlank()) {
+                        Log.e("OnBoardingActivity", "Deeplink parameter is empty: $name")
+                        ""
+                    } else {
+                        it
+                    }
+                }
+            }
+
+            return parameters
         }
     }
 }

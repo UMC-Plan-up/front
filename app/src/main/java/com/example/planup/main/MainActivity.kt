@@ -1,8 +1,10 @@
 package com.example.planup.main
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -12,7 +14,6 @@ import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.core.view.ViewCompat
@@ -48,9 +49,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editor: Editor
 
 
-    private val mainSnackbarViewModel : MainSnackbarViewModel by viewModels()
-    private val friendViewModel : FriendViewModel by viewModels()
-    private val myPageEmailChangeViewModel : MyPageEmailChangeViewModel by viewModels()
+    private val mainSnackbarViewModel: MainSnackbarViewModel by viewModels()
+    private val friendViewModel: FriendViewModel by viewModels()
+    private val myPageEmailChangeViewModel: MyPageEmailChangeViewModel by viewModels()
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -219,23 +220,20 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        when(intent.action) {
-            Intent.ACTION_VIEW -> {
-                val data = intent.data
-                Log.d("JWH",data.toString())
-                data ?: return
-                val host = data.host
-                when(host) {
-                    "mypage" -> {
+        val data = intent.data
+        println("scheme data: $data")
+        Log.d("JWH", data.toString())
+        data ?: return
+        val host = data.host
+        when (host) {
+            "mypage" -> {
+            }
 
-                    }
-                    "email" -> {
-                        if (data.path?.startsWith("/change") == true && data.getQueryParameter("verified") == "true") {
-                            //이메일 변경 완료 됨 검증
-                            val token = data.getQueryParameter("token")
-                            myPageEmailChangeViewModel.verifyScheme(token)
-                        }
-                    }
+            "email" -> {
+                //이메일 변경 완료 됨 검증
+                if (intent.getStringExtra(QUERY_VERIFIED) == "true") {
+                    val token = data.getQueryParameter(QUERY_TOKEN)
+                    myPageEmailChangeViewModel.verifyScheme(token)
                 }
             }
         }
@@ -318,5 +316,35 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+    }
+
+    companion object {
+        private const val QUERY_VERIFIED = "verified"
+        private const val QUERY_TOKEN = "token"
+
+        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+            .apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                )
+            }
+
+        fun getIntent(context: Context, deeplink: Uri): Intent =
+            Intent(context, MainActivity::class.java).apply {
+                addFlags(
+                    Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+                )
+                deeplink.queryParameterNames.associateWith { name ->
+                    deeplink.getQueryParameter(name).let {
+                        if (it.isNullOrBlank()) {
+                            ""
+                        } else {
+                            it
+                        }
+                    }
+                }.forEach { (key, value) ->
+                    putExtra(key, value)
+                }
+            }
     }
 }
