@@ -6,7 +6,11 @@ data class TermsListResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: List<TermItem>
+    @SerializedName("result") val result: TermsResult
+)
+
+data class TermsResult(
+    @SerializedName("termsList") val termsList: List<TermItem>
 )
 
 data class TermItem(

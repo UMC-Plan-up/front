@@ -102,9 +102,9 @@ class AgreementFragment : Fragment() {
                 val body = response.body()
                 val result = body?.result
 
-                if (response.isSuccessful && !result.isNullOrEmpty()) {
+                if (response.isSuccessful && !result?.termsList.isNullOrEmpty()) {
                     termsList.clear()
-                    termsList.addAll(result)
+                    termsList.addAll(result.termsList)
                     adapter.notifyDataSetChanged()
                     Log.d(
                         TAG,
