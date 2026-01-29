@@ -67,7 +67,7 @@
 
                 <!-- 날짜 -->
                 <TextView
-                    android:id="@+id/goal_list_text_date_tv"
+                    android:id="@+id/timer_date_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="2025.06.13"
@@ -82,8 +82,8 @@
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
-                    app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
+                    app:layout_constraintStart_toStartOf="@+id/timer_main_tv"
+                    app:layout_constraintTop_toTopOf="@id/timer_date_tv"
                     android:src="@drawable/ic_arrow_back"
                     app:tint="@color/white" />
 
@@ -91,14 +91,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="@id/goal_list_play_btn"
-                    app:layout_constraintTop_toTopOf="@id/goal_list_text_date_tv"
+                    app:layout_constraintTop_toTopOf="@id/timer_date_tv"
                     android:src="@drawable/ic_arrow_back"
                     android:rotation="180"
                     app:tint="@color/white" />
 
                 <!-- 타이머 -->
                 <TextView
-                    android:id="@+id/goal_list_text_timer_tv"
+                    android:id="@+id/timer_main_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="9dp"
@@ -108,7 +108,7 @@
                     android:textSize="40sp"
                     app:layout_constraintBottom_toTopOf="@id/goal_list_spinner"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/goal_list_text_date_tv"
+                    app:layout_constraintTop_toBottomOf="@id/timer_date_tv"
                     app:layout_constraintVertical_bias="0.2" />
 
                 <!-- 재생 버튼 -->
@@ -118,9 +118,9 @@
                     android:layout_height="51dp"
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_play_circle"
-                    app:layout_constraintBottom_toBottomOf="@id/goal_list_text_timer_tv"
+                    app:layout_constraintBottom_toBottomOf="@id/timer_main_tv"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/goal_list_text_timer_tv"/>
+                    app:layout_constraintTop_toTopOf="@id/timer_main_tv"/>
 
                 <!-- 드롭다운 -->
                 <androidx.appcompat.widget.AppCompatSpinner
@@ -137,8 +137,8 @@
                     android:spinnerMode="dropdown"
                     android:popupBackground="@drawable/bg_time_spinner_dropdown"
                     app:layout_constraintEnd_toEndOf="@+id/goal_list_play_btn"
-                    app:layout_constraintStart_toStartOf="@+id/goal_list_text_timer_tv"
-                    app:layout_constraintTop_toBottomOf="@+id/goal_list_text_timer_tv" />
+                    app:layout_constraintStart_toStartOf="@+id/timer_main_tv"
+                    app:layout_constraintTop_toBottomOf="@+id/timer_main_tv" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
 

@@ -337,7 +337,7 @@
     <!-- fragment_alert.xml -->
     <!-- 탭 레이아웃 버튼-->
     <string-array name="challenge">
-        <item name="friend_success_goal">친구의 목표 달성</item>
+        <item name="friend_success_goal">목표 달성</item>
         <item name="receive_response">받은 반응</item>
         <item name="challenge">챌린지</item>
     </string-array>

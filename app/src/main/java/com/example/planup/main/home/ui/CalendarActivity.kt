@@ -135,27 +135,43 @@ class CalendarActivity : AppCompatActivity() {
 
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 val date = data.date
+                val isFuture = date.isAfter(today)
                 container.textView.text = date.dayOfMonth.toString()
 
-                container.textView.setBackgroundResource(
-                    if (date == selectedDate) R.drawable.bg_calendar_select else 0
-                )
-                container.textView.setTextColor(
-                    if (date == selectedDate)
+                // 선택 표시
+                if (!isFuture && date == selectedDate) {
+                    container.textView.setBackgroundResource(R.drawable.bg_calendar_select)
+                    container.textView.setTextColor(
                         ContextCompat.getColor(container.textView.context, R.color.white)
-                    else ContextCompat.getColor(container.textView.context, R.color.black_400)
-                )
+                    )
+                } else {
+                    container.textView.background = null
+                    container.textView.setTextColor(
+                        ContextCompat.getColor(
+                            container.textView.context,
+                            if (isFuture) R.color.gray_100 else R.color.black_400
+                        )
+                    )
+                }
 
+                if (isFuture) {
+                    container.barsContainer.visibility = View.GONE
+                } else {
                 val events = viewModel.getEventsForDate(date)
                 val bars = listOf(container.bar1, container.bar2, container.bar3)
                 container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
                 bars.forEach { it.visibility = View.GONE }
                 for (i in 0 until minOf(events.size, 3)) bars[i].visibility = View.VISIBLE
 
-                container.view.setOnClickListener {
-                    selectedDate = date
-                    calendarView.notifyCalendarChanged()
-                    viewModel.selectDate(date)
+                }
+
+                container.view.setOnClickListener(null)
+                if(!isFuture) {
+                    container.view.setOnClickListener {
+                        selectedDate = date
+                        calendarView.notifyCalendarChanged()
+                        viewModel.selectDate(date)
+                    }
                 }
             }
         }

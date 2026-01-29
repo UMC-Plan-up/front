@@ -56,6 +56,14 @@ class HomeViewModel @Inject constructor(
                     }
                     _dailyToDos.value = dailyList
                 }
+
+                //TODO : dailytodo dummy
+                val dailyDummyList = mutableListOf<DailyToDo>()
+                dailyDummyList.add(
+                    DailyToDo("dummy1", 10, 20)
+                )
+                _dailyToDos.value = dailyDummyList
+
                 Log.d("loadMyGoalList", "result: ${_dailyToDos.value}")
                 onCallBack(result)
             } catch (e: CancellationException) {

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- 프로필 아이콘 -->
+    <View
+        android:id="@+id/viewProfile"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/profile_example"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <!-- 알림 내용 -->
+    <TextView
+        android:id="@+id/tvNotificationText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="친구님의 댓글 '벌써 이만큼 함?'"
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toEndOf="@id/viewProfile"
+        app:layout_constraintTop_toTopOf="@id/viewProfile"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="12dp"/>
+
+    <!-- 시간 -->
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4시간 전"
+        android:textSize="12sp"
+        android:textColor="@color/gray_100"
+        app:layout_constraintStart_toStartOf="@id/tvNotificationText"
+        app:layout_constraintTop_toBottomOf="@id/tvNotificationText"
+        android:layout_marginTop="4dp"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

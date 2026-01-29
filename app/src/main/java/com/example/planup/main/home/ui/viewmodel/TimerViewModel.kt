@@ -50,7 +50,10 @@ class TimerViewModel @Inject constructor(
     val selectedGoalId: StateFlow<Int> = _selectedGoalId
     var goalFreq = 0
     var goalAmount = "-"
-    val selectedDate: String = savedStateHandle["selectedDate"] ?: LocalDate.now().toString()
+    var preselectedDate: String = savedStateHandle["selectedDate"] ?: LocalDate.now().toString()
+
+    private val _selectedDate = MutableStateFlow(preselectedDate)
+    val selectedDate: StateFlow<String> = _selectedDate
 
     private var isRunning = false
     private var elapsedSeconds = 0

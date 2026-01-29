@@ -34,6 +34,7 @@ import android.widget.TextView
 import androidx.core.content.FileProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.File
+import java.time.LocalDate
 
 @AndroidEntryPoint
 class TimerFragment @Inject constructor() : Fragment() {
@@ -65,6 +66,7 @@ class TimerFragment @Inject constructor() : Fragment() {
         }
         initClickListener()
         observeViewModel()
+        viewModel.preselectedDate = arguments?.getString("selectedDate").toString()
 
         viewModel.loadGoals(
             onCallBack = { result ->
@@ -107,7 +109,13 @@ class TimerFragment @Inject constructor() : Fragment() {
 
         lifecycleScope.launch {
             viewModel.timerText.collect { time ->
-                binding.goalListTextTimerTv.text = time
+                binding.timerMainTv.text = time
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.selectedDate.collect { date ->
+                binding.timerDateTv.text = date
             }
         }
 
@@ -200,7 +208,7 @@ class TimerFragment @Inject constructor() : Fragment() {
                             else -> {}
                         }
                     })
-                binding.goalListTextTimerTv.text = viewModel.timerText.value
+                binding.timerMainTv.text = viewModel.timerText.value
 
                 // 4️⃣ 새 타이머 시작
                 //startTimer(token, selectedGoal.goalId)
@@ -223,7 +231,7 @@ class TimerFragment @Inject constructor() : Fragment() {
                         }
                     })
                 setGoalInfo()
-                viewModel.loadMemo(selectedSpinnerItem, viewModel.selectedDate,
+                viewModel.loadMemo(selectedSpinnerItem, viewModel.selectedDate.value,
                     onCallBack = { result ->
                         when (result) {
                             is ApiResult.Error -> {
@@ -299,36 +307,6 @@ class TimerFragment @Inject constructor() : Fragment() {
         }
     }
 
-    private fun showCameraPopup() {
-        val popupView = layoutInflater.inflate(com.example.planup.R.layout.popup_goal_list_camera, null)
-        val popupBinding = PopupGoalListCameraBinding.bind(popupView)
-
-        val popupWindow = PopupWindow(
-            popupBinding.root,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
-        ).apply {
-            setBackgroundDrawable(ColorDrawable())
-            isOutsideTouchable = true
-            elevation = 10f
-        }
-
-//        popupBinding.takePhotoTv.setOnClickListener {
-//            popupWindow.dismiss()
-//            tempGoalId = selectedSpinnerItem
-//            viewModel.onPickCamera()
-//        }
-//
-//        popupBinding.chooseGalleryTv.setOnClickListener {
-//            popupWindow.dismiss()
-//            tempGoalId = selectedSpinnerItem
-//            viewModel.onPickGallery()
-//        }
-
-        popupWindow.showAsDropDown(binding.goalListBtnCameraIb, 0, 10)
-    }
-
     /* ------------------------------
        BottomSheet
      ------------------------------ */
@@ -366,7 +344,5 @@ class TimerFragment @Inject constructor() : Fragment() {
             file
         )
     }
-
-
 
 }
