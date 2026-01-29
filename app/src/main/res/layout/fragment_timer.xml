@@ -80,6 +80,7 @@
                     android:layout_marginTop="16dp"/>
 
                 <ImageView
+                    android:id="@+id/timer_date_before_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="@+id/timer_main_tv"
@@ -88,6 +89,7 @@
                     app:tint="@color/white" />
 
                 <ImageView
+                    android:id="@+id/timer_date_next_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="@id/goal_list_play_btn"

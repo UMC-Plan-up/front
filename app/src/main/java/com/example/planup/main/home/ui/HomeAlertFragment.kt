@@ -73,9 +73,7 @@ class HomeAlertFragment : Fragment() {
 
     private fun clickListener(){
         binding.homeAlertBackIv.setOnClickListener {
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,HomeFragment())
-                .commitAllowingStateLoss()
+            parentFragmentManager.popBackStack()
         }
     }
 

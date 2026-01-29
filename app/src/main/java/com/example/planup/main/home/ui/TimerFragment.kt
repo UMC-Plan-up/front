@@ -1,6 +1,7 @@
 package com.example.planup.main.home.ui
 
 import android.R
+import android.graphics.PorterDuff
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import java.io.File
@@ -291,6 +293,14 @@ class TimerFragment @Inject constructor() : Fragment() {
     private fun initClickListener() {
         binding.goalListBtnCameraIb.setOnClickListener {
             showImagePickerBottomSheet()
+        }
+
+        binding.timerDateBeforeIv.setOnClickListener {
+            viewModel.prevDay()
+        }
+
+        binding.timerDateNextIv.setOnClickListener {
+            viewModel.nextDay()
         }
     }
 

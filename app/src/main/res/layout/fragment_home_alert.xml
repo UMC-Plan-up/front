@@ -37,18 +37,18 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnGoal"
             style="@style/HomeNotificationFilterButton"
-            android:text="목표 달성"/>
+            android:text="@string/home_alert_category_goal"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnReaction"
             style="@style/HomeNotificationFilterButton"
-            android:text="받은 반응"
+            android:text="@string/home_alert_category_feedback"
             android:layout_marginStart="8dp"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnChallenge"
             style="@style/HomeNotificationFilterButton"
-            android:text="챌린지"
+            android:text="@string/home_alert_category_challenge"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 

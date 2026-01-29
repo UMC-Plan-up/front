@@ -256,6 +256,18 @@ class TimerViewModel @Inject constructor(
             }
         }
     }
+
+    fun nextDay() {
+        val currentDate = LocalDate.parse(selectedDate.value)
+        val nextDate = currentDate.plusDays(1)
+        _selectedDate.value = nextDate.toString()
+    }
+
+    fun prevDay() {
+        val currentDate = LocalDate.parse(selectedDate.value)
+        val prevDate = currentDate.minusDays(1)
+        _selectedDate.value = prevDate.toString()
+    }
 }
 
 sealed class CameraEvent {
