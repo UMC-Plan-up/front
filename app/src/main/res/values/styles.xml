@@ -169,5 +169,14 @@
         <item name="android:windowBackground">@drawable/bg_splash_white_logo</item>
     </style>
 
+    <style name="HomeNotificationFilterButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">32dp</item>
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@drawable/challenge_tab_template</item>
+    </style>
+
 
 </resources>

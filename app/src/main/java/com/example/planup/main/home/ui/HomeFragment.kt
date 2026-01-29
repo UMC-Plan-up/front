@@ -151,6 +151,22 @@ class HomeFragment : Fragment() {
             showPopup()
         }
 
+        binding.homeAlarmNoneIv.setOnClickListener {
+            val fragment = HomeAlertFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.homeAlarmExistIv.setOnClickListener {
+            val fragment = HomeAlertFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
         val calendarCardView = binding.homeCalendarCardView
         calendarCardView.setOnClickListener {
             val intent = Intent(requireContext(), CalendarActivity::class.java)
@@ -196,35 +212,50 @@ class HomeFragment : Fragment() {
 
             override fun bind(container: DayViewContainer, data: com.kizitonwose.calendar.core.CalendarDay) {
                 val date = data.date
+                val isFuture = date.isAfter(today)
                 container.textView.text = date.dayOfMonth.toString()
 
                 // 선택 표시
-                container.textView.setBackgroundResource(
-                    if (date == selectedDate) R.drawable.bg_calendar_select else 0
-                )
-                container.textView.setTextColor(
-                    if (date == selectedDate)
+                if (!isFuture && date == selectedDate) {
+                    container.textView.setBackgroundResource(R.drawable.bg_calendar_select)
+                    container.textView.setTextColor(
                         ContextCompat.getColor(container.textView.context, R.color.white)
-                    else
-                        ContextCompat.getColor(container.textView.context, R.color.black_400)
-                )
+                    )
+                } else {
+                    container.textView.background = null
+                    container.textView.setTextColor(
+                        ContextCompat.getColor(
+                            container.textView.context,
+                            if (isFuture) R.color.gray_100 else R.color.black_400
+                        )
+                    )
+                }
 
                 // 이벤트 가져오기 (ViewModel observe에서 업데이트된 값 사용)
-                val events = viewModel.calendarEvents.value.filter { it.date == date }
-                val bars = listOf(container.bar1, container.bar2, container.bar3)
-                container.barsContainer.visibility = if (events.isEmpty()) View.GONE else View.VISIBLE
-                bars.forEach { it.visibility = View.GONE }
-                for (i in 0 until minOf(events.size, 3)) {
-                    bars[i].visibility = View.VISIBLE
+                if (isFuture) {
+                    container.barsContainer.visibility = View.GONE
+                } else {
+                    val events = viewModel.calendarEvents.value.filter { it.date == date }
+                    val bars = listOf(container.bar1, container.bar2, container.bar3)
+                    container.barsContainer.visibility =
+                        if (events.isEmpty()) View.GONE else View.VISIBLE
+                    bars.forEach { it.visibility = View.GONE }
+                    for (i in 0 until minOf(events.size, 3)) {
+                        bars[i].visibility = View.VISIBLE
+                    }
                 }
 
                 // 날짜 클릭
-                container.view.setOnClickListener {
-                    selectedDate = date
-                    calendarView.notifyCalendarChanged()
-
-                    // 선택한 날짜 API 호출
-                    viewModel.loadDailyGoals(selectedDate, createErrorHandler("loadDailyGoals"))
+                container.view.setOnClickListener(null)
+                if (!isFuture) {
+                    container.view.setOnClickListener {
+                        selectedDate = date
+                        calendarView.notifyCalendarChanged()
+                        viewModel.loadDailyGoals(
+                            selectedDate,
+                            createErrorHandler("loadDailyGoals")
+                        )
+                    }
                 }
             }
         }
@@ -301,5 +332,5 @@ class HomeFragment : Fragment() {
         }
         dialog.show()
     }
-    }
+}
 

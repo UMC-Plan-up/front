@@ -13,7 +13,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="15dp"/>
     <TextView
-        android:id="@+id/friend_alert_title_tv"
+        android:id="@+id/home_alert_title_tv"
         style="@style/TextAppearance.Pretendard.SemiBold.3XL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,33 +23,41 @@
         app:layout_constraintBottom_toBottomOf="@id/home_alert_back_iv"
         android:layout_marginStart="20dp"/>
 
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/friend_alert_tl"
-        android:layout_width="match_parent"
-        android:layout_height="36dp"
-        android:background="@color/transparent"
-        app:tabBackground="@drawable/challenge_tab_template"
-        app:layout_constraintTop_toBottomOf="@id/friend_alert_title_tv"
-        app:tabTextAppearance="@style/TextAppearance.Pretendard.Medium.SM"
-        app:tabTextColor="@color/key"
-        app:tabSelectedTextColor="@color/white"
-        app:tabIndicator="@color/transparent"
-        app:tabRippleColor="@color/transparent"
-        app:tabGravity="start"
-        app:tabMode="scrollable"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="12dp"/>
+    <!-- 필터 버튼 영역 -->
+    <LinearLayout
+        android:id="@+id/layoutFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/home_alert_title_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/friend_alert_vp"
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnGoal"
+            style="@style/HomeNotificationFilterButton"
+            android:text="@string/home_alert_category_goal"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnReaction"
+            style="@style/HomeNotificationFilterButton"
+            android:text="@string/home_alert_category_feedback"
+            android:layout_marginStart="8dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnChallenge"
+            style="@style/HomeNotificationFilterButton"
+            android:text="@string/home_alert_category_challenge"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/home_alert_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/friend_alert_tl"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="20dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/layoutFilter" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
