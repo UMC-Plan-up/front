@@ -3,8 +3,6 @@ package com.example.planup.goal
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
@@ -14,12 +12,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.findNavController
 import com.example.planup.R
 import com.example.planup.databinding.ActivityGoalBinding
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.goal.ui.GoalDetailFragment
-import com.example.planup.goal.ui.PushAlertFragment
+import com.example.planup.goal.ui.PushAlertCommunityFragment
 import com.example.planup.goal.ui.GoalSelectFragment
 import com.example.planup.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,6 +47,7 @@ class GoalActivity : AppCompatActivity() {
     var alertMinute: String = ""
     var alertDays: MutableSet<String> = mutableSetOf()
 
+    var isFriendTab: Boolean = true
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -111,6 +110,7 @@ class GoalActivity : AppCompatActivity() {
         binding = ActivityGoalBinding.inflate(layoutInflater)
         setContentView(binding.root)
         goalOwnerName = intent.getStringExtra("goalOwnerName") ?: "사용자"
+        Log.d("GoalActivity", goalOwnerName)
         loadLastGoalData()
 
         if (savedInstanceState == null) {
@@ -119,7 +119,7 @@ class GoalActivity : AppCompatActivity() {
                 intent.getBooleanExtra("start_from_payment_to_goal_detail", false)
 
             val startFragment = when {
-                isFromPayment -> PushAlertFragment()
+                isFromPayment -> PushAlertCommunityFragment()
                 isFromPaymentToDetail -> GoalDetailFragment().apply {
                     arguments = Bundle().apply {
                         putBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", true)
@@ -129,6 +129,9 @@ class GoalActivity : AppCompatActivity() {
 
                 else -> GoalSelectFragment().apply {
 //                        putString("from",intent.getStringExtra("TO_CHALLENGE_FROM"))
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", goalOwnerName)
+                    }
                 }
             }
             supportFragmentManager.beginTransaction()
@@ -139,7 +142,12 @@ class GoalActivity : AppCompatActivity() {
 
     fun navigateToFragment(fragment: Fragment) {
         fragment.arguments = (fragment.arguments ?: Bundle()).apply {
-            putString("goalOwnerName", goalOwnerName)
+            val name = getString("goalOwnerName")
+            if (name != null) {
+                putString("goalOwnerName", name)
+            }else{
+                putString("goalOwnerName", goalOwnerName)
+            }
         }
 
         supportFragmentManager.beginTransaction()
