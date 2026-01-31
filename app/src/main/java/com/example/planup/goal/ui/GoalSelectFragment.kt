@@ -14,6 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.example.planup.R
@@ -53,15 +55,29 @@ class GoalSelectFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentGoalSelectBinding.inflate(inflater, container, false)
+
         init()
         clickListener()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                systemBars.bottom
+            )
+            insets
+        }
+    }
+
     private fun init() {
         fromWhere = goalViewModel.fromWhere.value?.toString() ?: "no-value"
         category = binding.categoryStudyTv
-        nickname = arguments?.getString("GoalOwnerName", "사용자").toString()
+        nickname = arguments?.getString("goalOwnerName", "사용자").toString()
 
         binding.goalSelectCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -161,6 +177,7 @@ class GoalSelectFragment : Fragment() {
                 Log.d("GoalSelectFragment", "선택된 카테고리: $selectedCategoryEnum")
                 val commonGoalFragment = CommonGoalFragment()
                 commonGoalFragment.arguments = Bundle().apply{
+                    Log.d("GoalSelectFragment", "이름 전달 $nickname")
                     putString("goalOwnerName", nickname)
                     putString("selectedCategory", selectedCategoryEnum)
                     putString("goalType","COMMUNITY")
