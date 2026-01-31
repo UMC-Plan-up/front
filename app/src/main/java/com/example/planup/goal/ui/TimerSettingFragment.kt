@@ -11,13 +11,18 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
+import com.example.planup.goal.util.setInsets
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TimerSettingFragment : Fragment() {
     lateinit var binding: FragmentTimerSettingBinding
     private var totalTime = 0
@@ -30,6 +35,8 @@ class TimerSettingFragment : Fragment() {
     private val KEY_GOAL_TIME = "last_goal_time"
     private val KEY_VERIFICATION_TYPE = "last_verification_type"
 
+    private val viewModel: GoalViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -39,6 +46,11 @@ class TimerSettingFragment : Fragment() {
         init()
         clickListener()
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setInsets(binding.root,binding.root.paddingBottom)
     }
 
     // 프레그먼트 초기화
