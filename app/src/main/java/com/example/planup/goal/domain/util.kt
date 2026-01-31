@@ -1,12 +1,19 @@
 package com.example.planup.goal.domain
 
+import android.app.Activity
+import android.os.Bundle
+import androidx.annotation.IdRes
+import androidx.fragment.app.Fragment
+import com.example.planup.goal.GoalActivity
 import kotlin.jvm.JvmName
 import com.example.planup.main.goal.data.GoalType
 import com.example.planup.main.goal.data.MyGoalListDto
+import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
+import java.util.Collections.frequency
 import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -106,4 +113,21 @@ fun GoalType.toCriteria() = when(this){
     GoalType.COMMUNITY -> "매주"
     GoalType.CHALLENGE_PHOTO -> "매일"
     GoalType.CHALLENGE_TIME -> "매주"
+}
+
+fun Fragment.setGoalData(data: EditGoalResponse){
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+            goalName = data.goalName
+            goalAmount = data.goalAmount
+            goalCategory = data.goalCategory
+            goalType = data.goalType
+            oneDose = data.oneDose.toString()
+            frequency = data.frequency
+            period = data.period
+            endDate = data.endDate
+            verificationType = data.verificationType
+            limitFriendCount = data.limitFriendCount
+            goalTime = data.goalTime
+    }
 }
