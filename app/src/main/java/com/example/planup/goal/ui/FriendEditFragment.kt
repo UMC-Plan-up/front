@@ -58,7 +58,6 @@ class FriendEditFragment : Fragment() {
         )
         val goalActivity = (requireActivity() as GoalActivity)
         val titleTv = binding.editFriendTitleTv
-        val titleDescriptionTv = binding.editFriendTitleDescriptionTv
         val titleEt = binding.editFriendGoalNameEt
         val goalAmountEt = binding.editFriendGoalPeriodEt
         val nextBtn = binding.editFriendGoalNextBtn
@@ -187,7 +186,7 @@ class FriendEditFragment : Fragment() {
                 view.paddingLeft,
                 view.paddingTop,
                 view.paddingRight,
-                systemBars.bottom
+                systemBars.bottom + view.paddingBottom
             )
             insets
         }
