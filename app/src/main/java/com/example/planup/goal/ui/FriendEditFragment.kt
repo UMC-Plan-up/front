@@ -66,7 +66,6 @@ class FriendEditFragment : Fragment() {
         if(viewModel.friendNickname != "사용자") {
             Log.d("EditGoalTitleFragment", "friendNickname: ${viewModel.friendNickname}")
             titleTv.text = "${viewModel.friendNickname}님의 세부 목표"
-            titleDescriptionTv.text = "친구가 설정한 세부목표를 그대로 설정할수 있어요"
             titleEt.setText(goalActivity.goalName)
             goalAmountEt.setText(goalActivity.goalAmount)
         }
