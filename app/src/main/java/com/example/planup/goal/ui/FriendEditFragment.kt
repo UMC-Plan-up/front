@@ -12,9 +12,12 @@ import android.text.TextWatcher
 import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.domain.setGoalData
+import com.example.planup.goal.util.setGoalData
+import com.example.planup.goal.util.setInsets
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -24,7 +27,7 @@ class FriendEditFragment : Fragment() {
 
     private var goalId: Int = 0
 
-    private val viewModel: GoalViewModel by viewModels()
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,15 +183,6 @@ class FriendEditFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(
-                view.paddingLeft,
-                view.paddingTop,
-                view.paddingRight,
-                systemBars.bottom + view.paddingBottom
-            )
-            insets
-        }
+        setInsets(binding.root,binding.root.paddingBottom)
     }
 }
