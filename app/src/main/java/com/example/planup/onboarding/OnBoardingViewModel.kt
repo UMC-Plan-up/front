@@ -81,12 +81,15 @@ class OnBoardingViewModel @Inject constructor(
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
 
     fun updateEmail(email: String) {
-        val isValidEmailFormat = emailRegex.matches(email)
+        val isValidEmailFormat = emailRegex.matches(email).let {
+            if(email.isEmpty()) true else it
+        }
 
         _state.update {
             it.copy(
                 email = email,
-                isValidEmailFormat = isValidEmailFormat
+                isValidEmailFormat = isValidEmailFormat,
+                isDuplicatedEmail = false
             )
         }
     }

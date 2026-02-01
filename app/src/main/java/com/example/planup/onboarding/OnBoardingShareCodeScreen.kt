@@ -19,6 +19,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,11 +58,19 @@ fun OnBoardingShareCodeScreen(
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     val clipBoard = LocalClipboard.current
-
     val codeState = rememberTextFieldState(inviteCode)
     val shareTypes = remember { ShareTypeModel.entries.toList() }
     var isShareMenuOpen by remember { mutableStateOf(false) }
     var shareBoxSize by remember { mutableStateOf(IntSize.Zero) }
+
+    LaunchedEffect(inviteCode) {
+        // 초대 코드가 변경되는 경우
+        if(codeState.text != inviteCode) {
+            codeState.edit {
+                replace(0, length, inviteCode)
+            }
+        }
+    }
 
     Column(
         modifier = modifier
