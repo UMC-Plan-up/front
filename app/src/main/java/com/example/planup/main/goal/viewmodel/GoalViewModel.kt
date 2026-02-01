@@ -5,11 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalResult
-import com.example.planup.goal.domain.toGoalItems
-import com.example.planup.goal.domain.toGoalItemsForFriendAchieve
+import com.example.planup.goal.util.toGoalItems
+import com.example.planup.goal.util.toGoalItemsForFriendAchieve
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.goal.domain.GoalRepository
 import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
@@ -23,12 +24,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -42,9 +40,29 @@ class GoalViewModel @Inject constructor(
     val targetUserId: MutableLiveData<Int>
         get() = _targetUserId
 
+    private var _userName = MutableLiveData("사용자")
+    val userName: String
+        get() = _userName.value ?: "사용자"
+
+    fun setUserName(nickname: String) {
+        _userName.value = nickname
+    }
+
     private val _friendGoals = MutableStateFlow<List<FriendGoalWithAchievement>>(emptyList())
     val friendGoals: StateFlow<List<FriendGoalWithAchievement>> = _friendGoals
 
+
+    fun setFriendNickname(nickname: String) {
+        _friendNickname.value = nickname
+    }
+
+    private var _goalData = MutableLiveData<EditGoalResponse>()
+    val goalData: EditGoalResponse?
+        get() = _goalData.value
+
+    private var _friendNickname = MutableLiveData<String>()
+    val friendNickname: String
+        get() = _friendNickname.value?: "사용자"
 
     // ✅ UI 요청 실패 메시지 전용 (이벤트)
     private val _failMessage = MutableSharedFlow<String>()
@@ -188,6 +206,20 @@ class GoalViewModel @Inject constructor(
                 }
                 .onFailWithMessage { message->
                     message(message)
+                }
+        }
+    }
+
+    fun getGoalEditData(goalId: Int,goalDataAction: (EditGoalResponse) -> Unit, backAction: (String) -> Unit) {
+        viewModelScope.launch {
+            goalRepository.getGoalDetail(goalId)
+                .onSuccess {
+                    goalDataAction(it)
+                    _goalData.value = it
+                }
+                .onFailWithMessage { message->
+                    _failMessage.emit(message)
+                    backAction("목표의 데이터가 없습니다.")
                 }
         }
     }
