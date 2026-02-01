@@ -3,6 +3,7 @@ package com.example.planup.main.home.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.R
 import com.example.planup.main.goal.item.DailyGoalResult
 import com.example.planup.main.goal.item.FriendGoalAchievementResult
@@ -11,7 +12,10 @@ import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.home.data.CalendarEvent
 import com.example.planup.main.home.ui.HomeRepository
+import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
+import com.example.planup.network.onFailWithMessage
+import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +42,13 @@ class HomeViewModel @Inject constructor(
     private val _calendarEvents = MutableStateFlow<List<CalendarEvent>>(emptyList())
     val calendarEvents: StateFlow<List<CalendarEvent>> = _calendarEvents
 
+    private val _profileImg = MutableStateFlow("")
+    val profileImg: StateFlow<String> = _profileImg
+
+    private val _nickname = MutableStateFlow("")
+    val nickname: StateFlow<String> = _nickname
+
+
     fun loadMyGoalList(
         onCallBack: (result: ApiResult<List<MyGoalListItem>>) -> Unit
     ) {
@@ -58,9 +69,11 @@ class HomeViewModel @Inject constructor(
                 }
 
                 //TODO : dailytodo dummy
-                val dailyDummyList = mutableListOf<DailyToDo>()
-                dailyDummyList.add(
-                    DailyToDo("dummy1", 10, 20)
+                val dailyDummyList = listOf(
+                    DailyToDo("dummy1", 10, 20),
+                    DailyToDo("dummy2", 20, 30),
+                    DailyToDo("dummy3", 30, 40),
+                    DailyToDo("dummy4", 40, 50)
                 )
                 _dailyToDos.value = dailyDummyList
 
@@ -184,6 +197,19 @@ class HomeViewModel @Inject constructor(
                     })
                 current = current.plusDays(1)
             }
+        }
+    }
+
+    fun loadUserInfo() {
+        viewModelScope.launch {
+            homeRepository.getUserInfo()
+                .onSuccess { result ->
+                    _profileImg.value = result.profileImage
+                    _nickname.value = result.nickname
+                }
+                .onFailWithMessage { message ->
+                    Log.d("loadUserInfo", "Fail: $message")
+                }
         }
     }
 }

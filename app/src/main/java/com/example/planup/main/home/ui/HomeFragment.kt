@@ -1,5 +1,6 @@
 package com.example.planup.main.home.ui
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -38,19 +40,22 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
+import androidx.recyclerview.widget.RecyclerView
+import android.widget.SeekBar
+import androidx.core.view.doOnLayout
+import coil3.load
+import com.bumptech.glide.Glide
 
 class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private val viewModel: HomeViewModel by activityViewModels()
-    private lateinit var prefs: SharedPreferences
-
     private lateinit var dailyAdapter: DailyToDoAdapter
     private lateinit var friendChallengeAdapter: FriendChallengeAdapter
 
     private val today = LocalDate.now()
     private var selectedDate = today
-    private var eventList = mutableListOf<CalendarEvent>(
+    private var eventList = mutableListOf(
         CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 12, 11)),
         CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 12, 18)),
         CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 12, 19)),
@@ -65,26 +70,28 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val nickname = prefs.getString("nickname","")
-        binding.homeMainTv.text = getString(R.string.home_main_text,nickname?.removeSurrounding("\""))
-
+        viewModel.loadUserInfo()
         setupAdapters()
         observeViewModel()
         setupCalendar()
         setupClickListeners()
 
         // load data
-        viewModel.loadMyGoalList(createErrorHandler("loadMyGoalList"))
+        viewModel.loadMyGoalList(createErrorHandler("loadMyGoalList") {
+            updateScrollHandle()
+        })
         viewModel.loadFriendChallenges(createErrorHandler("loadFriendChallenges"))
         viewModel.loadMonthEvents(YearMonth.now())
+
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupAdapters() {
         dailyAdapter = DailyToDoAdapter()
         binding.dailyTodoRv.apply {
             adapter = dailyAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+
         }
 
         friendChallengeAdapter = FriendChallengeAdapter() { item ->
@@ -105,6 +112,46 @@ class HomeFragment : Fragment() {
             adapter = friendChallengeAdapter
             layoutManager = LinearLayoutManager(context)
         }
+
+        binding.dailyTodoRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
+                updateScrollHandle()
+            }
+        })
+
+        binding.scrollHandle.setOnTouchListener { v, event ->
+            val dailyTodoRv = binding.dailyTodoRv
+            when (event.action) {
+                MotionEvent.ACTION_DOWN,
+                MotionEvent.ACTION_MOVE -> {
+
+                    val rvWidth = dailyTodoRv.width
+                    val handleWidth = v.width
+
+                    val maxHandleX = rvWidth - handleWidth
+                    val newX = (event.rawX - handleWidth / 2)
+                        .coerceIn(0f, maxHandleX.toFloat())
+
+                    v.translationX = newX
+
+                    val range = dailyTodoRv.computeHorizontalScrollRange()
+                    val extent = dailyTodoRv.computeHorizontalScrollExtent()
+                    val maxScroll = range - extent
+
+                    val scrollRatio = newX / maxHandleX
+                    val targetScroll = (maxScroll * scrollRatio).toInt()
+
+                    dailyTodoRv.scrollBy(
+                        targetScroll - dailyTodoRv.computeHorizontalScrollOffset(),
+                        0
+                    )
+
+                    true
+                }
+                else -> false
+            }
+        }
+
     }
 
     private fun observeViewModel() {
@@ -113,10 +160,36 @@ class HomeFragment : Fragment() {
                 viewModel.dailyToDos.collect { list ->
 //                dailyAdapter = DailyToDoAdapter(list.toMutableList())
 //                dailyRecyclerVIew.adapter = dailyAdapter
-                    dailyAdapter.submitList(list)
+                    dailyAdapter.submitList(list) {
+                        binding.dailyTodoRv.doOnLayout {
+                            updateScrollHandle()
+                        }
+                    }
                 }
             }
         }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.profileImg.collect { url ->
+                    Glide.with(binding.homeMainProfileIv)
+                        .load(url) // String URL
+                        .placeholder(R.drawable.profile_example)
+                        .error(R.drawable.profile_example)
+                        .into(binding.homeMainProfileIv)
+                }
+            }
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.nickname.collect { nickname ->
+                    binding.homeMainTv.text = getString(R.string.home_main_text,
+                        nickname.removeSurrounding("\"")
+                    )
+                }
+            }
+        }
+
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.friendChallenges.collect { list ->
@@ -274,13 +347,15 @@ class HomeFragment : Fragment() {
         val bar3: View = binding.eventBar3
     }
 
-    fun <T> createErrorHandler(tag: String): (ApiResult<T>) -> Unit {
+    fun <T> createErrorHandler(
+        tag: String,
+        onSuccess: ((T) -> Unit)? = null): (ApiResult<T>) -> Unit {
         return { result ->
             when (result) {
+                is ApiResult.Success -> onSuccess?.invoke(result.data)
                 is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
                 is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
                 is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
-                else -> {}
             }
         }
     }
@@ -331,6 +406,35 @@ class HomeFragment : Fragment() {
                 .commitAllowingStateLoss()
         }
         dialog.show()
+    }
+
+    private fun updateScrollHandle() {
+        val rv = binding.dailyTodoRv
+        val handle = binding.scrollHandle
+
+        val range = rv.computeHorizontalScrollRange()
+        val extent = rv.computeHorizontalScrollExtent()
+        val offset = rv.computeHorizontalScrollOffset()
+
+        if (range <= extent) {
+            handle.visibility = View.INVISIBLE
+            Log.d("updateScrollHandle", "range <= extent")
+            return
+        }
+        Log.d("updateScrollHandle", "range: $range, extent: $extent, offset: $offset")
+
+
+        val proportion = extent.toFloat() / range
+        val handleWidth = (rv.width * proportion).toInt()
+        Log.d("updateScrollHandle", "proportion: $proportion, handleWidth: $handleWidth")
+        handle.layoutParams.width = handleWidth
+        handle.requestLayout()
+
+        val maxOffset = rv.width - handleWidth
+        val handleX = maxOffset * offset / (range - extent)
+        handle.translationX = handleX.toFloat()
+
+        handle.visibility = View.VISIBLE
     }
 }
 
