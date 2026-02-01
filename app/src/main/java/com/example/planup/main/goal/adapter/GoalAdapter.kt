@@ -27,7 +27,7 @@ class GoalAdapter(
     private val onEditClick: (Int) -> Unit,
     private val onDeactivateConfirmed: (Int) -> Unit,
     private val onActivateConfirmed: (Int) -> Unit,
-    private val onDeleteConfirmed: (Int) -> Unit) :
+    private val onDeleteConfirmed: (Int,()->Unit) -> Unit) :
     RecyclerView.Adapter<GoalAdapter.GoalViewHolder>() {
 
     private var isEditMode: Boolean = false
@@ -100,11 +100,12 @@ class GoalAdapter(
         }
 
         holder.editIcon.setOnClickListener {
-            val goalId = item.goalId
-            val context = holder.itemView.context
-            val intent = Intent(context, EditFriendGoalActivity::class.java)
-            intent.putExtra("goalId", goalId)  // 필요한 정보 전달
-            context.startActivity(intent)
+//            val goalId = item.goalId
+//            val context = holder.itemView.context
+//            val intent = Intent(context, EditFriendGoalActivity::class.java)
+//            intent.putExtra("goalId", goalId)  // 필요한 정보 전달
+//            context.startActivity(intent)
+            onEditClick(item.goalId)
         }
     }
 
@@ -281,9 +282,12 @@ class GoalAdapter(
             dialog.dismiss()
         }
         dialog.findViewById<TextView>(R.id.popup_delete_goal_yes_btn).setOnClickListener{
-            item.isActive = !item.isActive // 상태 전환
-            notifyItemChanged(position)
-            dialog.dismiss()
+//            item.isActive = !item.isActive // 상태 전환
+            onDeleteConfirmed(item.goalId){
+                notifyItemChanged(position)
+                dialog.dismiss()
+            }
+
         }
         dialog.show()
     }
