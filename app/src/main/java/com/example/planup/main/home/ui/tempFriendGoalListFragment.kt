@@ -240,17 +240,16 @@ class tempFriendGoalListFragment : Fragment() {
                 val today = LocalDate.now() // yyyy-MM-dd
 
                 val response = apiService.getDailyAchievement(
-                    token = "Bearer $token",
                     targetDate = today.toString()
                 )
 
-                if (response.isSuccess) {
+                if (response.isSuccessful && response.body()?.isSuccess == true) {
                     val dailyPieChart = binding.friendDailyGoalCompletePc
-                    val achievementRate = response.result.achievementRate
+                    val achievementRate = response.body()?.result?.achievementRate!!
                     binding.friendDailyGoalPercentTv.text = "$achievementRate%"
                     setupPieChart(dailyPieChart, achievementRate)
                 } else {
-                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message}")
+                    Log.d("GoalFragmentApi", "loadTodayAchievement 실패: ${response.message()}")
                 }
 
             } catch (e: Exception) {

@@ -103,7 +103,11 @@ object KakaoServiceHandler {
                 }
                 if (error != null) {
                     Log.e(LOG_TAG, "초대코드 공유 실패| error: $error")
-                    continuation.resumeWithException(KakaoHandlerError.UnHandledError(error))
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        continuation.resumeWithException(KakaoHandlerError.CancelledByUser)
+                    } else {
+                        continuation.resumeWithException(KakaoHandlerError.UnHandledError(error))
+                    }
                 }
             }
         }

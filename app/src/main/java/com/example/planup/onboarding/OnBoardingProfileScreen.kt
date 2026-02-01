@@ -259,7 +259,7 @@ private fun ProfileBody(
                     modifier = Modifier
                         .weight(1.0f),
                     state = nicknameState,
-                    placeHolder = stringResource(R.string.profile_name_input_hint),
+                    placeHolder = stringResource(R.string.profile_nickname_input_hint),
                     inputTransformation = {
                         validateNickNameFormat(toString())
                     }

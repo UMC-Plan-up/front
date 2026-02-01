@@ -38,7 +38,7 @@ class ParticipantLimitFragment : Fragment() {
                     ?: "사용자"
 
         // 닉네임 반영
-        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
+//        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
         binding.participantLimitErrorText.visibility = View.GONE
 
         /* 처음엔 다음 버튼 비활성화 */
@@ -73,7 +73,7 @@ class ParticipantLimitFragment : Fragment() {
 
                 if (ga != null) {
                     ga.limitFriendCount = limit
-                    val pushAlertFragment = PushAlertFragment().apply {
+                    val pushAlertCommunityFragment = PushAlertCommunityFragment().apply {
                         arguments = Bundle().apply {
                             putString("goalOwnerName", ga.goalOwnerName)
                             putString("goalType", ga.goalType)
@@ -86,9 +86,9 @@ class ParticipantLimitFragment : Fragment() {
                             putInt("limitFriendCount", ga.limitFriendCount)
                         }
                     }
-                    ga.navigateToFragment(pushAlertFragment)
+                    ga.navigateToFragment(pushAlertCommunityFragment)
                 } else {
-                    val pushAlertFragment = PushAlertFragment().apply {
+                    val pushAlertCommunityFragment = PushAlertCommunityFragment().apply {
                         arguments = Bundle().apply {
                             putString("goalOwnerName", goalOwnerName)
                             putInt("limitFriendCount", limit)
@@ -97,12 +97,12 @@ class ParticipantLimitFragment : Fragment() {
                     val containerId = (view?.parent as? ViewGroup)?.id
                     if (containerId != null && containerId != View.NO_ID) {
                         parentFragmentManager.beginTransaction()
-                            .replace(containerId, pushAlertFragment)
+                            .replace(containerId, pushAlertCommunityFragment)
                             .addToBackStack(null)
                             .commit()
                     } else {
                         requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(android.R.id.content, pushAlertFragment)
+                            .replace(android.R.id.content, pushAlertCommunityFragment)
                             .addToBackStack(null)
                             .commitAllowingStateLoss()
                     }

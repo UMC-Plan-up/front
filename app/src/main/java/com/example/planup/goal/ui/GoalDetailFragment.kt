@@ -1,5 +1,6 @@
 package com.example.planup.goal.ui
 
+import android.R.attr.button
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -11,15 +12,23 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalDetailBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.Collections.frequency
 
+@AndroidEntryPoint
 class GoalDetailFragment : Fragment() {
 
     private var _binding: FragmentGoalDetailBinding? = null
@@ -37,6 +46,23 @@ class GoalDetailFragment : Fragment() {
     private var selectedEndButton: AppCompatButton? = null
     private var isPlanSelected = false
 
+    private val viewModel: GoalViewModel by activityViewModels()
+
+    val periodButtons = listOf(
+        binding.dayOptionDailyButton,
+        binding.dayOptionWeeklyButton,
+        binding.dayOptionMonthlyButton
+    )
+
+    val endOptionButtons = listOf(
+        binding.endOption1WeekButton,
+        binding.endOption1MonthButton,
+        binding.endOption3MonthButton,
+        binding.endOption6MonthButton,
+        binding.endOption1YearButton,
+        binding.directSetButton
+    )
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,23 +74,48 @@ class GoalDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val goalActivity = (requireActivity() as GoalActivity)
         selectedMethod = arguments?.getString("SELECTED_METHOD")
         val name = arguments?.getString("goalOwnerName")
         goalOwnerName = name?.removeSurrounding("\"")
-            ?: (activity as? GoalActivity)?.goalOwnerName
-                    ?: "사용자"
+            ?: goalActivity.goalOwnerName
+        if(viewModel.friendNickname == "사용자") {
+            val title = getString(R.string.goal_friend_detail, goalOwnerName)
+            binding.friendGoalTitle.text = title
+        }else{
+            val title = getString(R.string.goal_friend_detail, viewModel.friendNickname)
+            binding.friendGoalTitle.text = title
+            periodButtons.forEach {
+                if (it.text.toString() == viewModel.goalData?.period){
+                    setPeriodListener(it)
+                }
+            }
+            binding.frequencyErrorText.text = viewModel.goalData?.frequency.toString()
+            setErrorText(viewModel.goalData?.frequency ?: 0)
 
-        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
+            when (viewModel.goalData?.endDate) {
+                "1Week" -> setEndListener(endOptionButtons[0])
+                "1Month" -> setEndListener(endOptionButtons[1])
+                "3Months" -> setEndListener(endOptionButtons[2])
+                "6Months" -> setEndListener(endOptionButtons[3])
+                "1Year" -> setEndListener(endOptionButtons[4])
+                else -> setEndListener(endOptionButtons[5])
+            }
+
+            updateNextButtonState()
+        }
+
+
+//        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
         binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
 
         // SubscriptionPlanFragment에서 직접 넘어온 경우
-        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
-        if (isUnlockedFromSubscription) {
-            binding.goalContainer.visibility = View.GONE
-        }
+//        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
+//        if (isUnlockedFromSubscription) {
+//            binding.goalContainer.visibility = View.GONE
+//        }
 
         // GoalActivity를 통해 유료 결제하고 돌아온 경우
 //        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
@@ -145,18 +196,9 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun setupPeriodButtons() {
-        val buttons = listOf(
-            binding.dayOptionDailyButton,
-            binding.dayOptionWeeklyButton,
-            binding.dayOptionMonthlyButton
-        )
-
-        buttons.forEach { button ->
+        periodButtons.forEach { button ->
             button.setOnClickListener {
-                selectedPeriodButton?.let { resetButtonStyle(it) }
-                selectButtonStyle(button)
-                selectedPeriodButton = button
-                updateNextButtonState()
+                setPeriodListener(button)
             }
         }
     }
@@ -178,14 +220,7 @@ class GoalDetailFragment : Fragment() {
 
         binding.frequencyInputEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                val value = s.toString().toIntOrNull() ?: 0
-                if (value < 1) {
-                    binding.frequencyErrorText.visibility = View.VISIBLE
-                    isFrequencyValid = false
-                } else {
-                    binding.frequencyErrorText.visibility = View.GONE
-                    isFrequencyValid = true
-                }
+                setErrorText(s.toString().toIntOrNull() ?: 0)
                 updateNextButtonState()
             }
 
@@ -228,50 +263,29 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun setupEndOptionButtons() {
-        val buttons = listOf(
-            binding.endOption1WeekButton,
-            binding.endOption1MonthButton,
-            binding.endOption3MonthButton,
-            binding.endOption6MonthButton,
-            binding.endOption1YearButton,
-            binding.directSetButton
-        )
+        val buttons = if(binding.frequencyInputState.text == binding.dayOptionMonthlyButton.text) {
+            listOf(
+                binding.endOption1MonthButton,
+                binding.endOption3MonthButton,
+                binding.endOption6MonthButton,
+                binding.endOption1YearButton,
+                binding.directSetButton
+            )
+        }
+        else{
+            listOf(
+                binding.endOption1WeekButton,
+                binding.endOption1MonthButton,
+                binding.endOption3MonthButton,
+                binding.endOption6MonthButton,
+                binding.endOption1YearButton,
+                binding.directSetButton
+            )
+        }
 
         buttons.forEach { button ->
             button.setOnClickListener {
-                if (selectedEndButton == button) {
-                    // 이미 선택된 버튼을 다시 클릭한 경우 선택 해제
-                    resetButtonStyle(button)
-                    selectedEndButton = null
-
-                    binding.dropdownContainer1.visibility = View.GONE
-                    binding.dropdownContainer2.visibility = View.GONE
-                    binding.dropdownContainer3.visibility = View.GONE
-
-                } else {
-                    selectedEndButton?.let { resetButtonStyle(it) }
-
-                    selectButtonStyle(button)
-                    selectedEndButton = button
-
-                    // '직접 설정' 버튼 선택 시 드롭다운 표시
-                    if (button == binding.directSetButton) {
-                        binding.dropdownContainer1.visibility = View.VISIBLE
-                        binding.dropdownContainer2.visibility = View.VISIBLE
-                        binding.dropdownContainer3.visibility = View.VISIBLE
-                    } else {
-                        binding.dropdownContainer1.visibility = View.GONE
-                        binding.dropdownContainer2.visibility = View.GONE
-                        binding.dropdownContainer3.visibility = View.GONE
-
-                        selectedYear = null
-                        selectedMonth = null
-                        selectedDay = null
-                        binding.challengeYearTv.text = getString(R.string.year)
-                        binding.challengeMonthTv.text = getString(R.string.month)
-                        binding.challengeDayTv.text = getString(R.string.day)
-                    }
-                }
+                setEndListener(button)
                 updateNextButtonState()
             }
         }
@@ -404,22 +418,39 @@ class GoalDetailFragment : Fragment() {
             goalActivity.frequency = frequency
             goalActivity.endDate = endDateString
 
-            // 다음 프래그먼트로 이동
-            val participantFragment = ParticipantLimitFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalActivity.goalOwnerName)
-                    putString("goalType", goalActivity.goalType)
-                    putString("goalCategory", goalActivity.goalCategory)
-                    putString("goalName", goalActivity.goalName)
-                    putString("goalAmount", goalActivity.goalAmount)
-                    putString("verificationType", goalActivity.verificationType)
-                    putString("period", goalActivity.period)
-                    putInt("frequency", goalActivity.frequency)
-                    putString("endDate", goalActivity.endDate)
+            val nextFragment = if (goalActivity.isFriendTab) {
+                // 다음 프래그먼트로 이동
+                ParticipantLimitFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", goalActivity.goalOwnerName)
+                        putString("goalType", goalActivity.goalType)
+                        putString("goalCategory", goalActivity.goalCategory)
+                        putString("goalName", goalActivity.goalName)
+                        putString("goalAmount", goalActivity.goalAmount)
+                        putString("verificationType", goalActivity.verificationType)
+                        putString("period", goalActivity.period)
+                        putInt("frequency", goalActivity.frequency)
+                        putString("endDate", goalActivity.endDate)
+                    }
+
+                }
+            }else {
+                PushAlertCommunityFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", goalActivity.goalOwnerName)
+                        putString("goalType", goalActivity.goalType)
+                        putString("goalCategory", goalActivity.goalCategory)
+                        putString("goalName", goalActivity.goalName)
+                        putString("goalAmount", goalActivity.goalAmount)
+                        putString("verificationType", goalActivity.verificationType)
+                        putString("period", goalActivity.period)
+                        putInt("frequency", goalActivity.frequency)
+                        putString("endDate", goalActivity.endDate)
+                    }
                 }
             }
 
-            goalActivity.navigateToFragment(participantFragment)
+            goalActivity.navigateToFragment(nextFragment)
             return
         }
 
@@ -446,6 +477,60 @@ class GoalDetailFragment : Fragment() {
             .replace(android.R.id.content, participantFragment)
             .addToBackStack(null)
             .commitAllowingStateLoss()
+    }
+
+    private fun setPeriodListener(button: AppCompatButton){
+        selectedPeriodButton?.let { resetButtonStyle(it) }
+        selectButtonStyle(button)
+        selectedPeriodButton = button
+        binding.frequencyInputState.text = button.text
+        updateNextButtonState()
+    }
+
+    private fun setErrorText(frequency: Int) {
+        if (frequency < 1) {
+            binding.frequencyErrorText.visibility = View.VISIBLE
+            isFrequencyValid = false
+        } else {
+            binding.frequencyErrorText.visibility = View.GONE
+            isFrequencyValid = true
+        }
+    }
+
+    private fun setEndListener(button: AppCompatButton){
+        if (selectedEndButton == button) {
+            // 이미 선택된 버튼을 다시 클릭한 경우 선택 해제
+            resetButtonStyle(button)
+            selectedEndButton = null
+
+            binding.dropdownContainer1.visibility = View.GONE
+            binding.dropdownContainer2.visibility = View.GONE
+            binding.dropdownContainer3.visibility = View.GONE
+
+        } else {
+            selectedEndButton?.let { resetButtonStyle(it) }
+
+            selectButtonStyle(button)
+            selectedEndButton = button
+
+            // '직접 설정' 버튼 선택 시 드롭다운 표시
+            if (button == binding.directSetButton) {
+                binding.dropdownContainer1.visibility = View.VISIBLE
+                binding.dropdownContainer2.visibility = View.VISIBLE
+                binding.dropdownContainer3.visibility = View.VISIBLE
+            } else {
+                binding.dropdownContainer1.visibility = View.GONE
+                binding.dropdownContainer2.visibility = View.GONE
+                binding.dropdownContainer3.visibility = View.GONE
+
+                selectedYear = null
+                selectedMonth = null
+                selectedDay = null
+                binding.challengeYearTv.text = getString(R.string.year)
+                binding.challengeMonthTv.text = getString(R.string.month)
+                binding.challengeDayTv.text = getString(R.string.day)
+            }
+        }
     }
 
     override fun onDestroyView() {

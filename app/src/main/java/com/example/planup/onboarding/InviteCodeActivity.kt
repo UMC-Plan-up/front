@@ -117,7 +117,11 @@ class InviteCodeActivity : AppCompatActivity() {
                                 this@InviteCodeActivity,
                                 inviteCode = event.inviteCode,
                                 nickname = event.nickname ?: "사용자"
-                            )
+                            ).onSuccess { intent ->
+                                startActivity(intent)
+                            }.onFailure {
+                                errorSnackBarHost.showSnackbar("카카오 공유하기 실패 $${it.message}")
+                            }
                         }
 
                         is InviteCodeViewModel.Event.InvalidInviteCode -> {

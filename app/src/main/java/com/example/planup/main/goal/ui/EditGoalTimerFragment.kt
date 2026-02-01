@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalTimerBinding
-import com.example.planup.main.goal.item.EditGoalResponse
 
 class EditGoalTimerFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTimerBinding
@@ -33,7 +32,6 @@ class EditGoalTimerFragment : Fragment() {
     private var verificationType: String = ""
     private var limitFriendCount: Int = 0
     private var goalTime: Int = 0
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

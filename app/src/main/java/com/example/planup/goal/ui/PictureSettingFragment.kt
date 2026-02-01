@@ -2,6 +2,7 @@ package com.example.planup.goal.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,12 +11,17 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPictureSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PictureSettingFragment : Fragment() {
 
     private var _binding: FragmentPictureSettingBinding? = null
@@ -26,6 +32,8 @@ class PictureSettingFragment : Fragment() {
     private val PREFS_NAME = "goal_data"
     private val KEY_FREQUENCY = "last_frequency"
     private val KEY_VERIFICATION_TYPE = "last_verification_type"
+
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +47,20 @@ class PictureSettingFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupListeners()
 //        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
+        val titleTv = binding.titleTv
+        val frequency = binding.challengePhotoNumberTv
+        Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
+        if(viewModel.friendNickname != "사용자") {
+            Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
+            Log.d(
+                "PictureSettingFragment",
+                "titleTv: ${getString(R.string.goal_friend_detail, viewModel.friendNickname)}"
+            )
+            titleTv.text = getString(R.string.goal_friend_detail, viewModel.friendNickname)
+            if(viewModel.goalData?.verificationType == "PICTURE"){
+                frequency.text = "${viewModel.goalData?.frequency}번"
+            }
+        }
     }
 
     private fun setupListeners() {

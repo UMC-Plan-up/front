@@ -11,6 +11,10 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+@Deprecated(
+    message ="GoalApiService is deprecated",
+    replaceWith = ReplaceWith("GoalApi")
+)
 interface GoalApiService {
     @PUT("/goals/{goalId}")
     suspend fun editGoal(

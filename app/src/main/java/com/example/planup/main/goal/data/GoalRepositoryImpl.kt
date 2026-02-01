@@ -1,8 +1,13 @@
 package com.example.planup.main.goal.data
 
 import android.util.Log
+import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalResult
 import com.example.planup.main.goal.domain.GoalRepository
+import com.example.planup.main.goal.item.EditGoalApiResponse
 import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.safeResult
@@ -21,7 +26,7 @@ class GoalRepositoryImpl @Inject constructor(
         try {
             val response = goalApi.editGoal(goalId = goalId, editGoalRequest = request)
 
-            if (response.isSuccess){
+            if (response.isSuccess) {
                 Log.d("EditGoalFragment", "성공 메시지: ${response.message}")
                 return true
             } else {
@@ -57,16 +62,19 @@ class GoalRepositoryImpl @Inject constructor(
         }
 
     override suspend fun deleteGoal(goalId: Int) =
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             safeResult(
                 response = {
                     goalApi.deleteGoal(goalId)
                 },
                 onResponse = { response ->
-                    if (response.isSuccess){
+                    if (response.isSuccess) {
                         ApiResult.Success(response.result)
-                    }else{
-                        Log.w("GoalFragment", "deleteGoal fail body=${response} code=${response.code}")
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "deleteGoal fail body=${response} code=${response.code}"
+                        )
                         ApiResult.Fail(response.message)
                     }
                 }
@@ -74,16 +82,59 @@ class GoalRepositoryImpl @Inject constructor(
         }
 
     override suspend fun setGoalActive(goalId: Int) =
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             safeResult(
                 response = {
                     goalApi.setGoalActive(goalId)
                 },
                 onResponse = { response ->
-                    if (response.isSuccess){
+                    if (response.isSuccess) {
                         ApiResult.Success(response.result)
-                    }else{
-                        Log.w("GoalFragment", "setGoalActive fail body=${response} code=${response.code}")
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "setGoalActive fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun createGoal(goalCreateRequest: GoalCreateRequest): ApiResult<GoalResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.createGoal(goalCreateRequest)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "setGoalActive fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun getGoalDetail(goalId: Int): ApiResult<EditGoalResponse> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getEditGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "getGoalDetail fail body=${response} code=${response.code}"
+                        )
                         ApiResult.Fail(response.message)
                     }
                 }
