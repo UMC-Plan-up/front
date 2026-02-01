@@ -52,9 +52,9 @@ class GoalCompleteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.backIcon.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
+//        binding.backIcon.setOnClickListener {
+//            parentFragmentManager.popBackStack()
+//        }
 
         binding.startPlanUpButton.setOnClickListener {
             sendCreateGoal()
