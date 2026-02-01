@@ -23,7 +23,7 @@ import com.example.planup.goal.GoalActivity
 import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
 
-class PushAlertFragment : Fragment() {
+class PushAlertCommunityFragment : Fragment() {
 
     private var _binding: FragmentPushAlertBinding? = null
     private val binding get() = _binding!!
