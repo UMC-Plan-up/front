@@ -16,9 +16,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCategoryBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.ui.CommonGoalFragment
-import com.example.planup.goal.ui.GoalInputFragment
 import kotlin.collections.forEach
 
 class EditGoalCategoryFragment : Fragment() {
