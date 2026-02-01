@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalDetailBinding
@@ -55,16 +56,16 @@ class GoalDetailFragment : Fragment() {
             ?: (activity as? GoalActivity)?.goalOwnerName
                     ?: "사용자"
 
-        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
+//        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
 
         binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
 
         // SubscriptionPlanFragment에서 직접 넘어온 경우
-        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
-        if (isUnlockedFromSubscription) {
-            binding.goalContainer.visibility = View.GONE
-        }
+//        val isUnlockedFromSubscription = arguments?.getBoolean("IS_UNLOCKED_FROM_SUBSCRIPTION", false) ?: false
+//        if (isUnlockedFromSubscription) {
+//            binding.goalContainer.visibility = View.GONE
+//        }
 
         // GoalActivity를 통해 유료 결제하고 돌아온 경우
 //        isPlanSelected = arguments?.getBoolean("PLAN_SELECTED", false) ?: false
@@ -156,6 +157,7 @@ class GoalDetailFragment : Fragment() {
                 selectedPeriodButton?.let { resetButtonStyle(it) }
                 selectButtonStyle(button)
                 selectedPeriodButton = button
+                binding.frequencyInputState.text = button.text
                 updateNextButtonState()
             }
         }
@@ -228,14 +230,25 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun setupEndOptionButtons() {
-        val buttons = listOf(
-            binding.endOption1WeekButton,
-            binding.endOption1MonthButton,
-            binding.endOption3MonthButton,
-            binding.endOption6MonthButton,
-            binding.endOption1YearButton,
-            binding.directSetButton
-        )
+        val buttons = if(binding.frequencyInputState.text == binding.dayOptionMonthlyButton.text) {
+            listOf(
+                binding.endOption1MonthButton,
+                binding.endOption3MonthButton,
+                binding.endOption6MonthButton,
+                binding.endOption1YearButton,
+                binding.directSetButton
+            )
+        }
+        else{
+            listOf(
+                binding.endOption1WeekButton,
+                binding.endOption1MonthButton,
+                binding.endOption3MonthButton,
+                binding.endOption6MonthButton,
+                binding.endOption1YearButton,
+                binding.directSetButton
+            )
+        }
 
         buttons.forEach { button ->
             button.setOnClickListener {
@@ -404,22 +417,39 @@ class GoalDetailFragment : Fragment() {
             goalActivity.frequency = frequency
             goalActivity.endDate = endDateString
 
-            // 다음 프래그먼트로 이동
-            val participantFragment = ParticipantLimitFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalActivity.goalOwnerName)
-                    putString("goalType", goalActivity.goalType)
-                    putString("goalCategory", goalActivity.goalCategory)
-                    putString("goalName", goalActivity.goalName)
-                    putString("goalAmount", goalActivity.goalAmount)
-                    putString("verificationType", goalActivity.verificationType)
-                    putString("period", goalActivity.period)
-                    putInt("frequency", goalActivity.frequency)
-                    putString("endDate", goalActivity.endDate)
+            val nextFragment = if (goalActivity.isFriendTab) {
+                // 다음 프래그먼트로 이동
+                ParticipantLimitFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", goalActivity.goalOwnerName)
+                        putString("goalType", goalActivity.goalType)
+                        putString("goalCategory", goalActivity.goalCategory)
+                        putString("goalName", goalActivity.goalName)
+                        putString("goalAmount", goalActivity.goalAmount)
+                        putString("verificationType", goalActivity.verificationType)
+                        putString("period", goalActivity.period)
+                        putInt("frequency", goalActivity.frequency)
+                        putString("endDate", goalActivity.endDate)
+                    }
+
+                }
+            }else {
+                PushAlertCommunityFragment().apply {
+                    arguments = Bundle().apply {
+                        putString("goalOwnerName", goalActivity.goalOwnerName)
+                        putString("goalType", goalActivity.goalType)
+                        putString("goalCategory", goalActivity.goalCategory)
+                        putString("goalName", goalActivity.goalName)
+                        putString("goalAmount", goalActivity.goalAmount)
+                        putString("verificationType", goalActivity.verificationType)
+                        putString("period", goalActivity.period)
+                        putInt("frequency", goalActivity.frequency)
+                        putString("endDate", goalActivity.endDate)
+                    }
                 }
             }
 
-            goalActivity.navigateToFragment(participantFragment)
+            goalActivity.navigateToFragment(nextFragment)
             return
         }
 
