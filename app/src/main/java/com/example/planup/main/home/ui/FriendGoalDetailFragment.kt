@@ -61,9 +61,9 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
         binding.friendGoalDetailTodayfocusTv.text = getString(R.string.friend_goal_detail_today_text, title)
-        loadComment(token, goalId)
+        loadComment(goalId)
         loadTodayFriendTime(token, friendId, goalId)
-        loadFriendPhotos(token, friendId, goalId)
+        loadFriendPhotos(friendId, goalId)
 
         chart = binding.friendGoalChart
         setupCombinedChart()
@@ -85,7 +85,7 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendGoalSendCommentIv.setOnClickListener {
             val comment = binding.friendGoalCommentEt.text.toString()
             if (comment.isNotEmpty()) {
-                sendComment(token, goalId, comment)
+                sendComment(goalId, comment)
             }
         }
 
@@ -174,11 +174,10 @@ class FriendGoalDetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadComment(token: String?, goalId: Int) {
+    private fun loadComment(goalId: Int) {
         lifecycleScope.launch {
             try {
-                val apiService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                val response = apiService.getComments(token = "Bearer $token", goalId = goalId)
+                val response = RetrofitInstance.goalApi.getComments(goalId = goalId)
                 if(response.isSuccess) {
                     binding.friendGoalCommentTv.text = response.result[0].content
                     binding.friendGoalOtherNicknameTv.text = response.result[0].writerNickname
@@ -217,11 +216,10 @@ class FriendGoalDetailFragment : Fragment() {
         }
     }
 
-    private fun loadFriendPhotos(token: String?, friendId: Int, goalId: Int) {
+    private fun loadFriendPhotos(friendId: Int, goalId: Int) {
         lifecycleScope.launch {
             try {
                 val response = RetrofitInstance.goalApi.getFriendPhotos(
-                    token = "Bearer $token",
                     friendId = friendId,
                     goalId = goalId,
                     userId = userPrefs.getInt("userId", 0)
@@ -242,15 +240,15 @@ class FriendGoalDetailFragment : Fragment() {
         recyclerView.adapter = PhotoAdapter(photoUrls)
     }
 
-    private fun sendComment(token: String?, goalId: Int, comment: String) {
+    private fun sendComment(goalId: Int, comment: String) {
         lifecycleScope.launch {
             try {
                 val request = CreateCommentRequest(content = comment, parentCommentId = 0, reply = false)
                 val goalService = RetrofitInstance.goalApi
-                val response = goalService.createComment(token = "Bearer $token", goalId = goalId, comment = request)
+                val response = goalService.createComment(goalId = goalId, comment = request)
                 if(response.isSuccess){
                     binding.friendGoalCommentEt.text.clear()
-                    loadComment(token, goalId)
+                    loadComment(goalId)
                 } else {
                     Log.d("FriendGoalDetailFragment", "sendComment 실패: ${response.message}")
                 }
