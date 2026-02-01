@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalInputBinding
 import com.example.planup.goal.GoalActivity
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 
 class GoalInputFragment : Fragment() {
 
@@ -50,7 +51,14 @@ class GoalInputFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // 타이틀에 닉네임 반영
-        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
+
+        if ((requireActivity() as GoalActivity).isFriendTab) {
+            binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
+            binding.friendGoalDescriptionText.visibility = View.VISIBLE
+        }else {
+            binding.friendGoalTitleText.text = getString(R.string.goal_community_detail)
+            binding.friendGoalDescriptionText.visibility = View.GONE
+        }
 
         binding.goalNameMinLengthHint.visibility = View.GONE
         binding.goalNameMaxLengthHint.visibility = View.GONE
