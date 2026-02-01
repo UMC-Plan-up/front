@@ -20,37 +20,28 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.planup.R
-import com.example.planup.database.TokenSaver
 import com.example.planup.databinding.FragmentGoalBinding
 import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.domain.toGoalItems
-import com.example.planup.goal.domain.toGoalItemsForFriend
+import com.example.planup.goal.util.toGoalItems
+import com.example.planup.goal.util.toGoalItemsForFriend
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.adapter.GoalAdapter
-import com.example.planup.main.goal.adapter.GoalApi
 import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.main.goal.data.GoalType
-import com.example.planup.main.goal.data.MyGoalListDto
-import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.goal.item.GoalRetrofitInstance
 import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.network.RetrofitInstance
-import com.example.planup.network.controller.GoalController
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.time.LocalDate
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class GoalFragment : Fragment(), MyGoalListDtoAdapter {
@@ -76,7 +67,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         }
     }
 
-    lateinit var tokenSaver : TokenSaver
 
     private var targetNicknameArg: String = ""
 
@@ -134,7 +124,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         prefs = (requireActivity() as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
 
-        val nickname = prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자"
+        viewModel.setUserName(prefs.getString("nickname","사용자")?.removeSurrounding("\"") ?: "사용자")
 
         dailyPieChart = binding.dailyGoalCompletePc
         loadTodayAchievement()
@@ -163,7 +153,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             },
             onDeactivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = false) },
             onActivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = true) },
-            onDeleteConfirmed = {goalId -> requestDeleteGoal(goalId)}
+            onDeleteConfirmed = {goalId,action -> requestDeleteGoal(goalId) { action() } }
         )
         recyclerView.adapter = adapter
 
@@ -177,7 +167,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             },
             action = {
                 // ✅ 내 모드
-                binding.userGoalListTv.text = "${nickname}의 목표 리스트"
+                binding.userGoalListTv.text = "${viewModel.userName}의 목표 리스트"
 
                 viewModel.fetchMyGoals()
             }
@@ -271,35 +261,35 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //            )
 //        }
 
-    private val goalEditApi by lazy{
-        GoalRetrofitInstance.api.create(GoalApi::class.java)
-    }
+//    private val goalEditApi by lazy{
+//        RetrofitInstance.goalApi
+//    }
 
-    // 액세스 토큰 가져오기
-    private fun requireTokenOrNull(): String?{
-        return tokenSaver.safeToken()
-    }
+//    // 액세스 토큰 가져오기
+//    private fun requireTokenOrNull(): String?{
+//        return tokenSaver.safeToken()
+//    }
 
     // 삭제
     /** 삭제 */
-    private fun requestDeleteGoal(goalId: Int) {
-        val token = requireTokenOrNull() ?: run {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun requestDeleteGoal(goalId: Int , action:()-> Unit) {
         lifecycleScope.launch {
             runCatching {
-                goalEditApi.deleteGoal(token = token, goalId = goalId)
+                RetrofitInstance.goalApi.deleteGoal(goalId = goalId)
             }.onSuccess { res ->
                 if (res.isSuccessful && (res.body()?.isSuccess == true)) {
+
                     showDeleteToast()
                     // 1) 즉시 UI에서 제거
                     adapter.removeItemById(goalId)
                     // 2) 서버 최신 상태도 재조회(편집모드 유지됨)
                     viewModel.loadGoalList(
-                        friendAction = {},
+                        friendAction = {
+                            action()
+                        },
                         action = {
                             viewModel.fetchMyGoals()
+                            action()
                         }
                     )
                 } else {
@@ -318,9 +308,8 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
     /** 활성/비활성 토글 (이번 클릭 의도 전달) */
     private fun requestToggleActive(goalId: Int, willActivate: Boolean) {
-        val token = requireTokenOrNull() ?: return Toast.makeText(requireContext(),"로그인이 필요합니다.",Toast.LENGTH_SHORT).show()
         lifecycleScope.launch {
-            runCatching { goalEditApi.setGoalActive(token, goalId) }
+            runCatching { RetrofitInstance.goalApi.setGoalActive(goalId) }
                 .onSuccess { res ->
                     if (res.isSuccessful && (res.body()?.isSuccess == true)) {
                         if (willActivate) showActivateToast() else showDeactivateToast()
@@ -444,20 +433,20 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         }
 
         // unlockTextLl 클릭 시 SubscriptionPlanFragment로 이동
-        binding.unlockTextLl.setOnClickListener {
-            val subscriptionFragment = SubscriptionPlanFragment().apply {
-                arguments = Bundle().apply {
-                    putBoolean("IS_FROM_GOAL_FRAGMENT", true)
-                }
-            }
-            // MainActivity의 navigateToFragment를 사용해 전환
-            (context as? MainActivity)?.navigateToFragment(subscriptionFragment)
-        }
+//        binding.unlockTextLl.setOnClickListener {
+//            val subscriptionFragment = SubscriptionPlanFragment().apply {
+//                arguments = Bundle().apply {
+//                    putBoolean("IS_FROM_GOAL_FRAGMENT", true)
+//                }
+//            }
+//            // MainActivity의 navigateToFragment를 사용해 전환
+//            (context as? MainActivity)?.navigateToFragment(subscriptionFragment)
+//        }
 
         binding.lockCircleIv2.setOnClickListener {
             // SharedPreferences에서 닉네임 가져오기
             val nickname = prefs.getString("nickname", "사용자") ?: "사용자"
-
+            Log.d("GoalFragment", "nickname: $nickname")
             val intent = Intent(requireContext(), GoalActivity::class.java).apply {
                 putExtra("goalOwnerName", nickname)
                 putExtra("TO_CHALLENGE_FROM","GoalFragment")
@@ -575,5 +564,24 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
     override fun failMyGoals(message: String) {
         Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadGoalList(
+            friendAction = {
+                // ✅ 친구 모드
+                binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+
+                // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
+                binding.manageButton.visibility = View.GONE
+            },
+            action = {
+                // ✅ 내 모드
+                binding.userGoalListTv.text = "${viewModel.userName}의 목표 리스트"
+
+                viewModel.fetchMyGoals()
+            }
+        )
     }
 }
