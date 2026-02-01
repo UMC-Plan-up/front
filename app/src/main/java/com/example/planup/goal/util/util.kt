@@ -1,8 +1,11 @@
-package com.example.planup.goal.domain
+package com.example.planup.goal.util
 
-import android.app.Activity
-import android.os.Bundle
-import androidx.annotation.IdRes
+import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.goal.GoalActivity
 import kotlin.jvm.JvmName
@@ -13,7 +16,6 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
-import java.util.Collections.frequency
 import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -129,5 +131,17 @@ fun Fragment.setGoalData(data: EditGoalResponse){
             verificationType = data.verificationType
             limitFriendCount = data.limitFriendCount
             goalTime = data.goalTime
+    }
+}
+
+fun setInsets(view: View, baseMargin: Int = 0) {
+    setOnApplyWindowInsetsListener(view) { view, insets ->
+
+        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            bottomMargin = baseMargin + systemBars.bottom
+            view.layoutParams = this
+        }
+        insets
     }
 }
