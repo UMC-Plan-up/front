@@ -11,6 +11,7 @@ import com.example.planup.main.home.data.DailyToDo
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import androidx.core.graphics.toColorInt
 
 class DailyToDoAdapter :
     ListAdapter<DailyToDo, DailyToDoAdapter.ViewHolder>(DiffCallback()) {
@@ -33,9 +34,9 @@ class DailyToDoAdapter :
             )
 
             val colors = when (position % 3) {
-                0 -> listOf(Color.parseColor("#79B0F8"), Color.LTGRAY)
-                1 -> listOf(Color.parseColor("#F3C092"), Color.LTGRAY)
-                else -> listOf(Color.parseColor("#71D9C4"), Color.LTGRAY)
+                0 -> listOf("#79B0F8".toColorInt(), Color.LTGRAY)
+                1 -> listOf("#F3C092".toColorInt(), Color.LTGRAY)
+                else -> listOf("#71D9C4".toColorInt(), Color.LTGRAY)
             }
 
             val dataSet = PieDataSet(entries, "").apply {

@@ -9,9 +9,7 @@ import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface WeeklyReportApi {
-
-    // 주간 페이지(배지/알림/응원)
+interface RecordApi {
     @GET("/report/reports")
     suspend fun getWeeklyGoalReportRequest(
         @Query("userId") userId: Int

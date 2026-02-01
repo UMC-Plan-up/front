@@ -12,7 +12,6 @@ import android.view.*
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.planup.App
@@ -23,21 +22,15 @@ import com.example.planup.main.home.ui.HomeAlertFragment
 import com.example.planup.main.record.adapter.NotificationAdapter
 import com.example.planup.main.record.data.BadgeDTO
 import com.example.planup.network.RetrofitInstance
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import kotlin.getValue
-import com.example.planup.main.record.ui.viewmodel.RecordViewModel
-import com.example.planup.network.ApiResult
 
-@AndroidEntryPoint
-class RecordFragment @Inject constructor() :  Fragment() {
+class tempRecordFragment : Fragment() {
 
     private lateinit var binding: FragmentRecordBinding
-    private val viewModel: RecordViewModel by viewModels()
     private lateinit var notificationAdapter: NotificationAdapter
 
     private val TAG = "RecordFragment"
+    private val TAG_ENC = "RecordFragment/Encourage"
 
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
@@ -47,7 +40,6 @@ class RecordFragment @Inject constructor() :  Fragment() {
     ): View {
         binding = FragmentRecordBinding.inflate(inflater, container, false)
 
-        viewModel.loadUserInfo()
         setUpDropdownList()
         setupNotificationRecycler()
         fetchWeeklyPageData()      // 주간 페이지(배지/알림/응원) 조회
@@ -108,17 +100,72 @@ class RecordFragment @Inject constructor() :  Fragment() {
 
     /** 주간 페이지 데이터(응원 문구, 배지, 알림) 조회 */
     private fun fetchWeeklyPageData() {
-        viewModel.loadWeeklyGoalReport(createErrorHandler("fetchWeeklyPageData") {
-            binding.balloonText.text = it.cheering
-            updateBadges(viewModel.badgeList.value.take(3))
-            notificationAdapter.submitList(viewModel.notificationList.value)
+        val auth = buildAuthHeader() ?: return
+        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+        val userId = prefs.getInt("userId", -1)
+        if (userId <= 0) {
+            // 토큰/유저 정보 없으면 기본 문구 + 보조 호출
+            binding.balloonText.text = "이번 주도 화이팅! 꾸준함이 실력을 만듭니다 💪"
+            fetchEncourageMessage()
+            return
+        }
 
-        })
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching {
+                Log.d(TAG, "--> GET /report/reports?userId=$userId")
+                RetrofitInstance.weeklyReportApi.getWeeklyGoalReportRequest(userId)
+            }.onSuccess { resp ->
+                val req = resp.raw().request
+                Log.d(TAG, "Request: ${req.method} ${req.url}")
+                Log.d(TAG, "<-- code=${resp.code()} msg=${resp.message()}")
+
+                val body = resp.body()
+                if (resp.isSuccessful && body?.isSuccess == true) {
+                    val result = body.result
+
+                    val cheering = result.cheering?.takeIf { !it.isNullOrBlank() }
+                        ?: "이번 주도 화이팅! 꾸준함이 실력을 만듭니다 💪"
+                    binding.balloonText.text = cheering
+
+                    updateBadges(result.badgeDTOList.take(3))
+                    notificationAdapter.submitList(result.notificationDTOList)
+                } else {
+                    Log.w(TAG, "weekly page FAIL: http=${resp.code()}, msg='${body?.message}'")
+                }
+            }.onFailure {
+                Log.e(TAG, "weekly page EXCEPTION", it)
+            }
+
+            // 보조 메시지 (서버 고쳐지면 그대로 사용)
+            fetchEncourageMessage()
+        }
     }
 
     /** (선택) 월별 주차 리스트 조회 - 새 API(getMonthlyReports)에 맞춘 유틸 */
     private fun prefetchMonthlyWeeks(year: Int, month: Int) {
-        viewModel.loadMonthlyReport(year, month)
+        val auth = buildAuthHeader() ?: return
+        val userId = requireContext()
+            .getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+            .getInt("userId", -1)
+        if (userId <= 0) return
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            runCatching {
+                Log.d(TAG, "--> GET /report/reports/$year/$month?userId=$userId (monthly weeks)")
+                RetrofitInstance.weeklyReportApi.getMonthlyReports(userId, year, month)
+            }.onSuccess { resp ->
+                Log.d(TAG, "<-- monthly weeks code=${resp.code()} msg=${resp.message()}")
+                val body = resp.body()
+                if (resp.isSuccessful && body != null) {
+                    // ApiResponseListInteger 형태라고 가정: result = [1,2,3,...]
+                    Log.d(TAG, "monthly weeks result=${body}")
+                } else {
+                    Log.w(TAG, "monthly weeks FAIL: http=${resp.code()}")
+                }
+            }.onFailure {
+                Log.e(TAG, "monthly weeks EXCEPTION", it)
+            }
+        }
     }
 
     /** 배지 3칸 업데이트 (아이콘/이름) */
@@ -249,17 +296,33 @@ class RecordFragment @Inject constructor() :  Fragment() {
         }
     }
 
+    /** /api/encourage 호출(보조) — 어디서 500 나는지 상세 로그 */
+    private fun fetchEncourageMessage() {
+        val auth = buildAuthHeader()
+        if (auth == null) {
+            Log.w(TAG_ENC, "fetchEncourageMessage(): no auth token, skip")
+            return
+        }
 
-
-    fun <T> createErrorHandler(
-        tag: String,
-        onSuccess: ((T) -> Unit)? = null): (ApiResult<T>) -> Unit {
-        return { result ->
-            when (result) {
-                is ApiResult.Success -> onSuccess?.invoke(result.data)
-                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
-                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
-                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                Log.d(TAG_ENC, "--> GET /api/encourage")
+                val resp = RetrofitInstance.encourageMessageApi.getEncourageMessage(auth)
+                val rawReq = resp.raw().request
+                Log.d(TAG_ENC, "Request: ${rawReq.method} ${rawReq.url}")
+                Log.d(TAG_ENC, "<-- code=${resp.code()} msg=${resp.message()}")
+                val body = resp.body()
+                if (resp.isSuccessful && body != null && body.message.isNotBlank()) {
+                    Log.d(TAG_ENC, "encourage OK: msgLen=${body.message.length}")
+                    binding.balloonText.text = body.message
+                } else {
+                    Log.w(
+                        TAG_ENC,
+                        "encourage FAIL: http=${resp.code()}, bodyNull=${body==null}, msg='${body?.message}'"
+                    )
+                }
+            } catch (e: Exception) {
+                Log.e(TAG_ENC, "encourage EXCEPTION", e)
             }
         }
     }
