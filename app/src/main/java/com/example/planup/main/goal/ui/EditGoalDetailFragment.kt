@@ -9,7 +9,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditGoalDetailFragment : Fragment(){
     private lateinit var binding: FragmentEditGoalDetailBinding
     private var goalId: Int = 0
@@ -55,6 +57,7 @@ class EditGoalDetailFragment : Fragment(){
         val nextBtn = binding.editDetailNextBtn
         val backBtn = binding.editDetailBackIv
 
+
         backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -82,6 +85,7 @@ class EditGoalDetailFragment : Fragment(){
                 monthlyBtn -> "MONTH"
                 else -> "DAY"
             }
+            binding.frequencyInputState.text = selectedBtn.text
         }
 
 
@@ -94,7 +98,7 @@ class EditGoalDetailFragment : Fragment(){
         nextBtn.setOnClickListener {
             val freqValue = freqStr.toIntOrNull() ?: frequency
 
-            val nextfragment = PushAlertFragment()
+            val nextFragment = PushAlertEditFragment()
             val bundle = Bundle().apply {
                 putInt("goalId", goalId)
                 putString("goalName", goalName)
@@ -109,9 +113,9 @@ class EditGoalDetailFragment : Fragment(){
                 putInt("limitFriendCount", limitFriendCount)
                 putInt("goalTime", goalTime)
             }
-            nextfragment.arguments = bundle
+            nextFragment.arguments = bundle
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, nextfragment)
+                .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
                 .addToBackStack(null)
                 .commit()
         }

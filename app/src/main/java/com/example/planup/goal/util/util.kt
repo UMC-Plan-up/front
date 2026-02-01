@@ -1,8 +1,17 @@
-package com.example.planup.goal.domain
+package com.example.planup.goal.util
 
+import android.util.TypedValue
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
+import androidx.core.view.WindowInsetsCompat
+import androidx.fragment.app.Fragment
+import com.example.planup.goal.GoalActivity
 import kotlin.jvm.JvmName
 import com.example.planup.main.goal.data.GoalType
 import com.example.planup.main.goal.data.MyGoalListDto
+import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.MyGoalListItem
@@ -77,7 +86,7 @@ fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
     }
 
 @JvmName("friendGoalWithAchievementToGoalItems")
-fun List<FriendGoalWithAchievement>.toGoalItemsForFriend(): List<GoalItem> =
+fun List<FriendGoalWithAchievement>.toGoalItemsForFriendAchieve(): List<GoalItem> =
     map { dto ->
         val typeLabel = dto.goalType.toCriteria()
         val criteria = "$typeLabel ${dto.frequency}번 이상"
@@ -106,4 +115,33 @@ fun GoalType.toCriteria() = when(this){
     GoalType.COMMUNITY -> "매주"
     GoalType.CHALLENGE_PHOTO -> "매일"
     GoalType.CHALLENGE_TIME -> "매주"
+}
+
+fun Fragment.setGoalData(data: EditGoalResponse){
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+            goalName = data.goalName
+            goalAmount = data.goalAmount
+            goalCategory = data.goalCategory
+            goalType = data.goalType
+            oneDose = data.oneDose.toString()
+            frequency = data.frequency
+            period = data.period
+            endDate = data.endDate
+            verificationType = data.verificationType
+            limitFriendCount = data.limitFriendCount
+            goalTime = data.goalTime
+    }
+}
+
+fun setInsets(view: View, baseMargin: Int = 0) {
+    setOnApplyWindowInsetsListener(view) { view, insets ->
+
+        val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+        (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
+            bottomMargin = baseMargin + systemBars.bottom
+            view.layoutParams = this
+        }
+        insets
+    }
 }

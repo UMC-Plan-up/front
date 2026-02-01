@@ -17,6 +17,8 @@ import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.example.planup.databinding.FragmentCommonGoalBinding
 import com.example.planup.databinding.ItemGoalCardBinding
 import com.example.planup.main.goal.ui.GoalDescriptionFragment
@@ -55,7 +57,16 @@ class CommonGoalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.setPadding(
+                view.paddingLeft,
+                view.paddingTop,
+                view.paddingRight,
+                systemBars.bottom + view.paddingBottom
+            )
+            insets
+        }
         goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
         goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
 
@@ -67,32 +78,40 @@ class CommonGoalFragment : Fragment() {
         }
 
         // 기본 탭: 친구와 함께
-        setTabActive(binding.friendTab, true)
-        setTabActive(binding.communityTab, false)
+        tabToggle(friendTab = true)
         isFriendTab = true
         showAll = false
 
-        fetchGoalsFromServer("FRIEND")
+        fetchGoalsFromServer("FRIEND") { goalType ,goalOwnerName, goalId ->
+            Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
+            listener(goalType, goalOwnerName,goalId)
+        }
 
         // 탭 전환
         binding.friendTab.setOnClickListener {
             isFriendTab = true
             showAll = false
-            setTabActive(binding.friendTab, true)
-            setTabActive(binding.communityTab, false)
-            fetchGoalsFromServer("FRIEND")
+            tabToggle(friendTab = isFriendTab)
+            fetchGoalsFromServer("FRIEND") { goalType ,goalOwnerName, goalId ->
+                Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
+                listener(goalType, goalOwnerName,goalId)
+            }
         }
 
         binding.communityTab.setOnClickListener {
             isFriendTab = false
             showAll = false
-            setTabActive(binding.friendTab, false)
-            setTabActive(binding.communityTab, true)
-            fetchGoalsFromServer("COMMUNITY")
+            tabToggle(friendTab = isFriendTab)
+            fetchGoalsFromServer("COMMUNITY") { goalType ,goalOwnerName, goalId ->
+                Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
+                listener(goalType, goalOwnerName,goalId)
+            }
         }
 
         // 새 목표 만들기
         binding.createCommunityButton.setOnClickListener {
+            val goalActivity = requireActivity() as GoalActivity
+            goalActivity.isFriendTab = isFriendTab
             val goalInputFragment = GoalInputFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
@@ -131,7 +150,7 @@ class CommonGoalFragment : Fragment() {
     }
 
     /* 목표 리스트 받아오기 */
-    private fun fetchGoalsFromServer(goalType: String) {
+    private fun fetchGoalsFromServer(goalType: String, setListener: (String, String, Int) -> Unit) {
         val serverCategory = toServerCategory(goalCategory)
 
 
@@ -159,21 +178,27 @@ class CommonGoalFragment : Fragment() {
                     }
 
                     currentFilteredGoals = list
-                    renderFirstThree(list)
+                    renderFirstThree(list){goalOwnerName, goalId->
+                        setListener(goalType,goalOwnerName,goalId)
+                    }
                 } else {
                     Log.e("GoalAPI", "code=${res.code()} msg=${res.errorBody()?.string()}")
                     currentFilteredGoals = emptyList()
-                    renderFirstThree(emptyList())
+                    renderFirstThree(emptyList()){goalOwnerName,goalId->
+                        setListener(goalType,goalOwnerName,goalId)
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("GoalAPI", "network error", e)
                 currentFilteredGoals = emptyList()
-                renderFirstThree(emptyList())
+                renderFirstThree(emptyList()){goalOwnerName,goalId->
+                    setListener(goalType,goalOwnerName,goalId)
+                }
             }
         }
     }
 
-    private fun renderFirstThree(goals: List<GoalDto>) {
+    private fun renderFirstThree(goals: List<GoalDto>, listener: (String,Int) -> Unit) {
         binding.goalCardContainer.removeAllViews()
 
         if (goals.isEmpty()) {
@@ -186,19 +211,23 @@ class CommonGoalFragment : Fragment() {
         val first = goals.take(3)
         val rest = goals.drop(3)
 
-        addCards(first)
+        addCards(first){goalOwnerName,goalId->
+            listener(goalOwnerName,goalId)
+        }
 
         binding.moreButton.visibility = if (rest.isNotEmpty()) View.VISIBLE else View.GONE
         binding.moreButton.setOnClickListener {
             if (!showAll) {
                 showAll = true
-                addCards(rest)
+                addCards(rest){goalOwnerName,goalId->
+                    listener(goalOwnerName,goalId)
+                }
                 binding.moreButton.visibility = View.GONE
             }
         }
     }
 
-    private fun addCards(list: List<GoalDto>) {
+    private fun addCards(list: List<GoalDto>,listener: (String,Int) -> Unit) {
         val inflater = LayoutInflater.from(requireContext())
         list.forEach { goal ->
             val card = ItemGoalCardBinding.inflate(inflater, binding.goalCardContainer, false)
@@ -237,15 +266,11 @@ class CommonGoalFragment : Fragment() {
             /*
             목표 생성 되는 지 확인하고 주석 해제 필요
              */
-//            card.root.setOnClickListener {
-//                val goalDetailFragment = GoalDescriptionFragment().apply {
-//                    arguments = Bundle().apply {
-//                        putInt(ARG_GOAL_ID, goal.goalId)
-//                    }
-//                }
-//                (requireActivity() as GoalActivity)
-//                    .navigateToFragment(goalDetailFragment)
-//            }
+            card.root.setOnClickListener {
+                Log.d("CommonGoalFragment", "setOnClickListener")
+                Log.d("CommonGoalFragment", "creatorNickname: ${goal.creatorNickname}")
+                listener(goal.creatorNickname,goal.goalId)
+            }
             binding.goalCardContainer.addView(card.root)
         }
     }
@@ -262,6 +287,49 @@ class CommonGoalFragment : Fragment() {
         val m = (totalSeconds % 3600) / 60
         val s = totalSeconds % 60
         return String.format("%02d:%02d:%02d", h, m, s)
+    }
+
+    private fun tabToggle(friendTab: Boolean){
+        setTabActive(binding.friendTab, friendTab)
+        setTabActive(binding.communityTab, !friendTab)
+        binding.createCommunityText.text = if (friendTab) getString(R.string.friend_create_new)
+        else getString(R.string.community_create_new)
+    }
+
+    fun listener(goalType: String, goalOwnerName: String, goalId: Int) = when(goalType){
+
+        "FRIEND"->{
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalType: FRIEND")
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalOwnerName: $goalOwnerName")
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalId: $goalId")
+            val editGoalDetailFragment = FriendEditFragment().apply {
+                arguments = Bundle().apply {
+
+                    putString("goalOwnerName", goalOwnerName)
+                    putInt(ARG_GOAL_ID, goalId)
+                    putBoolean("isSolo", true)
+                }
+            }
+            (requireActivity() as GoalActivity)
+                .navigateToFragment(editGoalDetailFragment)
+        }
+        "COMMUNITY"->{
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalType: COMMUNITY")
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalOwnerName: $goalOwnerName")
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalId: $goalId")
+            val goalDetailFragment = GoalDescriptionFragment().apply {
+                arguments = Bundle().apply {
+                    putString("goalOwnerName", goalOwnerName)
+                    putInt(ARG_GOAL_ID, goalId)
+                    putBoolean("isSolo", true)
+                }
+            }
+            (requireActivity() as GoalActivity)
+                .navigateToFragment(goalDetailFragment)
+        }
+        else -> {
+            Log.d("CommonGoalFragment", "EditGoalTitleFragment goalType: $goalType")
+        }
     }
 
     override fun onDestroyView() {

@@ -35,13 +35,14 @@
             android:id="@+id/edit_detail_friend_goal_desc_tv"
             android:layout_width="match_parent"
             android:layout_height="21dp"
-            android:text="@string/goal_friend_detail_description"
-            android:textSize="14sp"
+            android:layout_marginTop="64dp"
             android:fontFamily="@font/pretendard_medium"
+            android:text="@string/goal_friend_detail_description"
             android:textColor="@color/black_300"
-            app:layout_constraintTop_toBottomOf="@id/edit_detail_back_iv"
+            android:textSize="14sp"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginTop="64dp" />
+            app:layout_constraintTop_toBottomOf="@id/edit_detail_back_iv" />
 
         <TextView
             android:id="@+id/edit_detail_period_title_tv"
@@ -140,6 +141,15 @@
             android:layout_marginTop="288dp"
             app:layout_constraintTop_toBottomOf="@id/edit_detail_back_iv"
             app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/frequencyInputState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium"
+                android:gravity="center_vertical"
+                android:textColor="@color/black_400"
+                android:textSize="14sp" />
 
             <EditText
                 android:id="@+id/edit_detail_frequency_et"

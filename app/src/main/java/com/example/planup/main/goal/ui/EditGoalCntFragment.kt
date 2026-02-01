@@ -10,7 +10,6 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCntBinding
 import android.widget.TextView
 import android.text.TextWatcher
-import kotlin.text.toInt
 
 class EditGoalCntFragment : Fragment() {
 
@@ -91,7 +90,7 @@ class EditGoalCntFragment : Fragment() {
                 putInt("goalTime", goalTime)
             }
 
-            val nextFragment = PushAlertFragment() // 실제 다음 Fragment로 교체
+            val nextFragment = PushAlertEditFragment() // 실제 다음 Fragment로 교체
             nextFragment.arguments = bundle
 
             parentFragmentManager.beginTransaction()

@@ -54,17 +54,17 @@
         android:id="@+id/nicknameEditText"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:hint="@string/goal_toeic_study"
-        android:textSize="16sp"
-        android:background="@drawable/bg_edittext_rounded"
-        android:padding="8dp"
-        android:fontFamily="@font/pretendard_medium"
         android:layout_marginTop="155dp"
-        android:textColorHint="@color/black_200"
-        android:textColor="@color/black_300"
+        android:background="@drawable/bg_edittext_rounded"
+        android:fontFamily="@font/pretendard_medium"
+        android:hint="@string/goal_toeic_study"
         android:inputType="text"
-        app:layout_constraintTop_toBottomOf="@id/backIcon"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:padding="8dp"
+        android:textColor="@color/black_300"
+        android:textColorHint="@color/black_200"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/backIcon" />
 
     <TextView
         android:id="@+id/goalNameMinLengthHint"

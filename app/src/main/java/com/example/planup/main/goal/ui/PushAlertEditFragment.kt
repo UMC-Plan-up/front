@@ -1,7 +1,9 @@
-package com.example.planup.goal.ui
+package com.example.planup.main.goal.ui
 
 import android.app.Dialog
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -12,19 +14,22 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPushAlertBinding
-import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.main.home.ui.HomeFragment
-import androidx.core.graphics.drawable.toDrawable
-import com.example.planup.goal.GoalActivity
 import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
+import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.home.ui.HomeFragment
+import com.example.planup.network.RetrofitInstance
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
-class PushAlertFragment : Fragment() {
-
+class PushAlertEditFragment : Fragment() {
     private var _binding: FragmentPushAlertBinding? = null
     private val binding get() = _binding!!
     private var isFirst = true
@@ -32,23 +37,99 @@ class PushAlertFragment : Fragment() {
     private lateinit var hours: ArrayList<String> //시간
     private lateinit var minutes: ArrayList<String> //분
     private lateinit var times: ArrayList<String>
+    private lateinit var prefs: SharedPreferences
+    private var goalId: Int = 0
+    private var goalName: String = ""
+    private var goalAmount: String = ""
+    private var goalCategory: String = ""
+    private var goalType: String = ""
+    private var oneDose: Int = 0
+    private var frequency: Int = 0
+    private var period: String = ""
+    private var endDate: String = ""
+    private var verificationType: String = ""
+    private var limitFriendCount: Int = 0
+    private var goalTime: Int = 0
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        goalId = arguments?.getInt("goalId") ?: 0
+        goalName = arguments?.getString("goalName") ?: ""
+        goalAmount = arguments?.getString("goalAmount") ?: ""
+        goalCategory = arguments?.getString("goalCategory") ?: ""
+        goalType = arguments?.getString("goalType") ?: ""
+        oneDose = arguments?.getInt("oneDose") ?: 0
+        frequency = arguments?.getInt("frequency") ?: 0
+        period = arguments?.getString("period") ?: ""
+        endDate = arguments?.getString("endDate") ?: ""
+        verificationType = arguments?.getString("verificationType") ?: ""
+        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
+        goalTime = arguments?.getInt("goalTime") ?: 0
+        prefs = requireActivity().getSharedPreferences("userInfo", MODE_PRIVATE)
+
+    }
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         _binding = FragmentPushAlertBinding.inflate(inflater, container, false)
+        init()
+        clickListener()
+        binding.alertBackIv.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
+        binding.nextButton.setOnClickListener {
+            val request = EditGoalRequest(
+                goalName = goalName,
+                goalAmount = goalAmount,
+                goalCategory = goalCategory,
+                goalType = goalType,
+                oneDose = oneDose,
+                frequency = frequency,
+                period = period,
+                endDate = endDate,
+                verificationType = verificationType,
+                limitFriendCount = limitFriendCount,
+                goalTime = goalTime
+            )
+            Log.d("EditGoalFragment", "$request")
+            updateGoal(goalId = goalId, request = request)
+        }
+
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        init()
-        clickListener()
+    private fun updateGoal(goalId: Int, request: EditGoalRequest) {
+        lifecycleScope.launch {
+            try {
+//                val token = prefs.getString("accessToken", null)
+                val response = RetrofitInstance.goalApi.editGoal(goalId = goalId, request)
+                if (response.isSuccess){
+                    val nextFragment = EditGoalCompleteFragment()
+                    val bundle = Bundle().apply {
+                        putString("goalId", goalId.toString())
+                    }
+                    nextFragment.arguments = bundle
+                    requireActivity().supportFragmentManager.beginTransaction()
+                        .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
+                        .addToBackStack(null)
+                        .commit()
+                } else {
+                    val errorMessage = response.message
+                    Log.d("EditGoalFragment", "에러 메시지: $errorMessage")
+                }
+            } catch (e: Exception) {
+                if (e is HttpException) {
+                    Log.e("API", "Http error: ${e.code()} ${e.response()?.errorBody()?.string()}")
+                } else {
+                    Log.e("API", "Other error: ${e.message}", e)
+                }
+            }
+        }
     }
 
-    //프레그먼트 초기화
     private fun init() {
         hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList())
         minutes = resources.getStringArray(R.array.dropdown_minute_second).toCollection(ArrayList())
@@ -66,11 +147,6 @@ class PushAlertFragment : Fragment() {
     }
 
     private fun clickListener() {
-        //뒤로가기 버튼 클릭
-        binding.alertBackIv.setOnClickListener {
-            val participantLimitFragment = ParticipantLimitFragment()
-            (requireActivity() as GoalActivity).navigateToFragment(participantLimitFragment)
-        }
 
         //알림받기 토글 끄기
         binding.alertReceiveOnIv.setOnClickListener {
@@ -92,84 +168,6 @@ class PushAlertFragment : Fragment() {
         binding.alertRegularOffIv.setOnClickListener {
             binding.alertRegularOnIv.visibility = View.VISIBLE
             binding.alertRegularOffIv.visibility = View.GONE
-        }
-
-        //저장 버튼 클릭 (GoalActivity를 통해서만 이동)
-        binding.nextButton.setOnClickListener {
-            Log.d("okhttppppppppp","1")
-            val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            Log.d("okhttppppppppp","2")
-            val isAlertsEnabled = binding.alertReceiveOnIv.visibility == View.VISIBLE
-            editor.putBoolean("receive_alerts", isAlertsEnabled)
-            editor.putBoolean("regular_alerts", binding.alertRegularOnIv.visibility == View.VISIBLE)
-            editor.putString("alert_time_of_day", binding.alertTimeTv.text.toString())
-            editor.putString("alert_hour", binding.alertHourTv.text.toString())
-            editor.putString("alert_minute", binding.alertMinuteTv.text.toString())
-            Log.d("okhttppppppppp","3")
-            val selectedDays = mutableSetOf<String>()
-            val dayViews = listOf(
-                binding.alertEverydayTv, binding.alertMondayTv, binding.alertTuesdayTv,
-                binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
-                binding.alertSaturdayTv, binding.alertSundayTv
-            )
-            Log.d("okhttppppppppp","4")
-            val dayNames = listOf(
-                "everyday", "monday", "tuesday", "wednesday",
-                "thursday", "friday", "saturday", "sunday"
-            )
-            dayViews.forEachIndexed { index, view ->
-                if (view.isSelected) {
-                    selectedDays.add(dayNames[index])
-                }
-            }
-            Log.d("okhttppppppppp","5")
-            editor.putStringSet("alert_days", selectedDays)
-            editor.apply()
-
-            Log.d("okhttppppppppp","6")
-            // 알림 설정 완료 후 팝업을 다시 보지 않도록 상태 변경
-            val appPrefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
-            appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
-
-            Log.d("okhttppppppppp","7")
-            // GoalActivity에 알림 설정 정보 저장
-            val activity = requireActivity() as GoalActivity
-            activity.notificationEnabled = isAlertsEnabled
-            activity.regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
-            activity.alertTimeOfDay = binding.alertTimeTv.text.toString()
-            activity.alertHour = binding.alertHourTv.text.toString()
-            activity.alertMinute = binding.alertMinuteTv.text.toString()
-            activity.alertDays = selectedDays
-
-            Log.d("okhttppppppppp","8")
-            val goalCompleteFragment = GoalCompleteFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", activity.goalOwnerName)
-                    putString("goalType", activity.goalType)
-                    putString("goalCategory", activity.goalCategory)
-                    putString("goalName", activity.goalName)
-                    putString("goalAmount", activity.goalAmount)
-                    putString("verificationType", activity.verificationType)
-                    putString("period", activity.period)
-                    putInt("frequency", activity.frequency)
-                    putInt("limitFriendCount", activity.limitFriendCount)
-                    putInt("goalTime", activity.goalTime)
-
-                    // 알림 설정 정보도 함께 전달
-                    putBoolean("notificationEnabled", activity.notificationEnabled)
-                    putBoolean("regularAlertEnabled", activity.regularAlertEnabled)
-                    putString("alertTimeOfDay", activity.alertTimeOfDay)
-                    putString("alertHour", activity.alertHour)
-                    putString("alertMinute", activity.alertMinute)
-                    putStringArrayList("alertDays", ArrayList(selectedDays))
-                }
-            }
-            Log.d("okhttppppppppp","9")
-            activity.navigateToFragment(goalCompleteFragment)
-            Log.d("okhttppppppppp","10")
-//            showSizedToast(binding.nextButton, getString(R.string.toast_alert_setting))
-
         }
 
         //정기 알림 시간 설정
@@ -324,7 +322,7 @@ class PushAlertFragment : Fragment() {
 
     private fun showSizedToast(matchTo: View, text: CharSequence) {
         val doShow: () -> Unit = {
-            val layout = layoutInflater.inflate(R.layout.toast_grey_template, null)
+            val layout = layoutInflater.inflate(R.layout.toast_grey_template, null) as android.widget.LinearLayout
             val tv = layout.findViewById<TextView>(R.id.toast_grey_template_tv)
 
             val lp = matchTo.layoutParams as ViewGroup.MarginLayoutParams

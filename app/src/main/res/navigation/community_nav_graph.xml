@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/community_nav_graph"
+    app:startDestination="@id/goalSelectFragment"
+    >
+    <!--    flow 시작 -->
+    <fragment
+        android:id="@+id/goalSelectFragment"
+        android:name="com.example.planup.goal.ui.GoalSelectFragment" >
+        <action android:id="@+id/action_to_common"
+            app:destination="@id/commonGoalFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/commonGoalFragment"
+        android:name="com.example.planup.goal.ui.CommonGoalFragment">
+        <action android:id="@+id/action_to_Input"
+            app:destination="@id/goalInputFragment"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/goalInputFragment"
+        android:name="com.example.planup.goal.ui.GoalInputFragment" >
+        <argument
+            android:name="goalOwnerName"
+            app:argType="string" />
+        <action android:id="@+id/action_to_certification"
+            app:destination="@id/certificationMethodFragment"
+            />
+    </fragment>
+
+    <!-- 타입 선택 분기 -->
+    <fragment
+        android:id="@+id/certificationMethodFragment"
+        android:name="com.example.planup.goal.ui.CertificationMethodFragment">
+
+        <action android:id="@+id/action_to_timer"
+            app:destination="@id/timerSettingFragment"
+            />
+        <action android:id="@+id/action_to_picture"
+            app:destination="@id/pictureSettingFragment"
+            />
+
+    </fragment>
+
+    <!-- 선택 타입 화면 1-->
+    <fragment
+        android:id="@+id/timerSettingFragment"
+        android:name="com.example.planup.goal.ui.TimerSettingFragment" >
+        <action android:id="@+id/action_to_detail"
+            app:destination="@id/goalDetailFragment"
+            />
+    </fragment>
+
+    <!-- 선택 타입 화면 2-->
+    <fragment
+        android:id="@+id/pictureSettingFragment"
+        android:name="com.example.planup.goal.ui.PictureSettingFragment">
+        <action android:id="@+id/action_to_detail"
+            app:destination="@id/goalDetailFragment"
+            />
+    </fragment>
+
+    <!-- 세부 설정 -->
+    <fragment
+        android:id="@+id/goalDetailFragment"
+        android:name="com.example.planup.goal.ui.GoalDetailFragment" >
+
+        <action android:id="@+id/action_to_community"
+            app:destination="@id/pushAlertCommunityFragment"
+            />
+        <action android:id="@+id/action_to_friend"
+            app:destination="@id/participantLimitFragment"
+            />
+    </fragment>
+
+    <!-- 세부 설정 2 -->
+    <fragment
+        android:id="@+id/participantLimitFragment"
+        android:name="com.example.planup.goal.ui.ParticipantLimitFragment">
+        <action android:id="@+id/action_to_pushAlert"
+            app:destination="@id/pushAlertCommunityFragment"
+            />
+    </fragment>
+
+    <!-- 알람 설정 -->
+    <fragment
+        android:id="@+id/pushAlertCommunityFragment"
+        android:name="com.example.planup.goal.ui.PushAlertCommunityFragment" />
+</navigation>

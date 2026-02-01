@@ -125,8 +125,10 @@
     <string name="community_with_community">커뮤니티와 함께</string>
     <string name="community_see_more">더보기</string>
     <string name="community_create_new">새 커뮤니티 만들기</string>
+    <string name="friend_create_new">친구와의 목표 만들기</string>
 
     <string name="goal_friend_detail">%1$s님의 세부 목표</string>
+    <string name="goal_community_detail">커뮤니티 세부 목표</string>
     <string name="goal_friend_detail_description">친구가 설정한 세부 목표를 그대로 적용할 수 있어요.</string>
     <string name="goal_toeic_study">토익 공부</string>
     <string name="goal_toeic_chapter_study">토익 교재 1챕터씩 공부하기</string>
@@ -483,6 +485,7 @@
     <string name="btn_input">입력</string>
     <string name="btn_community_category_goal">목표 설정 시작하기</string>
     <string name="btn_start_PlanUp">Plan-Up 사용 시작하기</string>
+    <string name="btn_complete_community">새 커뮤니티 생성 완료하기</string>
     <string name="btn_report_complete">신고완료</string>
     <string name="btn_delete">삭제</string>
     <string name="btn_block">차단</string>
