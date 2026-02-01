@@ -235,9 +235,7 @@ fun CommunityIntroScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             title = stringResource(R.string.btn_community_category_goal),
-            onClick = {
-                // TODO:: 목표 설정 페이지로 이동
-            }
+            onClick = { }
         )
 
         Spacer(
