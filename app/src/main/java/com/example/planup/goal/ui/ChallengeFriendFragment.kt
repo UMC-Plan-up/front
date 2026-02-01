@@ -11,18 +11,22 @@ import android.view.ViewTreeObserver
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.planup.R
 import com.example.planup.databinding.FragmentChallengeFriendBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.ChallengeFriendsAdapter
 import com.example.planup.goal.adapter.FriendRVAdapter
 import com.example.planup.goal.adapter.RequestChallengeAdapter
+import com.example.planup.main.goal.viewmodel.ChallengeViewModel
 import com.example.planup.network.controller.ChallengeController
 import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.dto.GoalPeriod
 import com.example.planup.network.dto.challenge.ChallengeDto
 import com.example.planup.network.dto.challenge.Time
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFriendsAdapter {
     lateinit var binding: FragmentChallengeFriendBinding
     lateinit var friends: List<ChallengeFriends> //챌린지 참여를 요청할 수 있는 친구 리스트
@@ -30,6 +34,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     private lateinit var editor: Editor //prefs에 데이터 저장
     var friend: ChallengeFriends? = null //최종으로 선택된 친구
     private lateinit var challengeService: ChallengeController
+    private val viewModel : ChallengeViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,13 +50,16 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 
     //프레그먼트 초기화
     private fun init(){
-        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
-        editor = prefs.edit()
-        val userPrefs = (context as GoalActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
+//        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+//        editor = prefs.edit()
+//        val userPrefs = (context as GoalActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         challengeService = ChallengeController()
-        challengeService.showChallengeFriends(userPrefs.getInt("userId",0))
-        challengeService.setChallengeFriendsAdapter(this)
-        challengeService.setRequestChallengeAdapter(this)
+        viewModel.getUserNickName{
+            challengeService.showChallengeFriends(it)
+            challengeService.setChallengeFriendsAdapter(this)
+            challengeService.setRequestChallengeAdapter(this)
+        }
+
         friend = ChallengeFriends(0,"no-data",0)
         binding.challengeFriendCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
             override fun onGlobalLayout() {
