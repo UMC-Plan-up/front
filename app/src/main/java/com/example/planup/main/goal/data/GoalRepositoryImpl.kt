@@ -5,7 +5,9 @@ import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalResult
 import com.example.planup.main.goal.domain.GoalRepository
+import com.example.planup.main.goal.item.EditGoalApiResponse
 import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.safeResult
@@ -112,6 +114,26 @@ class GoalRepositoryImpl @Inject constructor(
                         Log.w(
                             "GoalFragment",
                             "setGoalActive fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun getGoalDetail(goalId: Int): ApiResult<EditGoalResponse> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getEditGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "getGoalDetail fail body=${response} code=${response.code}"
                         )
                         ApiResult.Fail(response.message)
                     }
