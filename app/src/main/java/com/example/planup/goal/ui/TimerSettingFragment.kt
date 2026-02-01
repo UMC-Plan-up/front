@@ -60,8 +60,10 @@ class TimerSettingFragment : Fragment() {
             Log.d("CertificationMethodFragment", "titleTv: ${getString(R.string.goal_friend_detail, viewModel.friendNickname)}")
             titleTv.text = getString(R.string.goal_friend_detail, viewModel.friendNickname)
             if(viewModel.goalData?.verificationType == "TIMER"){
+                Log.d("TimerSettingFragment", "goalData: ${viewModel.goalData}")
                 viewModel.goalData?.let {
                     val time = it.goalTime
+                    Log.d("TimerSettingFragment", "time: $time")
                     totalTime = it.goalTime
                     // 기존 총 시간에서 해당 부분 시간을 빼고 새로운 시간을 더함
                     val hour = time / 3600
