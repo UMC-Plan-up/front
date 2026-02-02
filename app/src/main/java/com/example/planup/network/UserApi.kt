@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.login.data.RefreshTokenRequest
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
@@ -66,7 +67,9 @@ interface UserApi : MyPageApi {
     ): Response<LoginResponse>
 
     @POST("users/refresh")
-    suspend fun refreshToken(): Response<UserResponse<Tokens>>
+    suspend fun refreshToken(
+        @Body request: RefreshTokenRequest
+    ): Response<UserResponse<Tokens>>
 
     //회원 탈퇴
     @POST("users/withdraw")

@@ -36,6 +36,13 @@ class TokenSaver(
         return prefs.getString(REFRESH_TOKEN_KEY, null)
     }
 
+    fun clearTokens() {
+        prefs.edit {
+            remove(TOKEN_KEY)
+            remove(REFRESH_TOKEN_KEY)
+        }
+    }
+
     /**
      * Token 값이 존재할 경우 Bearer 여부를 판단해 추가로 반환한다.
      */

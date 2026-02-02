@@ -1,6 +1,8 @@
 package com.example.planup.network.interceptor
 
 import android.util.Log
+import com.example.planup.database.TokenSaver
+import com.example.planup.database.UserInfoSaver
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
@@ -14,7 +16,9 @@ import okhttp3.Route
 import javax.inject.Inject
 
 class TokenAuthenticator @Inject constructor(
-    private val userRepository: dagger.Lazy<UserRepository>
+    private val userRepository: dagger.Lazy<UserRepository>,
+    private val userInfoSaver: UserInfoSaver,
+    private val tokenSaver: TokenSaver
 ) : Authenticator {
     private val mutex = Mutex()
 
@@ -33,6 +37,8 @@ class TokenAuthenticator @Inject constructor(
 
             if (retryCount > MAX_RETRY) {
                 // 최대 시도 횟수를 넘은 경우 추가 요청 X
+                userInfoSaver.clearAllUserInfo()
+                tokenSaver.clearTokens()
                 return@withLock null
             }
 
