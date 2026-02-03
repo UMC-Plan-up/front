@@ -1,65 +1,62 @@
 package com.example.planup.signup.data
 
+import com.google.gson.annotations.SerializedName
+
 // 이메일 인증 대안 - 카카오 로그인
 data class KakaoLoginRequest(
-    val token: String,
-    val email: String
+    @SerializedName("token") val token: String,
+    @SerializedName("email") val email: String
 )
 
 data class KakaoLoginResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
-    val result: ResultData
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: ResultData
 ) {
     data class ResultData(
-        val tempUserId: String?,
-        val accessToken: String?,
-        val userInfo: UserInfo?,
-        val newUser: Boolean
+        @SerializedName("tempUserId") val tempUserId: String?,
+        @SerializedName("accessToken") val accessToken: String?,
+        @SerializedName("userInfo") val userInfo: UserInfo?,
+        @SerializedName("newUser") val newUser: Boolean
     )
 
     data class UserInfo(
-        val id: Long,
-        val email: String?,
-        val nickname: String?,
-        val profileImg: String?
+        @SerializedName("id") val id: Long,
+        @SerializedName("email") val email: String?,
+        @SerializedName("nickname") val nickname: String?,
+        @SerializedName("profileImg") val profileImg: String?
     )
 }
 
 // 카카오 회원가입 완료
 // 요청 Dto
 data class KakaoCompleteRequest(
-    val tempUserId: String,
-    val nickname: String,
-    val profileImg: String?,
-    val agreements: List<Agreement>
-) {
-    data class Agreement(
-        val termsId: Int,
-        val isAgreed: Boolean
-    )
-}
+    @SerializedName("tempUserId") val tempUserId: String,
+    @SerializedName("nickname") val nickname: String,
+    @SerializedName("profileImg") val profileImg: String?,
+    @SerializedName("agreements") val agreements: List<Agreement>
+)
 
 // 응답 Dto
 data class KakaoCompleteResponse(
-    val isSuccess: Boolean,
-    val code: String,
-    val message: String,
-    val result: Result
+    @SerializedName("isSuccess") val isSuccess: Boolean,
+    @SerializedName("code") val code: String,
+    @SerializedName("message") val message: String,
+    @SerializedName("result") val result: Result
 ) {
     data class Result(
-        val id: Long,
-        val email: String?,
-        val accessToken: String,
-        val userInfo: UserInfo?
+        @SerializedName("id") val id: Long,
+        @SerializedName("email") val email: String?,
+        @SerializedName("accessToken") val accessToken: String,
+        @SerializedName("userInfo") val userInfo: UserInfo?
     )
 
     data class UserInfo(
-        val id: Long,
-        val email: String?,
-        val nickname: String?,
-        val profileImg: String?
+        @SerializedName("id") val id: Long,
+        @SerializedName("email") val email: String?,
+        @SerializedName("nickname") val nickname: String?,
+        @SerializedName("profileImg") val profileImg: String?
     )
 }
 
