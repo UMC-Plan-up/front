@@ -7,18 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.planup.R
 import com.example.planup.databinding.PopupResendEmailBinding
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
-import com.example.planup.signup.data.ResendEmailRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
-import com.kakao.sdk.auth.AuthCodeClient
-import com.kakao.sdk.user.UserApiClient
-import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
+import com.example.planup.util.KakaoServiceHandler
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 
@@ -62,39 +58,21 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
         binding.kakaoLoginOption.isEnabled = false
         binding.resendEmailOption.isEnabled = false
 
-        val ctx = requireActivity()
 
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(ctx)) {
-            AuthCodeClient.instance.authorizeWithKakaoTalk(ctx) { code, _ ->
-                if (code != null) {
-                    callKakaoLogin(code)
-                } else {
-                    AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code2, _ ->
-                        if (code2 != null) {
-                            callKakaoLogin(code2)
-                        } else {
-                            Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
-                            restoreKakaoButtons()
-                        }
+        lifecycleScope.launch {
+            KakaoServiceHandler.getTokenWithUser(requireActivity())
+                .onSuccess { (token, user) ->
+                    if(user != null) {
+                        callKakaoLogin(token.accessToken, user.kakaoAccount?.email ?: "")
                     }
                 }
-            }
-        } else {
-            AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code, _ ->
-                if (code != null) {
-                    callKakaoLogin(code)
-                } else {
-                    Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
-                    restoreKakaoButtons()
-                }
-            }
         }
     }
 
-    private fun callKakaoLogin(authCode: String) {
+    private fun callKakaoLogin(accessToken: String, email: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(authCode))
+                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(accessToken, email))
                 val body = resp.body()
 
                 if (resp.isSuccessful && body?.isSuccess == true) {

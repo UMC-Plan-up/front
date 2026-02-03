@@ -119,7 +119,7 @@ class LoginActivityNew: AppCompatActivity() {
         // 카카오 로그인 버튼
         binding.kakaoLoginLayout.setOnClickListener {
             // TODO:: 뷰모델로 로직 분리
-            onClickKakaoLogin()
+//            onClickKakaoLogin()
         }
     }
 
@@ -237,69 +237,71 @@ class LoginActivityNew: AppCompatActivity() {
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
-    // 카카오 인가코드 얻기
-    private suspend fun getKakaoAuthorizationCode(): String =
-        suspendCancellableCoroutine { cont ->
-            val callback: (String?, Throwable?) -> Unit = { code, error ->
-                println("code: ${code}|\n error: ${error}")
-                if (error != null) cont.resumeWithException(error)
-                else cont.resume(code ?: "")
-            }
 
-            val client = AuthCodeClient.Companion.instance
-            if (client.isKakaoTalkLoginAvailable(this@LoginActivityNew)) {
-                client.authorizeWithKakaoTalk(this@LoginActivityNew, callback = callback)
-            } else {
-                client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
-            }
-        }
-
-    // 카카오 로그인 실행
-    private fun onClickKakaoLogin() {
-        lifecycleScope.launch {
-            try {
-                val code = getKakaoAuthorizationCode()
-                Log.d("KakaoLogin", "Received authorization code: $code")
-                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
-                val body = resp.body()
-
-                if (resp.isSuccessful && body?.isSuccess == true) {
-                    val r = body.result
-
-                    if (r.newUser) {
-                        startActivity(
-                            Intent(this@LoginActivityNew, OnBoardingActivity::class.java).apply {
-                                putExtra("provider", "KAKAO")
-                                putExtra("tempUserId", r.tempUserId ?: "")
-                                putExtra("email", r.userInfo?.email)
-                                putExtra("profileImg", r.userInfo?.profileImg)
-                            }
-                        )
-                    } else {
-                        val accessToken = r.accessToken
-                        val userInfo = r.userInfo
-                        App.Companion.jwt.token = r.accessToken
-                        editor.putString("kakaoCode",code)
-                        if (accessToken != null && userInfo != null) {
-                            saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
-                        } else {
-                            // API 응답은 성공했지만 필요한 데이터가 누락된 경우
-                            Log.e("KakaoLogin", "API call successful but missing accessToken or userInfo.")
-                            toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
-                        }
-                    }
-                } else {
-                    // API 호출 실패
-                    Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
-                    toast(body?.message ?: "로그인 실패(${resp.code()})")
-                }
-            } catch (e: Exception) {
-                // 카카오 SDK 인증 과정에서 예외가 발생한 경우
-                Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
-                toast("카카오 인증 실패: ${e.localizedMessage}")
-            }
-        }
-    }
+    // TODO:: 로직 수정
+//    // 카카오 인가코드 얻기
+//    private suspend fun getKakaoAuthorizationCode(): String =
+//        suspendCancellableCoroutine { cont ->
+//            val callback: (String?, Throwable?) -> Unit = { code, error ->
+//                println("code: ${code}|\n error: ${error}")
+//                if (error != null) cont.resumeWithException(error)
+//                else cont.resume(code ?: "")
+//            }
+//
+//            val client = AuthCodeClient.Companion.instance
+//            if (client.isKakaoTalkLoginAvailable(this@LoginActivityNew)) {
+//                client.authorizeWithKakaoTalk(this@LoginActivityNew, callback = callback)
+//            } else {
+//                client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
+//            }
+//        }
+//
+//    // 카카오 로그인 실행
+//    private fun onClickKakaoLogin() {
+//        lifecycleScope.launch {
+//            try {
+//                val code = getKakaoAuthorizationCode()
+//                Log.d("KakaoLogin", "Received authorization code: $code")
+//                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
+//                val body = resp.body()
+//
+//                if (resp.isSuccessful && body?.isSuccess == true) {
+//                    val r = body.result
+//
+//                    if (r.newUser) {
+//                        startActivity(
+//                            Intent(this@LoginActivityNew, OnBoardingActivity::class.java).apply {
+//                                putExtra("provider", "KAKAO")
+//                                putExtra("tempUserId", r.tempUserId ?: "")
+//                                putExtra("email", r.userInfo?.email)
+//                                putExtra("profileImg", r.userInfo?.profileImg)
+//                            }
+//                        )
+//                    } else {
+//                        val accessToken = r.accessToken
+//                        val userInfo = r.userInfo
+//                        App.Companion.jwt.token = r.accessToken
+//                        editor.putString("kakaoCode",code)
+//                        if (accessToken != null && userInfo != null) {
+//                            saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
+//                        } else {
+//                            // API 응답은 성공했지만 필요한 데이터가 누락된 경우
+//                            Log.e("KakaoLogin", "API call successful but missing accessToken or userInfo.")
+//                            toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
+//                        }
+//                    }
+//                } else {
+//                    // API 호출 실패
+//                    Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
+//                    toast(body?.message ?: "로그인 실패(${resp.code()})")
+//                }
+//            } catch (e: Exception) {
+//                // 카카오 SDK 인증 과정에서 예외가 발생한 경우
+//                Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
+//                toast("카카오 인증 실패: ${e.localizedMessage}")
+//            }
+//        }
+//    }
 
     private fun saveUserInfoAndGoToMain(
         userId: Int,

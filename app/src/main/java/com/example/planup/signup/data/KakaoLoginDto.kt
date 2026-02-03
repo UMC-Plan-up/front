@@ -2,7 +2,8 @@ package com.example.planup.signup.data
 
 // 이메일 인증 대안 - 카카오 로그인
 data class KakaoLoginRequest(
-    val code: String
+    val token: String,
+    val email: String
 )
 
 data class KakaoLoginResponse(
