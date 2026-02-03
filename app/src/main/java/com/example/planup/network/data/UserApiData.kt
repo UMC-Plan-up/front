@@ -48,6 +48,12 @@ data class Login(
     @SerializedName("message") val message: String
 )
 
+data class Tokens(
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("expiresIn") val expiresIn: Int
+)
+
 //초대 코드 실시간 검증
 data class InviteCodeValidate(
     @SerializedName("valid") val valid: Boolean,
