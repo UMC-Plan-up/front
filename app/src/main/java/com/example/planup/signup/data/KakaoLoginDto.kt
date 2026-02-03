@@ -50,6 +50,7 @@ data class KakaoCompleteResponse(
         @SerializedName("id") val id: Long,
         @SerializedName("email") val email: String?,
         @SerializedName("accessToken") val accessToken: String,
+        @SerializedName("refreshToken") val refreshToken: String,
         @SerializedName("userInfo") val userInfo: UserInfo?
     )
 
