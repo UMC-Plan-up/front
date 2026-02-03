@@ -57,6 +57,10 @@ class UserRepositoryImpl @Inject constructor(
             },
             onResponse = { response ->
                 if(response.isSuccess) {
+                    if(!response.result.newUser) {
+                        tokenSaver.saveToken(response.result.accessToken)
+                        tokenSaver.saveRefreshToken(response.result.refreshToken)
+                    }
                     ApiResult.Success(response.result)
                 } else {
                     ApiResult.Fail(response.message)

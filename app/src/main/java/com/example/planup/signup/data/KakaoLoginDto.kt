@@ -17,6 +17,7 @@ data class KakaoLoginResponse(
     data class ResultData(
         @SerializedName("tempUserId") val tempUserId: String?,
         @SerializedName("accessToken") val accessToken: String?,
+        @SerializedName("refreshToken") val refreshToken: String?,
         @SerializedName("userInfo") val userInfo: UserInfo?,
         @SerializedName("newUser") val newUser: Boolean
     )

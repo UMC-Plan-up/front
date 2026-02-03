@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
+import com.example.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -39,11 +40,34 @@ class LoginViewModel @Inject constructor(
         }
     }
 
+    fun requestKakaoLogin(accessToken: String, email: String?) {
+        viewModelScope.launch {
+            if(email == null) {
+                _eventChannel.send(Event.FailKakaoLogin)
+                return@launch
+            }
+            userRepository.kakaoLogin(accessToken, email)
+                .onSuccess {
+                    if(it.newUser) {
+                        // 새로운 유저라면, 온보딩 과정 진행
+                        it.tempUserId
+
+
+                    } else {
+                        // 기존 유저라면, 메인 화면으로 이동
+                        _eventChannel.send(Event.SuccessLogin)
+                    }
+                }
+        }
+    }
+
     sealed class Event {
         object UnknownEmail: Event()
         object WrongPassword: Event()
         object SuccessLogin: Event()
         data class FailLogin(val message: String): Event()
+        object FailKakaoLogin: Event()
+        object StartKakaoOnboarding: Event()
         object UnknownError: Event()
     }
 }

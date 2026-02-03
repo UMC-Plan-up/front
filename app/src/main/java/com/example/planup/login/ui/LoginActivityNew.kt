@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
 import android.util.Patterns
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -24,21 +23,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.main.MainActivity
-import com.example.planup.App
-import com.example.planup.network.RetrofitInstance
 import com.example.planup.network.controller.UserController
 import com.example.planup.onboarding.OnBoardingActivity
 import com.example.planup.password.ResetPasswordActivity
-import com.example.planup.signup.data.KakaoLoginRequest
-import com.kakao.sdk.auth.AuthCodeClient
+import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 @AndroidEntryPoint
-class LoginActivityNew: AppCompatActivity() {
+class LoginActivityNew : AppCompatActivity() {
     lateinit var binding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
 
@@ -119,7 +112,7 @@ class LoginActivityNew: AppCompatActivity() {
         // 카카오 로그인 버튼
         binding.kakaoLoginLayout.setOnClickListener {
             // TODO:: 뷰모델로 로직 분리
-//            onClickKakaoLogin()
+            onClickKakaoLogin()
         }
     }
 
@@ -127,15 +120,28 @@ class LoginActivityNew: AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.eventChannel.collect { event ->
-                    when(event) {
+                    when (event) {
                         is LoginViewModel.Event.FailLogin -> makeToast(event.message)
                         LoginViewModel.Event.SuccessLogin -> {
                             startActivity(Intent(this@LoginActivityNew, MainActivity::class.java))
                             finish()
                         }
+
                         LoginViewModel.Event.UnknownEmail -> makeToast("등록되지 않은 이메일이에요")
                         LoginViewModel.Event.UnknownError -> makeToast("알 수 없는 오류가 발생했습니다")
                         LoginViewModel.Event.WrongPassword -> makeToast("비밀번호를 다시 확인해 주세요.")
+                        LoginViewModel.Event.FailKakaoLogin -> makeToast("카카오 로그인에 실패했어요.")
+                        LoginViewModel.Event.StartKakaoOnboarding -> {
+                            startActivity(
+                                Intent(
+                                    this@LoginActivityNew,
+                                    OnBoardingActivity::class.java
+                                ).apply {
+//                                    putExtra()
+                                    // TODO:: 전달할 데이터 고민
+                                }
+                            )
+                        }
                     }
                 }
             }
@@ -238,70 +244,22 @@ class LoginActivityNew: AppCompatActivity() {
     }
 
 
-    // TODO:: 로직 수정
-//    // 카카오 인가코드 얻기
-//    private suspend fun getKakaoAuthorizationCode(): String =
-//        suspendCancellableCoroutine { cont ->
-//            val callback: (String?, Throwable?) -> Unit = { code, error ->
-//                println("code: ${code}|\n error: ${error}")
-//                if (error != null) cont.resumeWithException(error)
-//                else cont.resume(code ?: "")
-//            }
-//
-//            val client = AuthCodeClient.Companion.instance
-//            if (client.isKakaoTalkLoginAvailable(this@LoginActivityNew)) {
-//                client.authorizeWithKakaoTalk(this@LoginActivityNew, callback = callback)
-//            } else {
-//                client.authorizeWithKakaoAccount(this@LoginActivityNew, callback = callback)
-//            }
-//        }
-//
-//    // 카카오 로그인 실행
-//    private fun onClickKakaoLogin() {
-//        lifecycleScope.launch {
-//            try {
-//                val code = getKakaoAuthorizationCode()
-//                Log.d("KakaoLogin", "Received authorization code: $code")
-//                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(code))
-//                val body = resp.body()
-//
-//                if (resp.isSuccessful && body?.isSuccess == true) {
-//                    val r = body.result
-//
-//                    if (r.newUser) {
-//                        startActivity(
-//                            Intent(this@LoginActivityNew, OnBoardingActivity::class.java).apply {
-//                                putExtra("provider", "KAKAO")
-//                                putExtra("tempUserId", r.tempUserId ?: "")
-//                                putExtra("email", r.userInfo?.email)
-//                                putExtra("profileImg", r.userInfo?.profileImg)
-//                            }
-//                        )
-//                    } else {
-//                        val accessToken = r.accessToken
-//                        val userInfo = r.userInfo
-//                        App.Companion.jwt.token = r.accessToken
-//                        editor.putString("kakaoCode",code)
-//                        if (accessToken != null && userInfo != null) {
-//                            saveUserInfoAndGoToMain(userInfo.id.toInt(), userInfo.email, userInfo.nickname, userInfo.profileImg)
-//                        } else {
-//                            // API 응답은 성공했지만 필요한 데이터가 누락된 경우
-//                            Log.e("KakaoLogin", "API call successful but missing accessToken or userInfo.")
-//                            toast("로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.")
-//                        }
-//                    }
-//                } else {
-//                    // API 호출 실패
-//                    Log.e("KakaoLogin", "API call failed. Response code: ${resp.code()}, message: ${body?.message}")
-//                    toast(body?.message ?: "로그인 실패(${resp.code()})")
-//                }
-//            } catch (e: Exception) {
-//                // 카카오 SDK 인증 과정에서 예외가 발생한 경우
-//                Log.e("KakaoLogin", "Kakao authorization failed: ${e.localizedMessage}", e)
-//                toast("카카오 인증 실패: ${e.localizedMessage}")
-//            }
-//        }
-//    }
+    private fun onClickKakaoLogin() {
+        lifecycleScope.launch {
+            KakaoServiceHandler.getTokenWithUser(this@LoginActivityNew)
+                .onSuccess { (token, user) ->
+                    if (user != null)
+                        viewModel.requestKakaoLogin(token.accessToken, user.kakaoAccount?.email)
+                }
+                .onFailure {
+                    if (it is KakaoServiceHandler.KakaoHandlerError.CancelledByUser) {
+
+                    } else {
+                        makeToast("카카오 로그인에 실패했습니다")
+                    }
+                }
+        }
+    }
 
     private fun saveUserInfoAndGoToMain(
         userId: Int,
