@@ -32,7 +32,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.onboarding.component.OnBoardingFinishDialog
+import com.example.planup.onboarding.model.OnboardingStep
 import com.example.planup.onboarding.model.SignupTypeModel
+import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,10 +47,14 @@ class OnBoardingActivity: AppCompatActivity() {
 
         // 회원가입 유형 확인, 카카오 로그인으로 들어왔는지 확인하는 용도
         val signupType = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_SIGNUP_TYPE, SignupTypeModel::class.java)
+            intent.getParcelableExtra(EXTRA_SIGNUP_TYPE, SignupTypeModel::class.java).also {
+                intent.removeExtra(EXTRA_SIGNUP_TYPE)
+            }
         } else {
             @Suppress("DEPRECATION")
-            intent.getParcelableExtra(EXTRA_SIGNUP_TYPE)
+            intent.getParcelableExtra<SignupTypeModel>(EXTRA_SIGNUP_TYPE).also {
+                intent.removeExtra(EXTRA_SIGNUP_TYPE)
+            }
         } ?: SignupTypeModel.Normal
 
         viewModel.updateSignupType(signupType)
@@ -107,6 +113,31 @@ class OnBoardingActivity: AppCompatActivity() {
                         }
                         is OnBoardingViewModel.Event.FinishSignup -> {
                             isFinishDialogVisible = true
+                        }
+                        is OnBoardingViewModel.Event.RequestKakaoLogin -> {
+                            KakaoServiceHandler.getTokenWithUser(this@OnBoardingActivity)
+                                .onSuccess { (token, user) ->
+                                    viewModel.requestKakaoVerification(
+                                        accessToken = token.accessToken,
+                                        email = user?.kakaoAccount?.email ?: ""
+                                    )
+                                }
+                                .onFailure {
+                                    if(it is KakaoServiceHandler.KakaoHandlerError.CancelledByUser) {
+
+                                    } else {
+                                    // TODO:: 에러 표시 어떻게 할지 고민
+                                        errorSnackBarHost.showSnackbar(it.message ?: "카카오 로그인 실패")
+                                    }
+                                }
+                        }
+                        is OnBoardingViewModel.Event.SuccessKakaoVerification -> {
+                            println("SuccessKakaoVerification")
+                            navController.navigate(OnBoardProfileRoute) {
+                                popUpTo(OnBoardTermRoute) {
+                                    inclusive = false
+                                }
+                            }
                         }
                     }
                 }

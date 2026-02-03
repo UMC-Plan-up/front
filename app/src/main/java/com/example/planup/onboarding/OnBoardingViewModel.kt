@@ -11,6 +11,7 @@ import com.example.planup.network.onSuccess
 import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
+import com.example.planup.onboarding.model.OnboardingStep
 import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.signup.data.Agreement
@@ -257,8 +258,36 @@ class OnBoardingViewModel @Inject constructor(
         }
     }
 
-    fun kakaoLogin() {
-        // TODO:: 카카오 로그인 로직
+    fun requestKakaoLogin() {
+        viewModelScope.launch {
+            _event.send(Event.RequestKakaoLogin)
+        }
+    }
+
+    fun requestKakaoVerification(
+        accessToken: String,
+        email: String
+    ) {
+        viewModelScope.launch {
+            userRepository.kakaoLogin(accessToken, email)
+                .onSuccess {
+                    if(it.newUser) {
+                        // 회원가입 로직 진행
+                        updateSignupType(SignupTypeModel.Kakao(
+                            tempUserId = it.tempUserId,
+                            email = email
+                        ))
+                        _event.send(Event.SuccessKakaoVerification)
+                        _state.update { it.copy(email = email) }
+                    } else {
+                        // TODO:: 유저에게 안내 후 카카오 로그인으로? - 효빈님이랑 논의
+                    }
+                }
+                .onFailWithMessage {
+                    Log.e("OnBoardingViewModel", "카카오 로그인 실패| $it")
+                    // TODO:: 에러메세지
+                }
+        }
     }
 
     fun fetchRandomNickname() {
@@ -477,6 +506,8 @@ class OnBoardingViewModel @Inject constructor(
 
     sealed class Event {
         data class Navigate(val step: OnboardingStep) : Event()
+        data object RequestKakaoLogin: Event()
+        data object SuccessKakaoVerification: Event()
         data object FinishSignup : Event()
     }
 
@@ -530,61 +561,3 @@ data class OnBoardingState(
     val loading: Boolean = false,
 )
 
-sealed class OnboardingStep(val step: Int, val title: String?) {
-    private val totalStep: Int = 5
-
-    private val normalStep: List<OnboardingStep> = listOf(
-        Term,
-        Id,
-        Password,
-        Verification,
-        Profile
-    )
-
-    private val kakaoSteps: List<OnboardingStep> = listOf(
-        Term,
-        Profile
-    )
-
-    data object Term : OnboardingStep(step = 1, title = null)
-    data object Id : OnboardingStep(step = 2, title = null)
-    data object Password : OnboardingStep(step = 3, title = null)
-    data object Verification : OnboardingStep(step = 4, title = null)
-    data object Profile : OnboardingStep(step = 5, title = "프로필 설정")
-
-    fun getFloatProgress(): Float {
-        val currentProgress = this.step
-        return currentProgress / totalStep.toFloat()
-    }
-
-    fun getRoute(): Any {
-        return when (this) {
-            Term -> OnBoardTermRoute
-            Id -> OnBoardIdRoute
-            Password -> OnBoardPasswordRoute
-            Verification -> OnBoardVerificationRoute
-            Profile -> OnBoardProfileRoute
-        }
-    }
-
-    fun getNextStep(signupType: SignupTypeModel): OnboardingStep? {
-        return if(signupType is SignupTypeModel.Normal) {
-            normalStep.getOrNull(this.step)
-        } else {
-            kakaoSteps.getOrNull(this.step)
-        }
-    }
-
-    companion object {
-        fun parseRoute(route: String): OnboardingStep {
-            return when {
-                route.contains(OnBoardTermRoute::class.qualifiedName.toString()) -> Term
-                route.contains(OnBoardIdRoute::class.qualifiedName.toString()) -> Id
-                route.contains(OnBoardPasswordRoute::class.qualifiedName.toString()) -> Password
-                route.contains(OnBoardVerificationRoute::class.qualifiedName.toString()) -> Verification
-                route.contains(OnBoardProfileRoute::class.qualifiedName.toString()) -> Profile
-                else -> Term
-            }
-        }
-    }
-}

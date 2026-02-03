@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.planup.onboarding.model.OnboardingStep
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -71,7 +72,7 @@ fun OnboardNavHost(
                 state = state,
                 onNext = { viewModel.proceedNextStep(currentStep) },
                 onClickResend = viewModel::resendEmailVerification,
-                onClickKaKao = viewModel::kakaoLogin
+                onClickKaKao = viewModel::requestKakaoLogin
             )
         }
 
