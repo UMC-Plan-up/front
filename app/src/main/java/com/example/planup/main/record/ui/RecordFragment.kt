@@ -13,25 +13,20 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.planup.App
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeAlertFragment
 import com.example.planup.main.record.adapter.NotificationAdapter
 import com.example.planup.main.record.data.BadgeDTO
-import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.getValue
 import com.example.planup.main.record.ui.viewmodel.RecordViewModel
 import com.example.planup.network.ApiResult
 
 @AndroidEntryPoint
-class RecordFragment @Inject constructor() :  Fragment() {
+class RecordFragment :  Fragment() {
 
     private lateinit var binding: FragmentRecordBinding
     private val viewModel: RecordViewModel by viewModels()
@@ -88,22 +83,6 @@ class RecordFragment @Inject constructor() :  Fragment() {
             adapter = notificationAdapter
             isNestedScrollingEnabled = false
         }
-    }
-
-    /** 인증 헤더 생성 (userInfo > App.jwt.token 순서) */
-    private fun buildAuthHeader(): String? {
-        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val prefToken = prefs.getString("accessToken", null)
-        val appToken = App.jwt.token
-        val raw = when {
-            !prefToken.isNullOrBlank() -> prefToken
-            !appToken.isNullOrBlank() -> appToken
-            else -> null
-        } ?: return null
-        // 민감정보 노출 방지: 앞 12자리만 로그
-        val safe = raw.take(12)
-        Log.d(TAG, "buildAuthHeader(): tokenPresent=${raw.isNotBlank()} prefix=$safe..., len=${raw.length}")
-        return if (raw.startsWith("Bearer ", true)) raw else "Bearer $raw"
     }
 
     /** 주간 페이지 데이터(응원 문구, 배지, 알림) 조회 */

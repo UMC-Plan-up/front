@@ -3,6 +3,7 @@ package com.example.planup.main.record.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.main.record.data.BadgeDTO
 import com.example.planup.main.record.data.NotificationDTO
 import com.example.planup.main.record.data.WeeklyReportResult
@@ -10,11 +11,13 @@ import com.example.planup.main.record.ui.repository.RecordRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class RecordViewModel @Inject constructor(
     private val recordRepository: RecordRepository
 ): ViewModel(){
@@ -67,6 +70,11 @@ class RecordViewModel @Inject constructor(
         }
     }
 
+    fun loadNotification() {
+        viewModelScope.launch {
+            recordRepository.loadNotification(userId)
+        }
+    }
 
 
 }

@@ -9,42 +9,56 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
+import com.example.planup.databinding.ItemNotificationBinding
 import com.example.planup.main.record.data.NotificationDTO
 
 class NotificationAdapter(
     private val onItemClick: (NotificationDTO) -> Unit
-) : ListAdapter<NotificationDTO, NotificationAdapter.VH>(DIFF) {
+) :
+    ListAdapter<NotificationDTO, NotificationAdapter.NotificationViewHolder>(diffUtil) {
 
-    companion object {
-        private val DIFF = object : DiffUtil.ItemCallback<NotificationDTO>() {
-            override fun areItemsTheSame(old: NotificationDTO, new: NotificationDTO) =
-                old.id == new.id
-
-            override fun areContentsTheSame(old: NotificationDTO, new: NotificationDTO) =
-                old == new
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NotificationViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ItemNotificationBinding.inflate(inflater, parent, false)
+        return NotificationViewHolder(binding)
     }
 
-    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val ivIcon: ImageView = itemView.findViewById(R.id.ivIcon)
-        private val tvText: TextView = itemView.findViewById(R.id.tvText)
+    override fun onBindViewHolder(holder: NotificationViewHolder, position: Int) {
+        holder.bind(getItem(position))
+    }
+
+    // ⭐️ 최대 3개만 표시
+    override fun getItemCount(): Int {
+        return minOf(currentList.size, 3)
+    }
+
+    inner class NotificationViewHolder(
+        private val binding: ItemNotificationBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: NotificationDTO) {
-            // 필요 시 유형별 아이콘 변경 가능
-            ivIcon.setImageResource(R.drawable.ic_deep_blue_circle)
-            tvText.text = item.notificationText
+            binding.tvText.text = item.notificationText
+            binding.ivIcon.setImageResource(R.drawable.ic_deep_blue_circle)
+            binding.tvText.text = item.notificationText
 
             itemView.setOnClickListener { onItemClick(item) }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_notification, parent, false)
-        return VH(v)
-    }
+    companion object {
+        private val diffUtil = object : DiffUtil.ItemCallback<NotificationDTO>() {
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.bind(getItem(position))
+            override fun areItemsTheSame(
+                oldItem: NotificationDTO,
+                newItem: NotificationDTO
+            ): Boolean = oldItem.id == newItem.id
+
+            override fun areContentsTheSame(
+                oldItem: NotificationDTO,
+                newItem: NotificationDTO
+            ): Boolean = oldItem == newItem
+        }
     }
 }
+
+
