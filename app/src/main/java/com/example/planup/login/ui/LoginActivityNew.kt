@@ -25,6 +25,7 @@ import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.network.controller.UserController
 import com.example.planup.onboarding.OnBoardingActivity
+import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.password.ResetPasswordActivity
 import com.example.planup.util.KakaoServiceHandler
 import dagger.hilt.android.AndroidEntryPoint
@@ -122,23 +123,25 @@ class LoginActivityNew : AppCompatActivity() {
                 viewModel.eventChannel.collect { event ->
                     when (event) {
                         is LoginViewModel.Event.FailLogin -> makeToast(event.message)
-                        LoginViewModel.Event.SuccessLogin -> {
+                        is LoginViewModel.Event.SuccessLogin -> {
                             startActivity(Intent(this@LoginActivityNew, MainActivity::class.java))
                             finish()
                         }
 
-                        LoginViewModel.Event.UnknownEmail -> makeToast("등록되지 않은 이메일이에요")
-                        LoginViewModel.Event.UnknownError -> makeToast("알 수 없는 오류가 발생했습니다")
-                        LoginViewModel.Event.WrongPassword -> makeToast("비밀번호를 다시 확인해 주세요.")
-                        LoginViewModel.Event.FailKakaoLogin -> makeToast("카카오 로그인에 실패했어요.")
-                        LoginViewModel.Event.StartKakaoOnboarding -> {
+                        is LoginViewModel.Event.UnknownEmail -> makeToast("등록되지 않은 이메일이에요")
+                        is LoginViewModel.Event.UnknownError -> makeToast("알 수 없는 오류가 발생했습니다")
+                        is LoginViewModel.Event.WrongPassword -> makeToast("비밀번호를 다시 확인해 주세요.")
+                        is LoginViewModel.Event.FailKakaoLogin -> makeToast("카카오 로그인에 실패했어요.")
+                        is LoginViewModel.Event.StartKakaoOnboarding -> {
                             startActivity(
                                 Intent(
                                     this@LoginActivityNew,
                                     OnBoardingActivity::class.java
                                 ).apply {
-//                                    putExtra()
-                                    // TODO:: 전달할 데이터 고민
+                                    putExtra(OnBoardingActivity.EXTRA_SIGNUP_TYPE, SignupTypeModel.Kakao(
+                                        tempUserId = event.tempUserId,
+                                        email = event.email
+                                    ))
                                 }
                             )
                         }

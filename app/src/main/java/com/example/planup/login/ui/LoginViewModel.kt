@@ -15,9 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository
-): ViewModel() {
+) : ViewModel() {
 
-    private val _eventChannel =  Channel<Event>(Channel.BUFFERED)
+    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventChannel = _eventChannel.receiveAsFlow()
 
     fun requestLogin(
@@ -26,15 +26,17 @@ class LoginViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             val result = userRepository.postLogin(email = email, password = password)
-            when(result) {
+            when (result) {
                 is ApiResult.Success -> {
                     _eventChannel.send(Event.SuccessLogin)
                 }
+
                 is ApiResult.Error -> _eventChannel.send(Event.FailLogin(result.message))
                 is ApiResult.Exception -> {
                     Log.e("LoginViewModel", "Fail requestLogin. exception: ${result.error}")
                     _eventChannel.send(Event.UnknownError)
                 }
+
                 is ApiResult.Fail -> _eventChannel.send(Event.FailLogin(result.message))
             }
         }
@@ -42,16 +44,20 @@ class LoginViewModel @Inject constructor(
 
     fun requestKakaoLogin(accessToken: String, email: String?) {
         viewModelScope.launch {
-            if(email == null) {
+            if (email == null) {
                 _eventChannel.send(Event.FailKakaoLogin)
                 return@launch
             }
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
-                    if(it.newUser) {
+                    if (it.newUser) {
                         // 새로운 유저라면, 온보딩 과정 진행
-                        it.tempUserId
-
+                        _eventChannel.send(
+                            Event.StartKakaoOnboarding(
+                                tempUserId = it.tempUserId,
+                                email = email
+                            )
+                        )
 
                     } else {
                         // 기존 유저라면, 메인 화면으로 이동
@@ -62,12 +68,12 @@ class LoginViewModel @Inject constructor(
     }
 
     sealed class Event {
-        object UnknownEmail: Event()
-        object WrongPassword: Event()
-        object SuccessLogin: Event()
-        data class FailLogin(val message: String): Event()
-        object FailKakaoLogin: Event()
-        object StartKakaoOnboarding: Event()
-        object UnknownError: Event()
+        object UnknownEmail : Event()
+        object WrongPassword : Event()
+        object SuccessLogin : Event()
+        data class FailLogin(val message: String) : Event()
+        data class StartKakaoOnboarding(val tempUserId: String, val email: String) : Event()
+        object FailKakaoLogin : Event()
+        object UnknownError : Event()
     }
 }

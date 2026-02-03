@@ -219,7 +219,7 @@ class ProfileSetupFragment : Fragment() {
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl,
                         agreements = activity.agreements?.map {
-                            KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
+                            Agreement(it.termsId, it.isAgreed)
                         } ?: emptyList()
                     )
 

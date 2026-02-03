@@ -4,10 +4,12 @@ import android.app.ComponentCaller
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -31,7 +33,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
+import com.example.planup.network.data.Signup
 import com.example.planup.onboarding.component.OnBoardingFinishDialog
+import com.example.planup.onboarding.model.SignupTypeModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,6 +45,17 @@ class OnBoardingActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // 회원가입 유형 확인, 카카오 로그인으로 들어왔는지 확인하는 용도
+        val signupType = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra(EXTRA_SIGNUP_TYPE, SignupTypeModel::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(EXTRA_SIGNUP_TYPE)
+        } ?: SignupTypeModel.Normal
+
+        println("signupType: $signupType")
+
 
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -138,6 +153,7 @@ class OnBoardingActivity: AppCompatActivity() {
     }
 
     companion object {
+        const val EXTRA_SIGNUP_TYPE = "signup_type"
         private const val QUERY_EMAIL = "email"
         private const val QUERY_VERIFIED = "verified"
         private const val QUERY_TOKEN = "token"
