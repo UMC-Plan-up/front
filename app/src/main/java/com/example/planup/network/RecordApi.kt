@@ -3,9 +3,19 @@ package com.example.planup.network
 import com.example.planup.main.record.data.ApiResponseListInteger
 import com.example.planup.main.record.data.DetailWeeklyReportResponse
 import com.example.planup.main.record.data.WeeklyReportResponse
+import com.example.planup.network.data.ChallengeFriends
+import com.example.planup.network.data.ChallengeInfo
+import com.example.planup.network.data.ChallengeResponse
+import com.example.planup.network.data.ChallengeResponseNoResult
+import com.example.planup.network.data.ChallengeResult
+import com.example.planup.network.dto.challenge.ChallengeDto
+import com.example.planup.network.dto.challenge.RepenaltyDto
+import retrofit2.Call
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -31,4 +41,12 @@ interface RecordApi {
         @Path("week") week: Int,
         @Query("userId") userId: Int
     ): Response<DetailWeeklyReportResponse>
+
+    //챌린지 정보 조회
+
+    //챌린지에서 친구 조회
+    @GET("challenges/friends")
+    fun showFriends(
+        @Query("userId") userId: Int
+    ): Response<ChallengeResponse<List<ChallengeFriends>>>
 }
