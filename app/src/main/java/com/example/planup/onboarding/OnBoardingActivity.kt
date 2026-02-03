@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -26,14 +25,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
-import com.example.planup.network.data.Signup
 import com.example.planup.onboarding.component.OnBoardingFinishDialog
 import com.example.planup.onboarding.model.SignupTypeModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,8 +51,7 @@ class OnBoardingActivity: AppCompatActivity() {
             intent.getParcelableExtra(EXTRA_SIGNUP_TYPE)
         } ?: SignupTypeModel.Normal
 
-        println("signupType: $signupType")
-
+        viewModel.updateSignupType(signupType)
 
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()

@@ -11,6 +11,7 @@ import com.example.planup.network.onSuccess
 import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
 import com.example.planup.onboarding.model.GenderModel
+import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.signup.data.Agreement
 import com.example.planup.util.ImageResizer
@@ -66,6 +67,9 @@ class OnBoardingViewModel @Inject constructor(
         fetchRandomNickname()
     }
 
+    private val _signupType: SignupTypeModel
+        get() = savedStateHandle[KEY_SIGNUP_TYPE] ?: SignupTypeModel.Normal
+
     val verifiedEmail: StateFlow<String?> =
         savedStateHandle.getStateFlow(KEY_VERIFIED_EMAIL, null)
     val verificationToken: StateFlow<String?> =
@@ -79,6 +83,15 @@ class OnBoardingViewModel @Inject constructor(
 
     private val _snackBarEvent: Channel<SnackBarEvent> = Channel(Channel.BUFFERED)
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
+
+    fun updateSignupType(signupType: SignupTypeModel) {
+        savedStateHandle[KEY_SIGNUP_TYPE] = signupType
+        if(signupType is SignupTypeModel.Kakao) {
+            _state.update { it.copy(
+                email = signupType.email
+            ) }
+        }
+    }
 
     fun updateEmail(email: String) {
         val isValidEmailFormat = emailRegex.matches(email).let {
@@ -366,30 +379,46 @@ class OnBoardingViewModel @Inject constructor(
     fun signup() {
         viewModelScope.launch {
             if (state.value.loading) return@launch
-
             _state.update { it.copy(loading = true) }
 
-            userRepository.signup(
-                email = state.value.email,
-                password = state.value.password,
-                passwordCheck = state.value.password,
-                nickname = state.value.nickname,
-                gender = if (state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
-                profileImg = state.value.profileImage,
-                agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
-            ).onSuccess {
-                _event.send(Event.FinishSignup)
-                _state.update { it.copy(loading = false) }
-            }.onFailWithMessage {
-                _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
-                _state.update { it.copy(loading = false) }
+            when(_signupType) {
+                is SignupTypeModel.Normal -> {
+                    userRepository.signup(
+                        email = state.value.email,
+                        password = state.value.password,
+                        passwordCheck = state.value.password,
+                        nickname = state.value.nickname,
+                        gender = if (state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                        profileImg = state.value.profileImage,
+                        agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
+                    ).onSuccess {
+                        _event.send(Event.FinishSignup)
+                    }.onFailWithMessage {
+                        _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
+                    }
+                }
+                is SignupTypeModel.Kakao -> {
+                    userRepository.completeKakaoLogin(
+                        tempUserId = (_signupType as SignupTypeModel.Kakao).tempUserId,
+                        nickname = state.value.nickname,
+                        profileImg = state.value.profileImage,
+                        agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
+                    ).onSuccess {
+                        _event.send(Event.FinishSignup)
+                    }.onFailWithMessage {
+                        _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
+                    }
+                }
             }
+
+            _state.update { it.copy(loading = false) }
+
         }
     }
 
     fun proceedNextStep(current: OnboardingStep) {
         viewModelScope.launch {
-            val next = current.getNextStep()
+            val next = current.getNextStep(_signupType)
 
             when (current) {
                 OnboardingStep.Term -> {
@@ -465,6 +494,7 @@ class OnBoardingViewModel @Inject constructor(
         private val isAlphabetRegex = Regex("""^[a-zA-Z ]+$""")
         private val isHangulRegex = Regex("""^[가-힣 ]+$""")
 
+        private const val KEY_SIGNUP_TYPE = "key_signup_type"
         private const val KEY_VERIFICATION_TOKEN = "key_verification_token"
         private const val KEY_VERIFIED_EMAIL = "key_verification_email"
     }
@@ -503,11 +533,16 @@ data class OnBoardingState(
 sealed class OnboardingStep(val step: Int, val title: String?) {
     private val totalStep: Int = 5
 
-    private val values: List<OnboardingStep> = listOf(
+    private val normalStep: List<OnboardingStep> = listOf(
         Term,
         Id,
         Password,
         Verification,
+        Profile
+    )
+
+    private val kakaoSteps: List<OnboardingStep> = listOf(
+        Term,
         Profile
     )
 
@@ -532,8 +567,12 @@ sealed class OnboardingStep(val step: Int, val title: String?) {
         }
     }
 
-    fun getNextStep(): OnboardingStep? {
-        return values.getOrNull(this.step)
+    fun getNextStep(signupType: SignupTypeModel): OnboardingStep? {
+        return if(signupType is SignupTypeModel.Normal) {
+            normalStep.getOrNull(this.step)
+        } else {
+            kakaoSteps.getOrNull(this.step)
+        }
     }
 
     companion object {
