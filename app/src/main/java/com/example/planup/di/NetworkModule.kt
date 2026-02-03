@@ -1,6 +1,8 @@
 package com.example.planup.di
 
 import com.example.planup.database.TokenSaver
+import com.example.planup.database.UserInfoSaver
+import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.FriendApi
 import com.example.planup.network.GoalApi
 import com.example.planup.network.NotificationApi
@@ -9,6 +11,7 @@ import com.example.planup.network.RecordApi
 import com.example.planup.network.TermsApi
 import com.example.planup.network.UserApi
 import com.example.planup.network.interceptor.AuthInterceptor
+import com.example.planup.network.interceptor.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,11 +40,25 @@ class NetworkModule {
         return AuthInterceptor(tokenSaver)
     }
 
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        userRepository: dagger.Lazy<UserRepository>,
+        userInfoSaver: UserInfoSaver,
+        tokenSaver: TokenSaver
+    ): TokenAuthenticator {
+        return TokenAuthenticator(
+            userRepository,
+            userInfoSaver,
+            tokenSaver
+        )
+    }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        authenticator: TokenAuthenticator
     ): OkHttpClient {
         return OkHttpClient
             .Builder()
@@ -51,6 +68,7 @@ class NetworkModule {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
+            .authenticator(authenticator)
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

@@ -5,6 +5,7 @@ import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.LoginResponse
+import com.example.planup.login.data.RefreshTokenRequest
 import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
@@ -14,6 +15,7 @@ import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
@@ -27,6 +29,7 @@ import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -210,6 +213,7 @@ class UserRepositoryImpl @Inject constructor(
                 if (response.isSuccess) {
                     val result = response.result
                     userInfoSaver.clearAllUserInfo()
+                    tokenSaver.clearTokens()
                     ApiResult.Success(result)
                 } else {
                     ApiResult.Fail(response.message)
@@ -230,6 +234,7 @@ class UserRepositoryImpl @Inject constructor(
                     val withdraw = response.result
                     if (withdraw.success) {
                         userInfoSaver.clearAllUserInfo()
+                        tokenSaver.clearTokens()
                         ApiResult.Success(withdraw)
                     } else {
                         ApiResult.Fail(withdraw.message)
@@ -518,6 +523,31 @@ class UserRepositoryImpl @Inject constructor(
                     if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result.available)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
+
+    override suspend fun refreshToken(): ApiResult<Tokens> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    userApi.refreshToken(
+                        RefreshTokenRequest(
+                            tokenSaver.getRefreshToken() ?: ""
+                        )
+                    )
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        val result = response.result
+
+                        tokenSaver.saveToken(result.accessToken)
+                        tokenSaver.saveRefreshToken(result.refreshToken)
+
+                        ApiResult.Success(result)
                     } else {
                         ApiResult.Fail(response.message)
                     }
