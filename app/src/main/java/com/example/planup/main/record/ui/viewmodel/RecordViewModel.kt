@@ -3,7 +3,6 @@ package com.example.planup.main.record.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.main.record.data.BadgeDTO
 import com.example.planup.main.record.data.NotificationDTO
 import com.example.planup.main.record.data.WeeklyReportResult
@@ -29,7 +28,6 @@ class RecordViewModel @Inject constructor(
     private val _notificationList = MutableStateFlow<List<NotificationDTO>>(emptyList())
     val notificationList: StateFlow<List<NotificationDTO>> = _notificationList
     private var userId = 0
-
 
     fun loadWeeklyGoalReport(
         onCallBack: (result: ApiResult<WeeklyReportResult>) -> Unit
@@ -76,6 +74,4 @@ class RecordViewModel @Inject constructor(
             recordRepository.loadNotification(userId)
         }
     }
-
-
 }
