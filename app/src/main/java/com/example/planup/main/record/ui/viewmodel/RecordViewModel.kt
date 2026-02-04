@@ -30,6 +30,7 @@ class RecordViewModel @Inject constructor(
     val notificationList: StateFlow<List<NotificationDTO>> = _notificationList
     private var userId = 0
 
+
     fun loadWeeklyGoalReport(
         onCallBack: (result: ApiResult<WeeklyReportResult>) -> Unit
     ) {

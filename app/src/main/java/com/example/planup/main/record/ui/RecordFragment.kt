@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 import com.example.planup.main.record.ui.viewmodel.RecordViewModel
 import com.example.planup.network.ApiResult
+import java.time.LocalDate
 
 @AndroidEntryPoint
 class RecordFragment :  Fragment() {
@@ -54,9 +55,14 @@ class RecordFragment :  Fragment() {
 
     /** 드롭 다운 설정 **/
     private fun setUpDropdownList(){
+        // ✅ 초기 선택값 세팅
+        val today = LocalDate.now()
+        binding.textSelectedMonth.text = "${today.monthValue}월"
+        binding.textSelectedYear.text = "${today.year}년"
+
         setupDropdown(
             targetView = binding.textSelectedMonth,
-            items = listOf("월", "1","2","3","4","5","6","7","8","9","10","11","12"),
+            items = listOf("1","2","3","4","5","6","7","8","9","10","11","12"),
             popupLayoutRes = R.layout.popup_month_dropdown,
             listViewId = R.id.listViewMonths,
             itemLayoutRes = R.layout.item_dropdown_month
@@ -64,7 +70,7 @@ class RecordFragment :  Fragment() {
 
         setupDropdown(
             targetView = binding.textSelectedYear,
-            items = listOf("연도", "2025","2024","2023","2022","2021","2020"),
+            items = listOf("2026","2025","2024","2023","2022","2021","2020"),
             popupLayoutRes = R.layout.popup_year_dropdown,
             listViewId = R.id.listViewYears,
             itemLayoutRes = R.layout.item_dropdown_year
@@ -164,11 +170,11 @@ class RecordFragment :  Fragment() {
     /** 선택된 연도/월 파싱 */
     private fun parseSelectedYear(): Int {
         val raw = binding.textSelectedYear.text?.toString().orEmpty()
-        return raw.filter { it.isDigit() }.toIntOrNull() ?: java.time.LocalDate.now().year
+        return raw.filter { it.isDigit() }.toIntOrNull() ?: LocalDate.now().year
     }
     private fun parseSelectedMonth(): Int {
         val raw = binding.textSelectedMonth.text?.toString().orEmpty()
-        return raw.filter { it.isDigit() }.toIntOrNull() ?: java.time.LocalDate.now().monthValue
+        return raw.filter { it.isDigit() }.toIntOrNull() ?: LocalDate.now().monthValue
     }
 
     /** 지정한 주차의 리포트 화면으로 이동 */
