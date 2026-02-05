@@ -14,6 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
+import com.example.planup.onboarding.OnBoardingActivity
+import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.signup.data.UserStatus
 import com.example.planup.util.KakaoServiceHandler
 
@@ -79,20 +81,22 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
 
-                    // TODO:: DTO 변경 대응 필요
-                    if (true) {
+                    if (r.userStatus == UserStatus.NEW) {
                         // 신규 유저: SignupActivity로
                         startActivity(
-                            Intent(requireContext(), com.example.planup.signup.SignupActivity::class.java).apply {
-                                putExtra("provider", "KAKAO")
-                                putExtra("tempUserId", r.tempUserId ?: "")
-                                putExtra("email", r.userInfo?.email)
-                                putExtra("profileImg", r.userInfo?.profileImg)
+                            Intent(
+                                requireContext(),
+                                OnBoardingActivity::class.java
+                            ).apply {
+                                putExtra(OnBoardingActivity.EXTRA_SIGNUP_TYPE, SignupTypeModel.Kakao(
+                                    tempUserId = r.tempUserId!!,
+                                    email = r.userInfo?.email!!
+                                ))
                             }
                         )
                         dismiss()
                         requireActivity().overridePendingTransition(0, 0)
-                    } else {
+                    } else if (r.userStatus == UserStatus.EXISTING_KAKAO){
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
                         if (!accessToken.isNullOrBlank() && userInfo != null) {
@@ -114,6 +118,8 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             Toast.makeText(requireContext(), "로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                             restoreKakaoButtons()
                         }
+                    } else {
+                        Toast.makeText(requireContext(), "로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(requireContext(), body?.message ?: "로그인 실패", Toast.LENGTH_LONG).show()
