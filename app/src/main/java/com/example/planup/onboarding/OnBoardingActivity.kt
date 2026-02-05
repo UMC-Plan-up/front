@@ -1,6 +1,7 @@
 package com.example.planup.onboarding
 
 import android.app.ComponentCaller
+import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -31,6 +32,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.R
 import com.example.planup.component.snackbar.GraySnackbarHost
+import com.example.planup.login.ui.LoginActivityNew
+import com.example.planup.onboarding.component.AlreadyExistKakaoUserDialog
+import com.example.planup.onboarding.component.AlreadyExistNormalUserDialog
 import com.example.planup.onboarding.component.OnBoardingFinishDialog
 import com.example.planup.onboarding.model.OnboardingStep
 import com.example.planup.onboarding.model.SignupTypeModel
@@ -62,6 +66,10 @@ class OnBoardingActivity: AppCompatActivity() {
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
             var isFinishDialogVisible by remember { mutableStateOf(false) }
+            var isDuplicatedNormalUserDialogVisible by remember { mutableStateOf(false) }
+            var isDuplicatedKakaoUserDialogVisible by remember { mutableStateOf(false) }
+            var existedEmail by remember { mutableStateOf("")}
+
             val errorSnackBarHost = remember { SnackbarHostState() }
             val navController = rememberNavController()
 
@@ -101,6 +109,37 @@ class OnBoardingActivity: AppCompatActivity() {
                             finish()
                         }
                     )
+                } else if(isDuplicatedNormalUserDialogVisible) {
+                    AlreadyExistNormalUserDialog(
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        email = existedEmail,
+                        onConfirm = {
+                            navigateToLogin()
+                        },
+                        onCancel = {
+                            isDuplicatedNormalUserDialogVisible = false
+                        },
+                        onDismissRequest = {
+                            isDuplicatedNormalUserDialogVisible = false
+                        },
+                    )
+                } else if(isDuplicatedKakaoUserDialogVisible) {
+                    AlreadyExistKakaoUserDialog(
+                        modifier = Modifier
+                            .align(Alignment.Center),
+                        email = existedEmail,
+                        onConfirm = {
+                            navigateToLogin()
+                        },
+                        onCancel = {
+                            isDuplicatedKakaoUserDialogVisible = false
+                        },
+                        onDismissRequest = {
+                            isDuplicatedKakaoUserDialogVisible = false
+                        },
+
+                    )
                 }
 
             }
@@ -132,11 +171,19 @@ class OnBoardingActivity: AppCompatActivity() {
                                 }
                         }
                         is OnBoardingViewModel.Event.SuccessKakaoVerification -> {
-                            println("SuccessKakaoVerification")
                             navController.navigate(OnBoardProfileRoute) {
                                 popUpTo(OnBoardTermRoute) {
                                     inclusive = false
                                 }
+                            }
+                        }
+
+                        is OnBoardingViewModel.Event.AlreadyExistUser -> {
+                            existedEmail = event.email
+                            if(event.isKakaoUser) {
+                                isDuplicatedKakaoUserDialogVisible = true
+                            } else {
+                                isDuplicatedNormalUserDialogVisible = true
                             }
                         }
                     }
@@ -178,6 +225,22 @@ class OnBoardingActivity: AppCompatActivity() {
         if(email.isNotEmpty() && token.isNotEmpty() && verified == "true")
             viewModel.validateDeeplink(email, token)
     }
+
+    private fun navigateToLogin() {
+        if(isTaskRoot) {
+            // 앱 종료 후 딥링크로 진입한 경우 고려
+            startActivity(
+                Intent(
+                    this@OnBoardingActivity,
+                    LoginActivityNew::class.java
+                )
+            )
+            finish()
+        } else {
+            finish()
+        }
+    }
+
 
     companion object {
         const val EXTRA_SIGNUP_TYPE = "signup_type"

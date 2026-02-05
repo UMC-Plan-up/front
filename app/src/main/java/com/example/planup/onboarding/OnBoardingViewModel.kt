@@ -15,6 +15,7 @@ import com.example.planup.onboarding.model.OnboardingStep
 import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.signup.data.Agreement
+import com.example.planup.signup.data.UserStatus
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -271,16 +272,29 @@ class OnBoardingViewModel @Inject constructor(
         viewModelScope.launch {
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
-                    if(it.newUser) {
-                        // 회원가입 로직 진행
-                        updateSignupType(SignupTypeModel.Kakao(
-                            tempUserId = it.tempUserId,
-                            email = email
-                        ))
-                        _event.send(Event.SuccessKakaoVerification)
-                        _state.update { it.copy(email = email) }
-                    } else {
-                        // TODO:: 유저에게 안내 후 카카오 로그인으로? - 효빈님이랑 논의
+                    when(it.userStatus) {
+                        UserStatus.NEW -> {
+                            updateSignupType(SignupTypeModel.Kakao(
+                                tempUserId = it.tempUserId!!,
+                                email = email
+                            ))
+                            _event.send(Event.SuccessKakaoVerification)
+                            _state.update { it.copy(email = email) }
+                        }
+                        UserStatus.EXISTING_EMAIL -> {
+                            // 일반 회원인 경우도 모달 띄우기
+                            _event.send(Event.AlreadyExistUser(
+                                email = email,
+                                isKakaoUser = false
+                            ))
+                        }
+                        UserStatus.EXISTING_KAKAO ->  {
+                            // 카카오인 경우도 모달 띄우기
+                            _event.send(Event.AlreadyExistUser(
+                                email = email,
+                                isKakaoUser = true
+                            ))
+                        }
                     }
                 }
                 .onFailWithMessage {
@@ -509,6 +523,7 @@ class OnBoardingViewModel @Inject constructor(
         data object RequestKakaoLogin: Event()
         data object SuccessKakaoVerification: Event()
         data object FinishSignup : Event()
+        data class AlreadyExistUser(val email: String, val isKakaoUser: Boolean) : Event()
     }
 
     sealed class SnackBarEvent {

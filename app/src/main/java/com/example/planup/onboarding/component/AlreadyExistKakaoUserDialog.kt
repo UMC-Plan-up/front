@@ -8,12 +8,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ fun AlreadyExistKakaoUserDialog(
     BasicAlertDialog(
         modifier = modifier
             .background(Color.White)
+            .clip(RoundedCornerShape(10.dp))
             .padding(horizontal = 20.dp, vertical = 28.dp),
         onDismissRequest = onDismissRequest
     ) {
@@ -111,15 +114,15 @@ private fun AlreadyExistKakaoDialogContent(
         ) {
             PlanUpButton(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1.0f)
                     .height(34.dp),
-                title = stringResource(R.string.btn_go_to_login),
+                title = stringResource(R.string.btn_login),
                 onClick = onConfirm
             )
 
             PlanUpBorderButton(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .weight(1.0f)
                     .height(34.dp),
                 title = stringResource(R.string.btn_close),
                 onClick = onCancel
