@@ -256,7 +256,6 @@ class RecordWeeklyReportFragment : Fragment() {
                     "--> GET /report/reports/{year}/{month}/{week}?userId=$userId&year=$year&month=$month&week=$week"
                 )
                 RetrofitInstance.weeklyReportApi.getWeeklyReports(
-                    token = tokenHeader,
                     userId = userId,
                     year = year,
                     month = month,
