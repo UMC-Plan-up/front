@@ -299,7 +299,7 @@ class OnBoardingViewModel @Inject constructor(
                 }
                 .onFailWithMessage {
                     Log.e("OnBoardingViewModel", "카카오 로그인 실패| $it")
-                    // TODO:: 에러메세지
+                    _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
                 }
         }
     }

@@ -165,8 +165,7 @@ class OnBoardingActivity: AppCompatActivity() {
                                     if(it is KakaoServiceHandler.KakaoHandlerError.CancelledByUser) {
 
                                     } else {
-                                    // TODO:: 에러 표시 어떻게 할지 고민
-                                        errorSnackBarHost.showSnackbar(it.message ?: "카카오 로그인 실패")
+                                        errorSnackBarHost.showSnackbar(it.message ?: "카카오 로그인이 실패했어요. 다음에 다시 시도해주세요")
                                     }
                                 }
                         }
