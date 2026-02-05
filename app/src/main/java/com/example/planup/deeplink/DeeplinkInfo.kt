@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import com.example.planup.main.MainActivity
 import com.example.planup.onboarding.OnBoardingActivity
+import com.example.planup.password.ResetPasswordActivity
 
 enum class DeeplinkInfo(val host: String, val path: String) {
     PROFILE_SETUP(host = "profile", path = "/setup") {
@@ -19,6 +20,15 @@ enum class DeeplinkInfo(val host: String, val path: String) {
         override val needMainForParents: Boolean = false
         override fun getIntent(context: Context, deeplink: Uri): Intent {
             return MainActivity.getIntent(context, deeplink)
+        }
+    },
+
+    PASSWORD_CHANGE(host = "login", path = "/password/change") {
+        override val needMainForParents: Boolean = false
+        override fun getIntent(context: Context, deeplink: Uri): Intent {
+            return Intent(context, ResetPasswordActivity::class.java).apply {
+                setData(deeplink)
+            }
         }
     };
 
