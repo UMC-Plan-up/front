@@ -53,14 +53,10 @@ class UserRepositoryImpl @Inject constructor(
     ): ApiResult<KakaoLoginResponse.ResultData> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
-                userApi.kakaoLogin(KakaoLoginRequest(token = kakaoAccessToken, email = email))
+                userApi.kakaoLogin(KakaoLoginRequest(kakaoAccessToken = kakaoAccessToken, email = email))
             },
             onResponse = { response ->
                 if(response.isSuccess) {
-                    if(!response.result.newUser) {
-                        tokenSaver.saveToken(response.result.accessToken)
-                        tokenSaver.saveRefreshToken(response.result.refreshToken)
-                    }
                     ApiResult.Success(response.result)
                 } else {
                     ApiResult.Fail(response.message)

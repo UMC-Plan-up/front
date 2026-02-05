@@ -14,6 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
+import com.example.planup.signup.data.UserStatus
 import com.example.planup.util.KakaoServiceHandler
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
@@ -78,7 +79,8 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
 
-                    if (r.newUser) {
+                    // TODO:: DTO 변경 대응 필요
+                    if (true) {
                         // 신규 유저: SignupActivity로
                         startActivity(
                             Intent(requireContext(), com.example.planup.signup.SignupActivity::class.java).apply {

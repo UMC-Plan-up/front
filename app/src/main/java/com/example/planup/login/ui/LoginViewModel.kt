@@ -50,19 +50,19 @@ class LoginViewModel @Inject constructor(
             }
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
-                    if (it.newUser) {
-                        // 새로운 유저라면, 온보딩 과정 진행
-                        _eventChannel.send(
-                            Event.StartKakaoOnboarding(
-                                tempUserId = it.tempUserId,
-                                email = email
-                            )
-                        )
-
-                    } else {
-                        // 기존 유저라면, 메인 화면으로 이동
-                        _eventChannel.send(Event.SuccessLogin)
-                    }
+//                    if (it.newUser) {
+//                        // 새로운 유저라면, 온보딩 과정 진행
+//                        _eventChannel.send(
+//                            Event.StartKakaoOnboarding(
+//                                tempUserId = it.tempUserId,
+//                                email = email
+//                            )
+//                        )
+//
+//                    } else {
+//                        // 기존 유저라면, 메인 화면으로 이동
+//                        _eventChannel.send(Event.SuccessLogin)
+//                    }
                 }
         }
     }
