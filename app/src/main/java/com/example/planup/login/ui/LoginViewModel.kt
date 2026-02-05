@@ -3,9 +3,11 @@ package com.example.planup.login.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.planup.database.TokenSaver
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onSuccess
+import com.example.planup.signup.data.UserStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val tokenSaver: TokenSaver
 ) : ViewModel() {
 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
@@ -50,19 +53,25 @@ class LoginViewModel @Inject constructor(
             }
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
-//                    if (it.newUser) {
-//                        // 새로운 유저라면, 온보딩 과정 진행
-//                        _eventChannel.send(
-//                            Event.StartKakaoOnboarding(
-//                                tempUserId = it.tempUserId,
-//                                email = email
-//                            )
-//                        )
-//
-//                    } else {
-//                        // 기존 유저라면, 메인 화면으로 이동
-//                        _eventChannel.send(Event.SuccessLogin)
-//                    }
+                    when(it.userStatus) {
+                        UserStatus.NEW -> {
+                            _eventChannel.send(
+                                Event.StartKakaoOnboarding(
+                                    tempUserId = it.tempUserId!!,
+                                    email = email
+                                )
+                            )
+                        }
+                        UserStatus.EXISTING_EMAIL -> {
+                            // TODO:: 효빈님이랑 논의 후 추가
+                        }
+                        UserStatus.EXISTING_KAKAO -> {
+                            tokenSaver.saveToken(it.accessToken)
+                            tokenSaver.saveRefreshToken(it.refreshToken)
+
+                            _eventChannel.send(Event.SuccessLogin)
+                        }
+                    }
                 }
         }
     }
