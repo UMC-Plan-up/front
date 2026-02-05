@@ -430,8 +430,10 @@ class OnBoardingViewModel @Inject constructor(
                         email = state.value.email,
                         password = state.value.password,
                         passwordCheck = state.value.password,
+                        name = state.value.name,
                         nickname = state.value.nickname,
                         gender = if (state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                        birthDate = state.value.getBirthDate(),
                         profileImg = state.value.profileImage,
                         agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
                     ).onSuccess {
@@ -443,7 +445,10 @@ class OnBoardingViewModel @Inject constructor(
                 is SignupTypeModel.Kakao -> {
                     userRepository.completeKakaoLogin(
                         tempUserId = (_signupType as SignupTypeModel.Kakao).tempUserId,
+                        name = state.value.name,
                         nickname = state.value.nickname,
+                        gender = if (state.value.gender == GenderModel.Male) "MALE" else "FEMALE",
+                        birthDate = state.value.getBirthDate(),
                         profileImg = state.value.profileImage,
                         agreements = state.value.terms.map { Agreement(it.id, it.isChecked) }
                     ).onSuccess {
@@ -574,5 +579,7 @@ data class OnBoardingState(
     val day: Int = 0,
     val inviteCode: String = "",
     val loading: Boolean = false,
-)
+) {
+    fun getBirthDate(): String = "$year-$month-$day"
+}
 

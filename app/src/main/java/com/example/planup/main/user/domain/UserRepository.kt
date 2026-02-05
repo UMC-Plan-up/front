@@ -15,6 +15,7 @@ import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -27,7 +28,10 @@ interface UserRepository {
 
     suspend fun completeKakaoLogin(
         tempUserId: String,
+        name: String,
         nickname: String,
+        gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<KakaoCompleteResponse.Result>
@@ -141,8 +145,10 @@ interface UserRepository {
         email: String,
         password: String,
         passwordCheck: String,
+        name: String,
         nickname: String,
         gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<SignupResult>

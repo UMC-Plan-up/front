@@ -12,8 +12,10 @@ data class SignupRequestDto(
     @SerializedName("email") val email: String,
     @SerializedName("password") val password: String,
     @SerializedName("passwordCheck") val passwordCheck: String,
+    @SerializedName("name") val name: String,
     @SerializedName("nickname") val nickname: String,
     @SerializedName("gender") val gender: String,
+    @SerializedName("birthDate") val birthDate: String,
     @SerializedName("profileImg") val profileImg: String?,
     @SerializedName("agreements") val agreements: List<Agreement>
 )

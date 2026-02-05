@@ -67,7 +67,10 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun completeKakaoLogin(
         tempUserId: String,
+        name: String,
         nickname: String,
+        gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<KakaoCompleteResponse.Result> = withContext(Dispatchers.IO) {
@@ -75,11 +78,15 @@ class UserRepositoryImpl @Inject constructor(
             response = {
                 userApi.kakaoComplete(
                     KakaoCompleteRequest(
-                    tempUserId = tempUserId,
-                    nickname = nickname,
-                    profileImg = profileImg,
-                    agreements = agreements
-                ))
+                        tempUserId = tempUserId,
+                        name = name,
+                        nickname = nickname,
+                        gender = gender,
+                        birthDate = birthDate,
+                        profileImg = profileImg,
+                        agreements = agreements
+                    )
+                )
             },
             onResponse = { response ->
                 if(response.isSuccess) {
@@ -475,8 +482,10 @@ class UserRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         passwordCheck: String,
+        name: String,
         nickname: String,
         gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<SignupResult> =
@@ -484,14 +493,17 @@ class UserRepositoryImpl @Inject constructor(
             safeResult(
                 response = {
                     userApi.signup(SignupRequestDto(
-                        email = email,
-                        password = password,
-                        passwordCheck = passwordCheck,
-                        nickname = nickname,
-                        gender = gender,
-                        profileImg = profileImg,
-                        agreements = agreements
-                    ))
+                            email = email,
+                            password = password,
+                            passwordCheck = passwordCheck,
+                            name = name,
+                            nickname = nickname,
+                            gender = gender,
+                            birthDate = birthDate,
+                            profileImg = profileImg,
+                            agreements = agreements
+                        )
+                    )
                 },
                 onResponse = { response ->
                     if (response.isSuccess) {

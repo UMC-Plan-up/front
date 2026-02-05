@@ -1,5 +1,6 @@
 package com.example.planup.signup.data
 
+import com.example.planup.network.data.UserInfo
 import com.google.gson.annotations.SerializedName
 
 // 이메일 인증 대안 - 카카오 로그인
@@ -43,7 +44,10 @@ enum class UserStatus {
 // 요청 Dto
 data class KakaoCompleteRequest(
     @SerializedName("tempUserId") val tempUserId: String,
+    @SerializedName("name") val name: String,
     @SerializedName("nickname") val nickname: String,
+    @SerializedName("gender") val gender: String,
+    @SerializedName("birthDate") val birthDate: String,
     @SerializedName("profileImg") val profileImg: String?,
     @SerializedName("agreements") val agreements: List<Agreement>
 )
@@ -57,17 +61,12 @@ data class KakaoCompleteResponse(
 ) {
     data class Result(
         @SerializedName("id") val id: Long,
-        @SerializedName("email") val email: String?,
+        @SerializedName("email") val email: String,
+        @SerializedName("name") val name: String,
+        @SerializedName("birthDate") val birthDate: String,
         @SerializedName("accessToken") val accessToken: String,
         @SerializedName("refreshToken") val refreshToken: String,
         @SerializedName("userInfo") val userInfo: UserInfo?
-    )
-
-    data class UserInfo(
-        @SerializedName("id") val id: Long,
-        @SerializedName("email") val email: String?,
-        @SerializedName("nickname") val nickname: String?,
-        @SerializedName("profileImg") val profileImg: String?
     )
 }
 
