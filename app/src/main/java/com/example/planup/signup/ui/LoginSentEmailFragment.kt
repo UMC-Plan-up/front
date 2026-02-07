@@ -50,12 +50,7 @@ class LoginSentEmailFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            ResendEmailBottomsheet().apply {
-                arguments = androidx.core.os.bundleOf(
-                    "email" to emailArg,
-                    "mode"  to com.example.planup.signup.ui.ResendMode.SIGNUP
-                )
-            }.show(childFragmentManager, "ResendEmailBottomSheet")
+
         }
 
         // 자동 발송

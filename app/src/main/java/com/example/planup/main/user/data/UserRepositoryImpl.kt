@@ -24,6 +24,10 @@ import com.example.planup.signup.data.Agreement
 import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
+import com.example.planup.signup.data.KakaoCompleteRequest
+import com.example.planup.signup.data.KakaoCompleteResponse
+import com.example.planup.signup.data.KakaoLoginRequest
+import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
@@ -42,6 +46,59 @@ class UserRepositoryImpl @Inject constructor(
     private val tokenSaver: TokenSaver,
     private val userInfoSaver: UserInfoSaver
 ) : UserRepository {
+
+    override suspend fun kakaoLogin(
+        kakaoAccessToken: String,
+        email: String
+    ): ApiResult<KakaoLoginResponse.ResultData> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.kakaoLogin(KakaoLoginRequest(kakaoAccessToken = kakaoAccessToken, email = email))
+            },
+            onResponse = { response ->
+                if(response.isSuccess) {
+                    ApiResult.Success(response.result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
+    override suspend fun completeKakaoLogin(
+        tempUserId: String,
+        name: String,
+        nickname: String,
+        gender: String,
+        birthDate: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<KakaoCompleteResponse.Result> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.kakaoComplete(
+                    KakaoCompleteRequest(
+                        tempUserId = tempUserId,
+                        name = name,
+                        nickname = nickname,
+                        gender = gender,
+                        birthDate = birthDate,
+                        profileImg = profileImg,
+                        agreements = agreements
+                    )
+                )
+            },
+            onResponse = { response ->
+                if(response.isSuccess) {
+                    tokenSaver.saveToken(response.result.accessToken)
+                    tokenSaver.saveRefreshToken(response.result.refreshToken)
+                    ApiResult.Success(response.result)
+                } else {
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
 
     override suspend fun getInviteCode(): String {
         val inviteCode = userInfoSaver.getInviteCode()
@@ -425,8 +482,10 @@ class UserRepositoryImpl @Inject constructor(
         email: String,
         password: String,
         passwordCheck: String,
+        name: String,
         nickname: String,
         gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<SignupResult> =
@@ -434,14 +493,17 @@ class UserRepositoryImpl @Inject constructor(
             safeResult(
                 response = {
                     userApi.signup(SignupRequestDto(
-                        email = email,
-                        password = password,
-                        passwordCheck = passwordCheck,
-                        nickname = nickname,
-                        gender = gender,
-                        profileImg = profileImg,
-                        agreements = agreements
-                    ))
+                            email = email,
+                            password = password,
+                            passwordCheck = passwordCheck,
+                            name = name,
+                            nickname = nickname,
+                            gender = gender,
+                            birthDate = birthDate,
+                            profileImg = profileImg,
+                            agreements = agreements
+                        )
+                    )
                 },
                 onResponse = { response ->
                     if (response.isSuccess) {
