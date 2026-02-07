@@ -1,5 +1,6 @@
 package com.example.planup.network.data
 
+import com.example.planup.signup.data.UserStatus
 import com.google.gson.annotations.SerializedName
 
 //User Controller 기본 응답 양식
@@ -30,22 +31,27 @@ data class WithDraw(
 
 //회원 가입
 data class Signup(
-    @SerializedName("id") val id: Int,
-    @SerializedName("email") val email: String,
-    @SerializedName("friendNickname") val nickname: String
+    @SerializedName("userStatus") val userStatus: UserStatus,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("expiresIn") val expiresIn: Int,
+    @SerializedName("userInfo") val userInfo: UserInfo
 )
+
+// 로그인
+data class Login(
+    @SerializedName("userStatus") val userStatus: UserStatus,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("expiresIn") val expiresIn: Int,
+    @SerializedName("userInfo") val userInfo: UserInfo
+)
+
 //비밀번호 변경 시 링크 발송, 재발송
 data class PasswordLink(
     @SerializedName("email") val email: String,
     @SerializedName("message") val message: String,
     @SerializedName("verificationToken") val token: String
-)
-//로그인
-data class Login(
-    @SerializedName("accessToken") val accessToken: String,
-    @SerializedName("nickname") val nickname: String,
-    @SerializedName("profileImage") val profileImage: String,
-    @SerializedName("message") val message: String
 )
 
 data class Tokens(
@@ -110,6 +116,7 @@ data class NicknameCheckDuplicated(
     @SerializedName("message") val message: String
 )
 
+// TODO:: dto 변경
 data class SignupResult(
     @SerializedName("id") val id: Int,
     @SerializedName("email") val email: String,
@@ -121,7 +128,11 @@ data class SignupResult(
 )
 
 data class UserInfo(
+    @SerializedName("id") val id: Int,
+    @SerializedName("email") val email: String,
+    @SerializedName("name") val name: String,
     @SerializedName("nickname") val nickname: String,
-    // TODO:: 도희님한테 프로필 이미지 추가 요청
+    @SerializedName("birthDate") val birthDate: String,
+    @SerializedName("gender") val gender: String?,
     @SerializedName("profileImg") val profileImg: String?
 )
