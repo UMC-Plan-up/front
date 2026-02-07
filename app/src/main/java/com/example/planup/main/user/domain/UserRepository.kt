@@ -1,10 +1,10 @@
 package com.example.planup.main.user.domain
 
-import com.example.planup.login.data.LoginResponse
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
@@ -15,7 +15,6 @@ import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
-import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -77,7 +76,7 @@ interface UserRepository {
     suspend fun postLogin(
         email: String,
         password: String
-    ): ApiResult<LoginResponse.Result>
+    ): ApiResult<Login>
 
     suspend fun logout(): ApiResult<String>
 

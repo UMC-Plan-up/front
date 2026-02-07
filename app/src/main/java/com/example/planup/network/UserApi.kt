@@ -1,13 +1,13 @@
 package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
-import com.example.planup.login.data.LoginResponse
 import com.example.planup.login.data.RefreshTokenRequest
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
@@ -64,7 +64,7 @@ interface UserApi : MyPageApi {
     @POST("/users/login")
     suspend fun login(
         @Body request: LoginRequest
-    ): Response<LoginResponse>
+    ): Response<UserResponse<Login>>
 
     @POST("users/refresh")
     suspend fun refreshToken(

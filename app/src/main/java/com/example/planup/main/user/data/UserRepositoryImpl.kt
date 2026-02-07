@@ -4,7 +4,6 @@ import com.example.planup.database.TokenSaver
 import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.login.data.LoginRequest
-import com.example.planup.login.data.LoginResponse
 import com.example.planup.login.data.RefreshTokenRequest
 import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
@@ -13,6 +12,7 @@ import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.Tokens
@@ -33,7 +33,6 @@ import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -235,7 +234,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun postLogin(
         email: String,
         password: String
-    ): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
+    ): ApiResult<Login> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.login(LoginRequest(email = email, password = password))
