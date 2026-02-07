@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.database.TokenSaver
+import com.example.planup.login.ui.LoginViewModel.Event.*
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onSuccess
@@ -54,22 +55,25 @@ class LoginViewModel @Inject constructor(
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
                     when(it.userStatus) {
-                        UserStatus.NEW -> {
+                        UserStatus.SIGNUP_REQUIRED -> {
                             _eventChannel.send(
-                                Event.StartKakaoOnboarding(
+                                StartKakaoOnboarding(
                                     tempUserId = it.tempUserId!!,
                                     email = email
                                 )
                             )
                         }
-                        UserStatus.EXISTING_EMAIL -> {
-                            // TODO:: 효빈님이랑 논의 후 추가
+                        UserStatus.ACCOUNT_CONFLICT -> {
+                            // TODO:: 스낵바 추가
                         }
-                        UserStatus.EXISTING_KAKAO -> {
+                        UserStatus.LOGIN_SUCCESS -> {
                             tokenSaver.saveToken(it.accessToken)
                             tokenSaver.saveRefreshToken(it.refreshToken)
 
                             _eventChannel.send(Event.SuccessLogin)
+                        }
+                        UserStatus.SIGNUP_SUCCESS -> {
+                            // 해당 없음
                         }
                     }
                 }

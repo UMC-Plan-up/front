@@ -81,7 +81,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
 
-                    if (r.userStatus == UserStatus.NEW) {
+                    if (r.userStatus == UserStatus.SIGNUP_REQUIRED) {
                         // 신규 유저: SignupActivity로
                         startActivity(
                             Intent(
@@ -96,7 +96,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                         )
                         dismiss()
                         requireActivity().overridePendingTransition(0, 0)
-                    } else if (r.userStatus == UserStatus.EXISTING_KAKAO){
+                    } else if (r.userStatus == UserStatus.LOGIN_SUCCESS){
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
                         if (!accessToken.isNullOrBlank() && userInfo != null) {

@@ -35,11 +35,6 @@ data class KakaoLoginResponse(
     )}
 
 enum class UserStatus {
-
-    @Deprecated("") NEW,
-    @Deprecated("") EXISTING_EMAIL,
-    @Deprecated("") EXISTING_KAKAO,
-
     // 일반 로그인 성공 또는 기존 카카오 유저의 로그인 성공
     LOGIN_SUCCESS,
     // 일반 회원가입 완료 또는 카카오 임시 유저의 추가 정보 입력 완료
