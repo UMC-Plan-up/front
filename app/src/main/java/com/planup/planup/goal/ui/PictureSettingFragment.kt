@@ -9,11 +9,15 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPictureSettingBinding
 import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.adapter.TimerRVAdapter
 import com.example.planup.goal.util.backStackTrueGoalNav
 import com.example.planup.goal.util.equil
 import com.example.planup.goal.util.setInsets
@@ -142,8 +146,8 @@ class PictureSettingFragment : Fragment() {
         val activity = requireActivity() as GoalActivity
         val frequency = binding.challengePhotoNumberTv
         Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
-        val goalDataE = if (viewModel.editGoalData != null){
-            viewModel.editGoalData!!.run {
+        val goalDataE = if (viewModel.goalData != null){
+            viewModel.goalData!!.run {
                 equil(
                     copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
                         verificationType = activity.verificationType)

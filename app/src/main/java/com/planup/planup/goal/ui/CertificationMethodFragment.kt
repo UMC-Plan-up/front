@@ -6,9 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.planup.R
 import com.example.planup.databinding.FragmentCertificationMethodBinding
 import com.example.planup.goal.GoalActivity
@@ -135,8 +140,8 @@ class CertificationMethodFragment : Fragment() {
     private fun setEdit(){
         val activity = requireActivity() as GoalActivity
         Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
-        val goalDataE = if (viewModel.editGoalData != null){
-            viewModel.editGoalData!!.run {
+        val goalDataE = if (viewModel.goalData != null){
+            viewModel.goalData!!.run {
                 equil(
                     copy(goalName = activity.goalName, goalAmount = activity.goalAmount)
                 )

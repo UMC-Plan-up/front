@@ -13,31 +13,27 @@ import com.example.planup.databinding.FragmentEditGoalTitleBinding
 import com.example.planup.main.goal.item.EditGoalResponse
 import kotlinx.coroutines.launch
 import android.text.TextWatcher
-import androidx.fragment.app.activityViewModels
 import com.example.planup.goal.util.setInsets
-import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+
 class EditGoalTitleFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTitleBinding
 
-//    private var goalId: Int = 0
-////    private var isSolo: Boolean = false
-//    private var goalData: EditGoalResponse? = null
+    private var goalId: Int = 0
+    private var isSolo: Boolean = false
+    private var goalData: EditGoalResponse? = null
 
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        // arguments에서 goalId 받아오기
-//        goalId = arguments?.getInt("goalId") ?: 0
-//
-//        Log.d("EditGoalTitleFragment", "goalId: $goalId")
-//
-////        isSolo = arguments?.getBoolean("isSolo") ?: false
-//    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // arguments에서 goalId 받아오기
+        goalId = arguments?.getInt("goalId") ?: 0
 
-    private val viewModel: GoalViewModel by activityViewModels()
+        Log.d("EditGoalTitleFragment", "goalId: $goalId")
+
+        isSolo = arguments?.getBoolean("isSolo") ?: false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,14 +41,15 @@ class EditGoalTitleFragment : Fragment() {
     ): View? {
         binding = FragmentEditGoalTitleBinding.inflate(inflater, container, false)
 
+        getGoalEditData(goalId)
 
         val titleEt = binding.editFriendGoalNameEt
         val goalAmountEt = binding.editFriendGoalPeriodEt
         val nextBtn = binding.editFriendGoalNextBtn
         val backBtn = binding.editFriendBackArrowIv
         backBtn.setOnClickListener {
-            parentFragmentManager.popBackStack()
-//            else requireActivity().finish()
+            if(isSolo) parentFragmentManager.popBackStack()
+            else requireActivity().finish()
         }
 
         binding.editFriendGoalNameEt.addTextChangedListener(object : TextWatcher {
@@ -109,43 +106,37 @@ class EditGoalTitleFragment : Fragment() {
             //테스트
             val goalName = titleEt.text.toString()
             val goalAmount = goalAmountEt.text.toString()
-            viewModel.setGoalData(
-                viewModel.goalData.copy(
-                    goalName = goalName,
-                    goalAmount = goalAmount
-                )
+            val goal = goalData ?: EditGoalResponse(
+                goalName = goalName,
+                oneDose = 0,
+                goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING",
+                goalType = "FRIEND",
+                period = "DAY",
+                endDate = "",
+                verificationType = "PHOTO",
+                limitFriendCount = 0,
+                goalTime = 0,
+                frequency = 0,
+                goalAmount = goalAmount
             )
-//            val goal = goalData ?: EditGoalResponse(
-//                goalName = goalName,
-//                oneDose = 0,
-//                goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING",
-//                goalType = "FRIEND",
-//                period = "DAY",
-//                endDate = "",
-//                verificationType = "PHOTO",
-//                limitFriendCount = 0,
-//                goalTime = 0,
-//                frequency = 0,
-//                goalAmount = goalAmount
-//            )
 
-//            val bundle = Bundle().apply {
-//                putInt("goalId", goalId)
-//                putString("goalName", goalName)
-//                putInt("oneDose", goal.oneDose)
-//                putString("goalCategory", goal.goalCategory)
-//                putString("goalType", goal.goalType)
-//                putString("period", goal.period)
-//                putString("endDate", goal.endDate)
-//                putString("verificationType", goal.verificationType)
-//                putInt("limitFriendCount", goal.limitFriendCount)
-//                putInt("goalTime", goal.goalTime)
-//                putInt("frequency", goal.frequency)
-//                putString("goalAmount", goalAmount)
-//            }
+            val bundle = Bundle().apply {
+                putInt("goalId", goalId)
+                putString("goalName", goalName)
+                putInt("oneDose", goal.oneDose)
+                putString("goalCategory", goal.goalCategory)
+                putString("goalType", goal.goalType)
+                putString("period", goal.period)
+                putString("endDate", goal.endDate)
+                putString("verificationType", goal.verificationType)
+                putInt("limitFriendCount", goal.limitFriendCount)
+                putInt("goalTime", goal.goalTime)
+                putInt("frequency", goal.frequency)
+                putString("goalAmount", goalAmount)
+            }
 
             val nextFragment = EditGoalTimerFragment()
-//            nextFragment.arguments = bundle
+            nextFragment.arguments = bundle
             parentFragmentManager.beginTransaction()
                 .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
                 .addToBackStack(null)
@@ -184,31 +175,26 @@ class EditGoalTitleFragment : Fragment() {
         return binding.root
     }
 
-//    private fun getGoalEditData(goalId: Int) {
-//        lifecycleScope.launch {
-//            try {
-//                val response = RetrofitInstance.goalApi.getEditGoal(goalId = goalId)
-//                if (response.isSuccessful) {
-//                    goalData = response.body()?.result
-//                    // 기존 값으로 EditText 초기화
-//                    binding.editFriendGoalNameEt.setText(goalData?.goalName)
-//                    binding.editFriendGoalPeriodEt.setText(goalData?.oneDose.toString())
-//                } else {
-//                    Log.d("EditGoalTitleFragment", "API 실패: ${response.message()}")
-//                }
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//                Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
-//            }
-//        }
-//    }
+    private fun getGoalEditData(goalId: Int) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.goalApi.getEditGoal(goalId = goalId)
+                if (response.isSuccessful) {
+                    goalData = response.body()?.result
+                    // 기존 값으로 EditText 초기화
+                    binding.editFriendGoalNameEt.setText(goalData?.goalName)
+                    binding.editFriendGoalPeriodEt.setText(goalData?.oneDose.toString())
+                } else {
+                    Log.d("EditGoalTitleFragment", "API 실패: ${response.message()}")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setInsets(binding.root)
-        if (viewModel.editGoalData != null)
-            viewModel.editGoalData!!.apply {
-                binding.editFriendGoalNameEt.setText(goalName)
-                binding.editFriendGoalPeriodEt.setText(goalAmount)
-            }
     }
 }
