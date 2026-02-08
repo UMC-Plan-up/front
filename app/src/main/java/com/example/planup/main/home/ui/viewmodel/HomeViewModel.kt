@@ -3,7 +3,6 @@ package com.example.planup.main.home.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.R
 import com.example.planup.main.goal.item.DailyGoalResult
 import com.example.planup.main.goal.item.FriendGoalAchievementResult
@@ -12,7 +11,6 @@ import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.home.data.CalendarEvent
 import com.example.planup.main.home.ui.HomeRepository
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess

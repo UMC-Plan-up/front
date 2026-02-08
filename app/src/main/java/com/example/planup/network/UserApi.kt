@@ -2,7 +2,6 @@ package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
 import com.example.planup.login.data.RefreshTokenRequest
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
@@ -14,6 +13,7 @@ import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -187,7 +187,7 @@ interface UserApi : MyPageApi {
 
     // 유저 정보 조회
     @GET("/users/info")
-    suspend fun getUserInfo(): Response<UserInfoResponse>
+    suspend fun getUserInfo(): Response<UserResponse<UserInfo>>
 }
 
 interface MyPageApi {

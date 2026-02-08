@@ -1,6 +1,5 @@
 package com.example.planup.main.user.domain
 
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
