@@ -7,18 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.example.planup.R
 import com.example.planup.databinding.PopupResendEmailBinding
 import com.example.planup.network.RetrofitInstance
 import com.example.planup.password.data.PasswordChangeEmailRequestDto
-import com.example.planup.signup.data.ResendEmailRequest
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import kotlinx.coroutines.launch
-import com.kakao.sdk.auth.AuthCodeClient
-import com.kakao.sdk.user.UserApiClient
-import com.example.planup.signup.data.AlternativeLoginRequest
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
+import com.example.planup.onboarding.OnBoardingActivity
+import com.example.planup.onboarding.model.SignupTypeModel
+import com.example.planup.signup.data.UserStatus
+import com.example.planup.util.KakaoServiceHandler
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
 
@@ -62,57 +61,42 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
         binding.kakaoLoginOption.isEnabled = false
         binding.resendEmailOption.isEnabled = false
 
-        val ctx = requireActivity()
 
-        if (UserApiClient.instance.isKakaoTalkLoginAvailable(ctx)) {
-            AuthCodeClient.instance.authorizeWithKakaoTalk(ctx) { code, _ ->
-                if (code != null) {
-                    callKakaoLogin(code)
-                } else {
-                    AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code2, _ ->
-                        if (code2 != null) {
-                            callKakaoLogin(code2)
-                        } else {
-                            Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
-                            restoreKakaoButtons()
-                        }
+        lifecycleScope.launch {
+            KakaoServiceHandler.getTokenWithUser(requireActivity())
+                .onSuccess { (token, user) ->
+                    if(user != null) {
+                        callKakaoLogin(token.accessToken, user.kakaoAccount?.email ?: "")
                     }
                 }
-            }
-        } else {
-            AuthCodeClient.instance.authorizeWithKakaoAccount(ctx) { code, _ ->
-                if (code != null) {
-                    callKakaoLogin(code)
-                } else {
-                    Toast.makeText(requireContext(), "카카오 로그인 실패", Toast.LENGTH_SHORT).show()
-                    restoreKakaoButtons()
-                }
-            }
         }
     }
 
-    private fun callKakaoLogin(authCode: String) {
+    private fun callKakaoLogin(accessToken: String, email: String) {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(authCode))
+                val resp = RetrofitInstance.userApi.kakaoLogin(KakaoLoginRequest(accessToken, email))
                 val body = resp.body()
 
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
 
-                    if (r.newUser) {
+                    if (r.userStatus == UserStatus.NEW) {
                         // 신규 유저: SignupActivity로
                         startActivity(
-                            Intent(requireContext(), com.example.planup.signup.SignupActivity::class.java).apply {
-                                putExtra("provider", "KAKAO")
-                                putExtra("tempUserId", r.tempUserId ?: "")
-                                putExtra("email", r.userInfo?.email)
-                                putExtra("profileImg", r.userInfo?.profileImg)
+                            Intent(
+                                requireContext(),
+                                OnBoardingActivity::class.java
+                            ).apply {
+                                putExtra(OnBoardingActivity.EXTRA_SIGNUP_TYPE, SignupTypeModel.Kakao(
+                                    tempUserId = r.tempUserId!!,
+                                    email = r.userInfo?.email!!
+                                ))
                             }
                         )
                         dismiss()
                         requireActivity().overridePendingTransition(0, 0)
-                    } else {
+                    } else if (r.userStatus == UserStatus.EXISTING_KAKAO){
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
                         if (!accessToken.isNullOrBlank() && userInfo != null) {
@@ -134,6 +118,8 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             Toast.makeText(requireContext(), "로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                             restoreKakaoButtons()
                         }
+                    } else {
+                        Toast.makeText(requireContext(), "로그인 처리에 실패했습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(requireContext(), body?.message ?: "로그인 실패", Toast.LENGTH_LONG).show()

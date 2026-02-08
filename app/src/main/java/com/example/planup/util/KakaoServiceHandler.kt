@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.kakao.sdk.auth.AuthCodeClient
+import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthError
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.share.ShareClient
 import com.kakao.sdk.user.UserApiClient
+import com.kakao.sdk.user.model.User
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -70,6 +72,57 @@ object KakaoServiceHandler {
                 authCodeClient.authorizeWithKakaoAccount(
                     context = context,
                     callback = authorizeWithKakaoAccountCallback
+                )
+            }
+        }
+    }
+
+    suspend fun getTokenWithUser(
+        context: Context
+    ): Result<Pair<OAuthToken, User?>> = safeRunCatching {
+        suspendCancellableCoroutine { continuation ->
+            val loginWithKakaoTalkCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+                if(token != null) {
+                    userApiClient.me { user, error ->
+                        continuation.resume(token to user)
+                    }
+                }
+                if (error != null) {
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        continuation.resumeWithException(KakaoHandlerError.CancelledByUser)
+                    } else {
+                        continuation.resumeWithException(KakaoHandlerError.UnHandledError(error))
+                    }
+                }
+            }
+
+            if (userApiClient.isKakaoTalkLoginAvailable(context)) {
+                // 카카오톡이 설치 된 경우 카카오톡 사용
+                userApiClient.loginWithKakaoTalk(context) { token, error ->
+                    if (token != null) {
+                        userApiClient.me { user, error ->
+                            continuation.resume(token to user)
+                        }
+                    }
+                    if (error != null) {
+                        if (error is AuthError && error.statusCode == 302) {
+                            // 카카오톡과 계정이 연결되지 않은 경우 계정으로 로그인
+                            userApiClient.loginWithKakaoAccount(
+                                context = context,
+                                callback = loginWithKakaoTalkCallback
+                            )
+                        } else if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                            continuation.resumeWithException(KakaoHandlerError.CancelledByUser)
+                        } else {
+                            continuation.resumeWithException(KakaoHandlerError.UnHandledError(error))
+                        }
+                    }
+                }
+            } else {
+                // 카카오톡이 설치되어 있는 경우 계정으로 로그인
+                userApiClient.loginWithKakaoAccount(
+                    context = context,
+                    callback = loginWithKakaoTalkCallback
                 )
             }
         }

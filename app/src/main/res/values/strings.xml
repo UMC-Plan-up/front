@@ -475,6 +475,7 @@
     <string name="btn_go_to_check">확인하러 가기</string>
     <string name="btn_ok">확인</string>
     <string name="btn_cancel">취소</string>
+    <string name="btn_close">닫기</string>
     <string name="btn_save">저장</string>
     <string name="btn_yes_checked">네, 확인했어요.</string>
     <string name="btn_get_link">이메일로 인증 링크 받기</string>
@@ -566,6 +567,9 @@
         \n\n혜택 및 마케팅 정보 수신 동의는 마이페이지 > [알림 설정]에서 변경 가능합니다.</string>
     <string name="popup_benefit_explain_disagree">전송자 : %1$s\n일시 : %2$s\n내용 : 수신 거부 처리 완료
         \n\n혜택 및 마케팅 정보 수신 동의는 마이페이지 > [알림 설정]에서 변경 가능합니다.</string>
+    <string name="popup_signup_duplicated_email_title">기존 계정이 존재해요!</string>
+    <string name="popup_signup_duplicated_normal_email_content">%1$s 소셜 로그인 계정이 이미 존재해요. 카카오톡 로그인으로 기존 계정을 사용해 보세요.</string>
+    <string name="popup_signup_duplicated_kakao_email_content">%1$s 이메일 로그인 계정이 이미 존재해요. 기존 계정과의 연동은 로그인 후 마이페이지 > 기타 계정 관리 메뉴에서 가능해요.</string>
 
     <!-- 드롭다운 -->
     <string name="dropdown_profile_album">사진 보관함</string>

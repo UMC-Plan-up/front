@@ -27,9 +27,8 @@ fun PlanUpBorderButton(
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier
-            .height(44.dp)
-            .then(modifier),
+        modifier = modifier
+            .height(44.dp),
         colors = ButtonDefaults.outlinedButtonColors(
             containerColor = Color.White,
             disabledContainerColor = Black200,

@@ -21,6 +21,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.planup.component.TopHeader
 import com.example.planup.onboarding.component.OnBoardingProgressBar
+import com.example.planup.onboarding.model.OnboardingStep
 
 @Composable
 fun OnBoardScreen(

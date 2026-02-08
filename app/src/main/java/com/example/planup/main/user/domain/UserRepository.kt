@@ -11,12 +11,30 @@ import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.Agreement
+import com.example.planup.signup.data.KakaoCompleteResponse
+import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
+import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import java.io.File
 
 interface UserRepository {
+
+    suspend fun kakaoLogin(
+        kakaoAccessToken: String,
+        email: String
+    ): ApiResult<KakaoLoginResponse.ResultData>
+
+    suspend fun completeKakaoLogin(
+        tempUserId: String,
+        name: String,
+        nickname: String,
+        gender: String,
+        birthDate: String,
+        profileImg: String?,
+        agreements: List<Agreement>
+    ): ApiResult<KakaoCompleteResponse.Result>
 
     /**
      * 내 초대 코드를 가져옵니다.
@@ -127,8 +145,10 @@ interface UserRepository {
         email: String,
         password: String,
         passwordCheck: String,
+        name: String,
         nickname: String,
         gender: String,
+        birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
     ): ApiResult<SignupResult>

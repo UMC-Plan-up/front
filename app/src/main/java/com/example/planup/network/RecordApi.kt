@@ -1,6 +1,7 @@
 package com.example.planup.network
 
 import com.example.planup.main.record.data.ApiResponseListInteger
+import com.example.planup.main.record.data.BadgeListResponse
 import com.example.planup.main.record.data.DetailWeeklyReportResponse
 import com.example.planup.main.record.data.WeeklyReportResponse
 import com.example.planup.network.data.ChallengeFriends
@@ -49,4 +50,7 @@ interface RecordApi {
     fun showFriends(
         @Query("userId") userId: Int
     ): Response<ChallengeResponse<List<ChallengeFriends>>>
+
+    @GET("/badges/list")
+    suspend fun getBadgeList(): Response<BadgeListResponse>
 }

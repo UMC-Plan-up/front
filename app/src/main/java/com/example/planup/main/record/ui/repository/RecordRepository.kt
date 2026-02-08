@@ -1,5 +1,6 @@
 package com.example.planup.main.record.ui.repository
 
+import com.example.planup.main.record.data.BadgeListResult
 import com.example.planup.main.record.data.WeeklyReportResult
 import com.example.planup.network.ApiResult
 import com.example.planup.network.NotificationApi
@@ -85,4 +86,6 @@ class RecordRepository @Inject constructor(
                 }
             )
         }
+
+
 }

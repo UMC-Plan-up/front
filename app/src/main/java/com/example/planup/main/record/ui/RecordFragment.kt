@@ -18,6 +18,7 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeAlertFragment
+import com.example.planup.main.home.ui.TimerFragment
 import com.example.planup.main.record.adapter.NotificationAdapter
 import com.example.planup.main.record.data.BadgeDTO
 import dagger.hilt.android.AndroidEntryPoint
@@ -156,8 +157,13 @@ class RecordFragment :  Fragment() {
 
     /** 클릭 리스너 설정 */
     private fun setClickListeners() {
-        setFragmentClick(binding.btnBadgeRecords, RecordBadgesFragment())
-
+        binding.btnBadgeRecords.setOnClickListener {
+            val fragment = RecordBadgesFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
         binding.btnWeeklyReport1.setOnClickListener { openWeeklyReport(1) }
         binding.btnWeeklyReport2.setOnClickListener { openWeeklyReport(2) }
         binding.btnWeeklyReport3.setOnClickListener { openWeeklyReport(3) }

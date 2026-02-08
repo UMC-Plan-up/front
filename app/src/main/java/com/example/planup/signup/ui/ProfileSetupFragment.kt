@@ -1,5 +1,6 @@
 package com.example.planup.signup.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -213,14 +214,19 @@ class ProfileSetupFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 if (isKakaoSignup) {
+                    // TODO:: 제거
                     val tempUserId = activity.tempUserId ?: return@launch
                     val request = KakaoCompleteRequest(
                         tempUserId = tempUserId,
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl,
+
                         agreements = activity.agreements?.map {
-                            KakaoCompleteRequest.Agreement(it.termsId, it.isAgreed)
-                        } ?: emptyList()
+                            Agreement(it.termsId, it.isAgreed)
+                        } ?: emptyList(),
+                        name = "",
+                        gender = "",
+                        birthDate = ""
                     )
 
                     val response = RetrofitInstance.userApi.kakaoComplete(request)
@@ -258,8 +264,11 @@ class ProfileSetupFragment : Fragment() {
                         passwordCheck = restoredPw ?: "",
                         nickname = activity.nickname ?: "",
                         profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) } ?: emptyList(),
-                        gender = ""
+                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) }
+                            ?: emptyList(),
+                        gender = "",
+                        name = "",
+                        birthDate = ""
                     )
 
                     val response = RetrofitInstance.userApi.signup(request)
@@ -456,7 +465,7 @@ class ProfileSetupFragment : Fragment() {
     }
 
     private fun hideKeyboard() {
-        val imm = requireContext().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
