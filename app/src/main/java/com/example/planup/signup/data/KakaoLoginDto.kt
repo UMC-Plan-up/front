@@ -10,14 +10,6 @@ data class KakaoLoginRequest(
     @SerializedName("kakaoAccessToken") val kakaoAccessToken: String
 )
 
-
-data class KakaoLoginResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: KakaoLogin
-)
-
 enum class UserStatus {
     // 일반 로그인 성공 또는 기존 카카오 유저의 로그인 성공
     LOGIN_SUCCESS,

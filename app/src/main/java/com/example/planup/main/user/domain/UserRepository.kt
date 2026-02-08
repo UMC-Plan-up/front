@@ -13,7 +13,6 @@ import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.Agreement
 import com.example.planup.signup.data.KakaoCompleteResponse
-import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import okhttp3.MultipartBody
