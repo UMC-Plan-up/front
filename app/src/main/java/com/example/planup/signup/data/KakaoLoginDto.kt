@@ -9,6 +9,7 @@ data class KakaoLoginRequest(
     @SerializedName("kakaoAccessToken") val kakaoAccessToken: String
 )
 
+// TODO:: dto 변경
 data class KakaoLoginResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
@@ -22,17 +23,7 @@ data class KakaoLoginResponse(
         @SerializedName("refreshToken") val refreshToken: String?,
         @SerializedName("userInfo") val userInfo: UserInfo?,
     )
-
-    data class UserInfo(
-        @SerializedName("id") val id: Long,
-        @SerializedName("email") val email: String?,
-        @SerializedName("nickname") val nickname: String?,
-        @SerializedName("name") val name: String?,
-        @SerializedName("birthDate") val birthDate: String?,
-        @SerializedName("profileImg") val profileImg: String?,
-        @SerializedName("ServiceNotificationAllow") val serviceNotificationAllow: Boolean,
-        @SerializedName("marketingNotificationAllow") val marketingNotificationAllow: Boolean,
-    )}
+}
 
 enum class UserStatus {
     // 일반 로그인 성공 또는 기존 카카오 유저의 로그인 성공
@@ -58,6 +49,7 @@ data class KakaoCompleteRequest(
 )
 
 // 응답 Dto
+// TODO:: dto 변경
 data class KakaoCompleteResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
