@@ -18,6 +18,7 @@ import com.example.planup.network.data.Login
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.Tokens
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
@@ -302,7 +303,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> =
+    override suspend fun getUserInfo(): ApiResult<UserInfo> =
         withContext(Dispatchers.IO) {
             if (userInfoSaver.isEmpty) {
                 safeResult(
@@ -312,10 +313,10 @@ class UserRepositoryImpl @Inject constructor(
                     onResponse = { response ->
                         if (response.isSuccess) {
                             val result = response.result
-                            userInfoSaver.saveNickName(result.nickname)
-                            userInfoSaver.saveEmail(result.email)
-                            userInfoSaver.saveProfileImage(result.profileImage)
-                            userInfoSaver.saveNotificationService(result.serviceNotification)
+                            userInfoSaver.saveNickName(result.nickname ?: "")
+                            userInfoSaver.saveEmail(result.email ?: "")
+                            userInfoSaver.saveProfileImage(result.profileImg ?: "")
+                            userInfoSaver.saveNotificationService(result.serviceNotification ?: false)
                             userInfoSaver.saveNotificationMarketing(result.marketingNotification)
 
                             ApiResult.Success(result)
@@ -328,14 +329,7 @@ class UserRepositoryImpl @Inject constructor(
             } else {
                 // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
                 ApiResult.Success(
-                    UserInfoResponse.Result(
-                        id = -1,
-                        email = userInfoSaver.getEmail(),
-                        nickname = userInfoSaver.getNickName(),
-                        profileImage = userInfoSaver.getProfileImage() ?: "",
-                        serviceNotification = false,
-                        marketingNotification = false
-                    )
+                    userInfoSaver.toUserInfo()
                 )
             }
         }

@@ -148,5 +148,7 @@ data class UserInfo(
     @SerializedName("nickname") val nickname: String?,
     @SerializedName("birthDate") val birthDate: String?,
     @SerializedName("gender") val gender: String?,
-    @SerializedName("profileImg") val profileImg: String?
+    @SerializedName("profileImg") val profileImg: String?,
+    @SerializedName(value = "serviceNotificationAllow") var serviceNotification: Boolean,
+    @SerializedName(value = "marketingNotificationAllow") var marketingNotification: Boolean,
 )

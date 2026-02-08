@@ -10,6 +10,7 @@ import com.example.planup.network.data.Login
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.Agreement
@@ -90,7 +91,7 @@ interface UserRepository {
         reason : String
     ) : ApiResult<WithDraw>
 
-    suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
+    suspend fun getUserInfo(): ApiResult<UserInfo>
 
     suspend fun setProfileImage(
         file: File

@@ -3,6 +3,7 @@ package com.example.planup.database
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
+import com.example.planup.network.data.UserInfo
 
 /**
  * 사용자 정보 관련 저장
@@ -159,5 +160,20 @@ class UserInfoSaver(
             remove(KEY_NOTIFICATION_MARKETING)
         }
     }
+
+    // TODO:: 더미 데이터 수정
+    fun toUserInfo(): UserInfo =
+        UserInfo(
+            id = -1,
+            email = prefs.getString(KEY_EMAIL, ""),
+            name = "dummy",
+            nickname = prefs.getString(KEY_NICKNAME, ""),
+            birthDate = "",
+            gender = "",
+            profileImg = prefs.getString(KEY_PROFILE_IMAGE, ""),
+            serviceNotification = prefs.getBoolean(KEY_NOTIFICATION_SERVICE, false),
+            marketingNotification = prefs.getBoolean(KEY_NOTIFICATION_MARKETING, false)
+        )
+
 
 }
