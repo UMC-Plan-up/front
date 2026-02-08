@@ -181,7 +181,6 @@ class GoalSelectFragment : Fragment() {
                     Log.d("GoalSelectFragment", "이름 전달 $nickname")
                     putString("goalOwnerName", nickname)
                     putString("selectedCategory", selectedCategoryEnum)
-                    putString("goalType","COMMUNITY")
                 }
 
                 backStackTrueGoalNav(commonGoalFragment,"goalSelect")

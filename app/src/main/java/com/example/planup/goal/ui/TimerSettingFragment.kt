@@ -1,7 +1,6 @@
 package com.example.planup.goal.ui
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
@@ -19,7 +17,6 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentTimerSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
 import com.example.planup.goal.util.backStackTrueGoalNav
 import com.example.planup.goal.util.clockString
 import com.example.planup.goal.util.equil
@@ -248,8 +245,8 @@ class TimerSettingFragment : Fragment() {
     private fun setEdit(){
         Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
         val activity = requireActivity() as GoalActivity
-        val goalDataE = if (viewModel.goalData != null){
-            viewModel.goalData!!.run {
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
                 val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
                     verificationType = activity.verificationType)
                 Log.d("TimerSettingFragment", "goalData: $this")
@@ -264,7 +261,7 @@ class TimerSettingFragment : Fragment() {
 
         }
         if(activity.verificationType == "TIMER"){
-            Log.d("TimerSettingFragment", "goalData: ${viewModel.goalData}")
+            Log.d("TimerSettingFragment", "goalData: ${viewModel.editGoalData}")
             activity.let {
                 if (it.goalTime >29) {
                     val time = it.goalTime

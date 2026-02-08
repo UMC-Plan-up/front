@@ -308,3 +308,23 @@ fun endDateFromToday(days: Int): String {
         .plusDays(days.toLong())
         .toString() // yyyy-MM-dd
 }
+
+fun goalType(isFriendTab: Boolean) = when (isFriendTab){
+    true -> "FRIEND"
+    false -> "COMMUNITY"
+}
+
+data class TmpGoalData(
+    val goalName: String = "",
+    val goalAmount: String = "",
+    val goalCategory: String = "",
+    val goalType: String = "",
+    val oneDose: Int = 0,
+    val frequency: Int = 0,
+    val period: String = "",
+    val endDate: String = "",
+    val verificationType: String = "",
+    val limitFriendCount: Int = 0,
+    val goalTime: Int = 0,
+    val goalOwnerName:String = ""
+)
