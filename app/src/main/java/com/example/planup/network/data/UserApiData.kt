@@ -1,6 +1,5 @@
 package com.example.planup.network.data
 
-import com.example.planup.signup.data.UserStatus
 import com.google.gson.annotations.SerializedName
 
 //User Controller 기본 응답 양식

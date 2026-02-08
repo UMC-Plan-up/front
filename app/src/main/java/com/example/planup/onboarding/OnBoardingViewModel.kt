@@ -17,7 +17,7 @@ import com.example.planup.onboarding.model.SignupTypeModel
 import com.example.planup.onboarding.model.SignupTypeModel.*
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.signup.data.Agreement
-import com.example.planup.signup.data.UserStatus
+import com.example.planup.network.data.UserStatus
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async

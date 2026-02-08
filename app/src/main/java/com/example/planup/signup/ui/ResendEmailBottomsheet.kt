@@ -16,7 +16,7 @@ import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
 import com.example.planup.onboarding.OnBoardingActivity
 import com.example.planup.onboarding.model.SignupTypeModel
-import com.example.planup.signup.data.UserStatus
+import com.example.planup.network.data.UserStatus
 import com.example.planup.util.KakaoServiceHandler
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {

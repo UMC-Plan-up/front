@@ -8,7 +8,7 @@ import com.example.planup.login.ui.LoginViewModel.Event.*
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onSuccess
-import com.example.planup.signup.data.UserStatus
+import com.example.planup.network.data.UserStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
