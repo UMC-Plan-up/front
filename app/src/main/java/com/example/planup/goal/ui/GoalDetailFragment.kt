@@ -1,6 +1,5 @@
 package com.example.planup.goal.ui
 
-import android.R.attr.button
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -29,7 +28,6 @@ import com.example.planup.goal.util.equil
 import com.example.planup.goal.util.logGoalActivityData
 import com.example.planup.goal.util.setInsets
 import com.example.planup.goal.util.titleFormat
-import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -530,8 +528,8 @@ class GoalDetailFragment : Fragment() {
         val activity = (requireActivity() as GoalActivity)
         selectedMethod = arguments?.getString("SELECTED_METHOD")
         goalOwnerName = activity.goalOwnerName
-        val goalDataE = if (viewModel.goalData != null){
-            viewModel.goalData!!.run {
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
                 val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
                     verificationType = activity.verificationType,)
                 equil(
@@ -547,7 +545,7 @@ class GoalDetailFragment : Fragment() {
             binding.nextButton.isEnabled = false
         }
         logGoalActivityData()
-        Log.d("GoalDetailFragment", "goal : ${viewModel.goalData}")
+        Log.d("GoalDetailFragment", "goal : ${viewModel.editGoalData}")
         // 주기 설정
         val period = when(activity.period){
             "DAY"-> "매일"
@@ -566,7 +564,7 @@ class GoalDetailFragment : Fragment() {
         }
 
 
-        Log.d("GoalDetailFragment", viewModel.goalData.toString())
+        Log.d("GoalDetailFragment", viewModel.editGoalData.toString())
         // 빈도 설정
         if (activity.frequency != 0) {
             binding.frequencyInputEditText.setText("${activity.frequency}")

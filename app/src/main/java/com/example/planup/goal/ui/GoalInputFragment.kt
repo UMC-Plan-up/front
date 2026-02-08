@@ -10,15 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.databinding.FragmentGoalInputBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.util.backStackTrueGoalNav
 import com.example.planup.goal.util.equil
+import com.example.planup.goal.util.goalType
 import com.example.planup.goal.util.resetGoalDataTrueCategory
 import com.example.planup.goal.util.setInsets
 import com.example.planup.goal.util.titleFormat
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GoalInputFragment : Fragment() {
 
     private var _binding: FragmentGoalInputBinding? = null
@@ -28,6 +33,7 @@ class GoalInputFragment : Fragment() {
     private var goalType: String? = null
     private var goalCategory: String? = null
 
+    private val viewModel : GoalViewModel by activityViewModels()
     private val prefs by lazy {
         requireActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     }
@@ -35,12 +41,12 @@ class GoalInputFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resetGoalDataTrueCategory()
-        goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
-        goalType = arguments?.getString("goalType")
-        goalCategory = arguments?.getString("selectedCategory")
+        viewModel.goalData.copy(
+            goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자",
+            goalType = goalType((requireActivity() as GoalActivity).isFriendTab),
+            goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
+        )
 
-        goalType?.let { prefs.edit().putString(KEY_GOAL_TYPE, it).apply() }
-        goalCategory?.let { prefs.edit().putString(KEY_GOAL_CATEGORY, it).apply() }
     }
 
     override fun onCreateView(

@@ -1,6 +1,5 @@
 package com.example.planup.goal.ui
 
-import android.R.attr.data
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -9,20 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 import com.example.planup.databinding.FragmentParticipantLimitBinding
 import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.backStackTrueNav
 import com.example.planup.goal.util.equil
 import com.example.planup.goal.util.setInsets
 import com.example.planup.goal.util.titleFormat
 import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 
@@ -182,8 +177,8 @@ class ParticipantLimitFragment : Fragment() {
 
     private fun setEdit(){
         val activity = requireActivity() as GoalActivity
-        val goalDataE = if (viewModel.goalData != null){
-            viewModel.goalData!!.run {
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
                 val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
                     verificationType = activity.verificationType, period = activity.period,
                     endDate = if (activity.endDate != null)activity.endDate!! else "",

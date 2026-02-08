@@ -21,6 +21,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.planup.databinding.FragmentCommonGoalBinding
 import com.example.planup.databinding.ItemGoalCardBinding
+import com.example.planup.goal.util.goalType
 import com.example.planup.main.goal.ui.GoalDescriptionFragment
 import com.example.planup.main.goal.ui.GoalDescriptionFragment.Companion.ARG_GOAL_ID
 
@@ -78,10 +79,9 @@ class CommonGoalFragment : Fragment() {
 
         // 기본 탭: 친구와 함께
         tabToggle(friendTab = true)
-        isFriendTab = true
         showAll = false
 
-        fetchGoalsFromServer("FRIEND") { goalType ,goalOwnerName, goalId ->
+        fetchGoalsFromServer(goalType(true)) { goalType, goalOwnerName, goalId ->
             Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
             listener(goalType, goalOwnerName,goalId)
         }
@@ -89,22 +89,12 @@ class CommonGoalFragment : Fragment() {
         // 탭 전환
         binding.friendTab.setOnClickListener {
             isFriendTab = true
-            showAll = false
-            tabToggle(friendTab = isFriendTab)
-            fetchGoalsFromServer("FRIEND") { goalType ,goalOwnerName, goalId ->
-                Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
-                listener(goalType, goalOwnerName,goalId)
-            }
+            tabClick()
         }
 
         binding.communityTab.setOnClickListener {
             isFriendTab = false
-            showAll = false
-            tabToggle(friendTab = isFriendTab)
-            fetchGoalsFromServer("COMMUNITY") { goalType ,goalOwnerName, goalId ->
-                Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
-                listener(goalType, goalOwnerName,goalId)
-            }
+            tabClick()
         }
 
         // 새 목표 만들기
@@ -114,6 +104,7 @@ class CommonGoalFragment : Fragment() {
             val goalInputFragment = GoalInputFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
+                    putString("selectedCategory",goalCategory)
                 }
             }
             (requireActivity() as GoalActivity).navigateToFragment(goalInputFragment)
@@ -328,6 +319,15 @@ class CommonGoalFragment : Fragment() {
         }
         else -> {
             Log.d("CommonGoalFragment", "EditGoalTitleFragment goalType: $goalType")
+        }
+    }
+
+    private fun tabClick(){
+        showAll = false
+        tabToggle(friendTab = isFriendTab)
+        fetchGoalsFromServer(goalType(isFriendTab)) { goalType ,goalOwnerName, goalId ->
+            Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
+            listener(goalType, goalOwnerName,goalId)
         }
     }
 

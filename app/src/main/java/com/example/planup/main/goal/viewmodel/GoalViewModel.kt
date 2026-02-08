@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalResult
+import com.example.planup.goal.util.TmpGoalData
 import com.example.planup.goal.util.toGoalItems
 import com.example.planup.goal.util.toGoalItemsForFriendAchieve
 import com.example.planup.main.friend.domain.FriendRepository
@@ -15,7 +16,6 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import com.example.planup.main.home.ui.FriendGoalListRepository
-import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
@@ -59,10 +59,17 @@ class GoalViewModel @Inject constructor(
     private var _goalId = MutableLiveData<Int>()
     val goalId: Int
         get() = _goalId.value ?: -1
-    private var _goalData = MutableLiveData<EditGoalResponse>()
-    val goalData: EditGoalResponse?
-        get() = _goalData.value
+    private var _editGoalData = MutableLiveData<EditGoalResponse>()
+    val editGoalData: EditGoalResponse?
+        get() = _editGoalData.value
 
+    private var _goalData = MutableLiveData<TmpGoalData>()
+    val goalData: TmpGoalData
+        get() = _goalData.value ?: TmpGoalData()
+
+    fun setGoalData(){
+
+    }
     private var _friendNickname = MutableLiveData<String>()
     val friendNickname: String
         get() = _friendNickname.value?: "사용자"
@@ -218,7 +225,7 @@ class GoalViewModel @Inject constructor(
             goalRepository.getGoalDetail(goalId)
                 .onSuccess {
                     goalDataAction(it)
-                    _goalData.value = it
+                    _editGoalData.value = it
                     _goalId.value = goalId
                 }
                 .onFailWithMessage { message->
