@@ -110,7 +110,7 @@ class GoalCompleteFragment : Fragment() {
 
     private fun sendCreateGoal() {
         val goalActivity = requireActivity() as GoalActivity
-        if (viewModel.goalData !=null && goalDataTrue(viewModel.goalData!!)) {
+        if (viewModel.editGoalData !=null && goalDataTrue(viewModel.editGoalData!!)) {
 
 
             val goalTypeApi = toApiGoalType(goalActivity.goalType)
@@ -145,7 +145,7 @@ class GoalCompleteFragment : Fragment() {
 
 //        val authHeader = "Bearer $token"
             binding.startPlanUpButton.isEnabled = false
-            if (viewModel.friendNickname != "사용자" && req.equil(data = viewModel.goalData!!)) {
+            if (viewModel.friendNickname != "사용자" && req.equil(data = viewModel.editGoalData!!)) {
 
             } else
                 viewModel.createGoal(
