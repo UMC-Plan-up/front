@@ -1,14 +1,16 @@
-package com.planup.planup.main.goal.data
+package com.example.planup.main.goal.data
 
 import android.util.Log
-import com.planup.planup.goal.data.GoalCreateRequest
-import com.planup.planup.goal.data.GoalResult
-import com.planup.planup.main.goal.domain.GoalRepository
-import com.planup.planup.main.goal.item.EditGoalRequest
-import com.planup.planup.main.goal.item.EditGoalResponse
-import com.planup.planup.network.ApiResult
-import com.planup.planup.network.GoalApi
-import com.planup.planup.network.safeResult
+import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalJoinResult
+import com.example.planup.goal.data.GoalResult
+import com.example.planup.main.goal.domain.GoalRepository
+import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.goal.item.EditGoalResponse
+import com.example.planup.network.ApiResult
+import com.example.planup.network.GoalApi
+import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -135,6 +137,27 @@ class GoalRepositoryImpl @Inject constructor(
                         )
                         ApiResult.Fail(response.message)
                     }
+                }
+            )
+        }
+
+    override suspend fun joinGoal(goalId: Int): ApiResult<GoalJoinResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.joinGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "joinGoal fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+
                 }
             )
         }

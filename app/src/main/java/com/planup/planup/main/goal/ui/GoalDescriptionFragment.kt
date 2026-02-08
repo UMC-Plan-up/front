@@ -1,4 +1,4 @@
-package com.planup.planup.main.goal.ui
+package com.example.planup.main.goal.ui
 
 import android.app.Activity
 import android.app.Dialog
@@ -15,11 +15,12 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.planup.planup.R
-import com.planup.planup.databinding.FragmentGoalDescriptionBinding
-import com.planup.planup.main.MainActivity
-import com.planup.planup.main.goal.item.GoalApiService
-import com.planup.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.R
+import com.example.planup.databinding.FragmentGoalDescriptionBinding
+import com.example.planup.main.MainActivity
+import com.example.planup.main.goal.item.GoalApiService
+import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class GoalDescriptionFragment : Fragment() {
@@ -79,20 +80,12 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     private fun loadGoalDetail(goalId: Int) {
-        val prefs = (requireActivity() as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = prefs.getString("accessToken", null)
-        if (token.isNullOrBlank()) {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         lifecycleScope.launch {
             runCatching {
-                val api = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                api.getGoalDetail(token = "Bearer $token", goalId = goalId) // GoalDetailResponse
+                RetrofitInstance.goalApi.getGoalDetail(goalId = goalId) // GoalDetailResponse
             }.onSuccess { resp ->
                 if (resp.isSuccess) {
-                    val goal: com.planup.planup.main.goal.item.GoalResult = resp.result  // ✅ 타입 맞춤
+                    val goal: com.example.planup.main.goal.item.GoalResult = resp.result  // ✅ 타입 맞춤
                     bindGoal(goal)
                 } else {
                     Toast.makeText(requireContext(), resp.message, Toast.LENGTH_SHORT).show()
@@ -104,7 +97,7 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     // 현재 서버 DTO(GoalResult)에 존재하는 필드만 안전하게 바인딩
-    private fun bindGoal(goal: com.planup.planup.main.goal.item.GoalResult) {
+    private fun bindGoal(goal: com.example.planup.main.goal.item.GoalResult) {
         binding.goalTitleTv.text = goal.goalName
         binding.oneDoseTv.text = "${goal.oneDose}"
 

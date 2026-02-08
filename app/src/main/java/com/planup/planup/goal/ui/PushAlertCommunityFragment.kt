@@ -1,4 +1,4 @@
-package com.planup.planup.goal.ui
+package com.example.planup.goal.ui
 
 import android.app.Dialog
 import android.content.Context
@@ -14,14 +14,18 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.planup.planup.R
-import com.planup.planup.databinding.FragmentPushAlertBinding
-import com.planup.planup.goal.adapter.TimerRVAdapter
-import com.planup.planup.main.home.ui.HomeFragment
+import com.example.planup.R
+import com.example.planup.databinding.FragmentPushAlertBinding
+import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.main.home.ui.HomeFragment
 import androidx.core.graphics.drawable.toDrawable
-import com.planup.planup.goal.GoalActivity
-import com.planup.planup.databinding.ItemRecyclerDropdownMoriningBinding
-import com.planup.planup.databinding.ItemRecyclerDropdownTimeBinding
+import androidx.core.view.marginBottom
+import com.example.planup.goal.GoalActivity
+import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
+import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
+import com.example.planup.goal.util.backStackTrueGoalNav
+import com.example.planup.goal.util.logGoalActivityData
+import com.example.planup.goal.util.setInsets
 
 class PushAlertCommunityFragment : Fragment() {
 
@@ -46,6 +50,10 @@ class PushAlertCommunityFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         init()
         clickListener()
+
+        logGoalActivityData()
+
+        setInsets(binding.root)
     }
 
     //프레그먼트 초기화
@@ -65,11 +73,13 @@ class PushAlertCommunityFragment : Fragment() {
         if (isFirst) showPopup()
     }
 
+
     private fun clickListener() {
         //뒤로가기 버튼 클릭
         binding.alertBackIv.setOnClickListener {
-            val participantLimitFragment = ParticipantLimitFragment()
-            (requireActivity() as GoalActivity).navigateToFragment(participantLimitFragment)
+//            val participantLimitFragment = ParticipantLimitFragment()
+//            (requireActivity() as GoalActivity).navigateToFragment(participantLimitFragment)
+            parentFragmentManager.popBackStack()
         }
 
         //알림받기 토글 끄기
@@ -96,24 +106,24 @@ class PushAlertCommunityFragment : Fragment() {
 
         //저장 버튼 클릭 (GoalActivity를 통해서만 이동)
         binding.nextButton.setOnClickListener {
-            Log.d("okhttppppppppp","1")
+
             val sharedPreferences = requireActivity().getSharedPreferences("alert_settings", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
-            Log.d("okhttppppppppp","2")
+
             val isAlertsEnabled = binding.alertReceiveOnIv.visibility == View.VISIBLE
             editor.putBoolean("receive_alerts", isAlertsEnabled)
             editor.putBoolean("regular_alerts", binding.alertRegularOnIv.visibility == View.VISIBLE)
             editor.putString("alert_time_of_day", binding.alertTimeTv.text.toString())
             editor.putString("alert_hour", binding.alertHourTv.text.toString())
             editor.putString("alert_minute", binding.alertMinuteTv.text.toString())
-            Log.d("okhttppppppppp","3")
+
             val selectedDays = mutableSetOf<String>()
             val dayViews = listOf(
                 binding.alertEverydayTv, binding.alertMondayTv, binding.alertTuesdayTv,
                 binding.alertWednesdayTv, binding.alertThursdayTv, binding.alertFridayTv,
                 binding.alertSaturdayTv, binding.alertSundayTv
             )
-            Log.d("okhttppppppppp","4")
+
             val dayNames = listOf(
                 "everyday", "monday", "tuesday", "wednesday",
                 "thursday", "friday", "saturday", "sunday"
@@ -123,26 +133,27 @@ class PushAlertCommunityFragment : Fragment() {
                     selectedDays.add(dayNames[index])
                 }
             }
-            Log.d("okhttppppppppp","5")
+
             editor.putStringSet("alert_days", selectedDays)
             editor.apply()
 
-            Log.d("okhttppppppppp","6")
+
             // 알림 설정 완료 후 팝업을 다시 보지 않도록 상태 변경
             val appPrefs = requireActivity().getSharedPreferences("app_settings", Context.MODE_PRIVATE)
             appPrefs.edit().putBoolean("show_push_alert_popup", false).apply()
 
-            Log.d("okhttppppppppp","7")
+
             // GoalActivity에 알림 설정 정보 저장
             val activity = requireActivity() as GoalActivity
-            activity.notificationEnabled = isAlertsEnabled
-            activity.regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
-            activity.alertTimeOfDay = binding.alertTimeTv.text.toString()
-            activity.alertHour = binding.alertHourTv.text.toString()
-            activity.alertMinute = binding.alertMinuteTv.text.toString()
-            activity.alertDays = selectedDays
+            activity.apply {
+                notificationEnabled = isAlertsEnabled
+                regularAlertEnabled = binding.alertRegularOnIv.visibility == View.VISIBLE
+                alertTimeOfDay = binding.alertTimeTv.text.toString()
+                alertHour = binding.alertHourTv.text.toString()
+                alertMinute = binding.alertMinuteTv.text.toString()
+                alertDays = selectedDays
+            }
 
-            Log.d("okhttppppppppp","8")
             val goalCompleteFragment = GoalCompleteFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", activity.goalOwnerName)
@@ -165,9 +176,10 @@ class PushAlertCommunityFragment : Fragment() {
                     putStringArrayList("alertDays", ArrayList(selectedDays))
                 }
             }
-            Log.d("okhttppppppppp","9")
-            activity.navigateToFragment(goalCompleteFragment)
-            Log.d("okhttppppppppp","10")
+
+            backStackTrueGoalNav(goalCompleteFragment,"PushAlertCommunityFragment")
+//            activity.navigateToFragment(goalCompleteFragment)
+
 //            showSizedToast(binding.nextButton, getString(R.string.toast_alert_setting))
 
         }

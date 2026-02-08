@@ -1,11 +1,12 @@
-package com.planup.planup.main.goal.ui
+package com.example.planup.main.goal.ui
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.planup.planup.R
+import com.example.planup.R
+import dagger.hilt.android.AndroidEntryPoint
 
 class EditFriendGoalActivity : AppCompatActivity() {
     private var goalId: Int = 0

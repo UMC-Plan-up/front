@@ -1,4 +1,4 @@
-package com.planup.planup.goal.ui
+package com.example.planup.goal.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,12 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.planup.planup.databinding.FragmentGoalCompleteBinding
-import com.planup.planup.goal.GoalActivity
-import com.planup.planup.goal.data.GoalCreateRequest
-import com.planup.planup.main.goal.viewmodel.GoalViewModel
-import com.planup.planup.main.MainActivity
+import androidx.fragment.app.activityViewModels
+import com.example.planup.databinding.FragmentGoalCompleteBinding
+import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.util.equil
+import com.example.planup.goal.util.goalDataTrue
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.example.planup.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
 import java.time.LocalDate
@@ -29,7 +31,7 @@ class GoalCompleteFragment : Fragment() {
     private val ISO_UTC_MILLIS: DateTimeFormatter =
         DateTimeFormatter.ofPattern("yyyy-MM-dd")
             .withZone(ZoneOffset.UTC)
-    private val viewModel: GoalViewModel by viewModels()
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -108,30 +110,32 @@ class GoalCompleteFragment : Fragment() {
 
     private fun sendCreateGoal() {
         val goalActivity = requireActivity() as GoalActivity
+        if (viewModel.goalData !=null && goalDataTrue(viewModel.goalData!!)) {
 
-        val goalTypeApi          = toApiGoalType(goalActivity.goalType)
-        val categoryApi          = toApiCategory(goalActivity.goalCategory)
-        val periodApi            = toApiPeriod(goalActivity.period)
-        val verifyApi            = toApiVerification(goalActivity.verificationType)
-        val endDateApi           = resolveEndDate(goalActivity.endDate, periodApi)
-        val oneDoseInt           = parseOneDose(goalActivity.oneDose)
 
-        val req = GoalCreateRequest(
-            goalName         = goalActivity.goalName.orEmpty(),
-            goalAmount       = goalActivity.goalAmount.orEmpty(),
-            goalCategory     = categoryApi,
-            goalType         = goalTypeApi,
-            oneDose          = oneDoseInt,
-            frequency        = goalActivity.frequency,
-            period           = periodApi,
-            endDate          = endDateApi,
-            verificationType = verifyApi,
-            limitFriendCount = goalActivity.limitFriendCount,
-            goalTime         = goalActivity.goalTime
-        )
+            val goalTypeApi = toApiGoalType(goalActivity.goalType)
+            val categoryApi = toApiCategory(goalActivity.goalCategory)
+            val periodApi = toApiPeriod(goalActivity.period)
+            val verifyApi = toApiVerification(goalActivity.verificationType)
+            val endDateApi = resolveEndDate(goalActivity.endDate, periodApi)
+            val oneDoseInt = parseOneDose(goalActivity.oneDose)
 
-        Log.d("GoalDebug", "Final API Request GoalName: ${req.goalName}")
-        Log.d("GoalDebug", "Final API Request Body: $req")
+            val req = GoalCreateRequest(
+                goalName = goalActivity.goalName.orEmpty(),
+                goalAmount = goalActivity.goalAmount.orEmpty(),
+                goalCategory = categoryApi,
+                goalType = goalTypeApi,
+                oneDose = oneDoseInt,
+                frequency = goalActivity.frequency,
+                period = periodApi,
+                endDate = endDateApi,
+                verificationType = verifyApi,
+                limitFriendCount = goalActivity.limitFriendCount,
+                goalTime = goalActivity.goalTime
+            )
+
+            Log.d("GoalDebug", "Final API Request GoalName: ${req.goalName}")
+            Log.d("GoalDebug", "Final API Request Body: $req")
 
 //        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
 //        val token = prefs.getString("accessToken", "") ?: ""
@@ -140,22 +144,46 @@ class GoalCompleteFragment : Fragment() {
 //        }
 
 //        val authHeader = "Bearer $token"
-        binding.startPlanUpButton.isEnabled = false
-        viewModel.createGoal(req,
-            action = {
-                (requireActivity() as GoalActivity).saveGoalData()
+            binding.startPlanUpButton.isEnabled = false
+            if (viewModel.friendNickname != "사용자" && req.equil(data = viewModel.goalData!!)) {
 
-                goHome()
-            },
-            message = {
-                Toast.makeText(
-                    requireContext(),
-                    it.ifBlank { "요청 실패" },
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.startPlanUpButton.isEnabled = true
-            }
-        )
+            } else
+                viewModel.createGoal(
+                    req,
+                    action = {
+                        (requireActivity() as GoalActivity).saveGoalData()
+
+                        goHome()
+                    },
+                    message = {
+                        Toast.makeText(
+                            requireContext(),
+                            it.ifBlank { "요청 실패" },
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        binding.startPlanUpButton.isEnabled = true
+                    }
+                )
+        }else{
+            if (viewModel.goalId != -1)
+                viewModel.joinGoal(
+                    viewModel.goalId,
+                    action = {
+                        (requireActivity() as GoalActivity).saveGoalData()
+
+                        goHome()
+                    },
+                    message = {
+                        Toast.makeText(
+                            requireContext(),
+                            it.ifBlank { "요청 실패" },
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        binding.startPlanUpButton.isEnabled = true
+                    }
+                )
+        }
 //        lifecycleScope.launch {
 //            runCatching {
 //                withContext(Dispatchers.IO) {

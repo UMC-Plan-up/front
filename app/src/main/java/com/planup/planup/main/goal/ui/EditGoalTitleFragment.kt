@@ -1,4 +1,4 @@
-package com.planup.planup.main.goal.ui
+package com.example.planup.main.goal.ui
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,15 +8,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.planup.planup.R
-import com.planup.planup.databinding.FragmentEditGoalTitleBinding
-import com.planup.planup.main.goal.item.EditGoalResponse
+import com.example.planup.R
+import com.example.planup.databinding.FragmentEditGoalTitleBinding
+import com.example.planup.main.goal.item.EditGoalResponse
 import kotlinx.coroutines.launch
 import android.text.TextWatcher
-import com.planup.planup.network.RetrofitInstance
+import com.example.planup.goal.util.setInsets
+import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+
 class EditGoalTitleFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTitleBinding
 
@@ -191,5 +192,9 @@ class EditGoalTitleFragment : Fragment() {
                 Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setInsets(binding.root)
     }
 }

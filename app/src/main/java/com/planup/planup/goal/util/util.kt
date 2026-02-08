@@ -1,19 +1,29 @@
-package com.planup.planup.goal.util
+package com.example.planup.goal.util
 
+import android.R.attr.data
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import com.planup.planup.goal.GoalActivity
+import com.example.planup.R
+import com.example.planup.goal.GoalActivity
+import com.example.planup.goal.data.GoalCreateRequest
 import kotlin.jvm.JvmName
-import com.planup.planup.main.goal.data.GoalType
-import com.planup.planup.main.goal.data.MyGoalListDto
-import com.planup.planup.main.goal.item.EditGoalResponse
-import com.planup.planup.main.goal.item.FriendGoalListResult
-import com.planup.planup.main.goal.item.GoalItem
-import com.planup.planup.main.goal.item.MyGoalListItem
-import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
+import com.example.planup.main.goal.data.GoalType
+import com.example.planup.main.goal.data.MyGoalListDto
+import com.example.planup.main.goal.item.EditGoalResponse
+import com.example.planup.main.goal.item.FriendGoalListResult
+import com.example.planup.main.goal.item.GoalItem
+import com.example.planup.main.goal.item.MyGoalListItem
+import com.example.planup.main.home.adapter.FriendGoalWithAchievement
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.ResolverStyle
+import java.time.temporal.ChronoUnit
+import java.util.Collections.frequency
 import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -132,14 +142,169 @@ fun Fragment.setGoalData(data: EditGoalResponse){
     }
 }
 
-fun setInsets(view: View, baseMargin: Int = 0) {
+fun setInsets(view: View) {
     setOnApplyWindowInsetsListener(view) { view, insets ->
 
         val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
         (view.layoutParams as ViewGroup.MarginLayoutParams).apply {
-            bottomMargin = baseMargin + systemBars.bottom
+            bottomMargin = 10 + systemBars.bottom
             view.layoutParams = this
         }
         insets
     }
+}
+
+fun Fragment.logGoalActivityData(){
+    val activity = requireActivity() as GoalActivity
+
+    activity.apply {
+        Log.d("GoalActivity", "{ 카테고리 $goalCategory, $goalType \n" +
+                "목표 $goalName ,$goalAmount \n" +
+                "인증 방식 $verificationType \n" +
+                "투자 시간 $goalTime \n" +
+                "$oneDose \n" +
+                "세부 목표 $period, $frequency ,$endDate \n" +
+                "참여자 제한 $limitFriendCount}")
+        Log.d("GoalActivity", "isFriendTab: $isFriendTab")
+    }
+}
+
+fun Fragment.titleFormat(isFriend: Boolean, isFriendDataTrue: Boolean, titleText: TextView, friendNickname: String, notAction: ()-> Unit){
+    titleText.text =
+    if(isFriend) {
+        if (isFriendDataTrue) {
+            getString(R.string.goal_friend_detail, friendNickname)
+        }else{
+            getString(R.string.goal_friend_detail_title)
+        }
+
+    }else{
+        notAction()
+        getString(R.string.goal_community_detail)
+    }
+}
+
+fun Fragment.backStackTrueGoalNav(nextFragment: Fragment,name: String?=null){
+    Log.d("FRAGMENTS", "${parentFragmentManager.fragments}")
+    backStackTrueNav(R.id.goal_container, nextFragment,name)
+}
+
+fun Fragment.backStackTrueNav(resId: Int, nextFragment: Fragment,name: String?=null){
+    Log.d("FRAGMENTS", "${parentFragmentManager.fragments}")
+    parentFragmentManager.beginTransaction()
+        .add(resId, nextFragment)
+        .hide(this@backStackTrueNav)
+        .addToBackStack(name)
+        .commitAllowingStateLoss()
+}
+
+fun GoalCreateRequest.equil(data: EditGoalResponse): Boolean{
+    this.apply {
+        return goalName == data.goalName
+                && goalAmount == data.goalAmount
+                &&goalCategory == data.goalCategory
+                &&goalType == data.goalType
+                &&oneDose == data.oneDose
+                &&frequency == data.frequency
+                &&period == data.period
+                &&endDate == data.endDate
+                &&verificationType == data.verificationType
+                &&limitFriendCount == data.limitFriendCount
+                &&goalTime == data.goalTime
+    }
+}
+
+fun EditGoalResponse.equil(data: EditGoalResponse): Boolean{
+    this.apply {
+        return goalName == data.goalName
+                && goalAmount == data.goalAmount
+                &&goalCategory == data.goalCategory
+                &&goalType == data.goalType
+                &&oneDose == data.oneDose
+                &&frequency == data.frequency
+                &&period == data.period
+                &&endDate == data.endDate
+                &&verificationType == data.verificationType
+                &&limitFriendCount == data.limitFriendCount
+                &&goalTime == data.goalTime
+    }
+}
+
+fun Fragment.goalDataTrue(data: EditGoalResponse): Boolean{
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+        return goalName == data.goalName
+                && goalAmount == data.goalAmount
+                &&goalCategory == data.goalCategory
+                &&goalType == data.goalType
+                &&oneDose == data.oneDose.toString()
+                &&frequency == data.frequency
+                &&period == data.period
+                &&endDate == data.endDate
+                &&verificationType == data.verificationType
+                &&limitFriendCount == data.limitFriendCount
+                &&goalTime == data.goalTime
+    }
+
+}
+
+fun Fragment.resetGoalDataTrueCategory(){
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+        goalName = ""
+        goalAmount = ""
+        oneDose = ""
+        frequency = 0
+        period = ""
+        endDate = ""
+        verificationType = ""
+        limitFriendCount = 0
+        goalTime = 0
+    }
+}
+
+fun Int.clockString() = if (this / 10 == 0) {
+    "0$this"
+} else {
+    this.toString()
+}
+
+fun Fragment.titleFormat(mode: String, titleText: TextView, friendNickname: String, notAction: ()-> Unit){
+    when (mode) {
+        "select" -> {
+            val title = getString(R.string.goal_select_title)
+            titleText.text = title
+        }
+        "common" -> {
+            val title = getString(R.string.goal_select_together)
+            titleText.text = title
+        }
+        "friend" -> {
+            val title = getString(R.string.goal_friend_detail, friendNickname)
+            titleText.text = title
+        }
+        else -> {
+            val title = getString(R.string.goal_community_detail)
+            titleText.text = title
+            notAction()
+        }
+    }
+}
+
+
+fun daysFromToday(dateStr: String): Int {
+    val DATE_FORMATTER  = DateTimeFormatter.ofPattern("yyyy-MM-dd").withResolverStyle(ResolverStyle.STRICT)
+    val targetDate = runCatching {
+        LocalDate.parse(dateStr, DATE_FORMATTER)
+    }.getOrNull()
+    if (targetDate == null) return -1
+    val today = LocalDate.now()
+
+    return ChronoUnit.DAYS.between(today, targetDate).toInt()
+}
+
+fun endDateFromToday(days: Int): String {
+    return LocalDate.now()
+        .plusDays(days.toLong())
+        .toString() // yyyy-MM-dd
 }
