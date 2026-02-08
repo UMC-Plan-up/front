@@ -10,11 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import com.example.planup.R
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.databinding.FragmentGoalInputBinding
 import com.example.planup.goal.GoalActivity
-import com.google.android.material.internal.ViewUtils.hideKeyboard
+import com.example.planup.goal.util.backStackTrueGoalNav
+import com.example.planup.goal.util.equil
+import com.example.planup.goal.util.goalType
+import com.example.planup.goal.util.resetGoalDataTrueCategory
+import com.example.planup.goal.util.setInsets
+import com.example.planup.goal.util.titleFormat
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GoalInputFragment : Fragment() {
 
     private var _binding: FragmentGoalInputBinding? = null
@@ -24,19 +33,20 @@ class GoalInputFragment : Fragment() {
     private var goalType: String? = null
     private var goalCategory: String? = null
 
+    private val viewModel : GoalViewModel by activityViewModels()
     private val prefs by lazy {
         requireActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        resetGoalDataTrueCategory()
+        viewModel.goalData.copy(
+            goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자",
+            goalType = goalType((requireActivity() as GoalActivity).isFriendTab),
+            goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
+        )
 
-        goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
-        goalType = arguments?.getString("goalType")
-        goalCategory = arguments?.getString("selectedCategory")
-
-        goalType?.let { prefs.edit().putString(KEY_GOAL_TYPE, it).apply() }
-        goalCategory?.let { prefs.edit().putString(KEY_GOAL_CATEGORY, it).apply() }
     }
 
     override fun onCreateView(
@@ -49,17 +59,11 @@ class GoalInputFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // 타이틀에 닉네임 반영
-
-        if ((requireActivity() as GoalActivity).isFriendTab) {
-            binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
-            binding.friendGoalDescriptionText.visibility = View.VISIBLE
-        }else {
-            binding.friendGoalTitleText.text = getString(R.string.goal_community_detail)
-            binding.friendGoalDescriptionText.visibility = View.GONE
+        titleFormat((requireActivity() as GoalActivity).isFriendTab,false, binding.friendGoalTitleText,
+            goalOwnerName){
         }
-
+        setInsets(binding.root)
         binding.goalNameMinLengthHint.visibility = View.GONE
         binding.goalNameMaxLengthHint.visibility = View.GONE
         binding.goalVolumeMinLengthHint.visibility = View.GONE
@@ -130,7 +134,7 @@ class GoalInputFragment : Fragment() {
                     putString("goalCategory", activity.goalCategory)
                 }
             }
-            activity.navigateToFragment(certificationFragment)
+            backStackTrueGoalNav(certificationFragment,"GoalInputFragment")
         }
 
         // 바깥 터치 시 키보드 숨김
@@ -216,6 +220,11 @@ class GoalInputFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        resetGoalDataTrueCategory()
     }
 
     companion object {

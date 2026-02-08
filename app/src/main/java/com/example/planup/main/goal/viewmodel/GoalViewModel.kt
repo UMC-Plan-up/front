@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalResult
+import com.example.planup.goal.util.TmpGoalData
 import com.example.planup.goal.util.toGoalItems
 import com.example.planup.goal.util.toGoalItemsForFriendAchieve
 import com.example.planup.main.friend.domain.FriendRepository
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 class GoalViewModel @Inject constructor(
     private val friendRepository: FriendRepository,
     private val goalRepository: GoalRepository,
-    private val friendListRepository: FriendGoalListRepository
+    private val friendListRepository: FriendGoalListRepository,
 ) : ViewModel() {
     var fromWhere = MutableLiveData<String>()
     private var _targetUserId = MutableLiveData(-1)
@@ -55,11 +56,20 @@ class GoalViewModel @Inject constructor(
     fun setFriendNickname(nickname: String) {
         _friendNickname.value = nickname
     }
+    private var _goalId = MutableLiveData<Int>()
+    val goalId: Int
+        get() = _goalId.value ?: -1
+    private var _editGoalData = MutableLiveData<EditGoalResponse>()
+    val editGoalData: EditGoalResponse?
+        get() = _editGoalData.value
 
-    private var _goalData = MutableLiveData<EditGoalResponse>()
-    val goalData: EditGoalResponse?
-        get() = _goalData.value
+    private var _goalData = MutableLiveData<TmpGoalData>()
+    val goalData: TmpGoalData
+        get() = _goalData.value ?: TmpGoalData()
 
+    fun setGoalData(){
+
+    }
     private var _friendNickname = MutableLiveData<String>()
     val friendNickname: String
         get() = _friendNickname.value?: "사용자"
@@ -215,12 +225,26 @@ class GoalViewModel @Inject constructor(
             goalRepository.getGoalDetail(goalId)
                 .onSuccess {
                     goalDataAction(it)
-                    _goalData.value = it
+                    _editGoalData.value = it
+                    _goalId.value = goalId
                 }
                 .onFailWithMessage { message->
                     _failMessage.emit(message)
                     backAction("목표의 데이터가 없습니다.")
                 }
         }
+    }
+
+    fun joinGoal(goalId: Int, action: (Int) -> Unit, message: (String) -> Unit){
+        viewModelScope.launch {
+            goalRepository.joinGoal(goalId)
+                .onSuccess {
+                    action(goalId)
+                }.onFailWithMessage {
+                    _failMessage.emit(it)
+                    message(it)
+                }
+        }
+
     }
 }

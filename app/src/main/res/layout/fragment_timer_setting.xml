@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="20dp">
+    android:padding="28dp">
 
     <ImageView
         android:id="@+id/back_iv"
@@ -25,20 +25,32 @@
         android:text="@string/goal_friend_detail"
         android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="87dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/back_iv"
+        android:layout_marginTop="31dp"/>
+
+    <TextView
+        android:id="@+id/textView14"
+        style="@style/Typography_S_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="목표 수정 시, 참여 중인 친구들의 목표도 변경돼요."
+        android:textColor="@color/black_300"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title_tv" />
 
     <TextView
         android:id="@+id/expected_time_tv"
+        style="@style/Typography_L_Semibold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/challenge_request_time"
-        style="@style/Typography_L_Semibold"
-        android:fontFamily="@font/pretendard_semibold"
-        android:textColor="@color/black_400"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/title_tv"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:fontFamily="@font/pretendard_semibold"
+        android:text="@string/challenge_request_time"
+        android:textColor="@color/black_400"
+        android:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textView14" />
 
     <TextView
         android:id="@+id/timer_ask_tv"

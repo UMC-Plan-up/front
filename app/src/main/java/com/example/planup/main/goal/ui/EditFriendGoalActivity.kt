@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.planup.R
+import dagger.hilt.android.AndroidEntryPoint
 
 class EditFriendGoalActivity : AppCompatActivity() {
     private var goalId: Int = 0

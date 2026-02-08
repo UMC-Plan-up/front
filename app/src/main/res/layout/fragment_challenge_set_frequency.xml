@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/challenge_set_frequency_cl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -52,7 +53,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_first_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="38dp"
@@ -63,17 +64,21 @@
                 <TextView
                     android:id="@+id/photo_first_day_tv"
                     style="@style/Typography_S_Medium"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:gravity="center"
                     android:text=""
+                    android:textColor="@color/black_300"
                     android:textAlignment="center"
-                    android:textColor="@color/black_300" />
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_second_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="38dp"
@@ -89,12 +94,16 @@
                     android:gravity="center"
                     android:text=""
                     android:textAlignment="center"
-                    android:textColor="@color/black_300" />
+                    android:textColor="@color/black_300"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_third_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="38dp"
@@ -115,7 +124,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_fourth_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="38dp"
@@ -136,7 +145,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_fifth_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp"
@@ -157,7 +166,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_sixth_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
@@ -178,7 +187,7 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/photo_seventh_day_cl"
-                android:layout_width="70dp"
+                android:layout_width="81dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
@@ -204,7 +213,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="48dp"
-                android:text="@string/duration"
+                android:text="@string/official_duration"
                 android:textColor="@color/black_400"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/photo_fifth_day_cl" />
@@ -212,11 +221,12 @@
             <TextView
                 android:id="@+id/duration_explain_tv"
                 style="@style/Typography_S_Medium"
-                android:layout_width="297dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="5dp"
                 android:text="@string/photo_duration"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/duration_tv" />
 

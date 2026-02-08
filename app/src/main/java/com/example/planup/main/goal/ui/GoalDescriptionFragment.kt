@@ -20,6 +20,7 @@ import com.example.planup.databinding.FragmentGoalDescriptionBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.goal.item.GoalApiService
 import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class GoalDescriptionFragment : Fragment() {
@@ -79,17 +80,9 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     private fun loadGoalDetail(goalId: Int) {
-        val prefs = (requireActivity() as MainActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
-        val token = prefs.getString("accessToken", null)
-        if (token.isNullOrBlank()) {
-            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         lifecycleScope.launch {
             runCatching {
-                val api = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-                api.getGoalDetail(token = "Bearer $token", goalId = goalId) // GoalDetailResponse
+                RetrofitInstance.goalApi.getGoalDetail(goalId = goalId) // GoalDetailResponse
             }.onSuccess { resp ->
                 if (resp.isSuccess) {
                     val goal: com.example.planup.main.goal.item.GoalResult = resp.result  // ✅ 타입 맞춤

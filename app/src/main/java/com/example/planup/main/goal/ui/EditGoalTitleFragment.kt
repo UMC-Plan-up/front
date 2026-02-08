@@ -13,10 +13,11 @@ import com.example.planup.databinding.FragmentEditGoalTitleBinding
 import com.example.planup.main.goal.item.EditGoalResponse
 import kotlinx.coroutines.launch
 import android.text.TextWatcher
+import com.example.planup.goal.util.setInsets
 import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+
 class EditGoalTitleFragment : Fragment() {
     private lateinit var binding: FragmentEditGoalTitleBinding
 
@@ -191,5 +192,9 @@ class EditGoalTitleFragment : Fragment() {
                 Log.d("EditGoalTitleFragment", "네트워크 오류 Exception: $e")
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setInsets(binding.root)
     }
 }

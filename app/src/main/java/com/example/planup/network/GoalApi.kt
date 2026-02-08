@@ -2,6 +2,7 @@ package com.example.planup.network
 
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalJoinResponseDto
 import com.example.planup.goal.data.GoalListResponseDto
 import com.example.planup.main.goal.data.GoalEditResponse
 import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
@@ -166,4 +167,9 @@ interface GoalApi {
     suspend fun getGoalPhotos(
         @Path("goalId") goalId: Int
     ): GoalPhotosResponse
+
+    @POST("/community/{goalId}/join")
+    suspend fun joinGoal(
+        @Path("goalId") goalId: Int
+    ): Response<GoalJoinResponseDto>
 }
