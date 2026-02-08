@@ -1,6 +1,6 @@
 package com.example.planup.signup.data
 
-import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
 import com.example.planup.network.data.UserInfo
 import com.google.gson.annotations.SerializedName
 
@@ -39,16 +39,5 @@ data class KakaoCompleteResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: Result
-) {
-    data class Result(
-        @SerializedName("id") val id: Long,
-        @SerializedName("email") val email: String,
-        @SerializedName("name") val name: String,
-        @SerializedName("birthDate") val birthDate: String,
-        @SerializedName("accessToken") val accessToken: String,
-        @SerializedName("refreshToken") val refreshToken: String,
-        @SerializedName("userInfo") val userInfo: UserInfo?
-    )
-}
-
+    @SerializedName("result") val result: KakaoSignup
+)

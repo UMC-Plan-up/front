@@ -5,6 +5,7 @@ import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
@@ -33,7 +34,7 @@ interface UserRepository {
         birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
-    ): ApiResult<KakaoCompleteResponse.Result>
+    ): ApiResult<KakaoSignup>
 
     /**
      * 내 초대 코드를 가져옵니다.

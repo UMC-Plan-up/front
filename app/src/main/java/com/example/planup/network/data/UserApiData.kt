@@ -134,6 +134,14 @@ data class KakaoLogin(
     @SerializedName("userInfo") val userInfo: UserInfo
 )
 
+data class KakaoSignup(
+    @SerializedName("userStatus") val userStatus: UserStatus,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("expiresIn") val expiresIn: Int,
+    @SerializedName("userInfo") val userInfo: UserInfo
+)
+
 data class UserInfo(
     @SerializedName("id") val id: Int?,
     @SerializedName("email") val email: String?,

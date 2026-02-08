@@ -13,6 +13,7 @@ import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
@@ -72,7 +73,7 @@ class UserRepositoryImpl @Inject constructor(
         birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
-    ): ApiResult<KakaoCompleteResponse.Result> = withContext(Dispatchers.IO) {
+    ): ApiResult<KakaoSignup> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.kakaoComplete(
