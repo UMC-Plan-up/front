@@ -4,6 +4,7 @@ import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.KakaoLogin
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
@@ -23,7 +24,7 @@ interface UserRepository {
     suspend fun kakaoLogin(
         kakaoAccessToken: String,
         email: String
-    ): ApiResult<KakaoLoginResponse.ResultData>
+    ): ApiResult<KakaoLogin>
 
     suspend fun completeKakaoLogin(
         tempUserId: String,

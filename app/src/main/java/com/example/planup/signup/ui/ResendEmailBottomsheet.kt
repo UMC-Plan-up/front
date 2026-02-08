@@ -105,7 +105,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             val prefs = requireActivity().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
                             prefs.edit().apply {
                                 putString("accessToken", accessToken)
-                                putInt("userId", userInfo.id.toInt())
+                                putInt("userId", userInfo.id?.toInt() ?: -1)
                                 putString("email", userInfo.email)
                                 putString("nickname", userInfo.nickname)
                                 putString("profileImg", userInfo.profileImg)

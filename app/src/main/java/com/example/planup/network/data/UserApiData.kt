@@ -125,6 +125,15 @@ data class SignupResult(
 
 )
 
+data class KakaoLogin(
+    @SerializedName("userStatus") val userStatus: UserStatus,
+    @SerializedName("tempUserId") val tempUserId: String?,
+    @SerializedName("accessToken") val accessToken: String,
+    @SerializedName("refreshToken") val refreshToken: String,
+    @SerializedName("expiresIn") val expiresIn: Int,
+    @SerializedName("userInfo") val userInfo: UserInfo
+)
+
 data class UserInfo(
     @SerializedName("id") val id: Int?,
     @SerializedName("email") val email: String?,

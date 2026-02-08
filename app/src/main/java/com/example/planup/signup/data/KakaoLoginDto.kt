@@ -1,5 +1,6 @@
 package com.example.planup.signup.data
 
+import com.example.planup.network.data.KakaoLogin
 import com.example.planup.network.data.UserInfo
 import com.google.gson.annotations.SerializedName
 
@@ -9,21 +10,13 @@ data class KakaoLoginRequest(
     @SerializedName("kakaoAccessToken") val kakaoAccessToken: String
 )
 
-// TODO:: dto 변경
+
 data class KakaoLoginResponse(
     @SerializedName("isSuccess") val isSuccess: Boolean,
     @SerializedName("code") val code: String,
     @SerializedName("message") val message: String,
-    @SerializedName("result") val result: ResultData
-) {
-    data class ResultData(
-        @SerializedName("userStatus") val userStatus: UserStatus,
-        @SerializedName("tempUserId") val tempUserId: String?,
-        @SerializedName("accessToken") val accessToken: String?,
-        @SerializedName("refreshToken") val refreshToken: String?,
-        @SerializedName("userInfo") val userInfo: UserInfo?,
-    )
-}
+    @SerializedName("result") val result: KakaoLogin
+)
 
 enum class UserStatus {
     // 일반 로그인 성공 또는 기존 카카오 유저의 로그인 성공

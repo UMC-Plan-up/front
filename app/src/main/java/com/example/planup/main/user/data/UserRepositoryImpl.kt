@@ -12,6 +12,7 @@ import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.KakaoLogin
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
@@ -49,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun kakaoLogin(
         kakaoAccessToken: String,
         email: String
-    ): ApiResult<KakaoLoginResponse.ResultData> = withContext(Dispatchers.IO) {
+    ): ApiResult<KakaoLogin> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.kakaoLogin(KakaoLoginRequest(kakaoAccessToken = kakaoAccessToken, email = email))
