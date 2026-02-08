@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/community_nav_graph"
-    app:startDestination="@id/goalSelectFragment"
-    >
+    android:id="@+id/community_nav_graph">
     <!--    flow 시작 -->
-    <fragment
-        android:id="@+id/goalSelectFragment"
-        android:name="com.example.planup.goal.ui.GoalSelectFragment" >
-        <action android:id="@+id/action_to_common"
-            app:destination="@id/commonGoalFragment"
-            />
-    </fragment>
 
     <fragment
         android:id="@+id/commonGoalFragment"
@@ -19,6 +10,9 @@
         <action android:id="@+id/action_to_Input"
             app:destination="@id/goalInputFragment"
             />
+        <action
+            android:id="@+id/action_commonGoalFragment_to_friendEditFragment"
+            app:destination="@id/friendEditFragment" />
     </fragment>
 
     <fragment
@@ -30,6 +24,14 @@
         <action android:id="@+id/action_to_certification"
             app:destination="@id/certificationMethodFragment"
             />
+    </fragment>
+
+    <fragment
+        android:id="@+id/friendEditFragment"
+        android:name="com.example.planup.goal.ui.FriendEditFragment" >
+        <action
+            android:id="@+id/action_friendEditFragment_to_certificationMethodFragment"
+            app:destination="@id/certificationMethodFragment" />
     </fragment>
 
     <!-- 타입 선택 분기 -->

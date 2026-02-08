@@ -73,8 +73,7 @@ class CommonGoalFragment : Fragment() {
         Log.d("CommonGoalFragment", "닉네임: $goalOwnerName / 카테고리: $goalCategory")
 
         binding.backIcon.setOnClickListener {
-            (requireActivity() as GoalActivity)
-                .navigateToFragment(GoalSelectFragment())
+            parentFragmentManager.popBackStack()
         }
 
         // 기본 탭: 친구와 함께
@@ -166,7 +165,7 @@ class CommonGoalFragment : Fragment() {
                 } else {
                     RetrofitInstance.goalApi.getCommunityGoalsByCategory(serverCategory)
                 }
-
+                Log.d("GoalAPI", "code=${res.body()?.result} msg=${res.message()}")
                 if (res.isSuccessful) {
                     val list = res.body()?.result.orEmpty()
 

@@ -2,6 +2,7 @@ package com.example.planup.main.goal.domain
 
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalJoinResult
 import com.example.planup.goal.data.GoalResult
 import com.example.planup.main.goal.item.EditGoalApiResponse
 import com.example.planup.main.goal.item.EditGoalRequest
@@ -20,4 +21,5 @@ interface GoalRepository {
         goalCreateRequest: GoalCreateRequest
     ): ApiResult<GoalResult>
     suspend fun getGoalDetail(goalId: Int): ApiResult<EditGoalResponse>
+    suspend fun joinGoal(goalId: Int): ApiResult<GoalJoinResult>
 }

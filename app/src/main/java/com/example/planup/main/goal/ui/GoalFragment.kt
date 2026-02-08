@@ -443,7 +443,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //            (context as? MainActivity)?.navigateToFragment(subscriptionFragment)
 //        }
 
-        binding.lockCircleIv2.setOnClickListener {
+        binding.addNewGoalCl.setOnClickListener {
             // SharedPreferences에서 닉네임 가져오기
             val nickname = prefs.getString("nickname", "사용자") ?: "사용자"
             Log.d("GoalFragment", "nickname: $nickname")
