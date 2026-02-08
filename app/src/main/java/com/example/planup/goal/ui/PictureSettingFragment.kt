@@ -18,6 +18,10 @@ import com.example.planup.R
 import com.example.planup.databinding.FragmentPictureSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.adapter.TimerRVAdapter
+import com.example.planup.goal.util.backStackTrueGoalNav
+import com.example.planup.goal.util.equil
+import com.example.planup.goal.util.setInsets
+import com.example.planup.goal.util.titleFormat
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -45,22 +49,11 @@ class PictureSettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         setupListeners()
 //        updateNextButtonUi(false) // 초기 상태: 버튼 비활성화
-        val titleTv = binding.titleTv
-        val frequency = binding.challengePhotoNumberTv
-        Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
-        if(viewModel.friendNickname != "사용자") {
-            Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
-            Log.d(
-                "PictureSettingFragment",
-                "titleTv: ${getString(R.string.goal_friend_detail, viewModel.friendNickname)}"
-            )
-            titleTv.text = getString(R.string.goal_friend_detail, viewModel.friendNickname)
-            if(viewModel.goalData?.verificationType == "PICTURE"){
-                frequency.text = "${viewModel.goalData?.frequency}번"
-            }
-        }
+        setInsets(view)
+        setEdit()
     }
 
     private fun setupListeners() {
@@ -78,7 +71,7 @@ class PictureSettingFragment : Fragment() {
         binding.challengeTimerNextBtn.setOnClickListener {
                 val activity = requireActivity() as GoalActivity
                 // GoalActivity에 인증 횟수와 인증 방식 저장
-                activity.frequency = selectedFrequency
+                activity.oneDose = selectedFrequency.toString()
                 activity.verificationType = "PICTURE"
 
                 // SharedPreferences에 저장
@@ -93,7 +86,7 @@ class PictureSettingFragment : Fragment() {
                         putString("goalOwnerName", activity.goalOwnerName)
                     }
                 }
-                activity.navigateToFragment(goalDetailFragment)
+                backStackTrueGoalNav(goalDetailFragment,"PictureSettingFragment")
         }
     }
 
@@ -139,8 +132,35 @@ class PictureSettingFragment : Fragment() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        setEdit()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setEdit() {
+        val activity = requireActivity() as GoalActivity
+        val frequency = binding.challengePhotoNumberTv
+        Log.d("PictureSettingFragment", "friendNickname: ${viewModel.friendNickname}")
+        val goalDataE = if (viewModel.goalData != null){
+            viewModel.goalData!!.run {
+                equil(
+                    copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
+                        verificationType = activity.verificationType)
+                )
+            }
+        }else false
+        titleFormat(activity.isFriendTab,goalDataE, binding.titleTv,
+            if (viewModel.friendNickname!="사용자")viewModel.friendNickname else activity.goalOwnerName){
+
+        }
+        if(activity.verificationType == "PICTURE" && activity.frequency != 0){
+            frequency.text = "${activity.frequency}번"
+            updateNextButtonUi(true)
+        }
     }
 }

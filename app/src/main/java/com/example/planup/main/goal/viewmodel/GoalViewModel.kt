@@ -15,6 +15,7 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import com.example.planup.main.home.ui.FriendGoalListRepository
+import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
@@ -33,7 +34,7 @@ import kotlinx.coroutines.launch
 class GoalViewModel @Inject constructor(
     private val friendRepository: FriendRepository,
     private val goalRepository: GoalRepository,
-    private val friendListRepository: FriendGoalListRepository
+    private val friendListRepository: FriendGoalListRepository,
 ) : ViewModel() {
     var fromWhere = MutableLiveData<String>()
     private var _targetUserId = MutableLiveData(-1)
@@ -55,7 +56,9 @@ class GoalViewModel @Inject constructor(
     fun setFriendNickname(nickname: String) {
         _friendNickname.value = nickname
     }
-
+    private var _goalId = MutableLiveData<Int>()
+    val goalId: Int
+        get() = _goalId.value ?: -1
     private var _goalData = MutableLiveData<EditGoalResponse>()
     val goalData: EditGoalResponse?
         get() = _goalData.value
@@ -216,11 +219,25 @@ class GoalViewModel @Inject constructor(
                 .onSuccess {
                     goalDataAction(it)
                     _goalData.value = it
+                    _goalId.value = goalId
                 }
                 .onFailWithMessage { message->
                     _failMessage.emit(message)
                     backAction("목표의 데이터가 없습니다.")
                 }
         }
+    }
+
+    fun joinGoal(goalId: Int, action: (Int) -> Unit, message: (String) -> Unit){
+        viewModelScope.launch {
+            goalRepository.joinGoal(goalId)
+                .onSuccess {
+                    action(goalId)
+                }.onFailWithMessage {
+                    _failMessage.emit(it)
+                    message(it)
+                }
+        }
+
     }
 }

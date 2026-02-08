@@ -3,9 +3,9 @@ package com.example.planup.main.goal.data
 import android.util.Log
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalJoinResult
 import com.example.planup.goal.data.GoalResult
 import com.example.planup.main.goal.domain.GoalRepository
-import com.example.planup.main.goal.item.EditGoalApiResponse
 import com.example.planup.main.goal.item.EditGoalRequest
 import com.example.planup.main.goal.item.EditGoalResponse
 import com.example.planup.network.ApiResult
@@ -137,6 +137,27 @@ class GoalRepositoryImpl @Inject constructor(
                         )
                         ApiResult.Fail(response.message)
                     }
+                }
+            )
+        }
+
+    override suspend fun joinGoal(goalId: Int): ApiResult<GoalJoinResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.joinGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "joinGoal fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+
                 }
             )
         }
