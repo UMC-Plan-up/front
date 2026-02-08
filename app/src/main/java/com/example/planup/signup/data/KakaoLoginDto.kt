@@ -32,12 +32,3 @@ data class KakaoCompleteRequest(
     @SerializedName("profileImg") val profileImg: String?,
     @SerializedName("agreements") val agreements: List<Agreement>
 )
-
-// 응답 Dto
-// TODO:: dto 변경
-data class KakaoCompleteResponse(
-    @SerializedName("isSuccess") val isSuccess: Boolean,
-    @SerializedName("code") val code: String,
-    @SerializedName("message") val message: String,
-    @SerializedName("result") val result: KakaoSignup
-)

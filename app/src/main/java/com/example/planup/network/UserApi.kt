@@ -8,6 +8,7 @@ import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
 import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
 import com.example.planup.network.data.Login
 import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.Tokens
@@ -31,7 +32,6 @@ import com.example.planup.signup.data.InviteCodeResponse
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
 import com.example.planup.signup.data.KakaoCompleteRequest
-import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
@@ -165,7 +165,7 @@ interface UserApi : MyPageApi {
     @POST("/users/auth/kakao/complete")
     suspend fun kakaoComplete(
         @Body body: KakaoCompleteRequest
-    ): Response<KakaoCompleteResponse>
+    ): Response<UserResponse<KakaoSignup>>
 
     // 이메일 인증 대안 - 카카오 로그인
     @POST("/users/auth/email/alternative")

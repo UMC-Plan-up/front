@@ -27,7 +27,6 @@ import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.KakaoCompleteRequest
-import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
