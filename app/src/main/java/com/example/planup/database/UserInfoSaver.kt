@@ -14,10 +14,14 @@ class UserInfoSaver(
     companion object {
         private const val PREF_TOKEN_NAME = "userInfo"
 
-        private const val KEY_NICKNAME = "nickname"
-        private const val KEY_INVITE_CODE = "invite"
+        private const val KEY_ID = "id"
         private const val KEY_EMAIL = "email"
+        private const val KEY_NAME = "name"
+        private const val KEY_NICKNAME = "nickname"
+        private const val KEY_BIRTH_DATE = "birthDate"
+        private const val KEY_GENDER = "gender"
         private const val KEY_PROFILE_IMAGE = "profileImg"
+        private const val KEY_INVITE_CODE = "invite"
 
 
         /**
@@ -152,28 +156,44 @@ class UserInfoSaver(
      */
     fun clearAllUserInfo() {
         prefs.edit {
-            remove(KEY_NICKNAME)
-            remove(KEY_INVITE_CODE)
+            remove(KEY_ID)
             remove(KEY_EMAIL)
+            remove(KEY_NICKNAME)
+            remove(KEY_BIRTH_DATE)
+            remove(KEY_GENDER)
+            remove(KEY_INVITE_CODE)
             remove(KEY_PROFILE_IMAGE)
             remove(KEY_NOTIFICATION_SERVICE)
             remove(KEY_NOTIFICATION_MARKETING)
         }
     }
 
-    // TODO:: 더미 데이터 수정
+    fun saveUserInfo(
+        userInfo: UserInfo
+    ) {
+        prefs.edit {
+            userInfo.id?.let { putInt(KEY_ID, it) }
+            userInfo.email?.let { putString(KEY_EMAIL, it) }
+            userInfo.name?.let { putString(KEY_NAME, it) }
+            userInfo.nickname?.let { putString(KEY_NICKNAME, it) }
+            userInfo.birthDate?.let { putString(KEY_BIRTH_DATE, it) }
+            userInfo.gender?.let { putString(KEY_GENDER, it) }
+            userInfo.profileImg?.let { putString(KEY_PROFILE_IMAGE, it) }
+            userInfo.serviceNotification.let { putBoolean(KEY_NOTIFICATION_SERVICE, it) }
+            userInfo.marketingNotification.let { putBoolean(KEY_NOTIFICATION_MARKETING, it) }
+        }
+    }
+
     fun toUserInfo(): UserInfo =
         UserInfo(
-            id = -1,
-            email = prefs.getString(KEY_EMAIL, ""),
-            name = "dummy",
-            nickname = prefs.getString(KEY_NICKNAME, ""),
-            birthDate = "",
-            gender = "",
-            profileImg = prefs.getString(KEY_PROFILE_IMAGE, ""),
+            id = prefs.getInt(KEY_ID, -1).takeIf { it != -1 },
+            email = prefs.getString(KEY_EMAIL, null),
+            name = prefs.getString(KEY_NAME, null),
+            nickname = prefs.getString(KEY_NICKNAME, null),
+            birthDate = prefs.getString(KEY_BIRTH_DATE, null),
+            gender = prefs.getString(KEY_GENDER, null),
+            profileImg = prefs.getString(KEY_PROFILE_IMAGE, null),
             serviceNotification = prefs.getBoolean(KEY_NOTIFICATION_SERVICE, false),
             marketingNotification = prefs.getBoolean(KEY_NOTIFICATION_MARKETING, false)
         )
-
-
 }
