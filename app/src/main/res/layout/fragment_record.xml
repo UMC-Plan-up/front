@@ -45,7 +45,7 @@
                     android:layout_width="100dp"
                     android:layout_height="30dp"
                     android:background="@drawable/bg_dropdown"
-                    android:text="2025년"
+                    android:text="2026년"
                     android:textColor="@color/black_400"
                     android:drawableEnd="@drawable/ic_arrow_down_blue"
                     android:textSize="16sp"

@@ -6,56 +6,52 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Base64
-import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.App
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWeeklyReportBinding
 import com.example.planup.main.MainActivity
+import com.example.planup.main.record.adapter.PhotoAdapter
+import com.example.planup.main.record.adapter.RankAdapter
+import com.example.planup.main.record.adapter.RankItem
 import com.example.planup.main.record.data.Badge
 import com.example.planup.main.record.data.DailyRecord
 import com.example.planup.main.record.data.GoalReport
-import com.example.planup.main.record.ui.viewmodel.RecordWeeklyReportViewModel
-import com.example.planup.network.ApiResult
 import com.example.planup.network.RetrofitInstance
+import com.example.planup.network.getRetrofit
+import com.example.planup.network.port.ChallengePort
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.OffsetDateTime
+import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
-import androidx.core.graphics.toColorInt
 
 // 챌린지 카드 표시용 데이터(ChallengeCompleteFragment로 전달)
-data class ChallengeCardData(
-    val resultText: String,
-    val opponentName: String,
-    val penaltyText: String,
-    val friend1Name: String,
-    val friend1Progress: Int,
-    val friend1ProfileRes: Int?,
-    val friend2Name: String,
-    val friend2Progress: Int,
-    val friend2ProfileRes: Int?,
-)
-@AndroidEntryPoint
-class RecordWeeklyReportFragment : Fragment() {
+
+class tempRecordWeeklyReportFragment : Fragment() {
     lateinit var binding: FragmentRecordWeeklyReportBinding
 
     private var currentChallenge: ChallengeCardData? = null
-    private val viewModel: RecordWeeklyReportViewModel by viewModels()
 
     // 주차 계산용(ISO: 월요일 시작)
     private val weekFields = WeekFields.ISO
+    private var currentYear: Int = 0
+    private var currentMonth: Int = 0
+    private var currentWeekOfMonth: Int = 0
+
 
     // 내 평균 달성률(목표별 달성률 평균)
     private var myAvgAchievementPercent: Int = 0
@@ -63,10 +59,14 @@ class RecordWeeklyReportFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentRecordWeeklyReportBinding.inflate(inflater, container, false)
 
-        viewModel.loadUserInfo()
+        val today = LocalDate.now()
+        currentYear = arguments?.getInt(ARG_YEAR) ?: today.year
+        currentMonth = arguments?.getInt(ARG_MONTH) ?: today.monthValue
+        currentWeekOfMonth = arguments?.getInt(ARG_WEEK) ?: today.get(weekFields.weekOfMonth())
+
         clickListener()
         updateTitle()
-        loadWeeklyReport()
+        loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
 
         // 서버 응원 메시지(보조)
         fetchEncourageMessage()
@@ -93,12 +93,12 @@ class RecordWeeklyReportFragment : Fragment() {
         binding.backReportIv.setOnClickListener {
             moveToPreviousWeek()
             updateTitle()
-            loadWeeklyReport()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
         }
         binding.frontReportIv.setOnClickListener {
             moveToNextWeek()
             updateTitle()
-            loadWeeklyReport()
+            loadWeeklyReport(currentYear, currentMonth, currentWeekOfMonth)
         }
         binding.backBtn.setOnClickListener{
             (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
@@ -146,17 +146,35 @@ class RecordWeeklyReportFragment : Fragment() {
     }
 
     private fun moveToPreviousWeek() {
-        viewModel.moveToPreviousWeek()
+        if (currentWeekOfMonth > 1) {
+            currentWeekOfMonth--
+        } else {
+            if (currentMonth == 1) { currentYear--; currentMonth = 12 } else currentMonth--
+            currentWeekOfMonth = maxWeeksInMonth(currentYear, currentMonth)
+        }
     }
 
     private fun moveToNextWeek() {
-        viewModel.moveToNextWeek()
+        val maxWeeks = maxWeeksInMonth(currentYear, currentMonth)
+        if (currentWeekOfMonth < maxWeeks) {
+            currentWeekOfMonth++
+        } else {
+            if (currentMonth == 12) { currentYear++; currentMonth = 1 } else currentMonth++
+            currentWeekOfMonth = 1
+        }
+    }
+
+    private fun maxWeeksInMonth(year: Int, month: Int): Int {
+        val ym = YearMonth.of(year, month)
+        var max = 0
+        for (d in 1..ym.lengthOfMonth()) {
+            val week = LocalDate.of(year, month, d).get(weekFields.weekOfMonth())
+            if (week > max) max = week
+        }
+        return max.coerceAtLeast(1)
     }
 
     private fun updateTitle() {
-        val currentYear = viewModel.year.value
-        val currentMonth = viewModel.month.value
-        val currentWeekOfMonth = viewModel.week.value
         binding.tvReportTitle.text = "${currentYear}년 ${currentMonth}월 ${currentWeekOfMonth}주차 리포트"
     }
 
@@ -207,39 +225,101 @@ class RecordWeeklyReportFragment : Fragment() {
         friend2Progress = 70,
         friend2ProfileRes = R.drawable.img_friend_profile_sample2
     )
-    private fun loadWeeklyReport() {
-        viewModel.loadWeeklyReport(createErrorHandler("loadWeeklyReport",
-            onSuccess = {
-                binding.balloonText.text = viewModel.nextMsg.value
 
-                renderGoalReports(viewModel.goalReportList.value)
+    private fun loadWeeklyReport(year: Int, month: Int, week: Int) {
+        lifecycleScope.launch {
+            val tokenHeader = buildAuthHeader()
+            if (tokenHeader.isNullOrBlank()) {
+                applyDummyWhenNoToken()
+                return@launch
+            }
+            val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
+            val userId = prefs.getInt("userId", -1).takeIf { it > 0 } ?: run {
+                applyDummyWhenNoToken()
+                return@launch
+            }
 
-                if (viewModel.dailyList.value.isEmpty()) {
-                    renderDailyRecords(emptyList())
-                    setupBarChartWithDummy()
-                } else {
-                    renderDailyRecords(viewModel.dailyList.value)
-                    setupBarChartWithData(viewModel.dailyList.value)
+            // 1) 주간 상세 리포트 — 주신 인터페이스 시그니처 사용
+            runCatching {
+                android.util.Log.d(
+                    "RecordWeeklyReport",
+                    "--> GET /report/reports/{year}/{month}/{week}?userId=$userId&year=$year&month=$month&week=$week"
+                )
+                RetrofitInstance.recordApi.getWeeklyReports(
+                    userId = userId,
+                    year = year,
+                    month = month,
+                    week = week
+                )
+            }.onSuccess { response ->
+                val req = response.raw().request
+                android.util.Log.d("RecordWeeklyReport", "Request: ${req.method} ${req.url}")
+                android.util.Log.d("RecordWeeklyReport", "<-- code=${response.code()} msg=${response.message()}")
+
+                if (!response.isSuccessful) {
+                    Toast.makeText(requireContext(), "조회 실패(${response.code()})", Toast.LENGTH_SHORT).show()
+                    applyDummyFallback()
+                    return@onSuccess
                 }
+                val body = response.body()
+                if (body?.isSuccess == true) {
+                    val r = body.result
+                    val nextMsg = r?.nextGoalMessage?.ifBlank {
+                        "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+                    } ?: "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
 
-                renderBadges(viewModel.badgeList.value)
-            },
-            onFail = {
-                Log.d("recordFail","loadWeeklyReport")
+                    val rawGoals = r?.goalReports.orEmpty()
+                    val goals = if (rawGoals.isEmpty()) buildDummyGoals() else rawGoals
+
+                    val dailyList = r?.dailyRecordList.orEmpty()
+                    val badges = r?.badgeList.orEmpty()
+
+                    myAvgAchievementPercent = if (goals.isNotEmpty()) {
+                        goals.map { it.achievementRate ?: 0 }.average().toInt().coerceIn(0, 100)
+                    } else 0
+
+                    binding.balloonText.text = nextMsg
+                    renderGoalReports(goals)
+                    if (dailyList.isEmpty()) {
+                        renderDailyRecords(emptyList())
+                        setupBarChartWithDummy()
+                    } else {
+                        renderDailyRecords(dailyList)
+                        setupBarChartWithData(dailyList)
+                    }
+                    if (badges.isEmpty()) renderBadges(emptyList()) else renderBadges(badges)
+                } else {
+                    Toast.makeText(requireContext(), body?.message ?: "조회 실패(isSuccess=false)", Toast.LENGTH_SHORT).show()
+                    applyDummyFallback()
+                }
+            }.onFailure {
+                it.printStackTrace()
+                Toast.makeText(requireContext(), "네트워크 오류: ${it.localizedMessage}", Toast.LENGTH_SHORT).show()
                 applyDummyFallback()
             }
-        ))
 
-        callChallengePortAndBind()
+            // 2) ChallengePort 예시 호출 (상대 닉네임만 대략 표시)
+            callChallengePortAndBind(userId)
+        }
     }
 
-    private fun callChallengePortAndBind() {
-        viewModel.loadChallengeFriends(createErrorHandler("loadChallengeFriends",
-            onSuccess = {
-                val opponentName =
-                    viewModel.challengeFriendList.value.firstOrNull()?.nickname ?: "상대"
+    private fun callChallengePortAndBind(userId: Int) {
+        val challengePort = getRetrofit().create(ChallengePort::class.java)
+        challengePort.showFriends(userId).enqueue(object :
+            retrofit2.Callback<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>> {
+            override fun onResponse(
+                call: retrofit2.Call<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>,
+                response: retrofit2.Response<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>
+            ) {
+                val friends = response.body()?.result.orEmpty()
+                if (friends.isEmpty()) {
+                    currentChallenge = buildDummyChallenge()
+                    bindChallengeCard(currentChallenge!!)
+                    return
+                }
+                val opponentName = friends.firstOrNull()?.nickname ?: "상대"
 
-                // TODO: 현재 API로 penalty, friendPercent는 없음 → 임시값
+                // 현재 API로 penalty, friendPercent는 없음 → 임시값
                 val penaltyText = ""
                 val myPercent   = myAvgAchievementPercent
                 val friendPct   = 0
@@ -250,7 +330,7 @@ class RecordWeeklyReportFragment : Fragment() {
                     else -> "무승부"
                 }
 
-                val myName = viewModel.nickname.value
+                val myName = getMyDisplayName()
                 val mapped = ChallengeCardData(
                     resultText      = resultText,
                     opponentName    = opponentName,
@@ -264,13 +344,21 @@ class RecordWeeklyReportFragment : Fragment() {
                 )
                 currentChallenge = mapped
                 bindChallengeCard(mapped)
-            },
-            onFail = {
-                Log.d("recordFail","callchallengeportandbind")
+            }
+
+            override fun onFailure(
+                call: retrofit2.Call<com.example.planup.network.data.ChallengeResponse<List<com.example.planup.network.data.ChallengeFriends>>>,
+                t: Throwable
+            ) {
                 currentChallenge = buildDummyChallenge()
                 bindChallengeCard(currentChallenge!!)
             }
-        ))
+        })
+    }
+
+    private fun getMyDisplayName(): String {
+        val prefs = requireContext().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
+        return prefs.getString("nickname", null)?.takeIf { it.isNotBlank() } ?: "나"
     }
 
     // ====== 목표 리스트 렌더링 (카드 클릭 시 분기) ======
@@ -320,7 +408,7 @@ class RecordWeeklyReportFragment : Fragment() {
                     layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, dp(1)
                     ).apply { topMargin = dp(4) }
-                    setBackgroundColor("#FFEFEFEF".toColorInt())
+                    setBackgroundColor(Color.parseColor("#FFEFEFEF"))
                 })
             }
             return
@@ -427,7 +515,7 @@ class RecordWeeklyReportFragment : Fragment() {
                 val photoLp = LinearLayout.LayoutParams(photoSize, photoSize).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
                 }
-                val photoCard = CardView(requireContext()).apply {
+                val photoCard = androidx.cardview.widget.CardView(requireContext()).apply {
                     layoutParams = photoLp
                     radius = dp(6).toFloat()
                     cardElevation = dp(4).toFloat()
@@ -522,7 +610,7 @@ class RecordWeeklyReportFragment : Fragment() {
             }
 
             // 사진 영역
-            val photoCard = CardView(requireContext()).apply {
+            val photoCard = androidx.cardview.widget.CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(dp(80), dp(80)).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
                 }
@@ -544,7 +632,7 @@ class RecordWeeklyReportFragment : Fragment() {
             row.addView(photoCard)
 
             // 시간 표시 카드
-            val timeCard = CardView(requireContext()).apply {
+            val timeCard = androidx.cardview.widget.CardView(requireContext()).apply {
                 layoutParams = LinearLayout.LayoutParams(0, dp(80), 1f).apply {
                     setMargins(dp(8), dp(8), dp(8), dp(8))
                 }
@@ -576,7 +664,7 @@ class RecordWeeklyReportFragment : Fragment() {
 
             val memo = dr.simpleMessage.orEmpty()
             if (memo.isNotBlank()) {
-                val memoCard = CardView(requireContext()).apply {
+                val memoCard = androidx.cardview.widget.CardView(requireContext()).apply {
                     layoutParams = LinearLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT, dp(74)
                     ).apply { setMargins(dp(8), 0, dp(8), dp(8)) }
@@ -755,6 +843,17 @@ class RecordWeeklyReportFragment : Fragment() {
             .commitAllowingStateLoss()
     }
 
+    private fun applyDummyWhenNoToken() {
+        Toast.makeText(requireContext(), "로그인이 필요합니다. (토큰 없음)", Toast.LENGTH_SHORT).show()
+        binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
+        renderGoalReports(buildDummyGoals())
+        renderDailyRecords(emptyList())
+        renderBadges(emptyList())
+        setupBarChartWithDummy()
+        currentChallenge = buildDummyChallenge()
+        bindChallengeCard(currentChallenge!!)
+    }
+
     private fun applyDummyFallback() {
         binding.balloonText.text = "아직 데이터가 없습니다. 새로운 목표를 향해 달려가 볼까요?"
         renderGoalReports(buildDummyGoals())
@@ -776,24 +875,6 @@ class RecordWeeklyReportFragment : Fragment() {
                     }
                 }
                 .onFailure { /* 실패 시 기존 문구 유지 */ }
-        }
-    }
-
-    fun <T> createErrorHandler(
-        tag: String,
-        onSuccess: ((T) -> Unit)? = null,
-        onFail: ((String) -> Unit)? = null
-    ): (ApiResult<T>) -> Unit {
-        return { result ->
-            when (result) {
-                is ApiResult.Success -> onSuccess?.invoke(result.data)
-                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
-                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
-                is ApiResult.Fail -> {
-                    Log.d(tag, "Fail: ${result.message}")
-                    onFail?.invoke(result.message)
-                }
-            }
         }
     }
 }

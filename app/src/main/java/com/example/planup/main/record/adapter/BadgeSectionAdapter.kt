@@ -9,12 +9,23 @@ import com.example.planup.databinding.ItemBadgeHeaderBinding
 
 sealed class BadgeRow {
     data class Header(val title: String) : BadgeRow()
-    data class Item(val iconRes: Int, val label: String) : BadgeRow()
+
+    data class Item(
+        val badgeType: String,   // 서버 enum 값
+        val title: String,
+        val lockedImageRes: Int,
+        val unlockedImageRes: Int,
+        val isUnlocked: Boolean = false
+    ) : BadgeRow()
 }
 
 class BadgeSectionAdapter(
-    private val items: List<BadgeRow>
+    items: List<BadgeRow> = emptyList()
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    private val items = mutableListOf<BadgeRow>().apply {
+        addAll(items)
+    }
 
     companion object {
         private const val TYPE_HEADER = 0
@@ -47,14 +58,23 @@ class BadgeSectionAdapter(
 
     override fun getItemCount(): Int = items.size
 
+    fun submitList(newItems: List<BadgeRow>) {
+        items.clear()
+        items.addAll(newItems)
+        notifyDataSetChanged()
+    }
+
     class HeaderVH(private val b: ItemBadgeHeaderBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(h: BadgeRow.Header) { b.tvHeader.text = h.title }
     }
 
     class ItemVH(private val b: ItemBadgeBinding) : RecyclerView.ViewHolder(b.root) {
         fun bind(i: BadgeRow.Item) {
-            b.imgBadge.setImageResource(i.iconRes)
-            b.tvBadge.text = i.label
+            b.imgBadge.setImageResource(
+                if (i.isUnlocked) i.unlockedImageRes
+                else i.lockedImageRes
+            )
+            b.tvBadge.text = i.title
         }
     }
 }

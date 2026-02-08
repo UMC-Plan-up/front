@@ -3,23 +3,23 @@ package com.example.planup.main.record.data
 // 주간 리포트 전체 응답
 data class DetailWeeklyReportResponse(
     val isSuccess: Boolean,
-    val code: String?,
-    val message: String?,
-    val result: DetailWeeklyReportResult?
+    val code: String,
+    val message: String,
+    val result: DetailWeeklyReportResult
 )
 
 data class DetailWeeklyReportResult(
-    val id: Int?,
-    val year: Int?,
-    val month: Int?,
-    val weekNumber: Int?,
-    val startDate: String?,
-    val endDate: String?,
-    val nextGoalMessage: String?,
-    val goalReports: List<GoalReport>?,
-    val totalDailyAchievement: Int?,
-    val dailyRecordList: List<DailyRecord>?,
-    val badgeList: List<Badge>?
+    val id: Int,
+    val year: Int,
+    val month: Int,
+    val weekNumber: Int,
+    val startDate: String,
+    val endDate: String,
+    val nextGoalMessage: String,
+    val goalReports: List<GoalReport>,
+    val totalDailyAchievement: Int,
+    val dailyRecordList: List<DailyRecord>,
+    val badgeList: List<Badge>
 )
 
 // ⚠️ 서버가 목표 성격을 넘겨줄 수 있도록 확장 필드 추가:
