@@ -186,7 +186,7 @@ class UserInfoSaver(
 
     fun toUserInfo(): UserInfo =
         UserInfo(
-            id = prefs.getInt(KEY_ID, -1).takeIf { it != -1 },
+            id = prefs.getInt(KEY_ID, -1),
             email = prefs.getString(KEY_EMAIL, null),
             name = prefs.getString(KEY_NAME, null),
             nickname = prefs.getString(KEY_NICKNAME, null),

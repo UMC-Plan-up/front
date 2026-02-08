@@ -204,8 +204,8 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             homeRepository.getUserInfo()
                 .onSuccess { result ->
-                    _profileImg.value = result.profileImage
-                    _nickname.value = result.nickname
+                    _profileImg.value = result.profileImg ?: ""
+                    _nickname.value = result.nickname ?: ""
                 }
                 .onFailWithMessage { message ->
                     Log.d("loadUserInfo", "Fail: $message")
