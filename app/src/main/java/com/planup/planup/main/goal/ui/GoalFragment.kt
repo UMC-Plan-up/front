@@ -222,11 +222,11 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //        }
 //    }
 
-    private fun loadFriendGoalList(friendUserId: Int) =
-        viewModel.loadFriendGoalList(friendUserId) { response ->
-            val items = response.toGoalItemsForFriend()
-            setGoals(items)
-        }
+//    private fun loadFriendGoalList(friendUserId: Int) =
+//        viewModel.loadFriendGoalList(friendUserId) { response ->
+//            val items = response.toGoalItemsForFriend()
+//            setGoals(items)
+//        }
 
     // 파일 상단 import에 추가
 // import com.example.planup.main.friend.data.FriendGoalListDto
