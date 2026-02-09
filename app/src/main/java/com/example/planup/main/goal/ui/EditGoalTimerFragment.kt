@@ -72,6 +72,8 @@ class EditGoalTimerFragment : Fragment() {
             setTime()
         }
 
+        binding.titleTv.text = getString(R.string.goal_friend_together_detail_title)
+
         binding.backIv.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
@@ -80,6 +82,11 @@ class EditGoalTimerFragment : Fragment() {
 //        val hourList = (0..23).map { it.toString().padStart(2, '0') }
 //        val minuteSecondList = (0..59).map { it.toString().padStart(2, '0') }
 //        val secondList = (0..59).map { it.toString().padStart(2, '0') }
+        hours = resources.getStringArray(R.array.dropdown_hour).toCollection(ArrayList<String>())
+        minutes = resources.getStringArray(R.array.dropdown_minute_second)
+            .toCollection(ArrayList<String>())
+        seconds = resources.getStringArray(R.array.dropdown_minute_second)
+            .toCollection(ArrayList<String>())
 
         binding.challengeTimerHourTv.setOnClickListener { // 시간
             showDropdown(hours, binding.challengeTimerHourTv, 0)
