@@ -13,25 +13,22 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.planup.App
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.main.home.ui.HomeAlertFragment
+import com.example.planup.main.home.ui.TimerFragment
 import com.example.planup.main.record.adapter.NotificationAdapter
 import com.example.planup.main.record.data.BadgeDTO
-import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 import kotlin.getValue
 import com.example.planup.main.record.ui.viewmodel.RecordViewModel
 import com.example.planup.network.ApiResult
+import java.time.LocalDate
 
 @AndroidEntryPoint
-class RecordFragment @Inject constructor() :  Fragment() {
+class RecordFragment :  Fragment() {
 
     private lateinit var binding: FragmentRecordBinding
     private val viewModel: RecordViewModel by viewModels()
@@ -59,9 +56,14 @@ class RecordFragment @Inject constructor() :  Fragment() {
 
     /** 드롭 다운 설정 **/
     private fun setUpDropdownList(){
+        // ✅ 초기 선택값 세팅
+        val today = LocalDate.now()
+        binding.textSelectedMonth.text = "${today.monthValue}월"
+        binding.textSelectedYear.text = "${today.year}년"
+
         setupDropdown(
             targetView = binding.textSelectedMonth,
-            items = listOf("월", "1","2","3","4","5","6","7","8","9","10","11","12"),
+            items = listOf("1","2","3","4","5","6","7","8","9","10","11","12"),
             popupLayoutRes = R.layout.popup_month_dropdown,
             listViewId = R.id.listViewMonths,
             itemLayoutRes = R.layout.item_dropdown_month
@@ -69,7 +71,7 @@ class RecordFragment @Inject constructor() :  Fragment() {
 
         setupDropdown(
             targetView = binding.textSelectedYear,
-            items = listOf("연도", "2025","2024","2023","2022","2021","2020"),
+            items = listOf("2026","2025","2024","2023","2022","2021","2020"),
             popupLayoutRes = R.layout.popup_year_dropdown,
             listViewId = R.id.listViewYears,
             itemLayoutRes = R.layout.item_dropdown_year
@@ -88,22 +90,6 @@ class RecordFragment @Inject constructor() :  Fragment() {
             adapter = notificationAdapter
             isNestedScrollingEnabled = false
         }
-    }
-
-    /** 인증 헤더 생성 (userInfo > App.jwt.token 순서) */
-    private fun buildAuthHeader(): String? {
-        val prefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val prefToken = prefs.getString("accessToken", null)
-        val appToken = App.jwt.token
-        val raw = when {
-            !prefToken.isNullOrBlank() -> prefToken
-            !appToken.isNullOrBlank() -> appToken
-            else -> null
-        } ?: return null
-        // 민감정보 노출 방지: 앞 12자리만 로그
-        val safe = raw.take(12)
-        Log.d(TAG, "buildAuthHeader(): tokenPresent=${raw.isNotBlank()} prefix=$safe..., len=${raw.length}")
-        return if (raw.startsWith("Bearer ", true)) raw else "Bearer $raw"
     }
 
     /** 주간 페이지 데이터(응원 문구, 배지, 알림) 조회 */
@@ -171,8 +157,13 @@ class RecordFragment @Inject constructor() :  Fragment() {
 
     /** 클릭 리스너 설정 */
     private fun setClickListeners() {
-        setFragmentClick(binding.btnBadgeRecords, RecordBadgesFragment())
-
+        binding.btnBadgeRecords.setOnClickListener {
+            val fragment = RecordBadgesFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_container, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
         binding.btnWeeklyReport1.setOnClickListener { openWeeklyReport(1) }
         binding.btnWeeklyReport2.setOnClickListener { openWeeklyReport(2) }
         binding.btnWeeklyReport3.setOnClickListener { openWeeklyReport(3) }
@@ -185,11 +176,11 @@ class RecordFragment @Inject constructor() :  Fragment() {
     /** 선택된 연도/월 파싱 */
     private fun parseSelectedYear(): Int {
         val raw = binding.textSelectedYear.text?.toString().orEmpty()
-        return raw.filter { it.isDigit() }.toIntOrNull() ?: java.time.LocalDate.now().year
+        return raw.filter { it.isDigit() }.toIntOrNull() ?: LocalDate.now().year
     }
     private fun parseSelectedMonth(): Int {
         val raw = binding.textSelectedMonth.text?.toString().orEmpty()
-        return raw.filter { it.isDigit() }.toIntOrNull() ?: java.time.LocalDate.now().monthValue
+        return raw.filter { it.isDigit() }.toIntOrNull() ?: LocalDate.now().monthValue
     }
 
     /** 지정한 주차의 리포트 화면으로 이동 */

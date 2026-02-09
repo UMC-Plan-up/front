@@ -4,20 +4,34 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import androidx.activity.OnBackPressedCallback
+import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.planup.R
 import com.example.planup.databinding.FragmentRecordWithFriendsBinding
+import com.example.planup.main.home.item.CustomCombinedChartRenderer
+import com.example.planup.main.home.ui.FriendGoalDetailFragment
+import com.example.planup.main.record.adapter.CompareFriend
+import com.example.planup.main.record.adapter.CompareFriendAdapter
 import com.example.planup.main.record.adapter.PhotoAdapter
+import com.example.planup.main.record.data.DailyAchievementRateDto
+import com.example.planup.main.record.data.ReportUserDto
+import com.example.planup.main.record.data.ThreeWeekAchievementRateDto
+import com.example.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-class RecordWithFriendsFragment : Fragment() {
+@AndroidEntryPoint
+class RecordWithFriendsFragment @Inject constructor(): Fragment() {
     lateinit var binding: FragmentRecordWithFriendsBinding
     private lateinit var photoAdapter: PhotoAdapter
+    private val viewModel: RecordGoalReportViewModel by viewModels()
 
     companion object {
         private const val ARG_GOAL_ID = "arg_goal_id"
@@ -45,9 +59,10 @@ class RecordWithFriendsFragment : Fragment() {
             R.drawable.img_sample1, R.drawable.img_sample2, R.drawable.img_sample3,
             R.drawable.img_sample4, R.drawable.img_sample5, R.drawable.img_sample6
         )
+        val images = viewModel.photos.value.map { it.photoImg }
         binding.photoGridrv.apply {
             layoutManager = GridLayoutManager(requireContext(), 4)
-            adapter = PhotoAdapter(sampleImages)
+            adapter = PhotoAdapter(images)
             val spacing = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
@@ -62,12 +77,38 @@ class RecordWithFriendsFragment : Fragment() {
             })
         }
 
+        //친구 비교
+        val compareAdapter = CompareFriendAdapter()
+        binding.compareFriendRv.adapter = compareAdapter
+        val sampleCompareFriends = listOf(
+            CompareFriend(
+                R.drawable.img_friend_profile_sample1,
+                "친구1",
+                70
+            ),
+            CompareFriend(
+                R.drawable.img_friend_profile_sample2,
+                "친구2",
+                85
+            ),
+            CompareFriend(
+                R.drawable.img_friend_profile_sample3,
+                "친구3",
+                60
+            )
+        )
+        val reportUsers = viewModel.reportUsers.value
+        val compareFriends = toCompareFriend(reportUsers)
+        compareAdapter.submitList(sampleCompareFriends)
+
         // 단순 바차트(요일)
         val barChart = binding.barChart
-        val entries = listOf(
+        val sampleEntries = listOf(
             BarEntry(0f, 2f), BarEntry(1f, 6f), BarEntry(2f, 5f), BarEntry(3f, 7f),
             BarEntry(4f, 1f), BarEntry(5f, 4f), BarEntry(6f, 5f), BarEntry(7f, 5f)
         )
+        val dailyAchievementRate = viewModel.dailyAchievementRate.value
+        val entries = toBarEntry(dailyAchievementRate)
         barChart.apply {
             data = BarData(BarDataSet(entries, "요일별 기록").apply {
                 color = Color.parseColor("#508CFF")
@@ -92,73 +133,11 @@ class RecordWithFriendsFragment : Fragment() {
         }
 
         // CombinedChart (라운드+그라데이션 막대 + 연노랑 라인)
-        val labels = listOf("4월 4주차", "4월 5주차", "이번 주")
-        val barValues = listOf(5f, 80f, 25f)
-        val lineValues = listOf(5f, 80f, 25f)
-
-        val barEntries = barValues.mapIndexed { i, v -> BarEntry(i.toFloat(), v) }
-
-// ⬇️ 그라데이션 적용
-        val barDataSet = BarDataSet(barEntries, "").apply {
-            setGradientColor(
-                Color.parseColor("#AFC6FF"), // start
-                Color.parseColor("#3D63FF")  // end
-            )
-            valueTextColor = Color.parseColor("#3D63FF")
-            valueTextSize = 14f
-            valueFormatter = PercentFormatter()
-            setDrawValues(true)
-            highLightAlpha = 0
-        }
-        val barData2 = BarData(barDataSet).apply { barWidth = 0.6f }
-
-// 라인 그대로
-        val lineEntries = lineValues.mapIndexed { i, v -> Entry(i.toFloat(), v) }
-        val lineDataSet = LineDataSet(lineEntries, "").apply {
-            color = Color.parseColor("#FFE682")
-            circleRadius = 6f
-            setCircleColor(Color.parseColor("#FFE682"))
-            setDrawCircleHole(false)
-            lineWidth = 2f
-            valueTextSize = 0f
-            mode = LineDataSet.Mode.CUBIC_BEZIER
-            setDrawValues(false)
-        }
-        val lineData = LineData(lineDataSet)
-
-        val combinedData = CombinedData().apply {
-            setData(barData2)
-            setData(lineData)
-        }
-
-        binding.combinedChart.apply {
-            description.isEnabled = false
-            axisRight.isEnabled = false
-            axisLeft.apply {
-                axisMinimum = 0f
-                axisMaximum = 100f
-                textColor = Color.BLACK
-                textSize = 12f
-                granularity = 10f
-            }
-            xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                valueFormatter = IndexAxisValueFormatter(labels)
-                granularity = 1f
-                textSize = 14f
-                textColor = Color.BLACK
-                setDrawGridLines(false)
-                axisMinimum = -0.5f
-                axisMaximum = labels.size - 0.5f
-            }
-            legend.isEnabled = false
-            extraTopOffset = 20f
-            extraBottomOffset = 50f
-            data = combinedData
-            setScaleEnabled(false)
-            setPinchZoom(false)
-            invalidate()
-        }
+        val sampleCombinedEntries = ThreeWeekAchievementRateDto(
+            10, 80, 25
+        )
+        val combinedEntries = viewModel.threeWeekAchievementRate.value
+        setupCombinedChart(combinedEntries)
 
         // 뒤로가기 처리
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }
@@ -170,5 +149,101 @@ class RecordWithFriendsFragment : Fragment() {
         )
 
         return binding.root
+    }
+
+    fun toBarEntry(item: DailyAchievementRateDto): List<BarEntry> {
+        val entries = listOf(
+            BarEntry(0f, item.sun.toFloat()),
+            BarEntry(1f, item.mon.toFloat()),
+            BarEntry(2f, item.tue.toFloat()),
+            BarEntry(3f, item.wed.toFloat()),
+            BarEntry(4f, item.thu.toFloat()),
+            BarEntry(5f, item.fri.toFloat()),
+            BarEntry(6f, item.sat.toFloat())
+        )
+        return entries
+    }
+
+    fun toCompareFriend(item: List<ReportUserDto>): List<CompareFriend> {
+        val compareFriend = item.map {
+            CompareFriend(
+                R.drawable.img_friend_profile_sample1,
+                it.userName,
+                it.rate
+            )
+        }
+        return compareFriend
+    }
+    private fun setupCombinedChart(temp: ThreeWeekAchievementRateDto) {
+        val labels = listOf("4월 4주차", "4월 5주차", "이번 주")
+        val entries = listOf(
+            BarEntry(0f, temp.twoWeekBefore.toFloat()),
+            BarEntry(1f, temp.oneWeekBefore.toFloat()),
+            BarEntry(2f, temp.thisWeek.toFloat())
+        )
+        val barEntries = entries
+
+        val lineEntries = entries
+
+        // Bar 데이터셋
+        val barDataSet = BarDataSet(barEntries, "달성률").apply {
+            color = "#548DFF".toColorInt()
+            valueTextSize = 14f
+            valueTextColor = "#5C91FC".toColorInt()
+            valueFormatter = PercentFormatter()
+        }
+
+        // Line 데이터셋
+        val lineDataSet = LineDataSet(lineEntries, "추이").apply {
+            color = Color.YELLOW
+            circleRadius = 5f
+            setCircleColor(Color.YELLOW)
+            lineWidth = 2f
+            mode = LineDataSet.Mode.LINEAR
+            setDrawValues(false)
+        }
+
+        val barData = BarData(barDataSet).apply {
+            barWidth = 0.4f
+        }
+        val lineData = LineData(lineDataSet)
+
+        val combinedData = CombinedData().apply {
+            setData(barData)
+            setData(lineData)
+        }
+        val chart = binding.combinedChart
+        chart.apply {
+            data = combinedData
+            description.isEnabled = false
+            legend.isEnabled = false
+
+            // X축
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = IndexAxisValueFormatter(labels)
+                granularity = 1f
+                setDrawGridLines(false)
+                axisLineColor = Color.GRAY
+
+                axisMinimum = -0.5f // ← 첫 번째 바 왼쪽 여유
+                axisMaximum = labels.size - 0.5f // ← 마지막 바 오른쪽 여유
+            }
+
+            // Y축
+            axisLeft.apply {
+                axisMinimum = 0f
+                axisMaximum = 100f
+                granularity = 25f            // 눈금 단위
+                setDrawGridLines(false)       // 그리드 라인 제거
+                setDrawAxisLine(true)         // 축선 표시
+                axisLineColor = Color.GRAY    // 축선 색상
+                axisLineWidth = 1f            // 축선 두께
+            }
+            axisRight.isEnabled = false      // 오른쪽 Y축 사용 안함
+
+            renderer = CustomCombinedChartRenderer(chart, chart.animator, chart.viewPortHandler)
+            invalidate()
+        }
     }
 }

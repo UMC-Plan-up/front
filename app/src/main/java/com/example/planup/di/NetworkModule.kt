@@ -7,6 +7,7 @@ import com.example.planup.network.FriendApi
 import com.example.planup.network.GoalApi
 import com.example.planup.network.NotificationApi
 import com.example.planup.network.ProfileApi
+import com.example.planup.network.RecordApi
 import com.example.planup.network.TermsApi
 import com.example.planup.network.UserApi
 import com.example.planup.network.interceptor.AuthInterceptor
@@ -130,5 +131,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): NotificationApi {
         return retrofit.create(NotificationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecordApi(
+        retrofit: Retrofit
+    ): RecordApi {
+        return retrofit.create(RecordApi::class.java)
     }
 }

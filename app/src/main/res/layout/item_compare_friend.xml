@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingVertical="10dp"
+    android:paddingHorizontal="16dp"
+    android:gravity="center_vertical">
+
+    <!-- 프로필 이미지 -->
+    <ImageView
+        android:id="@+id/friend_compare_profile_iv"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:src="@drawable/img_friend_profile_sample1"
+        android:background="@drawable/bg_circle"
+        android:scaleType="centerCrop" />
+
+    <!-- 이름 + 프로그레스 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingStart="12dp">
+
+        <TextView
+            android:id="@+id/friend_compare_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="친구1"
+            android:textSize="14sp"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/friend_compare_pb"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="6dp"
+            android:max="100"
+            android:progress="70"
+            android:progressDrawable="@drawable/progress_compare_friend" />
+    </LinearLayout>
+
+</LinearLayout>
