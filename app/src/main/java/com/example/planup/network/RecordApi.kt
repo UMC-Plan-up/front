@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.main.record.data.ApiResponseListInteger
 import com.example.planup.main.record.data.BadgeListResponse
 import com.example.planup.main.record.data.DetailWeeklyReportResponse
+import com.example.planup.main.record.data.WeeklyGoalReportResponse
 import com.example.planup.main.record.data.WeeklyReportResponse
 import com.example.planup.network.data.ChallengeFriends
 import com.example.planup.network.data.ChallengeInfo
@@ -53,4 +54,10 @@ interface RecordApi {
 
     @GET("/badges/list")
     suspend fun getBadgeList(): Response<BadgeListResponse>
+
+    @GET("/report/goal/{goalReportId}")
+    suspend fun getWeeklyGoalReport(
+        @Query("userId") userId: Int,
+        @Path("goalReportId") goalReportId: Int
+    ): Response<WeeklyGoalReportResponse>
 }
