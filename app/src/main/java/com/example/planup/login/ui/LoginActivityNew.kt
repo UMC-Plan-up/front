@@ -17,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -76,7 +77,8 @@ class LoginActivityNew : AppCompatActivity() {
                         is LoginViewModel.SnackBarEvent.ShowExistUserSnackBar -> {
                             snackBarHost.showSnackbar(
                                 message = getString(R.string.login_error_already_exist_account),
-                                withDismissAction = true
+                                withDismissAction = true,
+                                duration = SnackbarDuration.Indefinite
                             )
                         }
                     }
