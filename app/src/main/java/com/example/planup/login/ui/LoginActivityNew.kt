@@ -17,10 +17,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.planup.R
+import com.example.planup.component.snackbar.GraySnackbarHost
 import com.example.planup.databinding.ActivityLoginBinding
 import com.example.planup.main.MainActivity
 import com.example.planup.network.controller.UserController
@@ -61,6 +65,27 @@ class LoginActivityNew : AppCompatActivity() {
                 v.performClick()
             }
             true
+        }
+
+        binding.composeSnackbar.setContent {
+            val snackBarHost = remember { SnackbarHostState() }
+
+            LaunchedEffect(Unit) {
+                viewModel.snackBarEvent.collect { event ->
+                    when(event) {
+                        is LoginViewModel.SnackBarEvent.ShowExistUserSnackBar -> {
+                            snackBarHost.showSnackbar(
+                                message = getString(R.string.login_error_already_exist_account),
+                                withDismissAction = true
+                            )
+                        }
+                    }
+                }
+            }
+
+            GraySnackbarHost(
+                hostState = snackBarHost
+            )
         }
     }
 
@@ -112,7 +137,6 @@ class LoginActivityNew : AppCompatActivity() {
 
         // 카카오 로그인 버튼
         binding.kakaoLoginLayout.setOnClickListener {
-            // TODO:: 뷰모델로 로직 분리
             onClickKakaoLogin()
         }
     }

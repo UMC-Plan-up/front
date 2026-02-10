@@ -55,6 +55,7 @@
     <string name="signup">회원가입하기</string>
     <string name="hint_email">이메일을 입력하세요.</string>
     <string name="hint_password">비밀번호를 입력하세요.</string>
+    <string name="login_error_already_exist_account">이미 이메일로 가입된 계정이에요. 이메일 로그인 후 카카오 계정을 연동할 수 있어요.</string>
 
     <string name="signup_id_input">로그인에 사용할\n아이디를 입력해 주세요</string>
     <string name="signup_email">이메일 입력</string>
