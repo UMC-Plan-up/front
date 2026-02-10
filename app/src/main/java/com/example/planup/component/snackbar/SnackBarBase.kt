@@ -1,5 +1,8 @@
 package com.example.planup.component.snackbar
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Snackbar
@@ -9,7 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.planup.R
+import com.example.planup.theme.Accent3
 import com.example.planup.theme.Typography
 import com.example.planup.theme.fontColor
 
@@ -17,17 +23,31 @@ import com.example.planup.theme.fontColor
 internal fun SnackBarBase(
     hostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    snackbarColor : Color
+    snackbarColor : Color,
+    actionTextColor: Color = Accent3
 ) {
     SnackbarHost(
         modifier = modifier,
         hostState = hostState,
         snackbar = {
             Snackbar(
-                modifier = Modifier
-                    .padding(horizontal = 20.dp)
-                ,
+                modifier = Modifier,
                 containerColor = snackbarColor,
+                dismissAction = {
+                    Text(
+                        modifier = Modifier
+                            .padding(
+                                start = 8.dp,
+                                end = 20.dp
+                            )
+                            .clickable {
+                                it.dismiss()
+                            },
+                        text = stringResource(R.string.btn_close),
+                        style = Typography.Medium_SM,
+                        color = actionTextColor
+                    )
+                },
                 shape = RoundedCornerShape(6.dp),
             ) {
                 Text(
