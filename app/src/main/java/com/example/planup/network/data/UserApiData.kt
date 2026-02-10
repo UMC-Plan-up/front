@@ -127,11 +127,24 @@ data class SignupResult(
 data class KakaoLogin(
     @SerializedName("userStatus") val userStatus: UserStatus,
     @SerializedName("tempUserId") val tempUserId: String?,
-    @SerializedName("accessToken") val accessToken: String,
-    @SerializedName("refreshToken") val refreshToken: String,
-    @SerializedName("expiresIn") val expiresIn: Int,
-    @SerializedName("userInfo") val userInfo: UserInfo
-)
+    @SerializedName("accessToken") val accessToken: String?,
+    @SerializedName("refreshToken") val refreshToken: String?,
+    @SerializedName("expiresIn") val expiresIn: Int?,
+    @SerializedName("userInfo") val userInfo: KakaoUserInfo
+) {
+    // id 가 nullable 하게 올 수 있다는 것 인지
+    data class KakaoUserInfo(
+        @SerializedName("id") val id: Int?,
+        @SerializedName("email") val email: String?,
+        @SerializedName("name") val name: String?,
+        @SerializedName("nickname") val nickname: String?,
+        @SerializedName("birthDate") val birthDate: String?,
+        @SerializedName("gender") val gender: String?,
+        @SerializedName("profileImg") val profileImg: String?,
+        @SerializedName(value = "serviceNotificationAllow") var serviceNotification: Boolean,
+        @SerializedName(value = "marketingNotificationAllow") var marketingNotification: Boolean,
+    )
+}
 
 data class KakaoSignup(
     @SerializedName("userStatus") val userStatus: UserStatus,

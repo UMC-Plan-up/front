@@ -39,7 +39,7 @@ class UserInfoSaver(
 
     // 저장된 유저 정보가 없는지 확인
     val isEmpty
-        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMAGE)
+        get() = !prefs.contains(KEY_ID)
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
@@ -158,6 +158,7 @@ class UserInfoSaver(
         prefs.edit {
             remove(KEY_ID)
             remove(KEY_EMAIL)
+            remove(KEY_NAME)
             remove(KEY_NICKNAME)
             remove(KEY_BIRTH_DATE)
             remove(KEY_GENDER)

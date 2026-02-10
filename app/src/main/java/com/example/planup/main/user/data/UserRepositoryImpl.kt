@@ -90,6 +90,7 @@ class UserRepositoryImpl @Inject constructor(
             },
             onResponse = { response ->
                 if(response.isSuccess) {
+                    userInfoSaver.saveUserInfo(response.result.userInfo)
                     tokenSaver.saveToken(response.result.accessToken)
                     tokenSaver.saveRefreshToken(response.result.refreshToken)
                     ApiResult.Success(response.result)
@@ -250,7 +251,8 @@ class UserRepositoryImpl @Inject constructor(
                         tokenSaver.saveToken(result.accessToken)
 
                         userInfoSaver.clearAllUserInfo()
-                        getUserInfo()
+                        userInfoSaver.saveUserInfo(response.result.userInfo)
+
                     }
 
                     ApiResult.Success(result)
@@ -313,11 +315,7 @@ class UserRepositoryImpl @Inject constructor(
                     onResponse = { response ->
                         if (response.isSuccess) {
                             val result = response.result
-                            userInfoSaver.saveNickName(result.nickname ?: "")
-                            userInfoSaver.saveEmail(result.email ?: "")
-                            userInfoSaver.saveProfileImage(result.profileImg ?: "")
-                            userInfoSaver.saveNotificationService(result.serviceNotification ?: false)
-                            userInfoSaver.saveNotificationMarketing(result.marketingNotification)
+                            userInfoSaver.saveUserInfo(result)
 
                             ApiResult.Success(result)
                         } else {
@@ -327,7 +325,6 @@ class UserRepositoryImpl @Inject constructor(
                     }
                 )
             } else {
-                // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
                 ApiResult.Success(
                     userInfoSaver.toUserInfo()
                 )
@@ -507,7 +504,7 @@ class UserRepositoryImpl @Inject constructor(
 
                         // 유저 정보도 바로 업데이트
                         userInfoSaver.clearAllUserInfo()
-                        getUserInfo()
+                        userInfoSaver.saveUserInfo(result.userInfo)
 
                         ApiResult.Success(result)
                     } else {
@@ -604,6 +601,10 @@ class UserRepositoryImpl @Inject constructor(
 
                         ApiResult.Success(result)
                     } else {
+                        // 갱신 실패한 경우, 로그아웃 처리를 위한 정보 제거
+                        userInfoSaver.clearAllUserInfo()
+                        tokenSaver.clearTokens()
+
                         ApiResult.Fail(response.message)
                     }
                 }
