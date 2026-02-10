@@ -101,6 +101,23 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun validateToken(): ApiResult<Boolean> = withContext(Dispatchers.IO) {
+        safeResult(
+            response = {
+                userApi.validateToken()
+            },
+            onResponse = { response ->
+                if(response.isSuccess) {
+                    ApiResult.Success(response.result)
+                } else {
+                    userInfoSaver.clearAllUserInfo()
+                    tokenSaver.clearTokens()
+                    ApiResult.Fail(response.message)
+                }
+            }
+        )
+    }
+
     override suspend fun getInviteCode(): String {
         val inviteCode = userInfoSaver.getInviteCode()
         if (inviteCode.isNullOrEmpty()) {
