@@ -161,4 +161,29 @@ class GoalRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun getGoalLevel(): ApiResult<String> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getGoalLevel()
+                },
+                onResponse = { response ->
+                    Log.d(
+                        "GoalFragment",
+                        "getGoalLevel body=${response} code=${response.code}"
+                    )
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result.userLevel)
+                    } else {
+                        Log.d(
+                            "GoalFragment",
+                            "getGoalLevel fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+
+                }
+            )
+        }
 }

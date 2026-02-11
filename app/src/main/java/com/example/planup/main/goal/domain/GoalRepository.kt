@@ -22,4 +22,5 @@ interface GoalRepository {
     ): ApiResult<GoalResult>
     suspend fun getGoalDetail(goalId: Int): ApiResult<EditGoalResponse>
     suspend fun joinGoal(goalId: Int): ApiResult<GoalJoinResult>
+    suspend fun getGoalLevel(): ApiResult<String>
 }

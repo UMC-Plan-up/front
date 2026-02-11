@@ -1,28 +1,29 @@
-package com.planup.planup.network
+package com.example.planup.network
 
-import com.planup.planup.goal.data.GoalCreateRequest
-import com.planup.planup.goal.data.GoalCreateResponse
-import com.planup.planup.goal.data.GoalListResponseDto
-import com.planup.planup.main.goal.data.GoalEditResponse
-import com.planup.planup.main.goal.item.ApiResponseListMyGoalListDto
-import com.planup.planup.main.goal.item.CreateCommentRequest
-import com.planup.planup.main.goal.item.CreateCommentResponse
-import com.planup.planup.main.goal.item.DailyAchievementResponse
-import com.planup.planup.main.goal.item.DailyGoalResponse
-import com.planup.planup.main.goal.item.DateMemoResponse
-import com.planup.planup.main.goal.item.EditGoalApiResponse
-import com.planup.planup.main.goal.item.EditGoalRequest
-import com.planup.planup.main.goal.item.FriendGoalAchievementResponse
-import com.planup.planup.main.goal.item.FriendGoalListResponse
-import com.planup.planup.main.goal.item.FriendPhotosResponse
-import com.planup.planup.main.goal.item.FriendsTimerResponse
-import com.planup.planup.main.goal.item.GetCommentsResponse
-import com.planup.planup.main.goal.item.GoalDetailResponse
-import com.planup.planup.main.goal.item.GoalPhotosResponse
-import com.planup.planup.main.goal.item.MemoRequest
-import com.planup.planup.main.goal.item.MyGoalListResponse
-import com.planup.planup.main.goal.item.PostMemoResponse
-import com.planup.planup.main.goal.item.TotalAchievementResponse
+import com.example.planup.goal.data.GoalCreateRequest
+import com.example.planup.goal.data.GoalCreateResponse
+import com.example.planup.goal.data.GoalListResponseDto
+import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
+import com.example.planup.main.goal.item.CreateCommentRequest
+import com.example.planup.main.goal.item.CreateCommentResponse
+import com.example.planup.main.goal.item.DailyAchievementResponse
+import com.example.planup.main.goal.item.DailyGoalResponse
+import com.example.planup.main.goal.item.DateMemoResponse
+import com.example.planup.main.goal.item.EditGoalApiResponse
+import com.example.planup.main.goal.item.EditGoalRequest
+import com.example.planup.main.goal.item.FriendGoalAchievementResponse
+import com.example.planup.main.goal.item.FriendGoalListResponse
+import com.example.planup.main.goal.item.FriendPhotosResponse
+import com.example.planup.main.goal.item.FriendsTimerResponse
+import com.example.planup.main.goal.item.GetCommentsResponse
+import com.example.planup.main.goal.item.GoalCreateLevelResponse
+import com.example.planup.main.goal.item.GoalDetailResponse
+import com.example.planup.main.goal.item.GoalPhotosResponse
+import com.example.planup.main.goal.item.MemoRequest
+import com.example.planup.main.goal.item.MyGoalListResponse
+import com.example.planup.main.goal.item.PostMemoResponse
+import com.example.planup.main.goal.item.TotalAchievementResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -171,4 +172,7 @@ interface GoalApi {
     suspend fun joinGoal(
         @Path("goalId") goalId: Int
     ): Response<GoalJoinResponseDto>
+
+    @GET("/goals/level")
+    suspend fun getGoalLevel(): Response<GoalCreateLevelResponse>
 }

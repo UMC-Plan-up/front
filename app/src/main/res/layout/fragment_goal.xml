@@ -201,12 +201,14 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/lockTitle"
                             style="@style/Typography_SM_Semibold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="4번째 목표를 입력하세요" />
 
                         <TextView
+                            android:id="@+id/lockDescription"
                             style="@style/Typography_S_Medium"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
