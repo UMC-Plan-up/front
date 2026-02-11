@@ -14,10 +14,15 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.example.planup.R
 import com.example.planup.databinding.FragmentEditGoalCategoryBinding
+import com.example.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.forEach
 
+@AndroidEntryPoint
 class EditGoalCategoryFragment : Fragment() {
     private var _binding: FragmentEditGoalCategoryBinding? = null
     private val binding get() = _binding!!
@@ -29,6 +34,8 @@ class EditGoalCategoryFragment : Fragment() {
     private var isCustomMode = false
     private lateinit var edittext: EditText
     private lateinit var nextbtn: Button
+
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,24 +92,24 @@ class EditGoalCategoryFragment : Fragment() {
                 binding.editCategoryGuideText1.visibility = View.VISIBLE
                 return@setOnClickListener
             }
-
-
             val selectedCategoryCode = if (isCustomMode) {
                 edittext.text.toString()
             } else {
                 getCategoryCode(selectedCategory!!.id)
             }
+            viewModel.setGoalData(
+                viewModel.goalData.copy(
+                    goalCategory = selectedCategoryCode
+                )
+            )
 
-            val titlefragment = EditGoalTitleFragment()
+
+            val titleFragment = EditGoalTitleFragment()
             val goalId = arguments?.getInt("goalId") ?: 0
             Log.d("EditGoalCategoryFragment", "goalId: $goalId")
-            titlefragment.arguments = Bundle().apply {
-                putString("selectedCategory", selectedCategoryCode)
-                putInt("goalId", goalId)
-            }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, titlefragment)
+                .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -116,6 +123,14 @@ class EditGoalCategoryFragment : Fragment() {
             }
             view.performClick()
             false
+        }
+
+        if (viewModel.editGoalData != null) {
+            val layout = binding.root.findViewById<LinearLayout>(
+                getCategoryString(viewModel.editGoalData!!.goalCategory)
+            )
+            if (layout != null)
+                handleCategorySelection(layout)
         }
     }
 
@@ -176,6 +191,21 @@ class EditGoalCategoryFragment : Fragment() {
             R.id.edit_category_DiaryLayout -> "DIARY"
             R.id.edit_category_CustomLayout -> "SELF"
             else -> "SELF"
+        }
+    }
+
+    private fun getCategoryString(category: String): Int {
+        return when (category) {
+            "STUDYING" -> R.id.edit_category_StudyLayout
+            "READING" ->  R.id.edit_category_ReadingLayout
+            "DIGITAL_DETOX" -> R.id.edit_category_DigitalDetoxLayout
+            "MEDITATION" ->  R.id.edit_category_MeditationLayout
+            "SLEEP_PATTERN" ->  R.id.edit_category_SleepLayout
+            "MUSIC"->  R.id.edit_category_InstrumentLayout
+            "EXERCISE" ->R.id.edit_category_ExerciseLayout
+            "DIARY" -> R.id.edit_category_DiaryLayout
+            "SELF" ->  R.id.edit_category_CustomLayout
+            else -> R.id.edit_category_StudyLayout
         }
     }
 

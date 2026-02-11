@@ -41,12 +41,13 @@ class GoalInputFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resetGoalDataTrueCategory()
-        viewModel.goalData.copy(
-            goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자",
-            goalType = goalType((requireActivity() as GoalActivity).isFriendTab),
-            goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
+        viewModel.setGoalData(
+            viewModel.goalData.copy(
+                goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자",
+                goalType = goalType((requireActivity() as GoalActivity).isFriendTab),
+                goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
+            )
         )
-
     }
 
     override fun onCreateView(
