@@ -1,5 +1,6 @@
 package com.example.planup.main.goal.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -37,13 +38,21 @@ class GoalViewModel @Inject constructor(
     private val friendListRepository: FriendGoalListRepository,
 ) : ViewModel() {
     var fromWhere = MutableLiveData<String>()
+
+    private var _isCreateGoal = MutableStateFlow(false)
+    val isCreateGoal: StateFlow<Boolean>
+        get() = _isCreateGoal.asStateFlow()
+    private var _isGoalLevel = MutableStateFlow(10)
+    val isGoalLevel: Int
+        get() = _isGoalLevel.value
+
     private var _targetUserId = MutableLiveData(-1)
     val targetUserId: MutableLiveData<Int>
         get() = _targetUserId
 
-    private var _userName = MutableLiveData("사용자")
+    private var _userName = MutableStateFlow("사용자")
     val userName: String
-        get() = _userName.value ?: "사용자"
+        get() = _userName.value
 
     fun setUserName(nickname: String) {
         _userName.value = nickname
@@ -67,8 +76,8 @@ class GoalViewModel @Inject constructor(
     val goalData: TmpGoalData
         get() = _goalData.value ?: TmpGoalData()
 
-    fun setGoalData(){
-
+    fun setGoalData(goalData: TmpGoalData){
+        _goalData.value = goalData
     }
     private var _friendNickname = MutableLiveData<String>()
     val friendNickname: String
@@ -83,6 +92,10 @@ class GoalViewModel @Inject constructor(
      */
     private val _goalState = MutableStateFlow<List<GoalItem>>(emptyList())
     val goalState = _goalState.asStateFlow()
+
+    fun setGoalState(goalState: List<GoalItem>){
+        _goalState.value = goalState
+    }
 
     fun setTargetUserId(userId: Int) {
         _targetUserId.value = userId
@@ -102,7 +115,9 @@ class GoalViewModel @Inject constructor(
 
     fun fetchMyGoals() = viewModelScope.launch {
         goalRepository.fetchMyGoals()
-            .onSuccess { res -> _goalState.value = res.toGoalItems() }
+            .onSuccess { res ->
+                _goalState.value = res.toGoalItems()
+            }
             .onFailWithMessage {
                 _failMessage.emit(it)
             }
@@ -153,11 +168,7 @@ class GoalViewModel @Inject constructor(
         viewModelScope.launch {
             if (targetUserId.value>0){
                 friendAction()
-                loadFriendGoals(targetUserId.value) {
-                    if (it is ApiResult.Success) {
-                        _goalState.value = it.data
-                    }
-                }
+
             }else{
                 action()
             }
@@ -247,4 +258,19 @@ class GoalViewModel @Inject constructor(
         }
 
     }
+
+    fun getGoalLevel(action: (Int) -> Unit) = viewModelScope.launch {
+        goalRepository.getGoalLevel()
+            .onSuccess {
+                _isGoalLevel.value = it.split("_")[1].toInt()
+                Log.d("getGoalLevel","_goalState : ${_goalState.value.size}")
+                _isCreateGoal.value = _goalState.value.size >= _isGoalLevel.value
+                action(_isGoalLevel.value)
+            }
+            .onFailWithMessage {
+                Log.d("getGoalLevel","error : $it")
+                _failMessage.emit(it)
+            }
+    }
+
 }

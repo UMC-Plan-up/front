@@ -18,6 +18,7 @@ import com.example.planup.main.goal.item.FriendGoalListResponse
 import com.example.planup.main.goal.item.FriendPhotosResponse
 import com.example.planup.main.goal.item.FriendsTimerResponse
 import com.example.planup.main.goal.item.GetCommentsResponse
+import com.example.planup.main.goal.item.GoalCreateLevelResponse
 import com.example.planup.main.goal.item.GoalDetailResponse
 import com.example.planup.main.goal.item.GoalPhotosResponse
 import com.example.planup.main.goal.item.MemoRequest
@@ -172,4 +173,7 @@ interface GoalApi {
     suspend fun joinGoal(
         @Path("goalId") goalId: Int
     ): Response<GoalJoinResponseDto>
+
+    @GET("/goals/level")
+    suspend fun getGoalLevel(): Response<GoalCreateLevelResponse>
 }
