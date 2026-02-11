@@ -138,11 +138,12 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
         )
         val rankData = viewModel.reportUsers.value
-        val rankAdapter = RankAdapter(rankData)
-        binding.rankRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = rankAdapter
-        }
+        // TODO:: 한준님이 원복
+//        val rankAdapter = RankAdapter(rankData)
+//        binding.rankRecyclerView.apply {
+//            layoutManager = LinearLayoutManager(requireContext())
+//            adapter = rankAdapter
+//        }
 
         // 뒤로가기 처리
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }

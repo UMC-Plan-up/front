@@ -101,7 +101,7 @@ class RecordWeeklyReportViewModel @Inject constructor(
             reportRepository.getUserInfo()
                 .onSuccess { result ->
                     _userId.value = result.id
-                    _nickname.value = result.nickname
+                    _nickname.value = result.nickname ?: ""
                 }
                 .onFailWithMessage { message ->
                     Log.d("loadUserInfo", "Fail: $message")
