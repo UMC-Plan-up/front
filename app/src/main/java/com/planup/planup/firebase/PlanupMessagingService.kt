@@ -1,4 +1,4 @@
-package com.planup.planup.network.firebase
+package com.planup.planup.firebase
 
 import android.Manifest
 import android.app.NotificationChannel
