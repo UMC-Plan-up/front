@@ -8,6 +8,7 @@ import javax.inject.Inject
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.UserApi
+import okhttp3.Dispatcher
 
 class RecordGoalReportRepository @Inject constructor(
     private val recordApi: RecordApi,
@@ -36,6 +37,22 @@ class RecordGoalReportRepository @Inject constructor(
             safeResult(
                 response = {
                     goalApi.getGoalPhotos(goalId)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun loadRankingList(goalId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    recordApi.getRankingData(goalId)
                 },
                 onResponse = {
                     if(it.isSuccess) {
