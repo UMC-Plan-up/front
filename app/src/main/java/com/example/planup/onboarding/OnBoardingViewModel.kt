@@ -10,12 +10,14 @@ import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess
 import com.example.planup.network.repository.ProfileRepository
 import com.example.planup.network.repository.TermRepository
+import com.example.planup.onboarding.OnBoardingViewModel.Event.*
 import com.example.planup.onboarding.model.GenderModel
 import com.example.planup.onboarding.model.OnboardingStep
 import com.example.planup.onboarding.model.SignupTypeModel
+import com.example.planup.onboarding.model.SignupTypeModel.*
 import com.example.planup.onboarding.model.TermModel
 import com.example.planup.signup.data.Agreement
-import com.example.planup.signup.data.UserStatus
+import com.example.planup.network.data.UserStatus
 import com.example.planup.util.ImageResizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -273,27 +275,37 @@ class OnBoardingViewModel @Inject constructor(
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
                     when(it.userStatus) {
-                        UserStatus.NEW -> {
-                            updateSignupType(SignupTypeModel.Kakao(
-                                tempUserId = it.tempUserId!!,
-                                email = email
-                            ))
+                        UserStatus.SIGNUP_REQUIRED -> {
+                            updateSignupType(
+                                Kakao(
+                                    tempUserId = it.tempUserId!!,
+                                    email = email
+                                )
+                            )
                             _event.send(Event.SuccessKakaoVerification)
                             _state.update { it.copy(email = email) }
                         }
-                        UserStatus.EXISTING_EMAIL -> {
+                        UserStatus.ACCOUNT_CONFLICT -> {
                             // 일반 회원인 경우도 모달 띄우기
-                            _event.send(Event.AlreadyExistUser(
-                                email = email,
-                                isKakaoUser = false
-                            ))
+                            _event.send(
+                                AlreadyExistUser(
+                                    email = email,
+                                    isKakaoUser = false
+                                )
+                            )
                         }
-                        UserStatus.EXISTING_KAKAO ->  {
-                            // 카카오인 경우도 모달 띄우기
-                            _event.send(Event.AlreadyExistUser(
-                                email = email,
-                                isKakaoUser = true
-                            ))
+
+                        UserStatus.LOGIN_SUCCESS -> {
+                            // 카카오 로그인이 성공한 경우 (기존 계정이 존재하는 경우)
+                            _event.send(
+                                AlreadyExistUser(
+                                    email = email,
+                                    isKakaoUser = true
+                                )
+                            )
+                        }
+                        UserStatus.SIGNUP_SUCCESS -> {
+                            // 해당 없음
                         }
                     }
                 }

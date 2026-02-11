@@ -32,6 +32,7 @@ import com.bumptech.glide.Glide
 import com.example.planup.App
 import com.example.planup.signup.data.*
 
+@Deprecated("OnBoardingActivity 대체")
 class ProfileSetupFragment : Fragment() {
 
     private var _binding: FragmentProfileSetupBinding? = null
@@ -146,7 +147,7 @@ class ProfileSetupFragment : Fragment() {
 
                 saveProfileData(nickname)
 
-                completeSignup()
+//                completeSignup()
             }
         }
 
@@ -207,101 +208,101 @@ class ProfileSetupFragment : Fragment() {
         fetchRandomNickname()
     }
 
-    private fun completeSignup() {
-        val activity = requireActivity() as SignupActivity
-        val isKakaoSignup = !activity.tempUserId.isNullOrBlank()
-
-        lifecycleScope.launch {
-            try {
-                if (isKakaoSignup) {
-                    // TODO:: 제거
-                    val tempUserId = activity.tempUserId ?: return@launch
-                    val request = KakaoCompleteRequest(
-                        tempUserId = tempUserId,
-                        nickname = activity.nickname ?: "",
-                        profileImg = activity.profileImgUrl,
-
-                        agreements = activity.agreements?.map {
-                            Agreement(it.termsId, it.isAgreed)
-                        } ?: emptyList(),
-                        name = "",
-                        gender = "",
-                        birthDate = ""
-                    )
-
-                    val response = RetrofitInstance.userApi.kakaoComplete(request)
-                    val ok = response.isSuccessful
-                    val body = response.body()
-                    val err = response.errorBody()?.string()
-
-                    if (ok && body?.isSuccess == true) {
-                        val result = body.result
-                        val accessToken = result.accessToken
-
-                        if (accessToken != null) {
-                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
-                            prefs.edit().apply {
-                                putString("accessToken", accessToken)
-                                putLong("userId", result.id.toLong())
-                                putString("email", result.email)
-                                putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
-                                putString("profileImg", result.userInfo?.profileImg ?: activity.profileImgUrl ?: "")
-                            }.apply()
-
-                            App.jwt.token = "Bearer $accessToken"
-                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                    }
-                } else {
-                    val restoredEmail = activity.email ?: SignUpDraftStore.loadEmail(requireContext())
-                    val restoredPw = activity.password ?: SignUpDraftStore.loadPw(requireContext())
-
-                    val request = SignupRequestDto(
-                        email = restoredEmail ?: "",
-                        password = restoredPw ?: "",
-                        passwordCheck = restoredPw ?: "",
-                        nickname = activity.nickname ?: "",
-                        profileImg = activity.profileImgUrl ?: "",
-                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) }
-                            ?: emptyList(),
-                        gender = "",
-                        name = "",
-                        birthDate = ""
-                    )
-
-                    val response = RetrofitInstance.userApi.signup(request)
-                    val ok = response.isSuccessful
-                    val body = response.body()
-                    val err = response.errorBody()?.string()
-
-                    if (ok && body?.isSuccess == true) {
-                        val result = body.result
-                        val accessToken = result?.accessToken
-
-                        if (accessToken != null) {
-                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
-                            prefs.edit().apply {
-                                putString("accessToken", accessToken)
-                                putLong("userId", result.id.toLong())
-                                putString("email", result.email)
-                                putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
-                            }.apply()
-
-                            App.jwt.token = "Bearer $accessToken"
-                            SignUpDraftStore.clear(requireContext())
-                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
-                        }
-                    } else {
-                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+//    private fun completeSignup() {
+//        val activity = requireActivity() as SignupActivity
+//        val isKakaoSignup = !activity.tempUserId.isNullOrBlank()
+//
+//        lifecycleScope.launch {
+//            try {
+//                if (isKakaoSignup) {
+//                    // TODO:: 제거
+//                    val tempUserId = activity.tempUserId ?: return@launch
+//                    val request = KakaoCompleteRequest(
+//                        tempUserId = tempUserId,
+//                        nickname = activity.nickname ?: "",
+//                        profileImg = activity.profileImgUrl,
+//
+//                        agreements = activity.agreements?.map {
+//                            Agreement(it.termsId, it.isAgreed)
+//                        } ?: emptyList(),
+//                        name = "",
+//                        gender = "",
+//                        birthDate = ""
+//                    )
+//
+//                    val response = RetrofitInstance.userApi.kakaoComplete(request)
+//                    val ok = response.isSuccessful
+//                    val body = response.body()
+//                    val err = response.errorBody()?.string()
+//
+//                    if (ok && body?.isSuccess == true) {
+//                        val result = body.result
+//                        val accessToken = result.accessToken
+//
+//                        if (accessToken != null) {
+//                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
+//                            prefs.edit().apply {
+//                                putString("accessToken", accessToken)
+//                                putLong("userId", result.id.toLong())
+//                                putString("email", result.email)
+//                                putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
+//                                putString("profileImg", result.userInfo?.profileImg ?: activity.profileImgUrl ?: "")
+//                            }.apply()
+//
+//                            App.jwt.token = "Bearer $accessToken"
+//                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
+//                        }
+//                    } else {
+//                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
+//                    }
+//                } else {
+//                    val restoredEmail = activity.email ?: SignUpDraftStore.loadEmail(requireContext())
+//                    val restoredPw = activity.password ?: SignUpDraftStore.loadPw(requireContext())
+//
+//                    val request = SignupRequestDto(
+//                        email = restoredEmail ?: "",
+//                        password = restoredPw ?: "",
+//                        passwordCheck = restoredPw ?: "",
+//                        nickname = activity.nickname ?: "",
+//                        profileImg = activity.profileImgUrl ?: "",
+//                        agreements = activity.agreements?.map { Agreement(it.termsId, it.isAgreed) }
+//                            ?: emptyList(),
+//                        gender = "",
+//                        name = "",
+//                        birthDate = ""
+//                    )
+//
+//                    val response = RetrofitInstance.userApi.signup(request)
+//                    val ok = response.isSuccessful
+//                    val body = response.body()
+//                    val err = response.errorBody()?.string()
+//
+//                    if (ok && body?.isSuccess == true) {
+//                        val result = body.result
+//                        val accessToken = result?.accessToken
+//
+//                        if (accessToken != null) {
+//                            val prefs = requireActivity().getSharedPreferences("userInfo", AppCompatActivity.MODE_PRIVATE)
+//                            prefs.edit().apply {
+//                                putString("accessToken", accessToken)
+//                                putLong("userId", result.id.toLong())
+//                                putString("email", result.email)
+//                                putString("nickname", result.userInfo?.nickname ?: activity.nickname ?: "")
+//                            }.apply()
+//
+//                            App.jwt.token = "Bearer $accessToken"
+//                            SignUpDraftStore.clear(requireContext())
+//                            (requireActivity() as SignupActivity).navigateToFragment(InviteCodeFragment())
+//                        }
+//                    } else {
+//                        Toast.makeText(requireContext(), body?.message ?: "회원가입 실패", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                Toast.makeText(requireContext(), "네트워크 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
     private fun setNextButtonEnabled(enabled: Boolean) {
         binding.nextButton.isEnabled = enabled

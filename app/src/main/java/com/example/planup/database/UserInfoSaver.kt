@@ -3,6 +3,7 @@ package com.example.planup.database
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import androidx.core.content.edit
+import com.example.planup.network.data.UserInfo
 
 /**
  * 사용자 정보 관련 저장
@@ -13,10 +14,14 @@ class UserInfoSaver(
     companion object {
         private const val PREF_TOKEN_NAME = "userInfo"
 
-        private const val KEY_NICKNAME = "nickname"
-        private const val KEY_INVITE_CODE = "invite"
+        private const val KEY_ID = "id"
         private const val KEY_EMAIL = "email"
+        private const val KEY_NAME = "name"
+        private const val KEY_NICKNAME = "nickname"
+        private const val KEY_BIRTH_DATE = "birthDate"
+        private const val KEY_GENDER = "gender"
         private const val KEY_PROFILE_IMAGE = "profileImg"
+        private const val KEY_INVITE_CODE = "invite"
 
 
         /**
@@ -34,7 +39,7 @@ class UserInfoSaver(
 
     // 저장된 유저 정보가 없는지 확인
     val isEmpty
-        get() = !prefs.contains(KEY_EMAIL) && !prefs.contains(KEY_NICKNAME) && !prefs.contains(KEY_PROFILE_IMAGE)
+        get() = !prefs.contains(KEY_ID)
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
@@ -151,13 +156,45 @@ class UserInfoSaver(
      */
     fun clearAllUserInfo() {
         prefs.edit {
-            remove(KEY_NICKNAME)
-            remove(KEY_INVITE_CODE)
+            remove(KEY_ID)
             remove(KEY_EMAIL)
+            remove(KEY_NAME)
+            remove(KEY_NICKNAME)
+            remove(KEY_BIRTH_DATE)
+            remove(KEY_GENDER)
+            remove(KEY_INVITE_CODE)
             remove(KEY_PROFILE_IMAGE)
             remove(KEY_NOTIFICATION_SERVICE)
             remove(KEY_NOTIFICATION_MARKETING)
         }
     }
 
+    fun saveUserInfo(
+        userInfo: UserInfo
+    ) {
+        prefs.edit {
+            userInfo.id?.let { putInt(KEY_ID, it) }
+            userInfo.email?.let { putString(KEY_EMAIL, it) }
+            userInfo.name?.let { putString(KEY_NAME, it) }
+            userInfo.nickname?.let { putString(KEY_NICKNAME, it) }
+            userInfo.birthDate?.let { putString(KEY_BIRTH_DATE, it) }
+            userInfo.gender?.let { putString(KEY_GENDER, it) }
+            userInfo.profileImg?.let { putString(KEY_PROFILE_IMAGE, it) }
+            userInfo.serviceNotification.let { putBoolean(KEY_NOTIFICATION_SERVICE, it) }
+            userInfo.marketingNotification.let { putBoolean(KEY_NOTIFICATION_MARKETING, it) }
+        }
+    }
+
+    fun toUserInfo(): UserInfo =
+        UserInfo(
+            id = prefs.getInt(KEY_ID, -1),
+            email = prefs.getString(KEY_EMAIL, null),
+            name = prefs.getString(KEY_NAME, null),
+            nickname = prefs.getString(KEY_NICKNAME, null),
+            birthDate = prefs.getString(KEY_BIRTH_DATE, null),
+            gender = prefs.getString(KEY_GENDER, null),
+            profileImg = prefs.getString(KEY_PROFILE_IMAGE, null),
+            serviceNotification = prefs.getBoolean(KEY_NOTIFICATION_SERVICE, false),
+            marketingNotification = prefs.getBoolean(KEY_NOTIFICATION_MARKETING, false)
+        )
 }

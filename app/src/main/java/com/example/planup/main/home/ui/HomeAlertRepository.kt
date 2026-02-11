@@ -1,10 +1,9 @@
 package com.example.planup.main.home.ui
 
-import com.example.planup.database.TokenSaver
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.NotificationApi
 import com.example.planup.network.UserApi
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.dto.notification.NotificationPatchResponse
 import com.example.planup.network.dto.notification.NotificationResult
 import com.example.planup.network.safeResult
@@ -68,7 +67,7 @@ class HomeAlertRepository @Inject constructor(
             )
         }
 
-    suspend fun loadUserInfo(): ApiResult<UserInfoResponse> =
+    suspend fun loadUserInfo(): ApiResult<UserInfo> =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
@@ -76,7 +75,7 @@ class HomeAlertRepository @Inject constructor(
                 },
                 onResponse = { userInfoDto ->
                     if (userInfoDto.isSuccess) {
-                        ApiResult.Success(userInfoDto)
+                        ApiResult.Success(userInfoDto.result)
                     } else {
                         ApiResult.Fail(userInfoDto.message)
                     }

@@ -1,21 +1,20 @@
 package com.example.planup.main.user.domain
 
-import com.example.planup.login.data.LoginResponse
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.signup.data.Agreement
-import com.example.planup.signup.data.KakaoCompleteResponse
-import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
-import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import java.io.File
 
@@ -24,7 +23,7 @@ interface UserRepository {
     suspend fun kakaoLogin(
         kakaoAccessToken: String,
         email: String
-    ): ApiResult<KakaoLoginResponse.ResultData>
+    ): ApiResult<KakaoLogin>
 
     suspend fun completeKakaoLogin(
         tempUserId: String,
@@ -34,7 +33,7 @@ interface UserRepository {
         birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
-    ): ApiResult<KakaoCompleteResponse.Result>
+    ): ApiResult<KakaoSignup>
 
     /**
      * 내 초대 코드를 가져옵니다.
@@ -77,7 +76,7 @@ interface UserRepository {
     suspend fun postLogin(
         email: String,
         password: String
-    ): ApiResult<LoginResponse.Result>
+    ): ApiResult<Login>
 
     suspend fun logout(): ApiResult<String>
 
@@ -91,7 +90,7 @@ interface UserRepository {
         reason : String
     ) : ApiResult<WithDraw>
 
-    suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result>
+    suspend fun getUserInfo(): ApiResult<UserInfo>
 
     suspend fun setProfileImage(
         file: File

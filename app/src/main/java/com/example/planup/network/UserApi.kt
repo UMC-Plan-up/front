@@ -1,17 +1,19 @@
 package com.example.planup.network
 
 import com.example.planup.login.data.LoginRequest
-import com.example.planup.login.data.LoginResponse
 import com.example.planup.login.data.RefreshTokenRequest
-import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.data.EmailCheckDuplicated
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.NicknameCheckDuplicated
 import com.example.planup.network.data.Tokens
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UserResponse
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
@@ -30,9 +32,7 @@ import com.example.planup.signup.data.InviteCodeResponse
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.InviteCodeValidateResponse
 import com.example.planup.signup.data.KakaoCompleteRequest
-import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
-import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
@@ -64,7 +64,7 @@ interface UserApi : MyPageApi {
     @POST("/users/login")
     suspend fun login(
         @Body request: LoginRequest
-    ): Response<LoginResponse>
+    ): Response<UserResponse<Login>>
 
     @POST("users/refresh")
     suspend fun refreshToken(
@@ -159,13 +159,13 @@ interface UserApi : MyPageApi {
     @POST("/users/auth/kakao")
     suspend fun kakaoLogin(
         @Body request: KakaoLoginRequest
-    ): Response<KakaoLoginResponse>
+    ): Response<UserResponse<KakaoLogin>>
 
     // 카카오 회원가입 완료
     @POST("/users/auth/kakao/complete")
     suspend fun kakaoComplete(
         @Body body: KakaoCompleteRequest
-    ): Response<KakaoCompleteResponse>
+    ): Response<UserResponse<KakaoSignup>>
 
     // 이메일 인증 대안 - 카카오 로그인
     @POST("/users/auth/email/alternative")
@@ -187,7 +187,7 @@ interface UserApi : MyPageApi {
 
     // 유저 정보 조회
     @GET("/users/info")
-    suspend fun getUserInfo(): Response<UserInfoResponse>
+    suspend fun getUserInfo(): Response<UserResponse<UserInfo>>
 }
 
 interface MyPageApi {

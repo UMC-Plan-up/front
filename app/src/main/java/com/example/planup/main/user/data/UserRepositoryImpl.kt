@@ -4,7 +4,6 @@ import com.example.planup.database.TokenSaver
 import com.example.planup.database.UserInfoSaver
 import com.example.planup.database.checkToken
 import com.example.planup.login.data.LoginRequest
-import com.example.planup.login.data.LoginResponse
 import com.example.planup.login.data.RefreshTokenRequest
 import com.example.planup.main.user.domain.UserNameAlreadyExistException
 import com.example.planup.main.user.domain.UserRepository
@@ -13,9 +12,13 @@ import com.example.planup.network.UserApi
 import com.example.planup.network.data.EmailLink
 import com.example.planup.network.data.EmailSendRequest
 import com.example.planup.network.data.EmailVerificationStatus
+import com.example.planup.network.data.KakaoLogin
+import com.example.planup.network.data.KakaoSignup
+import com.example.planup.network.data.Login
 import com.example.planup.network.data.SignupLink
 import com.example.planup.network.data.SignupResult
 import com.example.planup.network.data.Tokens
+import com.example.planup.network.data.UserInfo
 import com.example.planup.network.data.UsingKakao
 import com.example.planup.network.data.WithDraw
 import com.example.planup.network.safeResult
@@ -25,15 +28,12 @@ import com.example.planup.signup.data.EmailSendRequestDto
 import com.example.planup.signup.data.InviteCodeRequest
 import com.example.planup.signup.data.InviteCodeValidateRequest
 import com.example.planup.signup.data.KakaoCompleteRequest
-import com.example.planup.signup.data.KakaoCompleteResponse
 import com.example.planup.signup.data.KakaoLoginRequest
-import com.example.planup.signup.data.KakaoLoginResponse
 import com.example.planup.signup.data.ProcessResult
 import com.example.planup.signup.data.ProfileImageResponse
 import com.example.planup.signup.data.ResendEmailRequest
 import com.example.planup.signup.data.SignupRequestDto
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -50,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun kakaoLogin(
         kakaoAccessToken: String,
         email: String
-    ): ApiResult<KakaoLoginResponse.ResultData> = withContext(Dispatchers.IO) {
+    ): ApiResult<KakaoLogin> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.kakaoLogin(KakaoLoginRequest(kakaoAccessToken = kakaoAccessToken, email = email))
@@ -73,7 +73,7 @@ class UserRepositoryImpl @Inject constructor(
         birthDate: String,
         profileImg: String?,
         agreements: List<Agreement>
-    ): ApiResult<KakaoCompleteResponse.Result> = withContext(Dispatchers.IO) {
+    ): ApiResult<KakaoSignup> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.kakaoComplete(
@@ -90,6 +90,7 @@ class UserRepositoryImpl @Inject constructor(
             },
             onResponse = { response ->
                 if(response.isSuccess) {
+                    userInfoSaver.saveUserInfo(response.result.userInfo)
                     tokenSaver.saveToken(response.result.accessToken)
                     tokenSaver.saveRefreshToken(response.result.refreshToken)
                     ApiResult.Success(response.result)
@@ -235,7 +236,7 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun postLogin(
         email: String,
         password: String
-    ): ApiResult<LoginResponse.Result> = withContext(Dispatchers.IO) {
+    ): ApiResult<Login> = withContext(Dispatchers.IO) {
         safeResult(
             response = {
                 userApi.login(LoginRequest(email = email, password = password))
@@ -250,7 +251,8 @@ class UserRepositoryImpl @Inject constructor(
                         tokenSaver.saveToken(result.accessToken)
 
                         userInfoSaver.clearAllUserInfo()
-                        getUserInfo()
+                        userInfoSaver.saveUserInfo(response.result.userInfo)
+
                     }
 
                     ApiResult.Success(result)
@@ -303,7 +305,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getUserInfo(): ApiResult<UserInfoResponse.Result> =
+    override suspend fun getUserInfo(): ApiResult<UserInfo> =
         withContext(Dispatchers.IO) {
             if (userInfoSaver.isEmpty) {
                 safeResult(
@@ -313,11 +315,7 @@ class UserRepositoryImpl @Inject constructor(
                     onResponse = { response ->
                         if (response.isSuccess) {
                             val result = response.result
-                            userInfoSaver.saveNickName(result.nickname)
-                            userInfoSaver.saveEmail(result.email)
-                            userInfoSaver.saveProfileImage(result.profileImage)
-                            userInfoSaver.saveNotificationService(result.serviceNotification)
-                            userInfoSaver.saveNotificationMarketing(result.marketingNotification)
+                            userInfoSaver.saveUserInfo(result)
 
                             ApiResult.Success(result)
                         } else {
@@ -327,16 +325,8 @@ class UserRepositoryImpl @Inject constructor(
                     }
                 )
             } else {
-                // TODO:: UserId 가 필요하지 않으면 id 에는 더미 값 제공
                 ApiResult.Success(
-                    UserInfoResponse.Result(
-                        id = -1,
-                        email = userInfoSaver.getEmail(),
-                        nickname = userInfoSaver.getNickName(),
-                        profileImage = userInfoSaver.getProfileImage() ?: "",
-                        serviceNotification = false,
-                        marketingNotification = false
-                    )
+                    userInfoSaver.toUserInfo()
                 )
             }
         }
@@ -514,7 +504,7 @@ class UserRepositoryImpl @Inject constructor(
 
                         // 유저 정보도 바로 업데이트
                         userInfoSaver.clearAllUserInfo()
-                        getUserInfo()
+                        userInfoSaver.saveUserInfo(result.userInfo)
 
                         ApiResult.Success(result)
                     } else {
@@ -611,6 +601,10 @@ class UserRepositoryImpl @Inject constructor(
 
                         ApiResult.Success(result)
                     } else {
+                        // 갱신 실패한 경우, 로그아웃 처리를 위한 정보 제거
+                        userInfoSaver.clearAllUserInfo()
+                        tokenSaver.clearTokens()
+
                         ApiResult.Fail(response.message)
                     }
                 }

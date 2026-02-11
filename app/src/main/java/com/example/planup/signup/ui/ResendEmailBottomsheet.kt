@@ -16,7 +16,7 @@ import com.example.planup.signup.data.KakaoLoginRequest
 import com.example.planup.App
 import com.example.planup.onboarding.OnBoardingActivity
 import com.example.planup.onboarding.model.SignupTypeModel
-import com.example.planup.signup.data.UserStatus
+import com.example.planup.network.data.UserStatus
 import com.example.planup.util.KakaoServiceHandler
 
 class ResendEmailBottomsheet : BottomSheetDialogFragment() {
@@ -81,7 +81,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                 if (resp.isSuccessful && body?.isSuccess == true) {
                     val r = body.result
 
-                    if (r.userStatus == UserStatus.NEW) {
+                    if (r.userStatus == UserStatus.SIGNUP_REQUIRED) {
                         // 신규 유저: SignupActivity로
                         startActivity(
                             Intent(
@@ -96,7 +96,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                         )
                         dismiss()
                         requireActivity().overridePendingTransition(0, 0)
-                    } else if (r.userStatus == UserStatus.EXISTING_KAKAO){
+                    } else if (r.userStatus == UserStatus.LOGIN_SUCCESS){
                         val accessToken = r.accessToken
                         val userInfo = r.userInfo
                         if (!accessToken.isNullOrBlank() && userInfo != null) {
@@ -105,7 +105,7 @@ class ResendEmailBottomsheet : BottomSheetDialogFragment() {
                             val prefs = requireActivity().getSharedPreferences("userInfo", android.content.Context.MODE_PRIVATE)
                             prefs.edit().apply {
                                 putString("accessToken", accessToken)
-                                putInt("userId", userInfo.id.toInt())
+                                putInt("userId", userInfo.id?.toInt() ?: -1)
                                 putString("email", userInfo.email)
                                 putString("nickname", userInfo.nickname)
                                 putString("profileImg", userInfo.profileImg)

@@ -60,7 +60,7 @@ class HomeAlertViewModel @Inject constructor(
             try {
                 val response = repo.loadUserInfo()
                 if (response is ApiResult.Success) {
-                    val result = response.data.result
+                    val result = response.data
                     userId = result.id
                 }
             } catch (e: CancellationException) {
