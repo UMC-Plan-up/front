@@ -4,13 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.planup.R
-import dagger.hilt.android.AndroidEntryPoint
+import com.example.planup.main.goal.viewmodel.GoalViewModel
 
 class EditFriendGoalActivity : AppCompatActivity() {
     private var goalId: Int = 0
-    private var isSolo: Boolean = true
+//    private var isSolo: Boolean = true
+
+    private val viewModel: GoalViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,24 +21,34 @@ class EditFriendGoalActivity : AppCompatActivity() {
 
         goalId = intent.getIntExtra("goalId", 0)
         Log.d("EditFriendGoalActivity", "goalId: $goalId")
+        viewModel.getGoalEditData(
+            goalId = goalId,
+            goalDataAction = {
+
+            },
+            backAction = { message ->
+                Log.d("EditFriendGoalActivity", "message: $message")
+                this.finish()
+            }
+        )
 
         if (savedInstanceState == null) {
-            if(isSolo){
+//            if(isSolo){
                 val categoryFragment = EditGoalCategoryFragment()
                 categoryFragment.arguments = Bundle().apply { putInt("goalId", goalId) }
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.edit_friend_goal_fragment_container, categoryFragment)
                     .commit()
-            } else {
-                val titleFragment = EditGoalTitleFragment()
-                titleFragment.arguments = Bundle().apply {
-                    putBoolean("isSolo", isSolo)
-                    putInt("goalId", goalId)
-                }
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
-                    .commit()
-            }
+//            } else {
+//                val titleFragment = EditGoalTitleFragment()
+//                titleFragment.arguments = Bundle().apply {
+//                    putBoolean("isSolo", isSolo)
+//                    putInt("goalId", goalId)
+//                }
+//                supportFragmentManager.beginTransaction()
+//                    .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
+//                    .commit()
+//            }
         }
     }
 

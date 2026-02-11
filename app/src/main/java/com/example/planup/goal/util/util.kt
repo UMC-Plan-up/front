@@ -314,6 +314,40 @@ fun goalType(isFriendTab: Boolean) = when (isFriendTab){
     false -> "COMMUNITY"
 }
 
+fun setLockText(titleText: TextView, descriptionText: TextView, level: Int){
+    titleText.text = "${level+1}번째 목표를 입력하려면?"
+    when(level){
+        1-> {
+            descriptionText.text = "7일간 달성률을 50%이상 유지하세요"
+        }
+        2-> {
+            descriptionText.text = "7일간 매일 1회이상 기록을 남기세요"
+        }
+        3-> {
+            descriptionText.text = "7일간 2개이상의 목표 달성률을 50%이상 유지하세요"
+        }
+        4 -> {
+            descriptionText.text = "새 목표를 추가하고, 7일간 2개 이상의 목표 달성률을 60%이상 유지하세요"
+        }
+        5 -> {
+            descriptionText.text = "7일간 전체 목표 달성률을 50%이상 유지하세요"
+        }
+        6 -> {
+            descriptionText.text = "2주간 2개이상의 목표 달성률을 50%이상 유지하세요"
+        }
+        7 -> {
+            descriptionText.text = "2주간 전체 목표 달성률을 50%이상 유지하세요"
+        }
+        8 -> {
+            descriptionText.text = "새 목표를 추가하고, 7일간 2개 이상의 목표 달성률을 60%이상 유지하세요"
+        }
+        9 -> {
+            descriptionText.text = "3주간 3개 이상의 목표 달성률을 50%이상 유지하세요"
+        }
+        else -> {}
+    }
+}
+
 data class TmpGoalData(
     val goalName: String = "",
     val goalAmount: String = "",
