@@ -67,7 +67,6 @@ class LoginViewModel @Inject constructor(
                             )
                         }
                         UserStatus.ACCOUNT_CONFLICT -> {
-                            // TODO:: 스낵바 추가
                             _snackBarEvent.send(SnackBarEvent.ShowExistUserSnackBar)
                         }
                         UserStatus.LOGIN_SUCCESS -> {
