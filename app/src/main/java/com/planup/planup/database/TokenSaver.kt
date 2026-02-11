@@ -12,6 +12,8 @@ class TokenSaver(
         private const val PREF_TOKEN_NAME = "Token"
         private const val TOKEN_KEY = "token"
         private const val REFRESH_TOKEN_KEY = "refresh_token"
+
+        private const val FCM_TOKEN_KEY = "fcm_token"
     }
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
@@ -28,12 +30,22 @@ class TokenSaver(
         }
     }
 
+    fun saveFCMToken(fcmToken: String?) {
+        prefs.edit {
+            putString(FCM_TOKEN_KEY, fcmToken)
+        }
+    }
+
     fun getToken() : String? {
         return prefs.getString(TOKEN_KEY,null)
     }
 
     fun getRefreshToken(): String? {
         return prefs.getString(REFRESH_TOKEN_KEY, null)
+    }
+
+    fun getFCMToken(): String? {
+        return prefs.getString(FCM_TOKEN_KEY, null)
     }
 
     fun clearTokens() {
