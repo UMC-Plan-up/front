@@ -127,14 +127,14 @@ class InviteCodeFragment : Fragment() {
                     description = "친구를 맺고 함께 목표를 달성해보세요. 친구 코드: ${inviteCode}",
                     imageUrl = "https://i.postimg.cc/6QCYNJk8/planup-share.png",
                     link = Link(
-                        mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup"
+                        mobileWebUrl = "https://play.google.com/store/apps/details?id=com.planup.planup"
                     )
                 ),
                 buttons = listOf(
                     Button(
                         title = "친구 초대 수락",
                         link = Link(
-                            mobileWebUrl = "https://play.google.com/store/apps/details?id=com.example.planup",
+                            mobileWebUrl = "https://play.google.com/store/apps/details?id=com.planup.planup",
                             androidExecutionParams = mapOf(
                                 "action" to "copy_code",
                                 "code" to inviteCode

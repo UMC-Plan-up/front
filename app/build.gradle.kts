@@ -20,7 +20,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.planup"
+        applicationId = "com.planup.planup"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
