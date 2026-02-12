@@ -1,7 +1,6 @@
 package com.planup.planup.network.repository.impl
 
 import com.google.firebase.messaging.FirebaseMessaging
-import com.planup.planup.database.TokenSaver
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.NotificationApi
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenRequest
@@ -16,7 +15,7 @@ import kotlin.coroutines.resume
 class NotificationRepositoryImpl @Inject constructor(
     private val notificationApi: NotificationApi
 ) : NotificationRepository {
-    override suspend fun getFcmToken(): String? {
+    override suspend fun getFcmToken(): String? =
         suspendCancellableCoroutine { continuation ->
             FirebaseMessaging.getInstance().token
                 .addOnCompleteListener { task ->
@@ -27,8 +26,6 @@ class NotificationRepositoryImpl @Inject constructor(
                     continuation.resume(task.result)
                 }
         }
-        return null
-    }
 
     override suspend fun updateFcmToken(): ApiResult<Boolean> =
         withContext(Dispatchers.IO) {
