@@ -6,8 +6,10 @@ import com.planup.planup.main.goal.data.GoalRepositoryImpl
 import com.planup.planup.main.goal.domain.GoalRepository
 import com.planup.planup.main.user.data.UserRepositoryImpl
 import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.repository.NotificationRepository
 import com.planup.planup.network.repository.ProfileRepository
 import com.planup.planup.network.repository.TermRepository
+import com.planup.planup.network.repository.impl.NotificationRepositoryImpl
 import com.planup.planup.network.repository.impl.ProfileRepositoryImpl
 import com.planup.planup.network.repository.impl.TermRepositoryImpl
 import dagger.Binds
@@ -46,5 +48,10 @@ abstract class RepositoryModule {
     abstract fun bindProfileRepository(
         impl: ProfileRepositoryImpl
     ): ProfileRepository
+
+    @Binds
+    abstract fun bindNotificationRepository(
+        impl: NotificationRepositoryImpl
+    ): NotificationRepository
 
 }
