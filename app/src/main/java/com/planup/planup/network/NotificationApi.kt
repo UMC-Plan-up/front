@@ -3,6 +3,7 @@ package com.planup.planup.network
 import com.planup.planup.network.dto.notification.NotificationPatchResponse
 import com.planup.planup.network.dto.notification.NotificationResponse
 import com.planup.planup.network.dto.notification.NotificationTypeResponse
+import com.planup.planup.network.dto.notification.RemoveDeviceTokenResponse
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenRequest
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenResponse
 import retrofit2.Response
@@ -36,6 +37,8 @@ interface NotificationApi {
         @Body deviceToken: UpdateDeviceTokenRequest
     ): Response<UpdateDeviceTokenResponse>
 
-
-
+    @PATCH("/deviceToken/deactivate/token/{token}")
+    suspend fun removeDeviceToken(
+        @Query("token") token: String
+    ): Response<RemoveDeviceTokenResponse>
 }

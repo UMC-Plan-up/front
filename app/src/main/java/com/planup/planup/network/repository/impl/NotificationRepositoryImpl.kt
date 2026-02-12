@@ -53,4 +53,27 @@ class NotificationRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun removeFcmToken(): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            getFcmToken()?.let {
+                removeFcmToken(it)
+            } ?: ApiResult.Fail("Fcm 토큰 로딩 실패")
+        }
+
+    override suspend fun removeFcmToken(token: String): ApiResult<Boolean> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    notificationApi.removeDeviceToken(token)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
+        }
 }
