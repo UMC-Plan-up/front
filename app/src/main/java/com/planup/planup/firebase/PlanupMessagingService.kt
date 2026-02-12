@@ -11,11 +11,16 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.planup.planup.R
 import com.planup.planup.database.TokenSaver
+import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class PlanupMessagingService @Inject constructor(
+    private val notificationRepository: NotificationRepository,
     private val tokenSaver: TokenSaver
 ) : FirebaseMessagingService() {
     private val channelName = "Planup Channel"
@@ -25,8 +30,10 @@ class PlanupMessagingService @Inject constructor(
         super.onNewToken(token)
 
         if(token.isNotEmpty()) {
-            Log.i("PlanupMessagingService", "Success Fcm NewToken: $token")
-            tokenSaver.saveFCMToken(token)
+            Log.i("PlanupMessagingService", "onNewToken: $token")
+            CoroutineScope(Dispatchers.IO).launch {
+                notificationRepository.updateFcmToken(token)
+            }
         } else {
             Log.e("PlanupMessagingService", "Failed Fcm NewToken")
         }
