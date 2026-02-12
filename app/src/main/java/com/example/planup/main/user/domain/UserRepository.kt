@@ -35,6 +35,8 @@ interface UserRepository {
         agreements: List<Agreement>
     ): ApiResult<KakaoSignup>
 
+    suspend fun validateToken(): ApiResult<Boolean>
+
     /**
      * 내 초대 코드를 가져옵니다.
      */

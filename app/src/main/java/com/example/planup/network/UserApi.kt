@@ -71,6 +71,9 @@ interface UserApi : MyPageApi {
         @Body request: RefreshTokenRequest
     ): Response<UserResponse<Tokens>>
 
+    @GET("users/validate")
+    suspend fun validateToken(): Response<UserResponse<Boolean>>
+
     //회원 탈퇴
     @POST("users/withdraw")
     suspend fun withdrawAccount(
