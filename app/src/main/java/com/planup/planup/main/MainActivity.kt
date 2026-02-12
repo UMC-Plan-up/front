@@ -1,21 +1,26 @@
 package com.planup.planup.main
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -52,6 +57,14 @@ class MainActivity : AppCompatActivity() {
     private val mainSnackbarViewModel: MainSnackbarViewModel by viewModels()
     private val friendViewModel: FriendViewModel by viewModels()
     private val myPageEmailChangeViewModel: MyPageEmailChangeViewModel by viewModels()
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            mainSnackbarViewModel.updateErrorMessage("알람이 거부되었습니다.")
+        }
+    }
 
     /* 화면 터치 시 EditText 밖을 누르면 키보드 숨기기 */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
@@ -109,6 +122,8 @@ class MainActivity : AppCompatActivity() {
 
             WindowInsetsCompat.CONSUMED
         }
+
+        requestPermissions()
 
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
@@ -315,6 +330,16 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             false
+        }
+    }
+
+    private fun requestPermissions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 
