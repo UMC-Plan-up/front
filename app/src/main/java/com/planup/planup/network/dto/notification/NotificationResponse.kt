@@ -26,3 +26,10 @@ data class NotificationPatchResponse(
     val message: String,
     val result: Boolean //정보 없음
 )
+
+data class UpdateDeviceTokenResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: Boolean //정보 없음
+)
