@@ -21,6 +21,7 @@ import com.planup.planup.network.data.Tokens
 import com.planup.planup.network.data.UserInfo
 import com.planup.planup.network.data.UsingKakao
 import com.planup.planup.network.data.WithDraw
+import com.planup.planup.network.repository.NotificationRepository
 import com.planup.planup.network.safeResult
 import com.planup.planup.password.data.PasswordChangeRequest
 import com.planup.planup.signup.data.Agreement
@@ -43,6 +44,7 @@ import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userApi: UserApi,
+    private val notificationRepository: NotificationRepository,
     private val tokenSaver: TokenSaver,
     private val userInfoSaver: UserInfoSaver
 ) : UserRepository {
@@ -288,6 +290,7 @@ class UserRepositoryImpl @Inject constructor(
             onResponse = { response ->
                 if (response.isSuccess) {
                     val result = response.result
+                    notificationRepository.removeFcmToken()
                     userInfoSaver.clearAllUserInfo()
                     tokenSaver.clearTokens()
                     ApiResult.Success(result)

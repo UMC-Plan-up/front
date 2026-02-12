@@ -6,6 +6,7 @@ import com.planup.planup.database.UserInfoSaver
 import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
+import com.planup.planup.network.repository.NotificationRepository
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -17,6 +18,7 @@ import javax.inject.Inject
 
 class TokenAuthenticator @Inject constructor(
     private val userRepository: dagger.Lazy<UserRepository>,
+    private val notificationRepository: dagger.Lazy<NotificationRepository>,
     private val userInfoSaver: UserInfoSaver,
     private val tokenSaver: TokenSaver
 ) : Authenticator {
@@ -37,6 +39,7 @@ class TokenAuthenticator @Inject constructor(
 
             if (retryCount > MAX_RETRY) {
                 // 최대 시도 횟수를 넘은 경우 추가 요청 X
+                notificationRepository.get().removeFcmToken()
                 userInfoSaver.clearAllUserInfo()
                 tokenSaver.clearTokens()
                 return@withLock null

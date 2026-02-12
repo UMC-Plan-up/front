@@ -12,6 +12,7 @@ import com.planup.planup.network.TermsApi
 import com.planup.planup.network.UserApi
 import com.planup.planup.network.interceptor.AuthInterceptor
 import com.planup.planup.network.interceptor.TokenAuthenticator
+import com.planup.planup.network.repository.NotificationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,11 +45,13 @@ class NetworkModule {
     @Singleton
     fun provideTokenAuthenticator(
         userRepository: dagger.Lazy<UserRepository>,
+        notificationRepository: dagger.Lazy<NotificationRepository>,
         userInfoSaver: UserInfoSaver,
         tokenSaver: TokenSaver
     ): TokenAuthenticator {
         return TokenAuthenticator(
             userRepository,
+            notificationRepository,
             userInfoSaver,
             tokenSaver
         )
