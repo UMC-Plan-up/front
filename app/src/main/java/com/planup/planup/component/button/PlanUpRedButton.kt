@@ -1,0 +1,66 @@
+package com.planup.planup.component.button
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.planup.planup.theme.Black200
+import com.planup.planup.theme.SemanticR2
+import com.planup.planup.theme.SemanticR4
+import com.planup.planup.theme.Typography
+
+@Composable
+fun PlanUpRedButton(
+    modifier: Modifier = Modifier,
+    title: String,
+    enabled: Boolean = true,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .height(44.dp)
+            .then(modifier),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = SemanticR4,
+            disabledContainerColor = Black200,
+        ),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        Text(
+            text = title,
+            color = SemanticR2,
+            style = Typography.Medium_SM
+        )
+    }
+}
+
+
+@Preview
+@Composable
+private fun PlanUpRedButtonPreview() {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        PlanUpRedButton(
+            modifier = Modifier.width(320.dp),
+            title = "다음",
+            onClick = {}
+        )
+        PlanUpRedButton(
+            modifier = Modifier.width(320.dp),
+            title = "다음",
+            enabled = false,
+            onClick = {}
+        )
+    }
+}

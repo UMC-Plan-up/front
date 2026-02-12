@@ -16,7 +16,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.planup"
+    namespace = "com.planup.planup"
     compileSdk = 36
 
     defaultConfig {
