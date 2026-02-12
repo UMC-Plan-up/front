@@ -10,6 +10,7 @@ import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onSuccess
 import com.planup.planup.network.data.UserStatus
 import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
+    private val notificationRepository: NotificationRepository,
     private val tokenSaver: TokenSaver
 ) : ViewModel() {
 
@@ -48,6 +50,7 @@ class LoginViewModel @Inject constructor(
             val result = userRepository.postLogin(email = email, password = password)
             when (result) {
                 is ApiResult.Success -> {
+                    notificationRepository.updateFcmToken()
                     _eventChannel.send(Event.SuccessLogin)
                 }
 
@@ -86,6 +89,7 @@ class LoginViewModel @Inject constructor(
                             tokenSaver.saveToken(it.accessToken)
                             tokenSaver.saveRefreshToken(it.refreshToken)
 
+                            notificationRepository.updateFcmToken()
                             _eventChannel.send(Event.SuccessLogin)
                         }
                         UserStatus.SIGNUP_SUCCESS -> {
