@@ -10,7 +10,6 @@ import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.planup.planup.R
-import com.planup.planup.database.TokenSaver
 import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -19,10 +18,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PlanupMessagingService @Inject constructor(
-    private val notificationRepository: NotificationRepository,
-    private val tokenSaver: TokenSaver
-) : FirebaseMessagingService() {
+class PlanupMessagingService() : FirebaseMessagingService() {
+    @Inject
+    lateinit var notificationRepository: NotificationRepository
+
     private val channelName = "Planup Channel"
     private val channelId = "planup_channel"
 
@@ -60,7 +59,7 @@ class PlanupMessagingService @Inject constructor(
             )
         }
 
-        // TODO:: 알림 종류에 따라 고도화
+        // TODO:: 알림 종류에 따라 고도화?
         val notification = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(body)
