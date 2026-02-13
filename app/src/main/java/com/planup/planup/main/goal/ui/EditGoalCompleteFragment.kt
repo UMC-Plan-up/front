@@ -1,0 +1,31 @@
+package com.planup.planup.main.goal.ui
+
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import com.planup.planup.databinding.FragmentEditGoalCompleteBinding
+
+class EditGoalCompleteFragment : Fragment() {
+    private lateinit var binding: FragmentEditGoalCompleteBinding
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentEditGoalCompleteBinding.inflate(inflater, container, false)
+
+        val goalId = arguments?.getString("goalId")
+        Log.d("FragmentEditGoalComplete", "goalId: $goalId")
+
+        binding.editCompleteStartBtn.setOnClickListener {
+            requireActivity().finish()
+        }
+
+        return binding.root
+    }
+
+}

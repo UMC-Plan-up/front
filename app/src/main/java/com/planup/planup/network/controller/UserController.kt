@@ -1,0 +1,251 @@
+package com.planup.planup.network.controller
+
+import com.planup.planup.main.my.adapter.KakaoAdapter
+import com.planup.planup.main.my.adapter.PasswordChangeAdapter
+import com.planup.planup.main.my.adapter.PasswordLinkAdapter
+import com.planup.planup.main.my.adapter.SignupLinkAdapter
+import com.planup.planup.network.adapter.KakaoLinkAdapter
+import com.planup.planup.network.data.KakaoLink
+import com.planup.planup.network.data.PasswordLink
+import com.planup.planup.network.data.SignupLink
+import com.planup.planup.network.data.UserResponse
+import com.planup.planup.network.data.UsingKakao
+import com.planup.planup.network.dto.user.ChangePassword
+import com.planup.planup.network.dto.user.EmailForPassword
+import com.planup.planup.network.dto.user.KakaoLinkCode
+import com.planup.planup.network.getRetrofit
+import com.planup.planup.network.port.UserPort
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+@Deprecated(
+    message = "UserRepository로 이관",
+    replaceWith = ReplaceWith("UserRepository")
+)
+class UserController {
+
+    /*
+* Adapter는 각 API 서비스 응답에 대한 레이아웃 변화를 관리함
+* 레이아웃 관리하는 .kt 파일에서 해당 인터페이스를 구현하여 API 응답 반영함*/
+
+    //카카오톡 연동 상태 확인
+    private lateinit var kakaoAdapter: KakaoAdapter
+    fun setKakaoAdapter(adapter: KakaoAdapter) {
+        this.kakaoAdapter = adapter
+    }
+
+    //회원가입 시 이메일 인증링크 발송
+    private lateinit var signupLinkAdapter: SignupLinkAdapter
+    fun setSignupLinkAdapter(adapter: SignupLinkAdapter) {
+        this.signupLinkAdapter = adapter
+    }
+
+    //비밀번호 변경 시 이메일 인증링크 발송
+    private lateinit var passwordLinkAdapter: PasswordLinkAdapter
+    fun setPasswordLinkAdapter(adapter: PasswordLinkAdapter) {
+        this.passwordLinkAdapter = adapter
+    }
+
+    //비밀번호 변경
+    private lateinit var passwordChangeAdapter: PasswordChangeAdapter
+    fun setPasswordChangeAdapter(adapter: PasswordChangeAdapter) {
+        this.passwordChangeAdapter = adapter
+    }
+
+    private lateinit var kakaoLinkAdapter: KakaoLinkAdapter
+    fun setKakaoLinkAdapter(adapter: KakaoLinkAdapter) {
+        this.kakaoLinkAdapter = adapter
+    }
+
+
+    //회원가입 시 인증링크 재발송
+    fun signupLinkService(email: String) {
+        val emailSendService = getRetrofit().create(UserPort::class.java)
+        emailSendService.signupLink(email).enqueue(object : Callback<UserResponse<SignupLink>> {
+            override fun onResponse(
+                call: Call<UserResponse<SignupLink>>,
+                response: Response<UserResponse<SignupLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    signupLinkAdapter.successEmailSend(response.body()!!.result.email)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    signupLinkAdapter.failEmailSend(response.body()!!.message)
+                } else {
+                    signupLinkAdapter.failEmailSend("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<SignupLink>>, t: Throwable) {
+                signupLinkAdapter.failEmailSend(t.toString())
+            }
+        })
+    }
+
+    //회원가입 시 인증링크 발송
+    fun signupRelinkService(email: String) {
+        val emailResendService = getRetrofit().create(UserPort::class.java)
+        emailResendService.signupRelink(email).enqueue(object : Callback<UserResponse<SignupLink>> {
+            override fun onResponse(
+                call: Call<UserResponse<SignupLink>>,
+                response: Response<UserResponse<SignupLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    signupLinkAdapter.successEmailSend(response.body()!!.result.email)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    signupLinkAdapter.failEmailSend(response.body()!!.message)
+                } else {
+                    signupLinkAdapter.failEmailSend("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<SignupLink>>, t: Throwable) {
+                signupLinkAdapter.failEmailSend(t.toString())
+            }
+        })
+    }
+
+    // 비밀번호 변경 시 인증링크 발송
+    fun passwordLinkService(email: EmailForPassword) {
+        val service = getRetrofit().create(UserPort::class.java)
+        service.passwordLink(email).enqueue(object : Callback<UserResponse<PasswordLink>> {
+            override fun onResponse(
+                call: Call<UserResponse<PasswordLink>>,
+                response: Response<UserResponse<PasswordLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    passwordLinkAdapter.successPasswordLink(response.body()!!.result.token)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    passwordLinkAdapter.failPasswordLink(response.body()!!.message)
+                } else {
+                    passwordLinkAdapter.failPasswordLink("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<PasswordLink>>, t: Throwable) {
+                passwordLinkAdapter.failPasswordLink(t.toString())
+            }
+        })
+    }
+
+    // 비밀번호 변경 시 인증링크 재발송
+    fun passwordRelinkService(email: String) {
+        val service = getRetrofit().create(UserPort::class.java)
+        service.passwordRelink(email).enqueue(object : Callback<UserResponse<PasswordLink>> {
+            override fun onResponse(
+                call: Call<UserResponse<PasswordLink>>,
+                response: Response<UserResponse<PasswordLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    passwordLinkAdapter.successPasswordLink(response.body()!!.result.email)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    passwordLinkAdapter.failPasswordLink(response.body()!!.message)
+                } else {
+                    passwordLinkAdapter.failPasswordLink("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<PasswordLink>>, t: Throwable) {
+                passwordLinkAdapter.failPasswordLink(t.toString())
+            }
+        })
+    }
+
+    // 비밀번호 변경
+    fun passwordUpdateService(password: ChangePassword) {
+        val passwordService = getRetrofit().create(UserPort::class.java)
+        passwordService.changePassword(password)
+            .enqueue(object : Callback<UserResponse<Boolean>> {
+                override fun onResponse(
+                    call: Call<UserResponse<Boolean>>,
+                    response: Response<UserResponse<Boolean>>
+                ) {
+                    if (response.isSuccessful && response.body() != null) {
+                        passwordChangeAdapter.successPasswordChange()
+                    } else if (!response.isSuccessful && response.body() != null) {
+                        passwordChangeAdapter.failPasswordChange(response.body()!!.message)
+                    } else {
+                        passwordChangeAdapter.failPasswordChange("null")
+                    }
+                }
+
+                override fun onFailure(call: Call<UserResponse<Boolean>>, t: Throwable) {
+                    passwordChangeAdapter.failPasswordChange(t.toString())
+                }
+            })
+    }
+
+    // 카카오 계정 연동상태 확인
+    fun kakaoService() {
+        val kakaoService = getRetrofit().create(UserPort::class.java)
+        kakaoService.getKakao().enqueue(object : Callback<UserResponse<UsingKakao>> {
+            override fun onResponse(
+                call: Call<UserResponse<UsingKakao>>,
+                response: Response<UserResponse<UsingKakao>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    val email = response.body()!!.result.kakaoEmail
+                    kakaoAdapter.successKakao(email)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    kakaoAdapter.failKakao(response.body()!!.message)
+                } else {
+                    kakaoAdapter.failKakao("null")
+                }
+            }
+
+            override fun onFailure(call: Call<UserResponse<UsingKakao>>, t: Throwable) {
+                kakaoAdapter.failKakao(t.toString())
+            }
+        })
+    }
+
+    fun kakaoLinkService(code: String){
+        val service = getRetrofit().create(UserPort::class.java)
+        service.linkKakao(KakaoLinkCode(code)).enqueue(object : Callback<UserResponse<KakaoLink>>{
+            override fun onResponse(
+                call: Call<UserResponse<KakaoLink>>,
+                response: Response<UserResponse<KakaoLink>>
+            ) {
+                if (response.isSuccessful && response.body() != null) {
+                    kakaoLinkAdapter.successKakaoLink(response.body()!!.result.kakaoEmail)
+                } else if (!response.isSuccessful && response.body() != null) {
+                    when (response.body()!!.code) {
+                        "S001" -> kakaoLinkAdapter.failKakaoLink("잘못된 입력값입니다.")
+                        "S002" -> kakaoLinkAdapter.failKakaoLink("서버 에러가 발생했습니다")
+                        "U001" -> kakaoLinkAdapter.failKakaoLink("존재하지 않는 사용자입니다.")
+                        else -> kakaoLinkAdapter.failKakaoLink(response.body()!!.code)
+                    }
+                } else {
+                    kakaoLinkAdapter.failKakaoLink("null")
+                }
+            }
+            override fun onFailure(call: Call<UserResponse<KakaoLink>>, t: Throwable) {
+                kakaoLinkAdapter.failKakaoLink(t.toString())
+            }
+
+        })
+    }
+//    //카카오 소셜 로그인
+//    fun kakaoSyncronizeService(code: String) {
+//        val service = getRetrofit().create(UserPort::class.java)
+//        service.syncKakao(code).enqueue(object : Callback<SyncKakao> {
+//            override fun onResponse(call: Call<SyncKakao>, response: Response<SyncKakao>) {
+//                if (response.isSuccessful && response.body() != null) {
+//                    kakaoSyncAdapter.successKakaoSync(response.body()!!.result.userInfo.email)
+//                } else if (!response.isSuccessful && response.body() != null) {
+//                    when (response.body()!!.code) {
+//                        "S001" -> kakaoSyncAdapter.failKakaoSync("잘못된 입력값입니다.")
+//                        "S002" -> kakaoSyncAdapter.failKakaoSync("서버 에러가 발생했습니다")
+//                        "U001" -> kakaoSyncAdapter.failKakaoSync("존재하지 않는 사용자입니다.")
+//                        else -> kakaoSyncAdapter.failKakaoSync(response.body()!!.code)
+//                    }
+//                } else kakaoSyncAdapter.failKakaoSync("서버로부터 응답이 없습니다.")
+//            }
+//
+//            override fun onFailure(call: Call<SyncKakao>, t: Throwable) {
+//                TODO("Not yet implemented")
+//            }
+//
+//        })
+//    }
+}

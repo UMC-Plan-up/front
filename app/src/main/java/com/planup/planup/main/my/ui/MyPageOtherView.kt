@@ -1,0 +1,33 @@
+package com.planup.planup.main.my.ui
+
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.planup.planup.R
+import com.planup.planup.main.my.ui.common.MyPageDefault
+import com.planup.planup.main.my.ui.common.RouteMenuItem
+
+@Composable
+fun MyPageOtherView(
+    onBack: () -> Unit,
+    navigateLogout: () -> Unit,
+    navigateDelete: () -> Unit
+) {
+    MyPageDefault(
+        onBack = onBack,
+        categoryText = stringResource(R.string.category)
+    ) {
+        Spacer(Modifier.height(20.dp))
+        RouteMenuItem(
+            title = stringResource(R.string.mypage_other_logout),
+            action = navigateLogout
+        )
+        RouteMenuItem(
+            title = stringResource(R.string.mypage_other_delete),
+            action = navigateDelete
+        )
+    }
+}

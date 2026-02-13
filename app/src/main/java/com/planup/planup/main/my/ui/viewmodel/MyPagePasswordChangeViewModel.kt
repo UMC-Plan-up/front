@@ -1,0 +1,98 @@
+package com.planup.planup.main.my.ui.viewmodel
+
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+sealed interface MyPagePasswordEvent {
+    data object SuccessLogin : MyPagePasswordEvent
+    data object SuccessChange : MyPagePasswordEvent
+    data class Error(val message: String) : MyPagePasswordEvent
+}
+
+@HiltViewModel
+class MyPagePasswordChangeViewModel @Inject constructor(
+    private val userRepository: UserRepository
+) : ViewModel() {
+
+    val emailInput = TextFieldState()
+    val passwordInput = TextFieldState()
+
+    val newPasswordInput = TextFieldState()
+    val newPasswordReInput = TextFieldState()
+
+    private val _uiEvent = MutableSharedFlow<MyPagePasswordEvent>()
+    val uiEvent = _uiEvent.asSharedFlow()
+
+    /**
+     * 비밀번호 변경 요청시 최종 확인 알럿
+     */
+    var showReCheckAlert by mutableStateOf(false)
+        private set
+
+    /**
+     * 비밀번호 변경 진행 중 로딩 알럿,(액션 block)
+     */
+    var showLoading by mutableStateOf(false)
+        private set
+
+    fun loginCheck() {
+        viewModelScope.launch {
+            val email = emailInput.text.toString()
+            if (email != userRepository.getUserEmail()) {
+                _uiEvent.emit(MyPagePasswordEvent.Error("본인의 이메일 주소를 확인해주세요."))
+                return@launch
+            }
+            showLoading = true
+            userRepository
+                .postLogin(
+                    email = email,
+                    password = passwordInput.text.toString()
+                )
+                .onSuccess {
+                    showLoading = false
+                    _uiEvent.emit(MyPagePasswordEvent.SuccessLogin)
+                }
+                .onFailWithMessage { message ->
+                    showLoading = false
+                    _uiEvent.emit(MyPagePasswordEvent.Error(message))
+                }
+        }
+    }
+
+    fun showCheckAlert() {
+        showReCheckAlert = true
+    }
+
+    fun hideCheckAlert() {
+        showReCheckAlert = false
+    }
+
+    fun changePassword() {
+        viewModelScope.launch {
+            showLoading = true
+            hideCheckAlert()
+            userRepository.changePassword(
+                newPasswordInput.text.toString()
+            ).onSuccess {
+                showLoading = false
+                _uiEvent.emit(MyPagePasswordEvent.SuccessChange)
+            }
+                .onFailWithMessage { message ->
+                    showLoading = false
+                    _uiEvent.emit(MyPagePasswordEvent.Error(message))
+                }
+        }
+    }
+}

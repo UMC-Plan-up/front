@@ -12,15 +12,16 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.services)
     id ("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.example.planup"
+    namespace = "com.planup.planup"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.planup"
+        applicationId = "com.planup.planup"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -139,4 +140,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
 }

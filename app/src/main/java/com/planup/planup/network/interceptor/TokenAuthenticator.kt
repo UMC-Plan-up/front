@@ -1,0 +1,81 @@
+package com.planup.planup.network.interceptor
+
+import android.util.Log
+import com.planup.planup.database.TokenSaver
+import com.planup.planup.database.UserInfoSaver
+import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
+import com.planup.planup.network.repository.NotificationRepository
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import okhttp3.Authenticator
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.Route
+import javax.inject.Inject
+
+class TokenAuthenticator @Inject constructor(
+    private val userRepository: dagger.Lazy<UserRepository>,
+    private val notificationRepository: dagger.Lazy<NotificationRepository>,
+    private val userInfoSaver: UserInfoSaver,
+    private val tokenSaver: TokenSaver
+) : Authenticator {
+    private val mutex = Mutex()
+
+    override fun authenticate(route: Route?, response: Response): Request? = runBlocking {
+        mutex.withLock {
+            val request = response.request
+            val retryCount = response.retryCount()
+            var newAccessToken = ""
+
+            Log.i(TAG, "토큰 갱신 시도($retryCount)")
+
+            if (request.header(HEADER_TOKEN).isNullOrBlank()) {
+                // 헤더에 토큰이 없는 요청인 경우 추가 요청 X
+                return@withLock null
+            }
+
+            if (retryCount > MAX_RETRY) {
+                // 최대 시도 횟수를 넘은 경우 추가 요청 X
+                notificationRepository.get().removeFcmToken()
+                userInfoSaver.clearAllUserInfo()
+                tokenSaver.clearTokens()
+                return@withLock null
+            }
+
+            val refreshResult = userRepository.get().refreshToken()
+
+            refreshResult.onSuccess {
+                Log.i(TAG, "토큰 갱신 요청 성공: $it")
+                newAccessToken = it.accessToken
+            }.onFailWithMessage {
+                Log.e(TAG, "토큰 갱신 요청 실패: $it")
+            }
+
+            request.newBuilder()
+                .removeHeader(HEADER_TOKEN)
+                .addHeader(HEADER_TOKEN, "Bearer $newAccessToken")
+                .build()
+        }
+    }
+
+    private fun Response.retryCount(): Int {
+        var curr = this
+        var retry = 1
+
+        while(curr.priorResponse != null) {
+            curr = curr.priorResponse!!
+            retry++
+        }
+
+        return retry
+    }
+
+    private companion object {
+        private const val TAG = "TokenAuthenticator"
+        private const val HEADER_TOKEN = "Authorization"
+        private const val MAX_RETRY = 3
+    }
+}
