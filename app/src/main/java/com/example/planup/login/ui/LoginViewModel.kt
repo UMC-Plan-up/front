@@ -25,6 +25,9 @@ class LoginViewModel @Inject constructor(
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
     val eventChannel = _eventChannel.receiveAsFlow()
 
+    private val _snackBarEvent = Channel<SnackBarEvent>(Channel.BUFFERED)
+    val snackBarEvent = _snackBarEvent.receiveAsFlow()
+    
     init {
         viewModelScope.launch {
             userRepository.validateToken()
@@ -77,7 +80,7 @@ class LoginViewModel @Inject constructor(
                             )
                         }
                         UserStatus.ACCOUNT_CONFLICT -> {
-                            // TODO:: 스낵바 추가
+                            _snackBarEvent.send(SnackBarEvent.ShowExistUserSnackBar)
                         }
                         UserStatus.LOGIN_SUCCESS -> {
                             tokenSaver.saveToken(it.accessToken)
@@ -101,5 +104,9 @@ class LoginViewModel @Inject constructor(
         data class StartKakaoOnboarding(val tempUserId: String, val email: String) : Event()
         object FailKakaoLogin : Event()
         object UnknownError : Event()
+    }
+
+    sealed class SnackBarEvent {
+        object ShowExistUserSnackBar : SnackBarEvent()
     }
 }
