@@ -6,9 +6,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.crossfade
 import com.example.planup.R
 
-data class RankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: Int)
+data class RankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
 
 class RankAdapter(private val rankList: List<RankItem>) :
     RecyclerView.Adapter<RankAdapter.RankViewHolder>() {
@@ -31,7 +33,9 @@ class RankAdapter(private val rankList: List<RankItem>) :
         holder.rankText.text = "${item.rank}위"
         holder.nicknameText.text = item.nickname
         holder.certCountText.text = "사진인증 ${item.certCount}회"
-        holder.profileImage.setImageResource(item.imageResId)
+        holder.profileImage.load(item.imageResId) {
+            crossfade(true)
+        }
     }
 
     override fun getItemCount(): Int = rankList.size

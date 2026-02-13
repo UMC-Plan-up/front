@@ -25,6 +25,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import com.example.planup.main.record.data.RankingListResult
 @AndroidEntryPoint
 class RecordWithCommunityFragment @Inject constructor(): Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding
@@ -67,6 +68,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         binding = FragmentRecordWithCommunityBinding.inflate(inflater, container, false)
         viewModel.loadWeeklyGoalReport()
         viewModel.loadPhotos()
+        viewModel.loadRankingList()
         // ====== 사진 그리드 ======
         val sampleImages = listOf(
             R.drawable.img_sample1, R.drawable.img_sample2, R.drawable.img_sample3,
@@ -131,14 +133,9 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         setupCombinedChart(combinedEntries)
 
         // ====== 랭킹 리스트 ======
-        val sampleRankData = listOf(
-            RankItem(4, "닉네임4", 12, R.drawable.img_friend_profile_sample4),
-            RankItem(5, "닉네임5", 10, R.drawable.img_friend_profile_sample2),
-            RankItem(6, "닉네임6", 8, R.drawable.img_friend_profile_sample3),
-            RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
-        )
-        val rankData = viewModel.reportUsers.value
-        val rankAdapter = RankAdapter(rankData)
+        val rankData = viewModel.rankingList.value
+        val sortedRankData = rankingDataToRankItem(rankData)
+        val rankAdapter = RankAdapter(sortedRankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rankAdapter
@@ -227,5 +224,17 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             renderer = CustomCombinedChartRenderer(chart, chart.animator, chart.viewPortHandler)
             invalidate()
         }
+    }
+
+    fun rankingDataToRankItem(rankingList: List<RankingListResult>): List<RankItem> {
+        val list = rankingList.map {
+            RankItem(
+                rank = 1,
+                nickname = it.nickName,
+                certCount = it.verificationCount,
+                imageResId = it.profileImg
+            )
+        }
+        return list
     }
 }

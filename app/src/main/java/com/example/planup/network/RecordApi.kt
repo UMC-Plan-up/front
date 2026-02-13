@@ -3,6 +3,7 @@ package com.example.planup.network
 import com.example.planup.main.record.data.ApiResponseListInteger
 import com.example.planup.main.record.data.BadgeListResponse
 import com.example.planup.main.record.data.DetailWeeklyReportResponse
+import com.example.planup.main.record.data.RankingListResponse
 import com.example.planup.main.record.data.WeeklyGoalReportResponse
 import com.example.planup.main.record.data.WeeklyReportResponse
 import com.example.planup.network.data.ChallengeFriends
@@ -17,6 +18,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -60,4 +62,9 @@ interface RecordApi {
         @Query("userId") userId: Int,
         @Path("goalReportId") goalReportId: Int
     ): Response<WeeklyGoalReportResponse>
+
+    @PATCH("/goal/{goalId}/ranking")
+    suspend fun getRankingData(
+        @Query("goalId") goalId: Int
+    ): Response<RankingListResponse>
 }
