@@ -9,6 +9,7 @@ import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onSuccess
 import com.example.planup.network.data.UserStatus
+import com.example.planup.network.onFailWithMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -26,6 +27,18 @@ class LoginViewModel @Inject constructor(
 
     private val _snackBarEvent = Channel<SnackBarEvent>(Channel.BUFFERED)
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
+    
+    init {
+        viewModelScope.launch {
+            userRepository.validateToken()
+                .onSuccess {
+                    _eventChannel.send(SuccessLogin)
+                }
+                .onFailWithMessage {
+                    Log.i("LoginViewModel", "자동 로그인 실패: $it")
+                }
+        }
+    }
 
     fun requestLogin(
         email: String,
