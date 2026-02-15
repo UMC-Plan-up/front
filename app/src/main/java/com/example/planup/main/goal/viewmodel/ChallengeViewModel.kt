@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.planup.main.friend.domain.FriendRepository
 import com.example.planup.main.goal.domain.GoalRepository
-import com.example.planup.main.home.ui.FriendGoalListRepository
+import com.example.planup.main.home.ui.repository.FriendGoalListRepository
 import com.example.planup.main.user.domain.UserRepository
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess

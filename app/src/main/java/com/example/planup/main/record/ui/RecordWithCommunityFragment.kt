@@ -16,6 +16,7 @@ import com.example.planup.main.home.item.CustomCombinedChartRenderer
 import com.example.planup.main.record.adapter.PhotoAdapter
 import com.example.planup.main.record.adapter.RankAdapter
 import com.example.planup.main.record.adapter.RankItem
+import com.example.planup.main.record.adapter.SampleRankItem
 import com.example.planup.main.record.data.DailyAchievementRateDto
 import com.example.planup.main.record.data.ThreeWeekAchievementRateDto
 import com.example.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
@@ -100,7 +101,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         )
         val dailyAchievementRate = viewModel.dailyAchievementRate.value
         val entries = toBarEntry(dailyAchievementRate)
-        val dataSet = BarDataSet(entries, "요일별 기록").apply {
+        val dataSet = BarDataSet(sampleEntries, "요일별 기록").apply {
             color = Color.parseColor("#508CFF")
             valueTextColor = Color.TRANSPARENT
         }
@@ -130,12 +131,20 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             10, 80, 25
         )
         val combinedEntries = viewModel.threeWeekAchievementRate.value
-        setupCombinedChart(combinedEntries)
+        setupCombinedChart(sampleCombinedEntries)
 
         // ====== 랭킹 리스트 ======
         val rankData = viewModel.rankingList.value
         val sortedRankData = rankingDataToRankItem(rankData)
-        val rankAdapter = RankAdapter(sortedRankData)
+        val sampleRankData = listOf(
+            SampleRankItem(1, "친구1", 80, R.drawable.img_friend_profile_sample1),
+            SampleRankItem(2, "친구2", 75, R.drawable.img_friend_profile_sample2),
+            SampleRankItem(3, "친구3", 70, R.drawable.img_friend_profile_sample3),
+            SampleRankItem(4, "친구4", 65, R.drawable.img_friend_profile_sample4),
+            SampleRankItem(5, "친구5", 60, R.drawable.img_friend_profile_sample4)
+
+        )
+        val rankAdapter = RankAdapter(sampleRankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rankAdapter

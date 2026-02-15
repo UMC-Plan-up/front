@@ -1,14 +1,11 @@
-package com.example.planup.main.home.ui
+package com.example.planup.main.home.ui.repository
 
 import com.example.planup.database.TokenSaver
-import com.example.planup.database.checkToken
 import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.goal.item.TotalAchievementResult
 import com.example.planup.network.ApiResult
 import com.example.planup.network.FriendApi
 import com.example.planup.network.GoalApi
-import com.example.planup.network.RetrofitInstance.friendApi
-import com.example.planup.network.RetrofitInstance.goalApi
 import com.example.planup.network.UserApi
 import com.example.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
@@ -63,7 +60,7 @@ class HomeRepository @Inject constructor(
                     friendApi.getFriendSummary()
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {
@@ -81,7 +78,7 @@ class HomeRepository @Inject constructor(
                     goalApi.getFriendGoalList(friendId)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {
@@ -98,7 +95,7 @@ class HomeRepository @Inject constructor(
                     goalApi.getFriendGoalAchievement(friendId, goalId)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {

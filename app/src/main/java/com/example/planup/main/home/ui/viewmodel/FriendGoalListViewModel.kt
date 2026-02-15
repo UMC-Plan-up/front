@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
 import com.example.planup.main.home.ui.FriendGoalListFragment
-import com.example.planup.main.home.ui.FriendGoalListRepository
+import com.example.planup.main.home.ui.repository.FriendGoalListRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage
 import com.example.planup.network.onSuccess

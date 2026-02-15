@@ -26,6 +26,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.utils.ColorTemplate
 import androidx.core.graphics.toColorInt
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -36,32 +37,32 @@ import retrofit2.HttpException
 import com.example.planup.R
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.home.adapter.PhotoAdapter
+import com.example.planup.main.home.ui.viewmodel.FriendGoalDetailViewModel
 import com.example.planup.network.ApiResult
 import com.example.planup.network.RetrofitInstance
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendGoalDetailFragment : Fragment() {
 
     private var _binding: FragmentFriendGoalDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var chart: CombinedChart
     private lateinit var userPrefs: SharedPreferences
+    private val viewModel: FriendGoalDetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFriendGoalDetailBinding.inflate(inflater, container, false)
-        userPrefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val token = userPrefs.getString("accessToken", null)
-
-        val goalId = arguments?.getInt("goalId") ?: 0
-        val title = arguments?.getString("title") ?: ""
-        val friendId = arguments?.getInt("friendId") ?: 0
-
+        val title = viewModel.title
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
         binding.friendGoalDetailTodayfocusTv.text = getString(R.string.friend_goal_detail_today_text, title)
-        loadComment(goalId)
+
+        viewModel.loadComment()
+
         loadTodayFriendTime(token, friendId, goalId)
         loadFriendPhotos(friendId, goalId)
 

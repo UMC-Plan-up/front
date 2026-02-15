@@ -13,7 +13,7 @@ import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.goal.item.PostMemoResult
 import com.example.planup.main.home.data.FriendTimer
 import com.example.planup.main.home.data.HomeTimer
-import com.example.planup.main.home.data.TimerRepository
+import com.example.planup.main.home.ui.repository.TimerRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.data.TimerStartResult
 import com.example.planup.network.data.TimerStopResult

@@ -154,7 +154,7 @@ interface GoalApi {
     @GET("/goals/{goalId}/comments")
     suspend fun getComments(
         @Path("goalId") goalId: Int
-    ): GetCommentsResponse
+    ): Response<GetCommentsResponse>
     //http://54.180.207.84/community/friend/2/goal/1/total-achievement
     @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
     suspend fun getFriendGoalAchievement(

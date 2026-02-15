@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.planup.main.goal.item.DailyGoalResult
 import com.example.planup.main.goal.item.VerifiedGoal
 import com.example.planup.main.home.data.CalendarEvent
-import com.example.planup.main.home.ui.CalendarRepository
+import com.example.planup.main.home.ui.repository.CalendarRepository
 import com.example.planup.network.ApiResult
 import com.example.planup.network.RetrofitInstance
 import dagger.hilt.android.lifecycle.HiltViewModel

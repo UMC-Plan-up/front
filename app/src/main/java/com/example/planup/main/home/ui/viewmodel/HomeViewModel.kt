@@ -11,7 +11,7 @@ import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.home.data.DailyToDo
 import com.example.planup.main.home.item.FriendChallengeItem
 import com.example.planup.main.home.data.CalendarEvent
-import com.example.planup.main.home.ui.HomeRepository
+import com.example.planup.main.home.ui.repository.HomeRepository
 import com.example.planup.main.user.data.UserInfoResponse
 import com.example.planup.network.ApiResult
 import com.example.planup.network.onFailWithMessage

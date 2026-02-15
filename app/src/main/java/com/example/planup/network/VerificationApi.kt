@@ -19,33 +19,28 @@ import retrofit2.http.Query
 interface VerificationApi {
     @GET("/verification/timer/today-total")
     suspend fun getTodayTotalTime(
-        @Header("Authorization") token: String,
         @Query("GoalId") goalId: Int
     ): Response<TodayTotalTimeResponse>
 
     @POST("verification/timer/start")
     suspend fun postTimerStart(
-        @Header("Authorization") token: String,
         @Query("goalId") goalId: Int
     ): Response<TimerStartResponse>
 
     @PUT("verification/timer/stop/{timerId}")
     suspend fun putTimerStop(
-        @Header("Authorization") token: String,
         @Path("timerId") timerId: Int
     ): Response<TimerStopResponse>
 
     @Multipart
     @POST("verification/photo/upload")
     suspend fun uploadPhoto(
-        @Header("Authorization") token: String,
         @Query("goalId") goalId: Int,
         @Part photoFile: MultipartBody.Part
     ): Response<UploadResponse>
 
     @GET("/verification/friend/{friendId}/timer/today-total")
     suspend fun getTodayFriendTimer(
-        @Header("Authorization") token: String,
         @Path("friendId") friendId: Int,
         @Query("goalId") goalId: Int
     ): Response<TodayFriendTimerResponse>

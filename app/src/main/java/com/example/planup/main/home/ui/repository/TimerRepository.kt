@@ -1,4 +1,4 @@
-package com.example.planup.main.home.data
+package com.example.planup.main.home.ui.repository
 
 import com.example.planup.database.TokenSaver
 import com.example.planup.database.checkToken
@@ -11,7 +11,6 @@ import com.example.planup.main.goal.item.PostMemoResult
 import com.example.planup.network.ApiResult
 import com.example.planup.network.GoalApi
 import com.example.planup.network.RetrofitInstance
-import com.example.planup.network.RetrofitInstance.goalApi
 import com.example.planup.network.data.TimerStartResult
 import com.example.planup.network.data.TimerStopResult
 import com.example.planup.network.data.TodayTotalTimeResult
@@ -20,7 +19,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.orEmpty
 
 @Singleton
 class TimerRepository @Inject constructor(
@@ -164,16 +162,16 @@ class TimerRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                        goalApi.getEditGoal(goalId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            ApiResult.Success(response.result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+                    goalApi.getEditGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
+                }
+            )
 
         }
 

@@ -191,7 +191,7 @@ class RecordWeeklyReportFragment : Fragment() {
             goalCriteria = "매일 30분 이상",
             achievementRate = 72,
             goalType = "PERSONAL",
-            isCommunity = false
+            isCommunity = true
         )
     )
 
