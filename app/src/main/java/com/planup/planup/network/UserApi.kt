@@ -1,0 +1,222 @@
+package com.planup.planup.network
+
+import com.planup.planup.login.data.LoginRequest
+import com.planup.planup.login.data.RefreshTokenRequest
+import com.planup.planup.network.data.EmailCheckDuplicated
+import com.planup.planup.network.data.EmailLink
+import com.planup.planup.network.data.EmailSendRequest
+import com.planup.planup.network.data.EmailVerificationStatus
+import com.planup.planup.network.data.KakaoLogin
+import com.planup.planup.network.data.KakaoSignup
+import com.planup.planup.network.data.Login
+import com.planup.planup.network.data.NicknameCheckDuplicated
+import com.planup.planup.network.data.Tokens
+import com.planup.planup.network.data.SignupLink
+import com.planup.planup.network.data.SignupResult
+import com.planup.planup.network.data.UserInfo
+import com.planup.planup.network.data.UserResponse
+import com.planup.planup.network.data.UsingKakao
+import com.planup.planup.network.data.WithDraw
+import com.planup.planup.password.data.ChangeLinkVerifyResponseDto
+import com.planup.planup.password.data.PasswordChangeEmailRequestDto
+import com.planup.planup.password.data.PasswordChangeEmailResponseDto
+import com.planup.planup.password.data.PasswordChangeRequest
+import com.planup.planup.password.data.PasswordUpdateResponse
+import com.planup.planup.signup.data.AlternativeLoginRequest
+import com.planup.planup.signup.data.AlternativeLoginResponse
+import com.planup.planup.signup.data.ApiResponse
+import com.planup.planup.signup.data.EmailSendRequestDto
+import com.planup.planup.signup.data.InviteCodeProcessResponse
+import com.planup.planup.signup.data.InviteCodeRequest
+import com.planup.planup.signup.data.InviteCodeResponse
+import com.planup.planup.signup.data.InviteCodeValidateRequest
+import com.planup.planup.signup.data.InviteCodeValidateResponse
+import com.planup.planup.signup.data.KakaoCompleteRequest
+import com.planup.planup.signup.data.KakaoLoginRequest
+import com.planup.planup.signup.data.ProfileImageResponse
+import com.planup.planup.signup.data.ResendEmailRequest
+import com.planup.planup.signup.data.SignupRequestDto
+import com.planup.planup.signup.data.VerifyLinkResult
+import okhttp3.MultipartBody
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Part
+import retrofit2.http.Query
+
+interface UserApi : MyPageApi {
+
+    // 회원가입
+    @POST("/users/signup")
+    suspend fun signup(
+        @Body request: SignupRequestDto
+    ): Response<UserResponse<SignupResult>>
+
+    //로그아웃
+    @POST("users/logout")
+    suspend fun logout(): Response<UserResponse<String>>
+
+    // 로그인
+    @POST("/users/login")
+    suspend fun login(
+        @Body request: LoginRequest
+    ): Response<UserResponse<Login>>
+
+    @POST("users/refresh")
+    suspend fun refreshToken(
+        @Body request: RefreshTokenRequest
+    ): Response<UserResponse<Tokens>>
+
+    @GET("users/validate")
+    suspend fun validateToken(): Response<UserResponse<Boolean>>
+
+    //회원 탈퇴
+    @POST("users/withdraw")
+    suspend fun withdrawAccount(
+        @Body reason: String
+    ): Response<UserResponse<WithDraw>>
+
+    // 내 초대코드 조회
+    @GET("users/me/invite-code")
+    suspend fun getInviteCode(
+        @Header("Authorization") token: String
+    ): Response<InviteCodeResponse>
+
+    // 초대코드 실시간 검증
+    @POST("/users/invite-code/validate")
+    suspend fun validateInviteCode(
+        @Body request: InviteCodeValidateRequest
+    ): Response<InviteCodeValidateResponse>
+
+    // 초대코드 처리
+    @POST("users/invite-code/process")
+    suspend fun processInviteCode(
+        @Body body: InviteCodeRequest
+    ): Response<InviteCodeProcessResponse>
+
+    // 회원가입을 위한 이메일 인증 메일 발송
+    @POST("/users/email/send")
+    suspend fun sendEmail(
+        @Body body: EmailSendRequestDto
+    ): Response<UserResponse<SignupLink>>
+
+    // 회원가입을 위한 이메일 인증 메일 재발송
+    @POST("/users/email/resend")
+    suspend fun resendEmail(
+        @Body body: ResendEmailRequest
+    ): Response<UserResponse<SignupLink>>
+
+    // 이메일 인증 링크 검증
+    @GET("/users/email/verify-link")
+    suspend fun verifyEmailLink(
+        @Query("token") token: String
+    ): Response<ApiResponse<VerifyLinkResult>>
+
+    // 이메일 인증 여부 확인
+    @GET("users/email/verification-status")
+    suspend fun checkEmailVerificationStatus(
+        @Query("token") token: String
+    ): Response<UserResponse<EmailVerificationStatus>>
+
+    // 이메일 중복 확인
+    @GET("/users/email/check-duplicate")
+    suspend fun checkEmailDuplicate(
+        @Query("email") email: String
+    ): Response<UserResponse<EmailCheckDuplicated>>
+
+    // 비밀번호 변경 확인 이메일 발송
+    @POST("/users/password/change-email/send")
+    suspend fun sendPasswordChangeEmail(
+        @Body body: PasswordChangeEmailRequestDto
+    ): Response<PasswordChangeEmailResponseDto>
+
+    // 비밀번호 변경 확인 이메일 재발송
+    @POST("/users/password/change-email/resend")
+    suspend fun resendPasswordChangeEmail(
+        @Body body: PasswordChangeEmailRequestDto
+    ): Response<PasswordChangeEmailResponseDto>
+
+    // 비밀번호 변경 요청 이메일 링크 클릭 처리
+    @GET("/users/password/change-link")
+    suspend fun verifyChangeLink(
+        @Query("token") token: String
+    ): Response<ChangeLinkVerifyResponseDto>
+
+    //이메일 변경 인증 메일 발송
+    @POST("users/email/change/send")
+    suspend fun emailLink(
+        @Body email: EmailSendRequest
+    ): Response<UserResponse<EmailLink>>
+
+    //이메일 변경 인증 메일 재발송
+    @POST("users/email/change/resend")
+    suspend fun emailReLink(
+        @Body email: EmailSendRequest
+    ): Response<UserResponse<EmailLink>>
+
+    // 카카오 소셜 인증
+    @POST("/users/auth/kakao")
+    suspend fun kakaoLogin(
+        @Body request: KakaoLoginRequest
+    ): Response<UserResponse<KakaoLogin>>
+
+    // 카카오 회원가입 완료
+    @POST("/users/auth/kakao/complete")
+    suspend fun kakaoComplete(
+        @Body body: KakaoCompleteRequest
+    ): Response<UserResponse<KakaoSignup>>
+
+    // 이메일 인증 대안 - 카카오 로그인
+    @POST("/users/auth/email/alternative")
+    suspend fun alternativeLogin(
+        @Body request: AlternativeLoginRequest
+    ): Response<AlternativeLoginResponse>
+
+    // 닉네임 중복 확인
+    @GET("users/nickname/check-duplicate")
+    suspend fun checkNicknameDuplicate(
+        @Query("nickname") nickname: String
+    ): Response<UserResponse<NicknameCheckDuplicated>>
+
+    // 비밀번호 재설정
+    @POST("/users/password/change")
+    suspend fun changePassword(
+        @Body request: PasswordChangeRequest
+    ): Response<PasswordUpdateResponse>
+
+    // 유저 정보 조회
+    @GET("/users/info")
+    suspend fun getUserInfo(): Response<UserResponse<UserInfo>>
+}
+
+interface MyPageApi {
+
+    //닉네임 수정
+    @POST("mypage/profile/nickname")
+    suspend fun changeNickname(
+        @Body nickname: String
+    ): Response<UserResponse<String>>
+
+    //유저 정보 카카오 연동 조회
+    @GET("mypage/kakao-account")
+    suspend fun getKakaoAccountLink(
+
+    ): Response<UserResponse<UsingKakao>>
+
+    //프로필 이미지 변경
+    @Multipart
+    @POST("mypage/profile/image")
+    suspend fun setProfileImage(@Part file: MultipartBody.Part): Response<UserResponse<ProfileImageResponse.Result>>
+
+    //서비스 알림 동의 변경
+    @PATCH("mypage/notification/service")
+    suspend fun patchNoticeService(): Response<UserResponse<Boolean>>
+
+    //혜택 및 마케팅 동의 변경
+    @PATCH("mypage/notification/marketing")
+    suspend fun patchNoticeMarketing(): Response<UserResponse<Boolean>>
+}

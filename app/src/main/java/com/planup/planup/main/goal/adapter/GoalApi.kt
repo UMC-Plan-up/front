@@ -1,0 +1,142 @@
+package com.planup.planup.main.goal.adapter
+
+//interface GoalApi {
+
+//    // 목표 삭제 API
+//    @DELETE("/goals/{goalId}")
+//    suspend fun deleteGoal(
+//        @Header("Authorization") token: String,
+//        @Query("goalId") goalId: Int
+//    ): Response<GoalEditResponse>
+//
+//    // 목표 공개 & 비공개 API
+//    @PATCH("/goals/{goalId}/public")
+//    suspend fun setGoalPublic(
+//        @Header("Authorization") token: String,
+//        @Query("goalId") goalId: Int
+//    ): Response<GoalEditResponse>
+//
+//    // 목표 활성 & 비활성화 API
+//    @PATCH("/goals/{goalId}/active")
+//    suspend fun setGoalActive(
+//        @Header("Authorization") token: String,
+//        @Query("goalId") goalId: Int
+//    ): Response<GoalEditResponse>
+//
+//    @POST("/goals/create")
+//    suspend fun createGoal(
+//        @Header("Authorization") token: String,
+//        @Body goalCreateRequest: GoalCreateRequest
+//    ): Response<GoalCreateResponse>
+//
+//    @GET("/goals/create/list/friend")
+//    suspend fun getFriendGoalsByCategory(
+//        @Query("goalCategory") goalCategory: String
+//    ): Response<GoalListResponseDto>
+//
+//    @GET("/goals/create/list/community")
+//    suspend fun getCommunityGoalsByCategory(
+//        @Query("goalCategory") goalCategory: String
+//    ): Response<GoalListResponseDto>
+//
+//
+//    @GET("/community/{goalId}/total-achievement")
+//    suspend fun getTotalAchievement(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int
+//    ): TotalAchievementResponse
+//
+//    @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
+//    suspend fun getFriendPhotos(
+//        @Header("Authorization") token: String,
+//        @Path("friendId") friendId: Int,
+//        @Path("goalId") goalId: Int,
+//        @Query("userId") userId: Int
+//    ): FriendPhotosResponse
+//
+//    @POST("/goals/{goalId}/comment")
+//    suspend fun createComment(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int,
+//        @Body comment: CreateCommentRequest
+//    ): CreateCommentResponse
+//
+//    @PUT("/goals/{goalId}")
+//    suspend fun editGoal(
+//        @Path("goalId") goalId: Int,
+//        @Body editGoalRequest: EditGoalRequest
+//    ): EditGoalApiResponse
+//    @GET("/goals/{goalId}/edit")
+//    suspend fun getEditGoal(
+//        @Header("Authorization") token: String,
+//        @Query("goalId") goalId: Int
+//    ): EditGoalApiResponse
+//
+//    @GET("/goals/mygoal/list")
+//    suspend fun getMyGoalList(
+//        @Header("Authorization") token: String
+//    ): MyGoalListResponse
+//
+//    @GET("/goals/friendgoal/list")
+//    suspend fun getFriendGoalList(
+//        @Header("Authorization") token: String,
+//        @Query ("friendId") friendId: Int
+//    ): FriendGoalListResponse
+//
+//    @GET("/goals/mygoal/{goalId}")
+//    suspend fun getGoalDetail(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int
+//    ): GoalDetailResponse
+//
+//    @GET("/goals/{goalId}/friendstimer")
+//    suspend fun getFriendsTimer(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int
+//    ): FriendsTimerResponse
+//
+//    @GET("/goals/daily/{date}")
+//    suspend fun getDailyGoal(
+//        @Header("Authorization") token: String,
+//        @Path("date") date: String
+//    ): DailyGoalResponse
+//
+//    @GET("/goals/{goalId}/memo/{date}")
+//    suspend fun getDateMemo(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int,
+//        @Path("date") date: String
+//    ): DateMemoResponse
+//
+//    @POST("goals/{goalId}/memo")
+//    suspend fun saveMemo(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int,
+//        @Body request: MemoRequest
+//    ): PostMemoResponse
+//
+//    @GET("/goals/{goalId}/comments")
+//    suspend fun getComments(
+//        @Header("Authorization") token: String,
+//        @Path("goalId") goalId: Int
+//    ): GetCommentsResponse
+//
+//    @GET("/community/daily-achievement")
+//    suspend fun getDailyAchievement(
+//        @Header("Authorization") token: String,
+//        @Query("targetDate") targetDate: String
+//    ): DailyAchievementResponse
+//
+//    @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
+//    suspend fun getFriendGoalAchievement(
+//        @Header("Authorization") token: String,
+//        @Path("friendId") friendId: Int,
+//        @Path("goalId") goalId: Int
+//    ): FriendGoalAchievementResponse
+//
+//    @GET("/goals/{goalId}/photos")
+//    suspend fun getGoalPhotos(
+//        @Header("Authorization") token: String,
+//        @Query("goalId") goalId: Int
+//    ): GoalPhotosResponse
+//}
