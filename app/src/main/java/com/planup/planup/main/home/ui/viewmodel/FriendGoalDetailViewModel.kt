@@ -76,7 +76,10 @@ class FriendGoalDetailViewModel @Inject constructor(
                 }
         }
 
-    fun sendComment(comment: String) {
+    fun sendComment(
+        comment: String,
+        onCallBack: (ApiResult<String>) -> Unit
+    ) {
         viewModelScope.launch {
             val content = CreateCommentRequest(
                 content = comment,
@@ -85,8 +88,35 @@ class FriendGoalDetailViewModel @Inject constructor(
             )
             repository.sendComment(goalId, content)
                 .onSuccess { result ->
-
+                    Log.d("FriendGoalDetailViewModel", "sendComment: $result")
+                    onCallBack(ApiResult.Success(result.content))
+                }.onFailWithMessage {
+                    Log.d("FriendGoalDetailViewModel", "sendComment: $it")
+                    onCallBack(ApiResult.Fail(it))
                 }
+
+        }
+    }
+
+    fun sendReaction(
+        isEncourage: Boolean
+    ) {
+        viewModelScope.launch {
+            if(isEncourage) {
+                repository.sendEncourage(goalId)
+                    .onSuccess { result ->
+                        Log.d("FriendGoalDetailViewModel", "sendReaction: $result")
+                    }.onFailWithMessage {
+                        Log.d("FriendGoalDetailViewModel", "sendReaction: $it")
+                    }
+            } else {
+                repository.sendCheer(goalId)
+                    .onSuccess {
+                        Log.d("FriendGoalDetailViewModel", "sendReaction: $it")
+                    }.onFailWithMessage {
+                        Log.d("FriendGoalDetailViewModel", "sendReaction: $it")
+                    }
+            }
 
         }
     }

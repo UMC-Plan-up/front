@@ -23,6 +23,7 @@ import com.planup.planup.main.goal.item.MemoRequest
 import com.planup.planup.main.goal.item.MyGoalListResponse
 import com.planup.planup.main.goal.item.PostMemoResponse
 import com.planup.planup.main.goal.item.TotalAchievementResponse
+import com.planup.planup.network.dto.goal.ReactionResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -165,4 +166,14 @@ interface GoalApi {
     suspend fun getGoalPhotos(
         @Path("goalId") goalId: Int
     ): Response<GoalPhotosResponse>
+
+    @POST("/goals/{goalId}/reactions/encourage")
+    suspend fun postEncourage(
+        @Path("goalId") goalId: Int
+    ): Response<ReactionResponseDto>
+
+    @POST("/goals/{goalId}/reactions/cheer")
+    suspend fun postCheer(
+        @Path("goalId") goalId: Int
+    ): Response<ReactionResponseDto>
 }

@@ -44,7 +44,6 @@ class FriendGoalDetailFragment : Fragment() {
     private var _binding: FragmentFriendGoalDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var chart: CombinedChart
-    private lateinit var userPrefs: SharedPreferences
     private val viewModel: FriendGoalDetailViewModel by viewModels()
 
     override fun onCreateView(
@@ -58,17 +57,17 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendGoalDetailTodayfocusTv.text = getString(R.string.friend_goal_detail_today_text, title)
         loadComment()
         loadTodayFriendTime()
-        loadFriendPhotos(friendId, goalId)
+        loadFriendPhotos()
 
         chart = binding.friendGoalChart
         setupCombinedChart()
 
         binding.friendGoalCheerBtn.setOnClickListener {
-            // TODO: 응원하기 클릭 이벤트
+            viewModel.sendReaction(false)
         }
 
         binding.friendGoalMotivateBtn.setOnClickListener {
-            // TODO: 칭찬하기 클릭 이벤트
+            viewModel.sendReaction(true)
         }
 
         binding.friendGoalDetailBackIv.setOnClickListener {
@@ -80,7 +79,7 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendGoalSendCommentIv.setOnClickListener {
             val comment = binding.friendGoalCommentEt.text.toString()
             if (comment.isNotEmpty()) {
-                sendComment(goalId, comment)
+                sendComment(comment)
             }
         }
 
@@ -186,7 +185,7 @@ class FriendGoalDetailFragment : Fragment() {
         })
     }
 
-    private fun loadFriendPhotos(friendId: Int, goalId: Int) {
+    private fun loadFriendPhotos() {
         viewModel.loadFriendPhoto(createErrorHandler("loadFriendPhotos") { result ->
             val urls = result.map { it.photoImg }
             setupRecyclerView(urls)
@@ -198,24 +197,11 @@ class FriendGoalDetailFragment : Fragment() {
         recyclerView.adapter = PhotoAdapter(photoUrls)
     }
 
-    private fun sendComment(goalId: Int, comment: String) {
-        lifecycleScope.launch {
-            try {
-                val request = CreateCommentRequest(content = comment, parentCommentId = 0, reply = false)
-                val goalService = RetrofitInstance.goalApi
-                val response = goalService.createComment(goalId = goalId, comment = request)
-                if(response.isSuccess){
-                    binding.friendGoalCommentEt.text.clear()
-                    loadComment(goalId)
-                } else {
-                    Log.d("FriendGoalDetailFragment", "sendComment 실패: ${response.message}")
-                }
-            } catch (e: Exception) {
-                if(e is HttpException) Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.code()} ${e.message()}")
-                else Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.message}")
-            }
-
-        }
+    private fun sendComment(comment: String) {
+        viewModel.sendComment(comment,createErrorHandler("sendComment") {
+            binding.friendGoalCommentEt.text.clear()
+            loadComment()
+        })
     }
 
     fun <T> createErrorHandler(
