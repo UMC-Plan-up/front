@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.R
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.data.GoalCreateRequest
@@ -19,6 +20,8 @@ import com.example.planup.main.goal.item.FriendGoalListResult
 import com.example.planup.main.goal.item.GoalItem
 import com.example.planup.main.goal.item.MyGoalListItem
 import com.example.planup.main.home.adapter.FriendGoalWithAchievement
+import com.example.planup.network.data.ChallengeFriends
+import com.example.planup.network.dto.friend.FriendInfo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
@@ -263,6 +266,13 @@ fun Fragment.resetGoalDataTrueCategory(){
     }
 }
 
+fun Fragment.resetType(){
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+        goalType = ""
+    }
+}
+
 fun Int.clockString() = if (this / 10 == 0) {
     "0$this"
 } else {
@@ -293,7 +303,7 @@ fun Fragment.titleFormat(mode: String, titleText: TextView, friendNickname: Stri
 
 
 fun daysFromToday(dateStr: String): Int {
-    val DATE_FORMATTER  = DateTimeFormatter.ofPattern("yyyy-MM-dd").withResolverStyle(ResolverStyle.STRICT)
+    val DATE_FORMATTER  = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT)
     val targetDate = runCatching {
         LocalDate.parse(dateStr, DATE_FORMATTER)
     }.getOrNull()
@@ -346,6 +356,19 @@ fun setLockText(titleText: TextView, descriptionText: TextView, level: Int){
         }
         else -> {}
     }
+}
+
+fun List<FriendInfo>.toFriendItems(): List<ChallengeFriends> =
+    this.map { ChallengeFriends(it.id, it.nickname, it.goalCnt) }
+
+fun String.toPeriod(): String = when(this) {
+    "DAY" -> "매일"
+    "매일"-> "DAY"
+    "WEEK" -> "매주"
+    "매주" -> "WEEK"
+    "MONTH" -> "매달"
+    "매달" -> "MONTH"
+    else -> this
 }
 
 data class TmpGoalData(

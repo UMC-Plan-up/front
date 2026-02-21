@@ -1,5 +1,6 @@
-package com.example.planup.goal.ui
+package com.example.planup.main.goal.ui
 
+import com.example.planup.goal.ui.GoalDetailFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -8,22 +9,24 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.planup.R
 import com.example.planup.databinding.FragmentPictureSettingBinding
 import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.util.backStackTrueGoalNav
+import com.example.planup.goal.util.backStackTrueNav
 import com.example.planup.goal.util.equil
 import com.example.planup.goal.util.setInsets
 import com.example.planup.goal.util.titleFormat
-import com.example.planup.main.goal.ui.EditGoalDetailFragment
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PictureSettingFragment : Fragment() {
+class EditPictureSettingFragment : Fragment() {
 
     private var _binding: FragmentPictureSettingBinding? = null
     private val binding get() = _binding!!
@@ -66,20 +69,15 @@ class PictureSettingFragment : Fragment() {
 
         // 다음 버튼 -> GoalDetailFragment로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
-                val activity = requireActivity() as GoalActivity
-                // GoalActivity에 인증 횟수와 인증 방식 저장
-                activity.oneDose = selectedFrequency.toString()
-                activity.verificationType = "PICTURE"
+            viewModel.setGoalData(
+                viewModel.goalData.copy(
+                    verificationType = "PICTURE",
+                    oneDose = selectedFrequency
+                )
+            )
 
-                // SharedPreferences에 저장
-                val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                prefs.edit()
-                    .putInt(KEY_DOSE, selectedFrequency)
-                    .putString(KEY_VERIFICATION_TYPE, "PICTURE")
-                    .apply()
-
-                val goalDetailFragment = EditGoalDetailFragment()
-                backStackTrueGoalNav(goalDetailFragment,"PictureSettingFragment")
+            val goalDetailFragment = EditGoalDetailFragment()
+            backStackTrueNav(R.id.edit_friend_goal_fragment_container, goalDetailFragment)
         }
     }
 

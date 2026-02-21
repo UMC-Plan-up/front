@@ -93,9 +93,17 @@ class GoalViewModel @Inject constructor(
     private val _goalState = MutableStateFlow<List<GoalItem>>(emptyList())
     val goalState = _goalState.asStateFlow()
 
+    private val _challengeNullState = MutableStateFlow<List<GoalItem>>(emptyList())
+    val challengeNullState = _challengeNullState.asStateFlow()
+
     fun setGoalState(goalState: List<GoalItem>){
         _goalState.value = goalState
     }
+
+    fun setChallengeNullState(challengeNullState: List<GoalItem>){
+        _challengeNullState.value = challengeNullState
+    }
+
 
     fun setTargetUserId(userId: Int) {
         _targetUserId.value = userId
@@ -117,6 +125,7 @@ class GoalViewModel @Inject constructor(
         goalRepository.fetchMyGoals()
             .onSuccess { res ->
                 _goalState.value = res.toGoalItems()
+                _challengeNullState.value = res.filter { it.goalType == "FRIEND" || it.goalType == "COMMUNITY" }.toGoalItems()
             }
             .onFailWithMessage {
                 _failMessage.emit(it)
@@ -149,6 +158,9 @@ class GoalViewModel @Inject constructor(
                                     totalAchievement = achieveRes.data.totalAchievement
                                 )
                             )
+                            _challengeNullState.value = resultList.filter {
+                                it.goalType == "FRIEND" || it.goalType == "COMMUNITY"
+                            }.toGoalItemsForFriendAchieve()
                             onCallBack(ApiResult.Success(resultList.toGoalItemsForFriendAchieve()))
                         }
                     }
@@ -262,9 +274,10 @@ class GoalViewModel @Inject constructor(
     fun getGoalLevel(action: (Int) -> Unit) = viewModelScope.launch {
         goalRepository.getGoalLevel()
             .onSuccess {
+
                 _isGoalLevel.value = it.split("_")[1].toInt()
                 Log.d("getGoalLevel","_goalState : ${_goalState.value.size}")
-                _isCreateGoal.value = _goalState.value.size >= _isGoalLevel.value
+                _isCreateGoal.value = _challengeNullState.value.size >= _isGoalLevel.value
                 action(_isGoalLevel.value)
             }
             .onFailWithMessage {

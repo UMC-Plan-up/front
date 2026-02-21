@@ -2,7 +2,6 @@ package com.example.planup.main.goal.ui
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -13,15 +12,17 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.planup.R
 import com.example.planup.databinding.FragmentGoalDescriptionBinding
+import com.example.planup.goal.util.toPeriod
 import com.example.planup.main.MainActivity
-import com.example.planup.main.goal.item.GoalApiService
-import com.example.planup.main.goal.item.GoalRetrofitInstance
+import com.example.planup.main.goal.data.GoalRanking
 import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
+import java.lang.reflect.Modifier.isPublic
 
 class GoalDescriptionFragment : Fragment() {
 
@@ -56,6 +57,7 @@ class GoalDescriptionFragment : Fragment() {
             Toast.makeText(requireContext(), "잘못된 목표입니다.", Toast.LENGTH_SHORT).show()
         } else {
             loadGoalDetail(goalId)   // ✅ 주석 해제해서 실제 호출
+            setRanking(goalId)
         }
 
         binding.goalDescEditIv.setOnClickListener {
@@ -99,12 +101,16 @@ class GoalDescriptionFragment : Fragment() {
     // 현재 서버 DTO(GoalResult)에 존재하는 필드만 안전하게 바인딩
     private fun bindGoal(goal: com.example.planup.main.goal.item.GoalResult) {
         binding.goalTitleTv.text = goal.goalName
-        binding.oneDoseTv.text = "${goal.oneDose}"
+        binding.oneDoseTv.text = "목표 1회 량${goal.oneDose} / ${goal.goalAmount}"
 
         // 아래 값들은 GoalResult에 아직 없으므로 일단 표시 보류/임시값
-        binding.periodTv.text = "-"
-        binding.frequencyTv.text = "-"
-        binding.verificationTv.text = "-"
+        binding.periodTv.text = goal.period.toPeriod()
+        binding.frequencyTv.text = "기준 기간당 달성 횟수: ${goal.frequency}회"
+        binding.verificationTv.text = when (goal.verificationType) {
+            "TIMER" -> "타이머 인증"
+            "PICTURE" -> "사진 인증"
+            else -> "알 수 없음"
+        }
 
         // 참여자 수 문구가 "%d명 참여중" 형식이면 strings.xml에
         // <string name="goal_description_attendee_cnt_fmt">%1$d명 참여중</string>
@@ -114,6 +120,32 @@ class GoalDescriptionFragment : Fragment() {
 
         isPublic = goal.public
         applyToggleUI(isPublic)
+    }
+
+    fun bindRanking(ranking: List<Pair<Int, GoalRanking>>) {
+        binding.apply {
+            val empty = ranking.isEmpty()
+            initRaking.visibility = if (empty) View.VISIBLE else View.GONE
+            topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
+            rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
+            if (ranking.size < 3) {
+                firstProfile
+                firstName
+                firstVer
+                secondProfile
+                secondName
+                secondVer
+                ThirdProfile
+                ThirdName
+                ThirdVer
+            } else {
+
+            }
+
+        }
+
+
+
     }
 
     private fun applyToggleUI(publicSelected: Boolean) {
@@ -135,5 +167,25 @@ class GoalDescriptionFragment : Fragment() {
             dialog.dismiss()
         }
         dialog.show()
+    }
+
+    fun setRanking(goalId: Int) {
+        lifecycleScope.launch {
+            runCatching {
+                RetrofitInstance.goalApi.getGoalRanking(goalId = goalId) // GoalDetailResponse
+            }.onSuccess { resp ->
+                if (resp.isSuccessful && resp.body() != null) {
+                    val ranking = resp.body()!!.result.goalRankingList.sortedByDescending { it.verificationCount }
+                        .mapIndexed { index, goalRanking ->
+                            index + 1 to goalRanking
+                        }// ✅ 타입 맞춤
+                    bindRanking(ranking)
+                } else {
+                    Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
+                }
+            }.onFailure {
+                Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

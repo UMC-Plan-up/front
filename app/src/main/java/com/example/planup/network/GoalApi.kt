@@ -5,6 +5,7 @@ import com.example.planup.goal.data.GoalCreateResponse
 import com.example.planup.goal.data.GoalJoinResponseDto
 import com.example.planup.goal.data.GoalListResponseDto
 import com.example.planup.main.goal.data.GoalEditResponse
+import com.example.planup.main.goal.data.GoalRankingResponse
 import com.example.planup.main.goal.item.ApiResponseListMyGoalListDto
 import com.example.planup.main.goal.item.CreateCommentRequest
 import com.example.planup.main.goal.item.CreateCommentResponse
@@ -112,7 +113,7 @@ interface GoalApi {
 
     @PUT("/goals/{goalId}")
     suspend fun editGoal(
-        @Path("goalId") goalId: Int,
+        @Query("goalId") goalId: Int,
         @Body editGoalRequest: EditGoalRequest
     ): EditGoalApiResponse
 
@@ -176,4 +177,9 @@ interface GoalApi {
 
     @GET("/goals/level")
     suspend fun getGoalLevel(): Response<GoalCreateLevelResponse>
+
+    @PATCH("/goals/{goalId}/ranking")
+    suspend fun getGoalRanking(
+        @Query("goalId") goalId: Int
+    ): Response<GoalRankingResponse>
 }

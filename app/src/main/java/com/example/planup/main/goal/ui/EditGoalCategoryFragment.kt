@@ -48,7 +48,6 @@ class EditGoalCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.editCategoryBackIcon.setOnClickListener {
             requireActivity().finish()
@@ -125,13 +124,19 @@ class EditGoalCategoryFragment : Fragment() {
             false
         }
 
-        if (viewModel.editGoalData != null) {
-            val layout = binding.root.findViewById<LinearLayout>(
-                getCategoryString(viewModel.editGoalData!!.goalCategory)
+        viewModel.setGoalData(
+            viewModel.goalData.copy(
+                goalCategory = viewModel.editGoalData?.goalCategory ?: ""
             )
-            if (layout != null)
-                handleCategorySelection(layout)
-        }
+        )
+        Log.d("EditGoalCategoryFragment", "editGoalData: ${viewModel.editGoalData}")
+        Log.d("EditGoalCategoryFragment", "goaldata: ${viewModel.goalData.goalCategory}")
+        val layout = binding.root.findViewById<LinearLayout>(
+            getCategoryString(viewModel.goalData.goalCategory)
+        )
+        if (layout != null)
+            handleCategorySelection(layout)
+
     }
 
     // 카테고리 선택 처리

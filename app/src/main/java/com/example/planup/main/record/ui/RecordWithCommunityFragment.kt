@@ -137,7 +137,10 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             RankItem(6, "닉네임6", 8, R.drawable.img_friend_profile_sample3),
             RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
         )
-        val rankData = viewModel.reportUsers.value
+        val rankData = viewModel.reportUsers.value.sortedByDescending { it.rate }
+            .mapIndexed { index, user ->
+            RankItem(index+1, user.userName, user.rate, R.drawable.img_friend_profile_sample4)
+        }
         val rankAdapter = RankAdapter(rankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())

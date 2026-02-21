@@ -407,6 +407,7 @@ class GoalDetailFragment : Fragment() {
 
                 }
             }else {
+                goalActivity.limitFriendCount = Int.MAX_VALUE
                 PushAlertCommunityFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalActivity.goalOwnerName)
@@ -417,6 +418,7 @@ class GoalDetailFragment : Fragment() {
                         putString("verificationType", goalActivity.verificationType)
                         putString("period", goalActivity.period)
                         putInt("frequency", goalActivity.frequency)
+                        putInt("limitFriendCount", Int.MAX_VALUE)
                         putString("endDate", goalActivity.endDate)
                     }
                 }

@@ -41,13 +41,6 @@ class GoalInputFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resetGoalDataTrueCategory()
-        viewModel.setGoalData(
-            viewModel.goalData.copy(
-                goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자",
-                goalType = goalType((requireActivity() as GoalActivity).isFriendTab),
-                goalCategory = arguments?.getString("selectedCategory") ?: "STUDYING"
-            )
-        )
     }
 
     override fun onCreateView(
@@ -126,15 +119,7 @@ class GoalInputFragment : Fragment() {
                 .apply()
 
             // 다음 화면으로
-            val certificationFragment = CertificationMethodFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalOwnerName)
-                    putString("goalName", activity.goalName)
-                    putString("goalAmount", activity.goalAmount)
-                    putString("goalType", activity.goalType)
-                    putString("goalCategory", activity.goalCategory)
-                }
-            }
+            val certificationFragment = CertificationMethodFragment()
             backStackTrueGoalNav(certificationFragment,"GoalInputFragment")
         }
 
