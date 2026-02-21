@@ -14,6 +14,7 @@ import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.data.GoalCreateRequest
 import com.example.planup.goal.util.equil
 import com.example.planup.goal.util.goalDataTrue
+import com.example.planup.goal.util.setInsets
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,7 +45,7 @@ class GoalCompleteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        setInsets(view)
 //        binding.backIcon.setOnClickListener {
 //            parentFragmentManager.popBackStack()
 //        }
@@ -57,6 +58,8 @@ class GoalCompleteFragment : Fragment() {
     private fun toApiGoalType(raw: String?) = when (raw?.lowercase()) {
         "friend", "친구" -> "FRIEND"
         "community", "커뮤니티" -> "COMMUNITY"
+        "FRIEND" -> raw
+        "COMMUNITY" -> raw
         else -> "FRIEND"
     }
 
@@ -111,8 +114,25 @@ class GoalCompleteFragment : Fragment() {
     private fun sendCreateGoal() {
         val goalActivity = requireActivity() as GoalActivity
         if (viewModel.editGoalData !=null && goalDataTrue(viewModel.editGoalData!!)) {
+            if (viewModel.goalId != -1)
+                viewModel.joinGoal(
+                    viewModel.goalId,
+                    action = {
+                        (requireActivity() as GoalActivity).saveGoalData()
 
-
+                        goHome()
+                    },
+                    message = {
+                        Toast.makeText(
+                            requireContext(),
+                            it.ifBlank { "요청 실패" },
+                            Toast.LENGTH_SHORT
+                        )
+                            .show()
+                        binding.startPlanUpButton.isEnabled = true
+                    }
+                )
+        }else{
             val goalTypeApi = toApiGoalType(goalActivity.goalType)
             val categoryApi = toApiCategory(goalActivity.goalCategory)
             val periodApi = toApiPeriod(goalActivity.period)
@@ -161,25 +181,6 @@ class GoalCompleteFragment : Fragment() {
                             it.ifBlank { "요청 실패" },
                             Toast.LENGTH_SHORT
                         ).show()
-                        binding.startPlanUpButton.isEnabled = true
-                    }
-                )
-        }else{
-            if (viewModel.goalId != -1)
-                viewModel.joinGoal(
-                    viewModel.goalId,
-                    action = {
-                        (requireActivity() as GoalActivity).saveGoalData()
-
-                        goHome()
-                    },
-                    message = {
-                        Toast.makeText(
-                            requireContext(),
-                            it.ifBlank { "요청 실패" },
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
                         binding.startPlanUpButton.isEnabled = true
                     }
                 )

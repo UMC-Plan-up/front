@@ -1,4 +1,4 @@
-package com.planup.planup.main.record.ui
+package com.example.planup.main.record.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -10,15 +10,15 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.planup.planup.R
-import com.planup.planup.databinding.FragmentRecordWithCommunityBinding
-import com.planup.planup.main.home.item.CustomCombinedChartRenderer
-import com.planup.planup.main.record.adapter.PhotoAdapter
-import com.planup.planup.main.record.adapter.RankAdapter
-import com.planup.planup.main.record.adapter.RankItem
-import com.planup.planup.main.record.data.DailyAchievementRateDto
-import com.planup.planup.main.record.data.ThreeWeekAchievementRateDto
-import com.planup.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
+import com.example.planup.R
+import com.example.planup.databinding.FragmentRecordWithCommunityBinding
+import com.example.planup.main.home.item.CustomCombinedChartRenderer
+import com.example.planup.main.record.adapter.PhotoAdapter
+import com.example.planup.main.record.adapter.RankAdapter
+import com.example.planup.main.record.adapter.RankItem
+import com.example.planup.main.record.data.DailyAchievementRateDto
+import com.example.planup.main.record.data.ThreeWeekAchievementRateDto
+import com.example.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
@@ -137,13 +137,15 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             RankItem(6, "닉네임6", 8, R.drawable.img_friend_profile_sample3),
             RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
         )
-        val rankData = viewModel.reportUsers.value
-        // TODO:: 한준님이 원복
-//        val rankAdapter = RankAdapter(rankData)
-//        binding.rankRecyclerView.apply {
-//            layoutManager = LinearLayoutManager(requireContext())
-//            adapter = rankAdapter
-//        }
+        val rankData = viewModel.reportUsers.value.sortedByDescending { it.rate }
+            .mapIndexed { index, user ->
+            RankItem(index+1, user.userName, user.rate, R.drawable.img_friend_profile_sample4)
+        }
+        val rankAdapter = RankAdapter(rankData)
+        binding.rankRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = rankAdapter
+        }
 
         // 뒤로가기 처리
         binding.btnBack.setOnClickListener { parentFragmentManager.popBackStack() }

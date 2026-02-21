@@ -103,6 +103,7 @@ class TimerSettingFragment : Fragment() {
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", activity.goalOwnerName)
+                    putString("SELECTED_METHOD", "TIMER")
                 }
             }
             backStackTrueGoalNav(goalDetailFragment,"TimerSettingFragment")

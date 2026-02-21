@@ -24,7 +24,9 @@ import com.example.planup.goal.GoalActivity
 import com.example.planup.goal.util.backStackTrueGoalNav
 import com.example.planup.main.goal.viewmodel.GoalViewModel
 import com.example.planup.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
     lateinit var category: TextView // 선택된 카테고리
