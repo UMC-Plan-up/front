@@ -72,6 +72,10 @@ class GoalViewModel @Inject constructor(
     val editGoalData: EditGoalResponse?
         get() = _editGoalData.value
 
+    fun setEditGoalData(goalData: EditGoalResponse){
+        _editGoalData.value = goalData
+    }
+
     private var _goalData = MutableLiveData<TmpGoalData>()
     val goalData: TmpGoalData
         get() = _goalData.value ?: TmpGoalData()
