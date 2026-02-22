@@ -3,9 +3,10 @@ package com.planup.planup.network.controller
 import com.planup.planup.goal.adapter.AcceptChallengeAdapter
 import com.planup.planup.goal.adapter.ChallengeFriendsAdapter
 import com.planup.planup.goal.adapter.RejectChallengeAdapter
-import com.planup.planup.goal.adapter.RequestChallengeAdapter
 import com.planup.planup.goal.adapter.RepenaltyAdapter
-import com.planup.planup.network.data.ChallengeFriends
+import com.planup.planup.goal.adapter.RequestChallengeAdapter
+import com.planup.planup.goal.util.toFriendItems
+import com.planup.planup.network.RetrofitInstance
 import com.planup.planup.network.data.ChallengeInfo
 import com.planup.planup.network.data.ChallengeResponse
 import com.planup.planup.network.data.ChallengeResponseNoResult
@@ -14,9 +15,14 @@ import com.planup.planup.network.dto.challenge.ChallengeDto
 import com.planup.planup.network.dto.challenge.RepenaltyDto
 import com.planup.planup.network.getRetrofit
 import com.planup.planup.network.port.ChallengePort
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.jvm.java
 
 class ChallengeController {
 
@@ -153,30 +159,21 @@ class ChallengeController {
 
     //챌린지에서 친구 조회
     fun showChallengeFriends(userId: Int) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.showFriends(userId)
-            .enqueue(object : Callback<ChallengeResponse<List<ChallengeFriends>>> {
-                override fun onResponse(
-                    call: Call<ChallengeResponse<List<ChallengeFriends>>>,
-                    response: Response<ChallengeResponse<List<ChallengeFriends>>>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
-                        challengeFriendsAdapter.successFriends(response.body()!!.result)
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        challengeFriendsAdapter.failFriends(response.body()!!.message)
-                    } else {
-                        challengeFriendsAdapter.failFriends("null")
-                    }
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = RetrofitInstance.friendApi.getFriendSummary()
+            withContext(Dispatchers.Main){
+                if (response.isSuccessful && response.body() != null) {
+                    challengeFriendsAdapter.successFriends(
+                        response.body()!!.result.friendInfoSummaryList.toFriendItems()
+                    )
+                } else if (!response.isSuccessful && response.body() != null) {
+                    challengeFriendsAdapter.failFriends(response.body()!!.message)
+                } else {
+                    challengeFriendsAdapter.failFriends("null")
                 }
+            }
 
-                override fun onFailure(
-                    call: Call<ChallengeResponse<List<ChallengeFriends>>>,
-                    t: Throwable
-                ) {
-                    challengeFriendsAdapter.failFriends(t.toString())
-                }
-
-            })
+        }
     }
 
     //챌린지에 대한 다른 페널티 제안
@@ -213,7 +210,6 @@ class ChallengeController {
                     response: Response<ChallengeResponseNoResult>
                 ) {
                     if (response.isSuccessful && response.body() != null) {
-
                         requestChallengeAdapter.successRequest()
                     } else if (!response.isSuccessful && response.body() != null) {
                         requestChallengeAdapter.failRequest(response.body()!!.message)

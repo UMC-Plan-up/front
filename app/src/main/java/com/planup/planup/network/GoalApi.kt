@@ -2,8 +2,10 @@ package com.planup.planup.network
 
 import com.planup.planup.goal.data.GoalCreateRequest
 import com.planup.planup.goal.data.GoalCreateResponse
+import com.planup.planup.goal.data.GoalJoinResponseDto
 import com.planup.planup.goal.data.GoalListResponseDto
 import com.planup.planup.main.goal.data.GoalEditResponse
+import com.planup.planup.main.goal.data.GoalRankingResponse
 import com.planup.planup.main.goal.item.ApiResponseListMyGoalListDto
 import com.planup.planup.main.goal.item.CreateCommentRequest
 import com.planup.planup.main.goal.item.CreateCommentResponse
@@ -17,6 +19,7 @@ import com.planup.planup.main.goal.item.FriendGoalListResponse
 import com.planup.planup.main.goal.item.FriendPhotosResponse
 import com.planup.planup.main.goal.item.FriendsTimerResponse
 import com.planup.planup.main.goal.item.GetCommentsResponse
+import com.planup.planup.main.goal.item.GoalCreateLevelResponse
 import com.planup.planup.main.goal.item.GoalDetailResponse
 import com.planup.planup.main.goal.item.GoalPhotosResponse
 import com.planup.planup.main.goal.item.MemoRequest
@@ -110,7 +113,7 @@ interface GoalApi {
 
     @PUT("/goals/{goalId}")
     suspend fun editGoal(
-        @Path("goalId") goalId: Int,
+        @Query("goalId") goalId: Int,
         @Body editGoalRequest: EditGoalRequest
     ): EditGoalApiResponse
 
@@ -165,5 +168,18 @@ interface GoalApi {
     @GET("/goals/{goalId}/photos")
     suspend fun getGoalPhotos(
         @Path("goalId") goalId: Int
-    ): Response<GoalPhotosResponse>
+    ): GoalPhotosResponse
+
+    @POST("/community/{goalId}/join")
+    suspend fun joinGoal(
+        @Path("goalId") goalId: Int
+    ): Response<GoalJoinResponseDto>
+
+    @GET("/goals/level")
+    suspend fun getGoalLevel(): Response<GoalCreateLevelResponse>
+
+    @PATCH("/goals/{goalId}/ranking")
+    suspend fun getGoalRanking(
+        @Query("goalId") goalId: Int
+    ): Response<GoalRankingResponse>
 }

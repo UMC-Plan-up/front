@@ -10,10 +10,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import com.planup.planup.R
+import androidx.fragment.app.activityViewModels
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.planup.planup.databinding.FragmentGoalInputBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.resetGoalDataTrueCategory
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class GoalInputFragment : Fragment() {
 
     private var _binding: FragmentGoalInputBinding? = null
@@ -29,13 +37,9 @@ class GoalInputFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        goalOwnerName = arguments?.getString("goalOwnerName") ?: "사용자"
-        goalType = arguments?.getString("goalType")
-        goalCategory = arguments?.getString("selectedCategory")
-
-        goalType?.let { prefs.edit().putString(KEY_GOAL_TYPE, it).apply() }
-        goalCategory?.let { prefs.edit().putString(KEY_GOAL_CATEGORY, it).apply() }
+        if (arguments?.getBoolean("isData") != true) {
+            resetGoalDataTrueCategory()
+        }
     }
 
     override fun onCreateView(
@@ -48,17 +52,11 @@ class GoalInputFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         // 타이틀에 닉네임 반영
-
-        if ((requireActivity() as GoalActivity).isFriendTab) {
-            binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
-            binding.friendGoalDescriptionText.visibility = View.VISIBLE
-        }else {
-            binding.friendGoalTitleText.text = getString(R.string.goal_community_detail)
-            binding.friendGoalDescriptionText.visibility = View.GONE
+        titleFormat((requireActivity() as GoalActivity).isFriendTab,false, binding.friendGoalTitleText,
+            goalOwnerName){
         }
-
+        setInsets(binding.root)
         binding.goalNameMinLengthHint.visibility = View.GONE
         binding.goalNameMaxLengthHint.visibility = View.GONE
         binding.goalVolumeMinLengthHint.visibility = View.GONE
@@ -120,16 +118,8 @@ class GoalInputFragment : Fragment() {
                 .apply()
 
             // 다음 화면으로
-            val certificationFragment = CertificationMethodFragment().apply {
-                arguments = Bundle().apply {
-                    putString("goalOwnerName", goalOwnerName)
-                    putString("goalName", activity.goalName)
-                    putString("goalAmount", activity.goalAmount)
-                    putString("goalType", activity.goalType)
-                    putString("goalCategory", activity.goalCategory)
-                }
-            }
-            activity.navigateToFragment(certificationFragment)
+            val certificationFragment = CertificationMethodFragment()
+            backStackTrueGoalNav(certificationFragment,"GoalInputFragment")
         }
 
         // 바깥 터치 시 키보드 숨김
@@ -144,6 +134,14 @@ class GoalInputFragment : Fragment() {
             view.performClick()
             false
         }
+
+        (requireActivity() as GoalActivity).apply {
+            if (goalName.isNotBlank())
+                binding.nicknameEditText.setText(goalName)
+            if (goalAmount.isNotBlank())
+                binding.goalVolumeEditText.setText(goalAmount)
+        }
+
     }
 
     // 전체 입력 검증 → 버튼 활성화
@@ -215,6 +213,11 @@ class GoalInputFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        resetGoalDataTrueCategory()
     }
 
     companion object {

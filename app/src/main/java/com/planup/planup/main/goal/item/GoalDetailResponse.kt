@@ -12,6 +12,10 @@ data class GoalResult(
     val goalId: Int,
     val goalName: String,
     val oneDose: Int, // 목표 1회량
+    val goalAmount: String,
+    val frequency: Int,
+    val period : String,
+    val verificationType : String,
     val public: Boolean,
     val commentList: List<Comment>
 )

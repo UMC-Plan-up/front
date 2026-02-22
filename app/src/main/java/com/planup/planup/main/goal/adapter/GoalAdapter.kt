@@ -194,8 +194,10 @@ class GoalAdapter(
             dialog.dismiss()
         }
         dialog.findViewById<TextView>(R.id.popup_inactivate_goal_yes_btn).setOnClickListener{
-            item.isActive = !item.isActive // 상태 전환
-            notifyItemChanged(position)
+
+//            item.isActive = !item.isActive // 상태 전환
+            onDeactivateConfirmed(item.goalId)
+//            notifyItemChanged(position)
             dialog.dismiss()
         }
         dialog.show()
@@ -238,8 +240,9 @@ class GoalAdapter(
             dialog.dismiss()
         }
         dialog.findViewById<TextView>(R.id.popup_activate_goal_yes_btn).setOnClickListener{
-            item.isActive = !item.isActive // 상태 전환
-            notifyItemChanged(position)
+//            item.isActive = !item.isActive // 상태 전환
+            onActivateConfirmed(item.goalId)
+//            notifyItemChanged(position)
             dialog.dismiss()
         }
         dialog.show()

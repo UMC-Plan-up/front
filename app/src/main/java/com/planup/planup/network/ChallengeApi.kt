@@ -1,12 +1,12 @@
-package com.planup.planup.network.port
+package com.example.planup.network
 
-import com.planup.planup.network.data.ChallengeResponse
-import com.planup.planup.network.data.ChallengeFriends
-import com.planup.planup.network.data.ChallengeInfo
-import com.planup.planup.network.data.ChallengeResponseNoResult
-import com.planup.planup.network.data.ChallengeResult
-import com.planup.planup.network.dto.challenge.ChallengeDto
-import com.planup.planup.network.dto.challenge.RepenaltyDto
+import com.example.planup.network.data.ChallengeFriends
+import com.example.planup.network.data.ChallengeInfo
+import com.example.planup.network.data.ChallengeResponse
+import com.example.planup.network.data.ChallengeResponseNoResult
+import com.example.planup.network.data.ChallengeResult
+import com.example.planup.network.dto.challenge.ChallengeDto
+import com.example.planup.network.dto.challenge.RepenaltyDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -14,12 +14,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-@Deprecated(
-    message = "Use ChallengeApi instead",
-    replaceWith = ReplaceWith("ChallengeApi")
-)
-interface ChallengePort {
-
+interface ChallengeApi {
     //챌린지 정보 조회
     @GET("challenges/{challengeId}")
     fun challengeInfo(@Path("challengeId") challengeId: Int): Call<ChallengeResponse<ChallengeInfo>>
@@ -37,7 +32,7 @@ interface ChallengePort {
     fun acceptChallenge(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResponseNoResult>
     //챌린지에서 친구 조회
     @GET("challenges/friends")
-    fun showFriends(@Query("userId") userId: Int): Call<ChallengeResponse<List<ChallengeFriends>>>
+    fun showFriends(): Call<ChallengeResponse<List<ChallengeFriends>>>
 
     //챌린지에 대한 다른 페널티 제안
     @POST("challenges/repanalty")

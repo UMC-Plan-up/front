@@ -17,7 +17,11 @@ import com.planup.planup.R
 import com.planup.planup.databinding.FragmentTimerSettingBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.clockString
+import com.planup.planup.goal.util.equil
 import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -49,37 +53,8 @@ class TimerSettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setInsets(binding.root,binding.root.paddingBottom)
-        val titleTv = binding.titleTv
-        Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
-        if(viewModel.friendNickname != "사용자") {
-            Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
-            Log.d("CertificationMethodFragment", "titleTv: ${getString(R.string.goal_friend_detail, viewModel.friendNickname)}")
-            titleTv.text = getString(R.string.goal_friend_detail, viewModel.friendNickname)
-            if(viewModel.goalData?.verificationType == "TIMER"){
-                Log.d("TimerSettingFragment", "goalData: ${viewModel.goalData}")
-                viewModel.goalData?.let {
-                    val time = it.goalTime
-                    Log.d("TimerSettingFragment", "time: $time")
-                    totalTime = it.goalTime
-                    // 기존 총 시간에서 해당 부분 시간을 빼고 새로운 시간을 더함
-                    val hour = time / 3600
-                    val minute = (time % 3600) / 60
-                    val second = time % 60
-                    binding.challengeTimerHourTv.text = getString(R.string.timer_hour, hour.clockString())
-                    binding.challengeTimerMinuteTv.text = getString(R.string.timer_minute, minute.clockString())
-                    binding.challengeTimerSecondTv.text = getString(R.string.timer_second, second.clockString())
-
-                    if (totalTime < 30) {
-                        binding.errorTv.visibility = View.VISIBLE
-                        binding.challengeTimerNextBtn.isActivated = false
-                    } else {
-                        binding.errorTv.visibility = View.GONE
-                        binding.challengeTimerNextBtn.isActivated = true
-                    }
-                }
-            }
-        }
+        setInsets(binding.root)
+        setEdit()
     }
 
     // 프레그먼트 초기화
@@ -94,9 +69,7 @@ class TimerSettingFragment : Fragment() {
     private fun clickListener() {
         // 이전 버튼 -> 인증방식 설정 페이지로 이동
         binding.backIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, CertificationMethodFragment())
-                .commitAllowingStateLoss()
+            parentFragmentManager.popBackStack()
         }
 
         // 타이머 시간 설정
@@ -130,10 +103,10 @@ class TimerSettingFragment : Fragment() {
             val goalDetailFragment = GoalDetailFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", activity.goalOwnerName)
+                    putString("SELECTED_METHOD", "TIMER")
                 }
             }
-
-            activity.navigateToFragment(goalDetailFragment)
+            backStackTrueGoalNav(goalDetailFragment,"TimerSettingFragment")
         }
     }
 
@@ -216,12 +189,6 @@ class TimerSettingFragment : Fragment() {
         })
     }
 
-    fun Int.clockString() = if (this / 10 == 0) {
-        "0$this"
-    } else {
-        this.toString()
-    }
-
 //    private fun showDropdown(
 //        items: ArrayList<String>,
 //        view: TextView,
@@ -275,4 +242,51 @@ class TimerSettingFragment : Fragment() {
 //            popupWindow.showAsDropDown(view, 0, 0)
 //        }
 //    }
+
+    private fun setEdit(){
+        Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
+        val activity = requireActivity() as GoalActivity
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
+                val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
+                    verificationType = activity.verificationType)
+                Log.d("TimerSettingFragment", "goalData: $this")
+                Log.d("TimerSettingFragment", "activity goalData: $data")
+                equil(
+                    data
+                )
+            }
+        }else false
+        titleFormat(activity.isFriendTab,goalDataE, binding.titleTv,
+            if (viewModel.friendNickname!="사용자")viewModel.friendNickname else activity.goalOwnerName){
+
+        }
+        if(activity.verificationType == "TIMER"){
+            Log.d("TimerSettingFragment", "goalData: ${viewModel.editGoalData}")
+            activity.let {
+                if (it.goalTime >29) {
+                    val time = it.goalTime
+                    Log.d("TimerSettingFragment", "time: $time")
+                    totalTime = it.goalTime
+                    // 기존 총 시간에서 해당 부분 시간을 빼고 새로운 시간을 더함
+                    val hour = time / 3600
+                    val minute = (time % 3600) / 60
+                    val second = time % 60
+                    binding.challengeTimerHourTv.text =
+                        getString(R.string.timer_hour, hour.clockString())
+                    binding.challengeTimerMinuteTv.text =
+                        getString(R.string.timer_minute, minute.clockString())
+                    binding.challengeTimerSecondTv.text =
+                        getString(R.string.timer_second, second.clockString())
+
+                    updateNextButtonUi(true)
+                }
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setEdit()
+    }
 }

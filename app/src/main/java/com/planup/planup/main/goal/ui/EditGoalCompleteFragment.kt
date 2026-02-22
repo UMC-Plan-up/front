@@ -18,9 +18,6 @@ class EditGoalCompleteFragment : Fragment() {
     ): View {
         binding = FragmentEditGoalCompleteBinding.inflate(inflater, container, false)
 
-        val goalId = arguments?.getString("goalId")
-        Log.d("FragmentEditGoalComplete", "goalId: $goalId")
-
         binding.editCompleteStartBtn.setOnClickListener {
             requireActivity().finish()
         }

@@ -21,9 +21,13 @@ import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalSelectBinding
 import com.planup.planup.goal.GoalActivity
-import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.goal.util.backStackTrueGoalNav
 import com.planup.planup.main.MainActivity
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.jvm.java
 
+@AndroidEntryPoint
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
     lateinit var category: TextView // 선택된 카테고리
@@ -180,12 +184,14 @@ class GoalSelectFragment : Fragment() {
                     Log.d("GoalSelectFragment", "이름 전달 $nickname")
                     putString("goalOwnerName", nickname)
                     putString("selectedCategory", selectedCategoryEnum)
-                    putString("goalType","COMMUNITY")
                 }
 
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, commonGoalFragment)
-                    .commitAllowingStateLoss()
+                backStackTrueGoalNav(commonGoalFragment,"goalSelect")
+
+//                (context as GoalActivity).supportFragmentManager
+//                    .beginTransaction()
+//                    .replace(R.id.goal_container, commonGoalFragment)
+//                    .commitAllowingStateLoss()
             } else if (binding.goalSelectChallengeCl.isSelected) {
                 if (sleepChallenge == 2) {
                     makeToast()

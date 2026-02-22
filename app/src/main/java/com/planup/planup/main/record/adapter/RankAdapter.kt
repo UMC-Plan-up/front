@@ -5,10 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import coil3.Uri
+import coil3.toUri
 import com.planup.planup.R
 
-data class RankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: Int)
+data class RankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
 
 class RankAdapter(private val rankList: List<RankItem>) :
     RecyclerView.Adapter<RankAdapter.RankViewHolder>() {
@@ -31,7 +34,7 @@ class RankAdapter(private val rankList: List<RankItem>) :
         holder.rankText.text = "${item.rank}위"
         holder.nicknameText.text = item.nickname
         holder.certCountText.text = "사진인증 ${item.certCount}회"
-        holder.profileImage.setImageResource(item.imageResId)
+        holder.profileImage.setImageURI(item.imageResId.toUri())
     }
 
     override fun getItemCount(): Int = rankList.size

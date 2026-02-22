@@ -1,5 +1,6 @@
 package com.planup.planup.goal.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
@@ -49,8 +50,8 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 
     //프레그먼트 초기화
     private fun init(){
-//        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
-//        editor = prefs.edit()
+        prefs = (requireActivity() as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        editor = prefs.edit()
 //        val userPrefs = (context as GoalActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         challengeService = ChallengeController()
         viewModel.getUserNickName{

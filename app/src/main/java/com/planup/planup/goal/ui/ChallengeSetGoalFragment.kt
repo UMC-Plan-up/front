@@ -44,7 +44,7 @@ class ChallengeSetGoalFragment : Fragment() {
                 binding.challengeSetGoalCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
-        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        prefs = (requireActivity() as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
     }
     private fun clickListener() {

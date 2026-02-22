@@ -2,7 +2,6 @@ package com.planup.planup.main.goal.ui
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +15,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.planup.planup.R
@@ -23,12 +23,17 @@ import com.planup.planup.databinding.FragmentPushAlertBinding
 import com.planup.planup.databinding.ItemRecyclerDropdownMoriningBinding
 import com.planup.planup.databinding.ItemRecyclerDropdownTimeBinding
 import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.setInsets
 import com.planup.planup.main.goal.item.EditGoalRequest
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import com.planup.planup.main.home.ui.HomeFragment
 import com.planup.planup.network.RetrofitInstance
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.util.Collections.frequency
 
+@AndroidEntryPoint
 class PushAlertEditFragment : Fragment() {
     private var _binding: FragmentPushAlertBinding? = null
     private val binding get() = _binding!!
@@ -38,35 +43,12 @@ class PushAlertEditFragment : Fragment() {
     private lateinit var minutes: ArrayList<String> //분
     private lateinit var times: ArrayList<String>
     private lateinit var prefs: SharedPreferences
-    private var goalId: Int = 0
-    private var goalName: String = ""
-    private var goalAmount: String = ""
-    private var goalCategory: String = ""
-    private var goalType: String = ""
-    private var oneDose: Int = 0
-    private var frequency: Int = 0
-    private var period: String = ""
-    private var endDate: String = ""
-    private var verificationType: String = ""
-    private var limitFriendCount: Int = 0
-    private var goalTime: Int = 0
+
+    private val viewModel: GoalViewModel by activityViewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        goalId = arguments?.getInt("goalId") ?: 0
-        goalName = arguments?.getString("goalName") ?: ""
-        goalAmount = arguments?.getString("goalAmount") ?: ""
-        goalCategory = arguments?.getString("goalCategory") ?: ""
-        goalType = arguments?.getString("goalType") ?: ""
-        oneDose = arguments?.getInt("oneDose") ?: 0
-        frequency = arguments?.getInt("frequency") ?: 0
-        period = arguments?.getString("period") ?: ""
-        endDate = arguments?.getString("endDate") ?: ""
-        verificationType = arguments?.getString("verificationType") ?: ""
-        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
-        goalTime = arguments?.getInt("goalTime") ?: 0
-        prefs = requireActivity().getSharedPreferences("userInfo", MODE_PRIVATE)
 
     }
     override fun onCreateView(
@@ -74,13 +56,7 @@ class PushAlertEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPushAlertBinding.inflate(inflater, container, false)
-        init()
-        clickListener()
-        binding.alertBackIv.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack()
-        }
-
-        binding.nextButton.setOnClickListener {
+        viewModel.goalData.apply {
             val request = EditGoalRequest(
                 goalName = goalName,
                 goalAmount = goalAmount,
@@ -95,10 +71,41 @@ class PushAlertEditFragment : Fragment() {
                 goalTime = goalTime
             )
             Log.d("EditGoalFragment", "$request")
-            updateGoal(goalId = goalId, request = request)
+        }
+        init()
+        clickListener()
+        binding.alertBackIv.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+
+        binding.nextButton.setOnClickListener {
+            if (viewModel.editGoalData == null) return@setOnClickListener
+            viewModel.goalData.apply {
+                val request = EditGoalRequest(
+                    goalName = goalName,
+                    goalAmount = goalAmount,
+                    goalCategory = goalCategory,
+                    goalType = goalType,
+                    oneDose = oneDose,
+                    frequency = frequency,
+                    period = period,
+                    endDate = endDate,
+                    verificationType = verificationType,
+                    limitFriendCount = limitFriendCount,
+                    goalTime = goalTime
+                )
+                Log.d("EditGoalFragment", "$request")
+                updateGoal(goalId = viewModel.goalId, request = request)
+            }
+
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setInsets(view)
     }
 
     private fun updateGoal(goalId: Int, request: EditGoalRequest) {

@@ -2,6 +2,7 @@ package com.planup.planup.main.goal.data
 
 import android.util.Log
 import com.planup.planup.goal.data.GoalCreateRequest
+import com.planup.planup.goal.data.GoalJoinResult
 import com.planup.planup.goal.data.GoalResult
 import com.planup.planup.main.goal.domain.GoalRepository
 import com.planup.planup.main.goal.item.EditGoalRequest
@@ -135,6 +136,52 @@ class GoalRepositoryImpl @Inject constructor(
                         )
                         ApiResult.Fail(response.message)
                     }
+                }
+            )
+        }
+
+    override suspend fun joinGoal(goalId: Int): ApiResult<GoalJoinResult> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.joinGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        Log.w(
+                            "GoalFragment",
+                            "joinGoal fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+
+                }
+            )
+        }
+
+    override suspend fun getGoalLevel(): ApiResult<String> =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getGoalLevel()
+                },
+                onResponse = { response ->
+                    Log.d(
+                        "GoalFragment",
+                        "getGoalLevel body=${response} code=${response.code}"
+                    )
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result.userLevel)
+                    } else {
+                        Log.d(
+                            "GoalFragment",
+                            "getGoalLevel fail body=${response} code=${response.code}"
+                        )
+                        ApiResult.Fail(response.message)
+                    }
+
                 }
             )
         }

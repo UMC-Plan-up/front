@@ -1,35 +1,47 @@
-package com.planup.planup.main.goal.ui
+package com.planup.planup.goal.ui
 
 import android.app.Activity
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.geometry.Rect
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
-import com.planup.planup.databinding.FragmentGoalDescriptionBinding
+import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.TmpGoalData
+import com.planup.planup.goal.util.goalType
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
+import com.planup.planup.main.goal.item.EditGoalResponse
+import com.planup.planup.main.goal.ui.GoalFragment
+import com.planup.planup.main.goal.ui.GoalUpdateDialog
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.main.record.adapter.RankAdapter
+import com.planup.planup.main.record.adapter.RankItem
 import com.planup.planup.network.RetrofitInstance
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
 
-class GoalDescriptionFragment : Fragment() {
+@AndroidEntryPoint
+class GoalCommunityJoinFragment : Fragment() {
 
     companion object { const val ARG_GOAL_ID = "goalId" }
 
-    private lateinit var binding: FragmentGoalDescriptionBinding
+    private lateinit var binding: FragmentGoalCommunityJoinBinding
     private var isPublic: Boolean = true
     private var goalId: Int = -1
+
+    private var goalData = TmpGoalData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,28 +53,29 @@ class GoalDescriptionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentGoalDescriptionBinding.inflate(inflater, container, false)
-
-        applyToggleUI(isPublic)
+        binding = FragmentGoalCommunityJoinBinding.inflate(inflater, container, false)
 
         binding.btnBack.setOnClickListener { (context as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, GoalFragment()).commitAllowingStateLoss()}
-        binding.btnPublic.setOnClickListener {
-            if (!isPublic) { isPublic = true; applyToggleUI(isPublic) }
-        }
-        binding.btnPrivate.setOnClickListener { if (isPublic) showPrivateDialog() }
 
         if (goalId <= 0) {
             Toast.makeText(requireContext(), "잘못된 목표입니다.", Toast.LENGTH_SHORT).show()
         } else {
             loadGoalDetail(goalId)   // ✅ 주석 해제해서 실제 호출
             setRanking(goalId)
-        }
-
-        binding.goalDescEditIv.setOnClickListener {
-            val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
-            intent.putExtra("goalId",goalId)
-            editGoalLauncher.launch(intent)
+            binding.goalJoinNextBtn.setOnClickListener {
+                setJoin(goalId)
+            }
+            binding.editGoalNextBtn.setOnClickListener {
+                val goalActivity = requireActivity() as GoalActivity
+                Log.d("CommonGoalFragment", "goalType: ${goalActivity.goalType}")
+                val goalInputFragment = GoalInputFragment().apply {
+                    arguments = Bundle().apply {
+                        putBoolean("isData",true)
+                    }
+                }
+                (requireActivity() as GoalActivity).navigateToFragment(goalInputFragment)
+            }
         }
 
         return binding.root
@@ -83,13 +96,13 @@ class GoalDescriptionFragment : Fragment() {
     private fun loadGoalDetail(goalId: Int) {
         lifecycleScope.launch {
             runCatching {
-                RetrofitInstance.goalApi.getGoalDetail(goalId = goalId) // GoalDetailResponse
+                RetrofitInstance.goalApi.getEditGoal(goalId = goalId) // GoalDetailResponse
             }.onSuccess { resp ->
-                if (resp.isSuccess) {
-                    val goal: com.planup.planup.main.goal.item.GoalResult = resp.result  // ✅ 타입 맞춤
+                if (resp.isSuccessful) {
+                    val goal = resp.body()!!.result  // ✅ 타입 맞춤
                     bindGoal(goal)
                 } else {
-                    Toast.makeText(requireContext(), resp.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
                 }
             }.onFailure {
                 Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -98,7 +111,7 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     // 현재 서버 DTO(GoalResult)에 존재하는 필드만 안전하게 바인딩
-    private fun bindGoal(goal: com.planup.planup.main.goal.item.GoalResult) {
+    private fun bindGoal(goal: EditGoalResponse) {
         binding.goalTitleTv.text = goal.goalName
         binding.oneDoseTv.text = "목표 1회 량${goal.oneDose} / ${goal.goalAmount}"
 
@@ -110,15 +123,19 @@ class GoalDescriptionFragment : Fragment() {
             "PICTURE" -> "사진 인증"
             else -> "알 수 없음"
         }
-
-        // 참여자 수 문구가 "%d명 참여중" 형식이면 strings.xml에
-        // <string name="goal_description_attendee_cnt_fmt">%1$d명 참여중</string>
-        // 로 추가하고 아래처럼 사용하세요. (현재는 데이터가 없으니 임시 0)
-        // binding.goal_description_attendee_cnt_tv.text =
-        //     getString(R.string.goal_description_attendee_cnt_fmt, 0)
-
-        isPublic = goal.public
-        applyToggleUI(isPublic)
+        (requireActivity() as GoalActivity).apply {
+            goalName = goal.goalName
+            goalAmount = goal.goalAmount
+            goalType = goal.goalType
+            goalCategory = goal.goalCategory
+            goalTime = goal.goalTime
+            endDate = goal.endDate
+            frequency = goal.frequency
+            verificationType = goal.verificationType
+            period = goal.period
+            oneDose = goal.oneDose.toString()
+            limitFriendCount = goal.limitFriendCount
+        }
     }
 
     fun bindRanking(ranking: List<GoalRanking>) {
@@ -143,7 +160,11 @@ class GoalDescriptionFragment : Fragment() {
 
                     val remain = ranking.drop(3)
                     if (remain.isNotEmpty()){
-
+                        rankRecyclerView.adapter = RankAdapter(
+                            ranking.mapIndexed {index, ranking ->
+                                RankItem(index+3,ranking.nickName,ranking.verificationCount,ranking.profileImg)
+                            }
+                        )
                     }
                 }
             }
@@ -155,27 +176,6 @@ class GoalDescriptionFragment : Fragment() {
 
     }
 
-    private fun applyToggleUI(publicSelected: Boolean) {
-        binding.btnPublic.isSelected = publicSelected
-        binding.btnPrivate.isSelected = !publicSelected
-        binding.btnPublic.setTextColor(if (publicSelected) Color.WHITE else Color.BLACK)
-        binding.btnPrivate.setTextColor(if (publicSelected) Color.BLACK else Color.WHITE)
-    }
-
-    private fun showPrivateDialog() {
-        val dialog = Dialog(requireContext()).apply {
-            setContentView(R.layout.dialog_private_goal)
-            window?.setBackgroundDrawableResource(android.R.color.transparent)
-        }
-        dialog.findViewById<ImageView>(R.id.popup_block_no_iv)?.setOnClickListener { dialog.dismiss() }
-        dialog.findViewById<ImageView>(R.id.popup_block_yes_iv)?.setOnClickListener {
-            isPublic = false
-            applyToggleUI(isPublic)
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
             runCatching {
@@ -185,6 +185,22 @@ class GoalDescriptionFragment : Fragment() {
                     val ranking = resp.body()!!.result.goalRankingList.sortedByDescending { it.verificationCount }
                     // ✅ 타입 맞춤
                     bindRanking(ranking)
+                } else {
+                    Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
+                }
+            }.onFailure {
+                Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun setJoin(goalId:Int){
+        lifecycleScope.launch {
+            runCatching {
+                RetrofitInstance.goalApi.joinGoal(goalId)
+            }.onSuccess { resp ->
+                if (resp.isSuccessful && resp.body() != null) {
+                    Log.d("join","${resp.body()!!.result}")
                 } else {
                     Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
                 }

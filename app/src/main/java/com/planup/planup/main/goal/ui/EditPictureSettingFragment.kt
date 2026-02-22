@@ -1,6 +1,5 @@
-package com.planup.planup.goal.ui
+package com.planup.planup.main.goal.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,16 +13,15 @@ import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentPictureSettingBinding
 import com.planup.planup.goal.GoalActivity
-import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.backStackTrueNav
 import com.planup.planup.goal.util.equil
 import com.planup.planup.goal.util.setInsets
 import com.planup.planup.goal.util.titleFormat
-import com.planup.planup.main.goal.ui.EditGoalDetailFragment
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PictureSettingFragment : Fragment() {
+class EditPictureSettingFragment : Fragment() {
 
     private var _binding: FragmentPictureSettingBinding? = null
     private val binding get() = _binding!!
@@ -66,20 +64,15 @@ class PictureSettingFragment : Fragment() {
 
         // 다음 버튼 -> GoalDetailFragment로 이동
         binding.challengeTimerNextBtn.setOnClickListener {
-                val activity = requireActivity() as GoalActivity
-                // GoalActivity에 인증 횟수와 인증 방식 저장
-                activity.oneDose = selectedFrequency.toString()
-                activity.verificationType = "PICTURE"
+            viewModel.setGoalData(
+                viewModel.goalData.copy(
+                    verificationType = "PICTURE",
+                    oneDose = selectedFrequency
+                )
+            )
 
-                // SharedPreferences에 저장
-                val prefs = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                prefs.edit()
-                    .putInt(KEY_DOSE, selectedFrequency)
-                    .putString(KEY_VERIFICATION_TYPE, "PICTURE")
-                    .apply()
-
-                val goalDetailFragment = EditGoalDetailFragment()
-                backStackTrueGoalNav(goalDetailFragment,"PictureSettingFragment")
+            val goalDetailFragment = EditGoalDetailFragment()
+            backStackTrueNav(R.id.edit_friend_goal_fragment_container, goalDetailFragment)
         }
     }
 

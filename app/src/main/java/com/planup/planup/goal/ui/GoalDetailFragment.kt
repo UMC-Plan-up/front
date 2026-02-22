@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,13 @@ import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDetailBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.daysFromToday
+import com.planup.planup.goal.util.endDateFromToday
+import com.planup.planup.goal.util.equil
+import com.planup.planup.goal.util.logGoalActivityData
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -43,20 +51,9 @@ class GoalDetailFragment : Fragment() {
 
     private val viewModel: GoalViewModel by activityViewModels()
 
-    val periodButtons = listOf(
-        binding.dayOptionDailyButton,
-        binding.dayOptionWeeklyButton,
-        binding.dayOptionMonthlyButton
-    )
-
-    val endOptionButtons = listOf(
-        binding.endOption1WeekButton,
-        binding.endOption1MonthButton,
-        binding.endOption3MonthButton,
-        binding.endOption6MonthButton,
-        binding.endOption1YearButton,
-        binding.directSetButton
-    )
+    private lateinit var periodButtons: List<AppCompatButton>
+    private lateinit var endOptionButtons: List<AppCompatButton>
+    private lateinit var _endOptionButtons: List<AppCompatButton>
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,41 +66,23 @@ class GoalDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val goalActivity = (requireActivity() as GoalActivity)
-        selectedMethod = arguments?.getString("SELECTED_METHOD")
-        val name = arguments?.getString("goalOwnerName")
-        goalOwnerName = name?.removeSurrounding("\"")
-            ?: goalActivity.goalOwnerName
-        if(viewModel.friendNickname == "사용자") {
-            val title = getString(R.string.goal_friend_detail, goalOwnerName)
-            binding.friendGoalTitle.text = title
-        }else{
-            val title = getString(R.string.goal_friend_detail, viewModel.friendNickname)
-            binding.friendGoalTitle.text = title
-            periodButtons.forEach {
-                if (it.text.toString() == viewModel.goalData?.period){
-                    setPeriodListener(it)
-                }
-            }
-            binding.frequencyErrorText.text = viewModel.goalData?.frequency.toString()
-            setErrorText(viewModel.goalData?.frequency ?: 0)
+        setInsets(binding.root)
+        periodButtons = listOf(
+            binding.dayOptionDailyButton,
+            binding.dayOptionWeeklyButton,
+            binding.dayOptionMonthlyButton
+        )
 
-            when (viewModel.goalData?.endDate) {
-                "1Week" -> setEndListener(endOptionButtons[0])
-                "1Month" -> setEndListener(endOptionButtons[1])
-                "3Months" -> setEndListener(endOptionButtons[2])
-                "6Months" -> setEndListener(endOptionButtons[3])
-                "1Year" -> setEndListener(endOptionButtons[4])
-                else -> setEndListener(endOptionButtons[5])
-            }
-
-            updateNextButtonState()
-        }
-
+        _endOptionButtons = listOf(
+            binding.endOption1WeekButton,
+            binding.endOption1MonthButton,
+            binding.endOption3MonthButton,
+            binding.endOption6MonthButton,
+            binding.endOption1YearButton,
+            binding.directSetButton
+        )
 
 //        binding.friendGoalTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
-
-        binding.nextButton.isEnabled = false
         binding.frequencyErrorText.visibility = View.GONE
 
         // SubscriptionPlanFragment에서 직접 넘어온 경우
@@ -133,6 +112,8 @@ class GoalDetailFragment : Fragment() {
         setupNextButton()
         setupDirectSetSection()
         setupKeyboardHiding()
+
+        setEdit()
     }
 
     private fun hideKeyboardAndClearFocus() {
@@ -162,31 +143,32 @@ class GoalDetailFragment : Fragment() {
 
     private fun setupBackButton() {
         binding.backIcon.setOnClickListener {
-            val previousFragment = arguments?.getString("PREVIOUS_FRAGMENT")
-
-            if (previousFragment == "ParticipantLimitFragment") {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
-            } else {
-                when (selectedMethod) {
-                    "TIMER" -> {
-                        val timerFragment = TimerSettingFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("goalOwnerName", goalOwnerName)
-                            }
-                        }
-                        (activity as? GoalActivity)?.navigateToFragment(timerFragment)
-                    }
-                    "PICTURE" -> {
-                        val certFragment = CertificationMethodFragment().apply {
-                            arguments = Bundle().apply {
-                                putString("goalOwnerName", goalOwnerName)
-                            }
-                        }
-                        (activity as? GoalActivity)?.navigateToFragment(certFragment)
-                    }
-                    else -> requireActivity().onBackPressedDispatcher.onBackPressed()
-                }
-            }
+//            val previousFragment = arguments?.getString("PREVIOUS_FRAGMENT")
+//
+//            if (previousFragment == "ParticipantLimitFragment") {
+//                requireActivity().onBackPressedDispatcher.onBackPressed()
+//            } else {
+//                when (selectedMethod) {
+//                    "TIMER" -> {
+//                        val timerFragment = TimerSettingFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putString("goalOwnerName", goalOwnerName)
+//                            }
+//                        }
+//                        (activity as? GoalActivity)?.navigateToFragment(timerFragment)
+//                    }
+//                    "PICTURE" -> {
+//                        val certFragment = CertificationMethodFragment().apply {
+//                            arguments = Bundle().apply {
+//                                putString("goalOwnerName", goalOwnerName)
+//                            }
+//                        }
+//                        (activity as? GoalActivity)?.navigateToFragment(certFragment)
+//                    }
+//                    else -> requireActivity().onBackPressedDispatcher.onBackPressed()
+//                }
+//            }
+            parentFragmentManager.popBackStack()
         }
     }
 
@@ -194,6 +176,13 @@ class GoalDetailFragment : Fragment() {
         periodButtons.forEach { button ->
             button.setOnClickListener {
                 setPeriodListener(button)
+                if(button.text == binding.dayOptionMonthlyButton.text) {
+                    endOptionButtons = _endOptionButtons.drop(1)
+                    binding.endOption1WeekButton.visibility = View.GONE
+                }else {
+                    endOptionButtons = _endOptionButtons
+                    binding.endOption1WeekButton.visibility = View.VISIBLE
+                }
             }
         }
     }
@@ -258,27 +247,15 @@ class GoalDetailFragment : Fragment() {
     }
 
     private fun setupEndOptionButtons() {
-        val buttons = if(binding.frequencyInputState.text == binding.dayOptionMonthlyButton.text) {
-            listOf(
-                binding.endOption1MonthButton,
-                binding.endOption3MonthButton,
-                binding.endOption6MonthButton,
-                binding.endOption1YearButton,
-                binding.directSetButton
-            )
+        val goalActivity = (requireActivity() as GoalActivity)
+        val period = when(goalActivity.period){
+            "DAY"-> "매일"
+            "WEEK"-> "매주"
+            "MONTH"-> "매달"
+            else -> goalActivity.period
         }
-        else{
-            listOf(
-                binding.endOption1WeekButton,
-                binding.endOption1MonthButton,
-                binding.endOption3MonthButton,
-                binding.endOption6MonthButton,
-                binding.endOption1YearButton,
-                binding.directSetButton
-            )
-        }
-
-        buttons.forEach { button ->
+        endOptionButtons = monthEndUi(period)
+        endOptionButtons.forEach { button ->
             button.setOnClickListener {
                 setEndListener(button)
                 updateNextButtonState()
@@ -353,7 +330,7 @@ class GoalDetailFragment : Fragment() {
         val isPeriodSelected = selectedPeriodButton != null
         val isFrequencyInputValid = isFrequencyValid
         val isReady = isPeriodSelected && isFrequencyInputValid
-
+        Log.d("GoalDetailFragment", "isReady: $isReady")
         binding.nextButton.isEnabled = isReady
         binding.nextButton.background =
             ContextCompat.getDrawable(
@@ -392,11 +369,11 @@ class GoalDetailFragment : Fragment() {
         val frequency = binding.frequencyInputEditText.text.toString().toIntOrNull() ?: 0
 
         val endDateString: String? = when (selectedEndButton) {
-            binding.endOption1WeekButton -> "1Week"
-            binding.endOption1MonthButton -> "1Month"
-            binding.endOption3MonthButton -> "3Months"
-            binding.endOption6MonthButton -> "6Months"
-            binding.endOption1YearButton -> "1Year"
+            binding.endOption1WeekButton -> endDateFromToday(7)
+            binding.endOption1MonthButton -> endDateFromToday(30)
+            binding.endOption3MonthButton -> endDateFromToday(90)
+            binding.endOption6MonthButton -> endDateFromToday(180)
+            binding.endOption1YearButton -> endDateFromToday(365)
             binding.directSetButton -> {
                 if (selectedYear != null && selectedMonth != null && selectedDay != null) {
                     "$selectedYear-$selectedMonth-$selectedDay"
@@ -430,6 +407,7 @@ class GoalDetailFragment : Fragment() {
 
                 }
             }else {
+                goalActivity.limitFriendCount = Int.MAX_VALUE
                 PushAlertCommunityFragment().apply {
                     arguments = Bundle().apply {
                         putString("goalOwnerName", goalActivity.goalOwnerName)
@@ -440,12 +418,12 @@ class GoalDetailFragment : Fragment() {
                         putString("verificationType", goalActivity.verificationType)
                         putString("period", goalActivity.period)
                         putInt("frequency", goalActivity.frequency)
+                        putInt("limitFriendCount", Int.MAX_VALUE)
                         putString("endDate", goalActivity.endDate)
                     }
                 }
             }
-
-            goalActivity.navigateToFragment(nextFragment)
+            backStackTrueGoalNav(nextFragment,"GoalDetailFragment")
             return
         }
 
@@ -494,6 +472,8 @@ class GoalDetailFragment : Fragment() {
 
     private fun setEndListener(button: AppCompatButton){
         if (selectedEndButton == button) {
+            Log.d("GoalDetailFragment", "selectedEndButton == button")
+            Log.d("GoalDetailFragment", "selectedEndButton: $selectedEndButton")
             // 이미 선택된 버튼을 다시 클릭한 경우 선택 해제
             resetButtonStyle(button)
             selectedEndButton = null
@@ -528,6 +508,11 @@ class GoalDetailFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setEdit()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -540,4 +525,92 @@ class GoalDetailFragment : Fragment() {
             binding.goalContainer.visibility = View.VISIBLE
         }
     }
+
+    fun setEdit(){
+        val activity = (requireActivity() as GoalActivity)
+        selectedMethod = arguments?.getString("SELECTED_METHOD")
+        goalOwnerName = activity.goalOwnerName
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
+                val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
+                    verificationType = activity.verificationType,)
+                equil(
+                    when(data.verificationType){
+                        "PICTURE" -> data.copy(oneDose = activity.oneDose.toIntOrNull() ?: 0)
+                        else -> data.copy(goalTime = activity.goalTime)
+                    })
+            }
+        }else false
+        titleFormat(activity.isFriendTab,goalDataE, binding.friendGoalTitle,
+            if (viewModel.friendNickname != "사용자")viewModel.friendNickname
+            else activity.goalOwnerName){
+            binding.nextButton.isEnabled = false
+        }
+        logGoalActivityData()
+        Log.d("GoalDetailFragment", "goal : ${viewModel.editGoalData}")
+        // 주기 설정
+        val period = when(activity.period){
+            "DAY"-> "매일"
+            "WEEK"-> "매주"
+            "MONTH"-> "매달"
+            else -> activity.period
+        }
+        endOptionButtons = monthEndUi(period)
+        periodButtons.forEach {
+            if (it.text.toString() == period) {
+                selectedPeriodButton?.let { resetButtonStyle(it) }
+                selectButtonStyle(it)
+                selectedPeriodButton = it
+                binding.frequencyInputState.text = it.text
+            }
+        }
+
+
+        Log.d("GoalDetailFragment", viewModel.editGoalData.toString())
+        // 빈도 설정
+        if (activity.frequency != 0) {
+            binding.frequencyInputEditText.setText("${activity.frequency}")
+            setErrorText(activity.frequency)
+        }
+
+        // 종료일 설정
+        selectedEndButton = null
+        Log.d("GoalDetailFragment", "endDate: ${activity.endDate}")
+        if (!activity.endDate.isNullOrBlank()) {
+            val endDate = daysFromToday(activity.endDate!!)
+            if (endDate == -1) return
+            when (endDate) {
+                7 -> setEndListener(endOptionButtons[0])
+                30 -> setEndListener(endOptionButtons[if(period == "매달")0 else 1])
+                90 -> setEndListener(endOptionButtons[if(period == "매달")1 else 2])
+                180 -> setEndListener(endOptionButtons[if(period == "매달")2 else 3])
+                365 -> setEndListener(endOptionButtons[if(period == "매달")3 else 4])
+                else -> {
+                    Log.d("GoalDetailFragment", "endDate: ${activity.endDate}")
+
+                    val dayText = activity.endDate?.split("-")
+                    if (dayText != null) {
+                        if (dayText.size == 3) {
+                            binding.challengeYearTv.text = getString(R.string.year_unit, dayText[0])
+                            selectedYear = dayText[0]
+                            binding.challengeMonthTv.text = getString(R.string.month_unit, dayText[1])
+                            selectedMonth = dayText[1]
+                            binding.challengeDayTv.text = getString(R.string.day_unit, dayText[2])
+                            selectedDay = dayText[2]
+                        }
+                    }
+                    setEndListener(endOptionButtons.last())
+                }
+            }
+        }
+
+
+
+        updateNextButtonState()
+    }
+
+    private fun monthEndUi(period: String): List<AppCompatButton>
+    = if(period == "매달"||period == "MONTH") {
+            _endOptionButtons.drop(1)
+        }else _endOptionButtons
 }

@@ -9,10 +9,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
-import com.planup.planup.goal.GoalActivity
 import com.planup.planup.databinding.FragmentParticipantLimitBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.equil
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
+@AndroidEntryPoint
 class ParticipantLimitFragment : Fragment() {
 
     private var _binding: FragmentParticipantLimitBinding? = null
@@ -20,6 +29,8 @@ class ParticipantLimitFragment : Fragment() {
 
     private var isInputValid = false
     private var goalOwnerName: String? = null
+
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,22 +42,11 @@ class ParticipantLimitFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // GoalDetailFragment에서 닉네임 받기
-        goalOwnerName = arguments?.getString("goalOwnerName")
-            ?: (activity as? GoalActivity)?.goalOwnerName
-                    ?: "사용자"
-
-        // 닉네임 반영
-//        binding.friendGoalTitleText.text = getString(R.string.goal_friend_detail, goalOwnerName)
-        binding.participantLimitErrorText.visibility = View.GONE
-
-        /* 처음엔 다음 버튼 비활성화 */
-        disableNextButton()
-
+        setInsets(view)
         setupClickListeners()
         setupInputValidation()
 
+        //setInsets(binding.root,)
         view.setOnTouchListener { _, event ->
             if (event.action == android.view.MotionEvent.ACTION_DOWN &&
                 binding.participantLimitEditText.isFocused
@@ -57,13 +57,16 @@ class ParticipantLimitFragment : Fragment() {
             view.performClick()
             false
         }
+
+        setEdit()
     }
 
     private fun setupClickListeners() {
         binding.backIcon.setOnClickListener {
-            val goalDetailFragment = GoalDetailFragment()
-            (activity as? GoalActivity)?.navigateToFragment(goalDetailFragment)
-                ?: parentFragmentManager.popBackStack()
+//            val goalDetailFragment = GoalDetailFragment()
+//            (activity as? GoalActivity)?.navigateToFragment(goalDetailFragment)
+//                ?: parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack()
         }
 
         binding.nextButton.setOnClickListener {
@@ -86,7 +89,8 @@ class ParticipantLimitFragment : Fragment() {
                             putInt("limitFriendCount", ga.limitFriendCount)
                         }
                     }
-                    ga.navigateToFragment(pushAlertCommunityFragment)
+//                    ga.navigateToFragment(pushAlertCommunityFragment)
+                    backStackTrueGoalNav(pushAlertCommunityFragment,"ParticipantLimitFragment")
                 } else {
                     val pushAlertCommunityFragment = PushAlertCommunityFragment().apply {
                         arguments = Bundle().apply {
@@ -96,11 +100,13 @@ class ParticipantLimitFragment : Fragment() {
                     }
                     val containerId = (view?.parent as? ViewGroup)?.id
                     if (containerId != null && containerId != View.NO_ID) {
+//                        backStackTrueNav(containerId,pushAlertCommunityFragment,"ParticipantLimitFragment")
                         parentFragmentManager.beginTransaction()
                             .replace(containerId, pushAlertCommunityFragment)
                             .addToBackStack(null)
                             .commit()
                     } else {
+//                        backStackTrueNav(android.R.id.content,pushAlertCommunityFragment,"ParticipantLimitFragment")
                         requireActivity().supportFragmentManager.beginTransaction()
                             .replace(android.R.id.content, pushAlertCommunityFragment)
                             .addToBackStack(null)
@@ -159,8 +165,47 @@ class ParticipantLimitFragment : Fragment() {
             ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background)
     }
 
+    override fun onResume() {
+        super.onResume()
+        setEdit()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
+    private fun setEdit(){
+        val activity = requireActivity() as GoalActivity
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
+                val data = copy(goalName = activity.goalName, goalAmount = activity.goalAmount,
+                    verificationType = activity.verificationType, period = activity.period,
+                    endDate = if (activity.endDate != null)activity.endDate!! else "",
+                    frequency = activity.frequency)
+                equil(
+                    when(data.verificationType){
+                        "PICTURE" -> data.copy(oneDose = activity.oneDose.toIntOrNull() ?: 0)
+                        else -> data.copy(goalTime = activity.goalTime)
+                    })
+            }
+        }else false
+        titleFormat(activity.isFriendTab,goalDataE, binding.friendGoalTitleText,
+            if (viewModel.friendNickname != "사용자")viewModel.friendNickname
+                else activity.goalOwnerName){
+            binding.participantLimitErrorText.visibility = View.GONE
+            /* 처음엔 다음 버튼 비활성화 */
+            disableNextButton()
+        }
+
+        if (activity.limitFriendCount != 0) {
+            binding.participantLimitEditText.setText(activity.limitFriendCount.toString())
+            isInputValid = true
+        } else {
+            /* 처음엔 다음 버튼 비활성화 */
+            disableNextButton()
+        }
+
+    }
+
 }
