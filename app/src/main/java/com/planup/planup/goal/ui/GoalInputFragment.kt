@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.planup.planup.databinding.FragmentGoalInputBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.util.backStackTrueGoalNav
@@ -30,15 +31,15 @@ class GoalInputFragment : Fragment() {
     private var goalType: String? = null
     private var goalCategory: String? = null
 
-    private val viewModel : GoalViewModel by activityViewModels()
     private val prefs by lazy {
         requireActivity().getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        resetGoalDataTrueCategory()
-
+        if (arguments?.getBoolean("isData") != true) {
+            resetGoalDataTrueCategory()
+        }
     }
 
     override fun onCreateView(
@@ -133,25 +134,14 @@ class GoalInputFragment : Fragment() {
             view.performClick()
             false
         }
-        if (viewModel.editGoalData != null){
-            (requireActivity() as GoalActivity).apply {
-                viewModel.editGoalData!!.let {
-                    goalName = it.goalName
-                    goalAmount = it.goalAmount
-                    goalCategory = it.goalCategory
-                    goalType = it.goalType
-                    goalTime = it.goalTime
-                    oneDose = it.oneDose.toString()
-                    frequency = it.frequency
-                    limitFriendCount = it.limitFriendCount
-                    verificationType = it.verificationType
-                    endDate = it.endDate
-                    period = it.period
-                }
+
+        (requireActivity() as GoalActivity).apply {
+            if (goalName.isNotBlank())
                 binding.nicknameEditText.setText(goalName)
+            if (goalAmount.isNotBlank())
                 binding.goalVolumeEditText.setText(goalAmount)
-            }
         }
+
     }
 
     // 전체 입력 검증 → 버튼 활성화

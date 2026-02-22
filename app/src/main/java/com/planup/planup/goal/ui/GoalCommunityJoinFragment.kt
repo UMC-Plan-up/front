@@ -13,6 +13,7 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
 import com.planup.planup.goal.GoalActivity
@@ -41,7 +42,6 @@ class GoalCommunityJoinFragment : Fragment() {
     private var goalId: Int = -1
 
     private var goalData = TmpGoalData()
-    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,9 +123,19 @@ class GoalCommunityJoinFragment : Fragment() {
             "PICTURE" -> "사진 인증"
             else -> "알 수 없음"
         }
-
-        viewModel.setEditGoalData(goalData = goal)
-
+        (requireActivity() as GoalActivity).apply {
+            goalName = goal.goalName
+            goalAmount = goal.goalAmount
+            goalType = goal.goalType
+            goalCategory = goal.goalCategory
+            goalTime = goal.goalTime
+            endDate = goal.endDate
+            frequency = goal.frequency
+            verificationType = goal.verificationType
+            period = goal.period
+            oneDose = goal.oneDose.toString()
+            limitFriendCount = goal.limitFriendCount
+        }
     }
 
     fun bindRanking(ranking: List<GoalRanking>) {
