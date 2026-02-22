@@ -38,6 +38,7 @@ class GoalInputFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         resetGoalDataTrueCategory()
+
     }
 
     override fun onCreateView(
@@ -131,6 +132,25 @@ class GoalInputFragment : Fragment() {
             }
             view.performClick()
             false
+        }
+        if (viewModel.editGoalData != null){
+            (requireActivity() as GoalActivity).apply {
+                viewModel.editGoalData!!.let {
+                    goalName = it.goalName
+                    goalAmount = it.goalAmount
+                    goalCategory = it.goalCategory
+                    goalType = it.goalType
+                    goalTime = it.goalTime
+                    oneDose = it.oneDose.toString()
+                    frequency = it.frequency
+                    limitFriendCount = it.limitFriendCount
+                    verificationType = it.verificationType
+                    endDate = it.endDate
+                    period = it.period
+                }
+                binding.nicknameEditText.setText(goalName)
+                binding.goalVolumeEditText.setText(goalAmount)
+            }
         }
     }
 
