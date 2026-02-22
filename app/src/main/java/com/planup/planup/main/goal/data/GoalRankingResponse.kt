@@ -1,6 +1,5 @@
-package com.example.planup.main.goal.data
+package com.planup.planup.main.goal.data
 
-import com.example.planup.main.goal.item.TimerVerification
 
 data class GoalRankingResponse(
     val isSuccess: Boolean,

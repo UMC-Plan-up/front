@@ -1,9 +1,8 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -12,20 +11,19 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
-import com.example.planup.databinding.FragmentPushAlertBinding
-import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.main.home.ui.HomeFragment
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.marginBottom
-import com.example.planup.goal.GoalActivity
-import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
-import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.logGoalActivityData
-import com.example.planup.goal.util.setInsets
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentPushAlertBinding
+import com.planup.planup.databinding.ItemRecyclerDropdownMoriningBinding
+import com.planup.planup.databinding.ItemRecyclerDropdownTimeBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.logGoalActivityData
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.home.ui.HomeFragment
 
 class PushAlertCommunityFragment : Fragment() {
 

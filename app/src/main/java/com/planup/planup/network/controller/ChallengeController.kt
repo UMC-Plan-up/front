@@ -1,31 +1,28 @@
-package com.example.planup.network.controller
+package com.planup.planup.network.controller
 
-import android.util.Log
-import com.example.planup.goal.adapter.AcceptChallengeAdapter
-import com.example.planup.goal.adapter.ChallengeFriendsAdapter
-import com.example.planup.goal.adapter.RejectChallengeAdapter
-import com.example.planup.goal.adapter.RequestChallengeAdapter
-import com.example.planup.goal.adapter.RepenaltyAdapter
-import com.example.planup.goal.util.toFriendItems
-import com.example.planup.main.goal.item.GoalRetrofitInstance.api
-import com.example.planup.network.RetrofitInstance
-import com.example.planup.network.data.ChallengeFriends
-import com.example.planup.network.data.ChallengeInfo
-import com.example.planup.network.data.ChallengeResponse
-import com.example.planup.network.data.ChallengeResponseNoResult
-import com.example.planup.network.data.ChallengeResult
-import com.example.planup.network.dto.challenge.ChallengeDto
-import com.example.planup.network.dto.challenge.RepenaltyDto
-import com.example.planup.network.getRetrofit
-import com.example.planup.network.port.ChallengePort
+import com.planup.planup.goal.adapter.AcceptChallengeAdapter
+import com.planup.planup.goal.adapter.ChallengeFriendsAdapter
+import com.planup.planup.goal.adapter.RejectChallengeAdapter
+import com.planup.planup.goal.adapter.RepenaltyAdapter
+import com.planup.planup.goal.adapter.RequestChallengeAdapter
+import com.planup.planup.goal.util.toFriendItems
+import com.planup.planup.network.RetrofitInstance
+import com.planup.planup.network.data.ChallengeInfo
+import com.planup.planup.network.data.ChallengeResponse
+import com.planup.planup.network.data.ChallengeResponseNoResult
+import com.planup.planup.network.data.ChallengeResult
+import com.planup.planup.network.dto.challenge.ChallengeDto
+import com.planup.planup.network.dto.challenge.RepenaltyDto
+import com.planup.planup.network.getRetrofit
+import com.planup.planup.network.port.ChallengePort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.Challenge
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.jvm.java
 
 class ChallengeController {
 

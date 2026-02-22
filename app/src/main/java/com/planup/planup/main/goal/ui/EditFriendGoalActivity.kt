@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.app.Activity
 import android.content.Intent
@@ -6,8 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.example.planup.R
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.example.planup.main.goal.ui.EditGoalCategoryFragment
+import com.planup.planup.R
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

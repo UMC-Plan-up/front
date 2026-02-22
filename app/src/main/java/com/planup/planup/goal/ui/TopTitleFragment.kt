@@ -1,12 +1,11 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.planup.R
-import com.example.planup.databinding.FragmentTopTitleBinding
+import com.planup.planup.databinding.FragmentTopTitleBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

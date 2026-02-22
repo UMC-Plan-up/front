@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.os.Bundle
 import android.text.Editable
@@ -7,16 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.example.planup.R
-import com.example.planup.databinding.FragmentEditGoalTitleBinding
-import com.example.planup.main.goal.item.EditGoalResponse
-import kotlinx.coroutines.launch
 import android.text.TextWatcher
 import androidx.fragment.app.activityViewModels
-import com.example.planup.goal.util.setInsets
-import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.example.planup.network.RetrofitInstance
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentEditGoalTitleBinding
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

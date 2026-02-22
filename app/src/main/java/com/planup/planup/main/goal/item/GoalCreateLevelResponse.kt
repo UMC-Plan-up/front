@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.item
+package com.planup.planup.main.goal.item
 
 data class GoalCreateLevelResponse(
     val isSuccess: Boolean,

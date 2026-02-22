@@ -1,6 +1,5 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,23 +7,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.widget.AppCompatButton
-import androidx.appcompat.widget.AppCompatSpinner
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
-import com.example.planup.databinding.FragmentEditGoalTimerBinding
-import com.example.planup.databinding.FragmentTimerSettingBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.goal.ui.GoalDetailFragment
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.clockString
-import com.example.planup.goal.util.setInsets
-import com.example.planup.goal.util.titleFormat
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentTimerSettingBinding
+import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.backStackTrueNav
+import com.planup.planup.goal.util.clockString
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.getValue
 
+@AndroidEntryPoint
 class EditGoalTimerFragment : Fragment() {
     private lateinit var binding: FragmentTimerSettingBinding
 
@@ -33,33 +30,12 @@ class EditGoalTimerFragment : Fragment() {
     lateinit var seconds: ArrayList<String>
     private lateinit var nextBtn: AppCompatButton
     private lateinit var warningTv: TextView
-    private var goalId: Int = 0
-    private var goalName: String = ""
-    private var goalAmount: String = ""
-    private var goalCategory: String = ""
-    private var goalType: String = ""
-    private var oneDose: Int = 0
-    private var frequency: Int = 0
-    private var period: String = ""
-    private var endDate: String = ""
-    private var verificationType: String = ""
-    private var limitFriendCount: Int = 0
     private var totalTime = 0
+
+    private val viewModel: GoalViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        goalId = arguments?.getInt("goalId") ?: 0
-        goalName = arguments?.getString("goalName") ?: ""
-        goalAmount = arguments?.getString("goalAmount") ?: ""
-        goalCategory = arguments?.getString("goalCategory") ?: ""
-        goalType = arguments?.getString("goalType") ?: "FRIEND"
-        oneDose = arguments?.getInt("oneDose") ?: 0
-        frequency = arguments?.getInt("frequency") ?: 0
-        period = arguments?.getString("period") ?: "DAY"
-        endDate = arguments?.getString("endDate") ?: ""
-        verificationType = arguments?.getString("verificationType") ?: ""
-        limitFriendCount = arguments?.getInt("limitFriendCount") ?: 0
-        totalTime = arguments?.getInt("goalTime") ?: 0
     }
 
     override fun onCreateView(
@@ -68,9 +44,9 @@ class EditGoalTimerFragment : Fragment() {
     ): View {
         // 1️⃣ binding 초기화
         binding = FragmentTimerSettingBinding.inflate(inflater, container, false)
-        if (totalTime > 29) {
-            setTime()
-        }
+//        if (totalTime > 29) {
+//            setTime()
+//        }
 
         binding.titleTv.text = getString(R.string.goal_friend_together_detail_title)
 
@@ -104,31 +80,32 @@ class EditGoalTimerFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val activity = requireActivity() as GoalActivity
-            activity.goalTime = totalTime // 타이머 총 시간 저장(초)
-            activity.verificationType = "TIMER" // 인증 방식 저장
+            viewModel.setGoalData(
+                viewModel.goalData.copy(
+                    goalTime = totalTime
+                )
+            )
+            Log.d("TimerSettingFragment", "goalTime: ${viewModel.goalData}")
+
 
             // SharedPreferences에 저장
-            val bundle = Bundle().apply {
-                putInt("goalId", goalId)
-                putString("goalName", goalName)
-                putString("goalAmount", goalAmount)
-                putString("goalCategory", goalCategory)
-                putString("goalType", goalType)
-                putInt("oneDose", oneDose)
-                putInt("frequency", frequency)
-                putString("period", period)
-                putString("endDate", endDate)
-                putString("verificationType", verificationType)
-                putInt("limitFriendCount", limitFriendCount)
-                putInt("goalTime", totalTime)
-            }
+//            val bundle = Bundle().apply {
+//                putInt("goalId", goalId)
+//                putString("goalName", goalName)
+//                putString("goalAmount", goalAmount)
+//                putString("goalCategory", goalCategory)
+//                putString("goalType", goalType)
+//                putInt("oneDose", oneDose)
+//                putInt("frequency", frequency)
+//                putString("period", period)
+//                putString("endDate", endDate)
+//                putString("verificationType", verificationType)
+//                putInt("limitFriendCount", limitFriendCount)
+//                putInt("goalTime", totalTime)
+//            }
 
-            val nextFragment = EditGoalDetailFragment().apply { arguments = bundle }
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, nextFragment)
-                .addToBackStack(null)
-                .commit()
+            val nextFragment = EditGoalDetailFragment()
+            backStackTrueNav(R.id.edit_friend_goal_fragment_container,nextFragment)
         }
 //        nextBtn.setOnClickListener {
 //            val hour = hourSpinner.selectedItem.toString().toIntOrNull() ?: 0
@@ -148,7 +125,7 @@ class EditGoalTimerFragment : Fragment() {
 
 
 
-//    private fun updateNextButtonState() {
+    //    private fun updateNextButtonState() {
 //        val hour = hourSpinner.selectedItem.toString().toIntOrNull() ?: 0
 //        val minute = minuteSpinner.selectedItem.toString().toIntOrNull() ?: 0
 //        val second = secondSpinner.selectedItem.toString().toIntOrNull() ?: 0
@@ -168,6 +145,14 @@ class EditGoalTimerFragment : Fragment() {
 //    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setInsets(binding.root)
+        Log.d("TimerSettingFragment", "goalData: ${viewModel.editGoalData!!.goalTime}")
+        viewModel.setGoalData(
+            viewModel.goalData.copy(
+                goalTime = viewModel.editGoalData!!.goalTime
+            )
+        )
+        Log.d("TimerSettingFragment", "goalData: ${viewModel.goalData}")
+
     }
 
     private fun showDropdown(
@@ -203,6 +188,17 @@ class EditGoalTimerFragment : Fragment() {
                 popupWindow.dismiss()
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        totalTime = viewModel.goalData.goalTime
+        if (totalTime > 29)
+            setTime()
+        else
+            Log.d("TimerSettingFragment", "totalTime: $totalTime")
+
     }
 
     private fun timeWatcher(item: Int, position: Int) {

@@ -1,7 +1,5 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
-import com.example.planup.goal.ui.GoalDetailFragment
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,20 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.planup.R
-import com.example.planup.databinding.FragmentPictureSettingBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.backStackTrueNav
-import com.example.planup.goal.util.equil
-import com.example.planup.goal.util.setInsets
-import com.example.planup.goal.util.titleFormat
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentPictureSettingBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueNav
+import com.planup.planup.goal.util.equil
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

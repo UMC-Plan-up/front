@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.os.Bundle
 import android.text.Editable
@@ -7,17 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.planup.databinding.FragmentEditGoalTitleBinding
 import android.text.TextWatcher
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.logGoalActivityData
-import com.example.planup.goal.util.resetGoalDataTrueCategory
-import com.example.planup.goal.util.setGoalData
-import com.example.planup.goal.util.setInsets
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.databinding.FragmentEditGoalTitleBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.logGoalActivityData
+import com.planup.planup.goal.util.resetGoalDataTrueCategory
+import com.planup.planup.goal.util.setGoalData
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -18,13 +18,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.planup.R
-import com.example.planup.databinding.FragmentGoalSelectBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.example.planup.main.MainActivity
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentGoalSelectBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.main.MainActivity
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class GoalSelectFragment : Fragment() {

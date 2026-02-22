@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
@@ -15,35 +15,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat.startActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.planup.R
-import com.example.planup.databinding.FragmentGoalBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.util.setLockText
-import com.example.planup.goal.util.toGoalItems
-import com.example.planup.goal.util.toGoalItemsForFriend
-import com.example.planup.main.MainActivity
-import com.example.planup.main.goal.adapter.GoalAdapter
-import com.example.planup.main.goal.adapter.MyGoalListDtoAdapter
-import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.goal.item.MyGoalListItem
-import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.example.planup.network.ApiResult
-import com.example.planup.network.RetrofitInstance
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentGoalBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.setLockText
+import com.planup.planup.goal.util.toGoalItems
+import com.planup.planup.main.MainActivity
+import com.planup.planup.main.goal.adapter.GoalAdapter
+import com.planup.planup.main.goal.adapter.MyGoalListDtoAdapter
+import com.planup.planup.main.goal.item.GoalItem
+import com.planup.planup.main.goal.item.MyGoalListItem
+import com.planup.planup.main.goal.ui.EditFriendGoalActivity
+import com.planup.planup.main.goal.ui.GoalDescriptionFragment
+import com.planup.planup.main.goal.ui.GoalUpdateDialog
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.network.ApiResult
+import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -161,13 +160,13 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             },
             onEditClick = { goalId ->
                 val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
-                intent.putExtra("goalId",goalId)
+                intent.putExtra("goalId", goalId)
                 startActivity(intent)
                 //editGoalLauncher.launch(intent)
             },
             onDeactivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = false) },
             onActivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = true) },
-            onDeleteConfirmed = {goalId,action -> requestDeleteGoal(goalId) { action() } }
+            onDeleteConfirmed = { goalId, action -> requestDeleteGoal(goalId) { action() } }
         )
         recyclerView.adapter = adapter
 

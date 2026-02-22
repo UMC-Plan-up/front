@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Context.MODE_PRIVATE
@@ -11,16 +11,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.planup.databinding.FragmentGoalInputBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.util.backStackTrueGoalNav
-import com.example.planup.goal.util.equil
-import com.example.planup.goal.util.goalType
-import com.example.planup.goal.util.resetGoalDataTrueCategory
-import com.example.planup.goal.util.setInsets
-import com.example.planup.goal.util.titleFormat
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.databinding.FragmentGoalInputBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.resetGoalDataTrueCategory
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

@@ -1,8 +1,7 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.app.Dialog
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
@@ -19,17 +18,16 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
-import com.example.planup.databinding.FragmentPushAlertBinding
-import com.example.planup.databinding.ItemRecyclerDropdownMoriningBinding
-import com.example.planup.databinding.ItemRecyclerDropdownTimeBinding
-import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.goal.util.goalType
-import com.example.planup.goal.util.setInsets
-import com.example.planup.main.goal.item.EditGoalRequest
-import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.example.planup.main.home.ui.HomeFragment
-import com.example.planup.network.RetrofitInstance
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentPushAlertBinding
+import com.planup.planup.databinding.ItemRecyclerDropdownMoriningBinding
+import com.planup.planup.databinding.ItemRecyclerDropdownTimeBinding
+import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.goal.item.EditGoalRequest
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.main.home.ui.HomeFragment
+import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import retrofit2.HttpException

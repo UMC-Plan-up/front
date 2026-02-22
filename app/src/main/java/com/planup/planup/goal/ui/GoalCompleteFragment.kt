@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,20 +9,21 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.planup.databinding.FragmentGoalCompleteBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalCreateRequest
-import com.example.planup.goal.util.equil
-import com.example.planup.goal.util.goalDataTrue
-import com.example.planup.goal.util.setInsets
-import com.example.planup.main.goal.viewmodel.GoalViewModel
-import com.example.planup.main.MainActivity
+import com.planup.planup.databinding.FragmentGoalCompleteBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.data.GoalCreateRequest
+import com.planup.planup.goal.util.equil
+import com.planup.planup.goal.util.goalDataTrue
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.main.MainActivity
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlin.jvm.java
 
 @AndroidEntryPoint
 class GoalCompleteFragment : Fragment() {

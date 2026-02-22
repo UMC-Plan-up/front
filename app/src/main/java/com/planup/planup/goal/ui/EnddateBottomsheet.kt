@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.planup.R
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.planup.planup.R
 
 class EndDateBottomSheet : BottomSheetDialogFragment() {
 

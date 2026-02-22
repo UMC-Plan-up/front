@@ -1,4 +1,4 @@
-package com.example.planup.goal.ui
+package com.planup.planup.goal.ui
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -10,24 +10,25 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.example.planup.R
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalDto
-import com.example.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 import android.util.Log
 import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
-import com.example.planup.databinding.FragmentCommonGoalBinding
-import com.example.planup.databinding.ItemGoalCardBinding
-import com.example.planup.goal.util.goalType
-import com.example.planup.goal.util.resetType
 import com.example.planup.main.goal.ui.GoalDescriptionFragment
 import com.example.planup.main.goal.ui.GoalDescriptionFragment.Companion.ARG_GOAL_ID
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentCommonGoalBinding
+import com.planup.planup.databinding.ItemGoalCardBinding
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.data.GoalDto
+import com.planup.planup.goal.util.goalType
+import com.planup.planup.goal.util.resetType
+import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.collections.drop
+import kotlin.collections.take
 
 @AndroidEntryPoint
 class CommonGoalFragment : Fragment() {

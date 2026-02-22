@@ -1,6 +1,5 @@
-package com.example.planup.goal.util
+package com.planup.planup.goal.util
 
-import android.R.attr.data
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -8,22 +7,23 @@ import android.widget.TextView
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
-import com.example.planup.R
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.data.GoalCreateRequest
+import com.planup.planup.R
+import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.data.GoalCreateRequest
+import com.planup.planup.main.goal.data.GoalType
+import com.planup.planup.main.goal.data.MyGoalListDto
+import com.planup.planup.main.goal.item.EditGoalResponse
+import com.planup.planup.main.goal.item.FriendGoalListResult
+import com.planup.planup.main.goal.item.GoalItem
+import com.planup.planup.main.goal.item.MyGoalListItem
+import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
 import kotlin.jvm.JvmName
-import com.example.planup.main.goal.data.GoalType
-import com.example.planup.main.goal.data.MyGoalListDto
-import com.example.planup.main.goal.item.EditGoalResponse
-import com.example.planup.main.goal.item.FriendGoalListResult
-import com.example.planup.main.goal.item.GoalItem
-import com.example.planup.main.goal.item.MyGoalListItem
-import com.example.planup.main.home.adapter.FriendGoalWithAchievement
+import com.planup.planup.network.data.ChallengeFriends
+import com.planup.planup.network.dto.friend.FriendInfo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 import java.time.temporal.ChronoUnit
-import java.util.Collections.frequency
 import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */
@@ -34,19 +34,19 @@ fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
         val criteria = "$typeLabel ${dto.frequency}번 이상"
 
         GoalItem(
-            goalId     = dto.goalId,
-            title      = dto.goalName.orEmpty(),
-            description= criteria,
-            percent    = 0,
-            authType   = when (dto.goalType) {
+            goalId = dto.goalId,
+            title = dto.goalName.orEmpty(),
+            description = criteria,
+            percent = 0,
+            authType = when (dto.goalType) {
                 GoalType.CHALLENGE_PHOTO -> "camera"
-                GoalType.CHALLENGE_TIME  -> "timer"
+                GoalType.CHALLENGE_TIME -> "timer"
                 else -> "none"
             },
             isEditMode = false,
             isActive = !dto.isActive,
-            criteria   = criteria,
-            progress   = 0
+            criteria = criteria,
+            progress = 0
         )
     }
 
@@ -58,19 +58,19 @@ fun List<MyGoalListItem>.toGoalItems(): List<GoalItem> =
         val criteria = "$typeLabel ${dto.frequency}번 이상"
 
         GoalItem(
-            goalId     = dto.goalId,
-            title      = dto.goalName.orEmpty(),
-            description= criteria,
-            percent    = 0,
-            authType   = when (dto.goalType) {
+            goalId = dto.goalId,
+            title = dto.goalName.orEmpty(),
+            description = criteria,
+            percent = 0,
+            authType = when (dto.goalType) {
                 "매일" -> "camera"
-                "매주"  -> "timer"
+                "매주" -> "timer"
                 else -> "none"
             },
             isEditMode = false,
             isActive = true,
-            criteria   = criteria,
-            progress   = 0
+            criteria = criteria,
+            progress = 0
         )
     }
 
@@ -81,15 +81,15 @@ fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
         val typeLabel = dto.goalType.toCriteria()
         val criteria = "$typeLabel ${dto.frequency}번 이상"
         GoalItem(
-            goalId      = dto.goalId,
-            title       = dto.goalName,
+            goalId = dto.goalId,
+            title = dto.goalName,
             description = criteria,
-            percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
-            authType    = dto.verificationType,
-            isEditMode  = false,
-            isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
-            criteria    = criteria,
-            progress    = 0            // 필요 시 서버 값 매핑
+            percent = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
+            authType = dto.verificationType,
+            isEditMode = false,
+            isActive = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
+            criteria = criteria,
+            progress = 0            // 필요 시 서버 값 매핑
         )
     }
 
@@ -99,15 +99,15 @@ fun List<FriendGoalWithAchievement>.toGoalItemsForFriendAchieve(): List<GoalItem
         val typeLabel = dto.goalType.toCriteria()
         val criteria = "$typeLabel ${dto.frequency}번 이상"
         GoalItem(
-            goalId      = dto.goalId,
-            title       = dto.goalName,
+            goalId = dto.goalId,
+            title = dto.goalName,
             description = criteria,
-            percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
-            authType    = dto.verificationType,
-            isEditMode  = false,
-            isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
-            criteria    = criteria,
-            progress    = 0            // 필요 시 서버 값 매핑
+            percent = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
+            authType = dto.verificationType,
+            isEditMode = false,
+            isActive = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
+            criteria = criteria,
+            progress = 0            // 필요 시 서버 값 매핑
         )
     }
 
@@ -128,17 +128,17 @@ fun GoalType.toCriteria() = when(this){
 fun Fragment.setGoalData(data: EditGoalResponse){
     val activity = requireActivity() as GoalActivity
     activity.apply {
-            goalName = data.goalName
-            goalAmount = data.goalAmount
-            goalCategory = data.goalCategory
-            goalType = data.goalType
-            oneDose = data.oneDose.toString()
-            frequency = data.frequency
-            period = data.period
-            endDate = data.endDate
-            verificationType = data.verificationType
-            limitFriendCount = data.limitFriendCount
-            goalTime = data.goalTime
+        goalName = data.goalName
+        goalAmount = data.goalAmount
+        goalCategory = data.goalCategory
+        goalType = data.goalType
+        oneDose = data.oneDose.toString()
+        frequency = data.frequency
+        period = data.period
+        endDate = data.endDate
+        verificationType = data.verificationType
+        limitFriendCount = data.limitFriendCount
+        goalTime = data.goalTime
     }
 }
 
@@ -171,17 +171,17 @@ fun Fragment.logGoalActivityData(){
 
 fun Fragment.titleFormat(isFriend: Boolean, isFriendDataTrue: Boolean, titleText: TextView, friendNickname: String, notAction: ()-> Unit){
     titleText.text =
-    if(isFriend) {
-        if (isFriendDataTrue) {
-            getString(R.string.goal_friend_detail, friendNickname)
-        }else{
-            getString(R.string.goal_friend_detail_title)
-        }
+        if(isFriend) {
+            if (isFriendDataTrue) {
+                getString(R.string.goal_friend_detail, friendNickname)
+            }else{
+                getString(R.string.goal_friend_detail_title)
+            }
 
-    }else{
-        notAction()
-        getString(R.string.goal_community_detail)
-    }
+        }else{
+            notAction()
+            getString(R.string.goal_community_detail)
+        }
 }
 
 fun Fragment.backStackTrueGoalNav(nextFragment: Fragment,name: String?=null){
@@ -263,6 +263,13 @@ fun Fragment.resetGoalDataTrueCategory(){
     }
 }
 
+fun Fragment.resetType(){
+    val activity = requireActivity() as GoalActivity
+    activity.apply {
+        goalType = ""
+    }
+}
+
 fun Int.clockString() = if (this / 10 == 0) {
     "0$this"
 } else {
@@ -293,7 +300,7 @@ fun Fragment.titleFormat(mode: String, titleText: TextView, friendNickname: Stri
 
 
 fun daysFromToday(dateStr: String): Int {
-    val DATE_FORMATTER  = DateTimeFormatter.ofPattern("yyyy-MM-dd").withResolverStyle(ResolverStyle.STRICT)
+    val DATE_FORMATTER  = DateTimeFormatter.ofPattern("uuuu-MM-dd").withResolverStyle(ResolverStyle.STRICT)
     val targetDate = runCatching {
         LocalDate.parse(dateStr, DATE_FORMATTER)
     }.getOrNull()
@@ -346,6 +353,19 @@ fun setLockText(titleText: TextView, descriptionText: TextView, level: Int){
         }
         else -> {}
     }
+}
+
+fun List<FriendInfo>.toFriendItems(): List<ChallengeFriends> =
+    this.map { ChallengeFriends(it.id, it.nickname, it.goalCnt) }
+
+fun String.toPeriod(): String = when(this) {
+    "DAY" -> "매일"
+    "매일"-> "DAY"
+    "WEEK" -> "매주"
+    "매주" -> "WEEK"
+    "MONTH" -> "매달"
+    "매달" -> "MONTH"
+    else -> this
 }
 
 data class TmpGoalData(

@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.content.Context
 import android.os.Bundle
@@ -17,17 +17,16 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
-import com.example.planup.databinding.FragmentGoalDetailBinding
-import com.example.planup.goal.GoalActivity
-import com.example.planup.goal.adapter.TimerRVAdapter
-import com.example.planup.goal.ui.EndDateBottomSheet
-import com.example.planup.goal.util.backStackTrueNav
-import com.example.planup.goal.util.daysFromToday
-import com.example.planup.goal.util.endDateFromToday
-import com.example.planup.goal.util.setInsets
-import com.example.planup.goal.util.toPeriod
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentGoalDetailBinding
+import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.ui.EndDateBottomSheet
+import com.planup.planup.goal.util.backStackTrueNav
+import com.planup.planup.goal.util.daysFromToday
+import com.planup.planup.goal.util.endDateFromToday
+import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.toPeriod
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -349,7 +348,7 @@ class EditGoalDetailFragment : Fragment(){
         )
 
         Log.d("GoalDetailFragment", "goal : ${viewModel.goalData}")
-        backStackTrueNav(R.id.edit_friend_goal_fragment_container,PushAlertEditFragment())
+        backStackTrueNav(R.id.edit_friend_goal_fragment_container, PushAlertEditFragment())
     }
 
     private fun setPeriodListener(button: AppCompatButton){

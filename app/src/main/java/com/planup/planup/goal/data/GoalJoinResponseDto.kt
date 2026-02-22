@@ -1,4 +1,4 @@
-package com.example.planup.goal.data
+package com.planup.planup.goal.data
 
 data class GoalJoinResponseDto(
     val isSuccess: Boolean,

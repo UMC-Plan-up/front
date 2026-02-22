@@ -1,4 +1,4 @@
-package com.example.planup.main.goal.ui
+package com.planup.planup.main.goal.ui
 
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -16,9 +16,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.example.planup.R
-import com.example.planup.databinding.FragmentEditGoalCategoryBinding
-import com.example.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentEditGoalCategoryBinding
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.forEach
 
