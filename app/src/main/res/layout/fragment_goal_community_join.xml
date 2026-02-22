@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/goal_detail_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <!-- ScrollView 내부 콘텐츠 -->
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/scroll_linear_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="95dp"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/btn_back"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_arrow_back" />
+
+                <TextView
+                    android:id="@+id/backText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="카테고리"
+                    android:textColor="@color/black_400"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center|left"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/goal_title_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="@string/goal_description_goal_title"
+                    android:textColor="@color/black_400"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_person" />
+
+                <TextView
+                    android:id="@+id/goal_description_attendee_cnt_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/goal_description_attendee_cnt" />
+            </LinearLayout>
+
+            <!-- 규칙 정보 섹션 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="200dp"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1회 분량"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="기준 기간"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="빈도"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="인증 방식"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/one_dose_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/goal_description_one_dose" />
+
+                    <TextView
+                        android:id="@+id/period_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/goal_description_period" />
+
+                    <TextView
+                        android:id="@+id/frequency_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/goal_description_frequency" />
+
+                    <TextView
+                        android:id="@+id/verification_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/goal_description_verification" />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 랭킹 제목 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:id="@+id/communityTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="커뮤니티 참여자 랭킹"
+                    android:textColor="@color/black_400"
+                    android:textSize="18sp" />
+
+
+                <LinearLayout
+                    android:id="@+id/initRaking"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:src="@drawable/img_no_competitor" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="20dp"
+                        android:text="아직 이 목표에 함께하는 친구가 없어요." />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="직접 친구를 초대해서" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="목표 달성을 시작해 보세요!" />
+
+                    <LinearLayout
+                        android:layout_width="150dp"
+                        android:layout_height="37dp"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="12dp"
+                        android:background="@drawable/bg_goal_black"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:fontFamily="@font/pretendard_medium"
+                            android:gravity="center"
+                            android:text="함께할 친구 초대하기"
+                            android:textColor="@color/black_400"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+                </LinearLayout>
+                <!-- 커뮤니티 참여자 랭킹 리스트 -->
+
+
+                <LinearLayout
+                    android:id="@+id/topThirdRaking"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:orientation="horizontal"
+                    android:paddingBottom="24dp"
+                    android:visibility="visible">
+
+                    <!-- 2위 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <!-- 프로필 이미지 + 순위 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/secondProfile"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/circle_bg"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/img_friend_profile_sample2" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="2위"
+                                android:textColor="#000000"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <!-- 닉네임 박스 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/rank_box_second"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/secondName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="닉네임"
+                                android:textColor="#FFFFFF"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/secondVer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="사진인증 N회"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- 1위 -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <!-- 프로필 + 메달 아이콘 겹치기 -->
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <ImageView
+                                android:id="@+id/firstProfile"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_margin="15dp"
+                                android:background="@drawable/circle_bg"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/img_friend_profile_sample1" />
+
+                            <ImageView
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
+                                android:layout_gravity="top|end"
+                                android:layout_marginTop="-8dp"
+                                android:layout_marginEnd="-8dp"
+                                android:src="@drawable/img_first_medal" />
+                        </FrameLayout>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="1위"
+                            android:textColor="#000000"
+                            android:textSize="14sp" />
+
+                        <!-- 박스 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="140dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/rank_box_first"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/firstName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="닉네임"
+                                android:textColor="#FFFFFF"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/firstVer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="사진인증 N회"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- 3위 -->
+                    <LinearLayout
+                        android:id="@+id/thirdRankLayout"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical"
+                        android:visibility="visible">
+
+                        <!-- 프로필 이미지 + 순위 -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <ImageView
+                                android:id="@+id/ThirdProfile"
+                                android:layout_width="52dp"
+                                android:layout_height="52dp"
+                                android:layout_marginBottom="4dp"
+                                android:background="@drawable/circle_bg"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/img_friend_profile_sample3"
+                                android:visibility="visible" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="3위"
+                                android:textColor="#000000"
+                                android:textSize="14sp"
+                                android:visibility="visible" />
+                        </LinearLayout>
+
+                        <!-- 닉네임 박스 -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="90dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/rank_box_third"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:visibility="visible">
+
+                            <TextView
+                                android:id="@+id/ThirdName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="닉네임"
+                                android:textColor="#FFFFFF"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/ThirdVer"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="사진인증 N회"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- 랭킹 리스트 (4위~) -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rankRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:nestedScrollingEnabled="false"
+                    android:visibility="visible" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="42dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scroll_content"
+        app:layout_constraintEnd_toEndOf="@+id/scroll_content"
+        app:layout_constraintStart_toStartOf="@+id/scroll_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/goal_join_next_btn"
+            android:layout_width="match_parent"
+            app:cornerRadius="25dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="12dp"
+            android:text="커뮤니티 참여하기"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            app:backgroundTint="@color/blue_200"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="match_parent">
+
+        </Space>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_goal_next_btn"
+            android:layout_width="match_parent"
+            app:cornerRadius="25dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="12dp"
+            android:text="기준 직접 설정하기"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            app:backgroundTint="@color/blue_200"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
