@@ -14,7 +14,6 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.example.planup.main.goal.ui.GoalFragment
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDescriptionBinding
 import com.planup.planup.goal.util.toPeriod
@@ -22,7 +21,7 @@ import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
-import java.lang.reflect.Modifier.isPublic
+import androidx.core.net.toUri
 
 class GoalDescriptionFragment : Fragment() {
 
@@ -122,25 +121,33 @@ class GoalDescriptionFragment : Fragment() {
         applyToggleUI(isPublic)
     }
 
-    fun bindRanking(ranking: List<Pair<Int, GoalRanking>>) {
+    fun bindRanking(ranking: List<GoalRanking>) {
         binding.apply {
-            val empty = ranking.isEmpty()
+            val empty = ranking.size < 2
             initRaking.visibility = if (empty) View.VISIBLE else View.GONE
             topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
-            if (ranking.size < 3) {
-                firstProfile
-                firstName
-                firstVer
-                secondProfile
-                secondName
-                secondVer
-                ThirdProfile
-                ThirdName
-                ThirdVer
-            } else {
+            if (!empty){
+                firstProfile.setImageURI(ranking[0].profileImg.toUri())
+                firstName.text = ranking[0].nickName
+                firstVer.text = "사진인증${ranking[0].verificationCount}회"
+                secondProfile.setImageURI(ranking[1].profileImg.toUri())
+                secondName.text = ranking[1].nickName
+                secondVer.text = "사진인증${ranking[1].verificationCount}회"
+                if (ranking.size < 3) {
+                    thirdRankLayout.visibility = View.GONE
+                } else {
+                    ThirdProfile.setImageURI(ranking[2].profileImg.toUri())
+                    ThirdName.text = ranking[2].nickName
+                    ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
 
+                    val remain = ranking.drop(3)
+                    if (remain.isNotEmpty()){
+
+                    }
+                }
             }
+
 
         }
 
@@ -176,9 +183,7 @@ class GoalDescriptionFragment : Fragment() {
             }.onSuccess { resp ->
                 if (resp.isSuccessful && resp.body() != null) {
                     val ranking = resp.body()!!.result.goalRankingList.sortedByDescending { it.verificationCount }
-                        .mapIndexed { index, goalRanking ->
-                            index + 1 to goalRanking
-                        }// ✅ 타입 맞춤
+                    // ✅ 타입 맞춤
                     bindRanking(ranking)
                 } else {
                     Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
