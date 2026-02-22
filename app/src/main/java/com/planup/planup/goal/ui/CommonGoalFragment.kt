@@ -15,9 +15,6 @@ import android.util.Log
 import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.activityViewModels
-import com.example.planup.main.goal.ui.GoalDescriptionFragment
-import com.example.planup.main.goal.ui.GoalDescriptionFragment.Companion.ARG_GOAL_ID
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentCommonGoalBinding
 import com.planup.planup.databinding.ItemGoalCardBinding
@@ -25,6 +22,8 @@ import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.data.GoalDto
 import com.planup.planup.goal.util.goalType
 import com.planup.planup.goal.util.resetType
+import com.planup.planup.main.goal.ui.GoalDescriptionFragment
+import com.planup.planup.main.goal.ui.GoalDescriptionFragment.Companion.ARG_GOAL_ID
 import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.drop
@@ -311,11 +310,10 @@ class CommonGoalFragment : Fragment() {
             Log.d("CommonGoalFragment", "EditGoalTitleFragment goalType: COMMUNITY")
             Log.d("CommonGoalFragment", "EditGoalTitleFragment goalOwnerName: $goalOwnerName")
             Log.d("CommonGoalFragment", "EditGoalTitleFragment goalId: $goalId")
-            val goalDetailFragment = GoalDescriptionFragment().apply {
+            val goalDetailFragment = GoalCommunityJoinFragment().apply {
                 arguments = Bundle().apply {
                     putString("goalOwnerName", goalOwnerName)
                     putInt(ARG_GOAL_ID, goalId)
-                    putBoolean("isSolo", true)
                 }
             }
             (requireActivity() as GoalActivity)
