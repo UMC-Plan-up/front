@@ -358,8 +358,7 @@
                     android:gravity="bottom"
                     android:orientation="horizontal"
                     android:paddingBottom="24dp"
-                    android:visibility="visible"
-                    android:weightSum="3">
+                    android:visibility="visible">
 
                     <!-- 2위 -->
                     <LinearLayout
@@ -488,11 +487,13 @@
 
                     <!-- 3위 -->
                     <LinearLayout
+                        android:id="@+id/thirdRankLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center_horizontal"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="visible">
 
                         <!-- 프로필 이미지 + 순위 -->
                         <LinearLayout
