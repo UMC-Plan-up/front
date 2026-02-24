@@ -34,6 +34,7 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
 import androidx.core.graphics.toColorInt
+import com.example.planup.main.record.ui.RecordWithCommunityFragment
 
 // 챌린지 카드 표시용 데이터(ChallengeCompleteFragment로 전달)
 data class ChallengeCardData(
