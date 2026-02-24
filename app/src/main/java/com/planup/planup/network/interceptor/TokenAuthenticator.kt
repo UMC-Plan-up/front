@@ -2,10 +2,7 @@ package com.planup.planup.network.interceptor
 
 import android.content.Context
 import android.content.Intent
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
-import androidx.core.os.HandlerCompat
 import com.planup.planup.R
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.UserInfoSaver
@@ -14,6 +11,7 @@ import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
 import com.planup.planup.network.repository.NotificationRepository
+import com.planup.planup.util.showSingleToast
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,16 +36,22 @@ class TokenAuthenticator @Inject constructor(
             val retryCount = response.retryCount()
             var newAccessToken = ""
 
-            Log.i(TAG, "토큰 갱신 시도($retryCount)")
-
-            if (request.header(HEADER_TOKEN).isNullOrBlank()) {
+            Log.i(TAG, "토큰 갱신 시도($retryCount), response: $response")
+            if (
+                request.header(HEADER_TOKEN).isNullOrBlank() ||
+                tokenSaver.getToken() == null ||
+                tokenSaver.getRefreshToken() == null
+            ) {
                 // 헤더에 토큰이 없는 요청인 경우 추가 요청 X
+                userInfoSaver.clearAllUserInfo()
+                tokenSaver.clearTokens()
+                goToLoginActivity()
                 return@withLock null
             }
 
             if (retryCount > MAX_RETRY) {
                 // 최대 시도 횟수를 넘은 경우 추가 요청 X
-                notificationRepository.get().removeFcmToken()
+
                 userInfoSaver.clearAllUserInfo()
                 tokenSaver.clearTokens()
 
@@ -62,6 +66,7 @@ class TokenAuthenticator @Inject constructor(
                 newAccessToken = it.accessToken
             }.onFailWithMessage {
                 Log.e(TAG, "토큰 갱신 요청 실패: $it")
+                return@withLock null
             }
 
             request.newBuilder()
@@ -84,10 +89,7 @@ class TokenAuthenticator @Inject constructor(
     }
 
     private fun goToLoginActivity() {
-        val handler = HandlerCompat.createAsync(Looper.getMainLooper())
-        handler.post {
-            Toast.makeText(context.applicationContext, R.string.expired_token, Toast.LENGTH_SHORT).show()
-        }
+        context.showSingleToast(R.string.expired_token)
 
         context.startActivity(
             Intent(context.applicationContext, LoginActivityNew::class.java).apply {
