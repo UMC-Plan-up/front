@@ -99,28 +99,29 @@ class GoalSelectFragment : Fragment() {
 
         // 뒤로가기
         binding.goalSelectBackIv.setOnClickListener {
-            when(fromWhere){
-                "CommunityIntroFragment" -> {
-                    val inflater = LayoutInflater.from(context)
-                    val layout = inflater.inflate(R.layout.toast_grey_template,null)
-                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_make_new_goal)
-                    val toast = Toast(context)
-                    toast.view = layout
-                    toast.duration = LENGTH_SHORT
-                    toast.setGravity(Gravity.BOTTOM,0,400)
-                    toast.show()
-                }
-                "GoalFragment" -> {
-                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
-                    intent.putExtra("FROM_CHALLENGE_TO", "GoalFragment")
-                    startActivity(intent)
-                }
-                "ChallengeCompleteFragment" -> {
-                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
-                    intent.putExtra("FROM_CHALLENGE_TO","RecordFragment")
-                    startActivity(intent)
-                }
-            }
+//            when(fromWhere){
+//                "CommunityIntroFragment" -> {
+//                    val inflater = LayoutInflater.from(context)
+//                    val layout = inflater.inflate(R.layout.toast_grey_template,null)
+//                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_make_new_goal)
+//                    val toast = Toast(context)
+//                    toast.view = layout
+//                    toast.duration = LENGTH_SHORT
+//                    toast.setGravity(Gravity.BOTTOM,0,400)
+//                    toast.show()
+//                }
+//                "GoalFragment" -> {
+//                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+//                    intent.putExtra("FROM_CHALLENGE_TO", "GoalFragment")
+//                    startActivity(intent)
+//                }
+//                "ChallengeCompleteFragment" -> {
+//                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+//                    intent.putExtra("FROM_CHALLENGE_TO","RecordFragment")
+//                    startActivity(intent)
+//                }
+//            }
+            parentFragmentManager.popBackStack()
         }
 
         // 함께 목표 설정하기 클릭
@@ -198,7 +199,7 @@ class GoalSelectFragment : Fragment() {
                     sleepChallenge--
                     return@setOnClickListener
                 }
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
+                (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.goal_container, ChallengeSetGoalFragment())
                     .commitAllowingStateLoss()
             }
