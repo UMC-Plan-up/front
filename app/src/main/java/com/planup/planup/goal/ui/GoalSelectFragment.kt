@@ -197,7 +197,6 @@ class GoalSelectFragment : Fragment() {
                 if (sleepChallenge == 2) {
                     makeToast()
                     sleepChallenge--
-                    return@setOnClickListener
                 }
                 (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.goal_container, ChallengeSetGoalFragment())
