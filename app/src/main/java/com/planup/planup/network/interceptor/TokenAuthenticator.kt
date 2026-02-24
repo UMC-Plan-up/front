@@ -1,8 +1,15 @@
 package com.planup.planup.network.interceptor
 
+import android.content.Context
+import android.content.Intent
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
+import androidx.core.os.HandlerCompat
+import com.planup.planup.R
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.UserInfoSaver
+import com.planup.planup.login.ui.LoginActivityNew
 import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
@@ -17,6 +24,7 @@ import okhttp3.Route
 import javax.inject.Inject
 
 class TokenAuthenticator @Inject constructor(
+    private val context: Context,
     private val userRepository: dagger.Lazy<UserRepository>,
     private val notificationRepository: dagger.Lazy<NotificationRepository>,
     private val userInfoSaver: UserInfoSaver,
@@ -42,6 +50,8 @@ class TokenAuthenticator @Inject constructor(
                 notificationRepository.get().removeFcmToken()
                 userInfoSaver.clearAllUserInfo()
                 tokenSaver.clearTokens()
+
+                goToLoginActivity()
                 return@withLock null
             }
 
@@ -71,6 +81,19 @@ class TokenAuthenticator @Inject constructor(
         }
 
         return retry
+    }
+
+    private fun goToLoginActivity() {
+        val handler = HandlerCompat.createAsync(Looper.getMainLooper())
+        handler.post {
+            Toast.makeText(context.applicationContext, R.string.expired_token, Toast.LENGTH_SHORT).show()
+        }
+
+        context.startActivity(
+            Intent(context.applicationContext, LoginActivityNew::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        )
     }
 
     private companion object {
