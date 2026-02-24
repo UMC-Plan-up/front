@@ -10,19 +10,19 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.planup.R
-import com.example.planup.databinding.FragmentRecordWithCommunityBinding
-import com.example.planup.main.home.item.CustomCombinedChartRenderer
-import com.example.planup.main.record.adapter.PhotoAdapter
-import com.example.planup.main.record.adapter.RankAdapter
-import com.example.planup.main.record.adapter.RankItem
-import com.example.planup.main.record.data.DailyAchievementRateDto
-import com.example.planup.main.record.data.ThreeWeekAchievementRateDto
-import com.example.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.planup.planup.R
+import com.planup.planup.databinding.FragmentRecordWithCommunityBinding
+import com.planup.planup.main.home.item.CustomCombinedChartRenderer
+import com.planup.planup.main.record.adapter.PhotoAdapter
+import com.planup.planup.main.record.adapter.RankAdapter
+import com.planup.planup.main.record.adapter.RankItem
+import com.planup.planup.main.record.data.DailyAchievementRateDto
+import com.planup.planup.main.record.data.ThreeWeekAchievementRateDto
+import com.planup.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 @AndroidEntryPoint
@@ -139,7 +139,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         )
         val rankData = viewModel.reportUsers.value.sortedByDescending { it.rate }
             .mapIndexed { index, user ->
-            RankItem(index+1, user.userName, user.rate, R.drawable.img_friend_profile_sample4)
+                RankItem(index + 1, user.userName, user.rate, R.drawable.img_friend_profile_sample4)
         }
         val rankAdapter = RankAdapter(rankData)
         binding.rankRecyclerView.apply {
