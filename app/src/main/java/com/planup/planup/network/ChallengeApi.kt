@@ -1,12 +1,12 @@
 package com.example.planup.network
 
-import com.example.planup.network.data.ChallengeFriends
-import com.example.planup.network.data.ChallengeInfo
-import com.example.planup.network.data.ChallengeResponse
-import com.example.planup.network.data.ChallengeResponseNoResult
-import com.example.planup.network.data.ChallengeResult
-import com.example.planup.network.dto.challenge.ChallengeDto
-import com.example.planup.network.dto.challenge.RepenaltyDto
+import com.planup.planup.network.data.ChallengeFriends
+import com.planup.planup.network.data.ChallengeInfo
+import com.planup.planup.network.data.ChallengeResponse
+import com.planup.planup.network.data.ChallengeResponseNoResult
+import com.planup.planup.network.data.ChallengeResult
+import com.planup.planup.network.dto.challenge.ChallengeDto
+import com.planup.planup.network.dto.challenge.RepenaltyDto
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
