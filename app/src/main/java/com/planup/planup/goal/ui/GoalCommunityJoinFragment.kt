@@ -17,6 +17,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.adapter.RankURLAdapter
+import com.planup.planup.goal.adapter.RankURLItem
 import com.planup.planup.goal.util.TmpGoalData
 import com.planup.planup.goal.util.goalType
 import com.planup.planup.goal.util.toPeriod
@@ -160,9 +162,14 @@ class GoalCommunityJoinFragment : Fragment() {
 
                     val remain = ranking.drop(3)
                     if (remain.isNotEmpty()){
-                        rankRecyclerView.adapter = RankAdapter(
-                            ranking.mapIndexed {index, ranking ->
-                                RankItem(index+3,ranking.nickName,ranking.verificationCount,ranking.profileImg)
+                        rankRecyclerView.adapter = RankURLAdapter(
+                            ranking.mapIndexed { index, ranking ->
+                                RankURLItem(
+                                    index + 3,
+                                    ranking.nickName,
+                                    ranking.verificationCount,
+                                    ranking.profileImg
+                                )
                             }
                         )
                     }
