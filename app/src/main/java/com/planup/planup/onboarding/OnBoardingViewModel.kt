@@ -592,6 +592,7 @@ data class OnBoardingState(
     val inviteCode: String = "",
     val loading: Boolean = false,
 ) {
-    fun getBirthDate(): String = "$year-$month-$day"
+    fun getBirthDate(): String =
+        "%04d-%02d-%02d".format(year, month, day)
 }
 
