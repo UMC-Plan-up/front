@@ -59,6 +59,7 @@ class UserRepositoryImpl @Inject constructor(
             },
             onResponse = { response ->
                 if(response.isSuccess) {
+                    // 토큰 저장은 호출부에서 처리
                     ApiResult.Success(response.result)
                 } else {
                     ApiResult.Fail(response.message)
@@ -92,9 +93,11 @@ class UserRepositoryImpl @Inject constructor(
             },
             onResponse = { response ->
                 if(response.isSuccess) {
-                    userInfoSaver.saveUserInfo(response.result.userInfo)
                     tokenSaver.saveToken(response.result.accessToken)
                     tokenSaver.saveRefreshToken(response.result.refreshToken)
+
+                    userInfoSaver.clearAllUserInfo()
+                    userInfoSaver.saveUserInfo(response.result.userInfo)
                     ApiResult.Success(response.result)
                 } else {
                     ApiResult.Fail(response.message)
@@ -268,6 +271,7 @@ class UserRepositoryImpl @Inject constructor(
                     if (result.accessToken.isNotEmpty()) {
                         // 토큰에 Bearer 붙이지 않고 저장
                         tokenSaver.saveToken(result.accessToken)
+                        tokenSaver.saveRefreshToken(result.refreshToken)
 
                         userInfoSaver.clearAllUserInfo()
                         userInfoSaver.saveUserInfo(response.result.userInfo)
