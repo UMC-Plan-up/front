@@ -168,7 +168,7 @@ interface GoalApi {
     @GET("/goals/{goalId}/photos")
     suspend fun getGoalPhotos(
         @Path("goalId") goalId: Int
-    ): GoalPhotosResponse
+    ): Response<GoalPhotosResponse>
 
     @POST("/community/{goalId}/join")
     suspend fun joinGoal(
