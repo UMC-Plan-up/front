@@ -2,7 +2,12 @@ package com.planup.planup.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.ApiResult
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -14,8 +19,9 @@ data class SnackbarEvent(
 )
 
 @HiltViewModel
+// TODO:: MainViewmodel 로 이름 변경
 class MainSnackbarViewModel @Inject constructor(
-
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _snackbarErrorEvents = MutableSharedFlow<SnackbarEvent>(
@@ -43,4 +49,10 @@ class MainSnackbarViewModel @Inject constructor(
         }
     }
 
+    suspend fun validateUserToken(): Boolean {
+        return when(userRepository.validateToken()) {
+            is ApiResult.Success<*> -> true
+            else -> false
+        }
+    }
 }

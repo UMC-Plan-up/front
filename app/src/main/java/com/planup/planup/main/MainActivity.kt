@@ -32,6 +32,7 @@ import com.planup.planup.R
 import com.planup.planup.component.snackbar.BlueSnackbarHost
 import com.planup.planup.component.snackbar.GraySnackbarHost
 import com.planup.planup.databinding.ActivityMainBinding
+import com.planup.planup.login.ui.LoginActivityNew
 import com.planup.planup.main.friend.ui.FriendFragment
 import com.planup.planup.main.friend.ui.viewmodel.FriendUiMessage
 import com.planup.planup.main.friend.ui.viewmodel.FriendViewModel
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+        validateUserToken()
         requestPermissions()
 
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
@@ -330,6 +332,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             false
+        }
+    }
+
+    private fun validateUserToken() {
+        lifecycleScope.launch {
+            val validation = mainSnackbarViewModel.validateUserToken()
+
+            if(!validation) {
+                // 토큰 만료로 인한 재로그인
+                val intent = Intent(this@MainActivity, LoginActivityNew::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+            }
         }
     }
 
