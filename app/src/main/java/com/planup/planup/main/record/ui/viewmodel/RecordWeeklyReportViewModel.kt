@@ -1,21 +1,18 @@
-package com.example.planup.main.record.ui.viewmodel
+package com.planup.planup.main.record.ui.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.planup.goal.data.ChallengeFriend
-import com.example.planup.main.record.data.Badge
-import com.example.planup.main.record.data.DailyRecord
-import com.example.planup.main.record.data.DetailWeeklyReportResult
-import com.example.planup.main.record.data.GoalReport
-import com.example.planup.main.record.data.WeeklyReportResult
-import com.example.planup.main.record.ui.repository.RecordRepository
-import com.example.planup.main.record.ui.repository.RecordWeeklyReportRepository
-import com.example.planup.network.ApiResult
-import com.example.planup.network.data.ChallengeFriends
-import com.example.planup.network.onFailWithMessage
-import com.example.planup.network.onSuccess
+import com.planup.planup.main.record.data.Badge
+import com.planup.planup.main.record.data.DailyRecord
+import com.planup.planup.main.record.data.DetailWeeklyReportResult
+import com.planup.planup.main.record.data.GoalReport
+import com.planup.planup.main.record.ui.repository.RecordWeeklyReportRepository
+import com.planup.planup.network.ApiResult
+import com.planup.planup.network.data.ChallengeFriends
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +21,8 @@ import java.time.LocalDate
 import java.time.YearMonth
 import java.time.temporal.WeekFields
 import javax.inject.Inject
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
 
 @HiltViewModel
 class RecordWeeklyReportViewModel @Inject constructor(
