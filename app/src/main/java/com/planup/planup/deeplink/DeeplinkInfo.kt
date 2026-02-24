@@ -30,8 +30,16 @@ enum class DeeplinkInfo(val host: String, val path: String) {
                 setData(deeplink)
             }
         }
-    };
+    },
 
+    // 카카오 공유하기 버튼
+    KAKAO_SHARE_INVITE(host = "kakaolink", path = "") {
+        override val needMainForParents: Boolean = false
+        override fun getIntent(context: Context, deeplink: Uri): Intent {
+            return MainActivity.getIntent(context, deeplink)
+        }
+    }
+;
 
     open val needMainForParents = true
     abstract fun getIntent(context: Context, deeplink: Uri): Intent
@@ -43,6 +51,7 @@ enum class DeeplinkInfo(val host: String, val path: String) {
         operator fun invoke(deeplink: Uri): DeeplinkInfo? {
             val host = deeplink.host
             val path = deeplink.path
+            println("host=$host, path=$path")
 
             if (host == null || path == null) {
                 Log.e("DeeplinkInfo", "Deeplink host or path is null: $host, $path")
