@@ -4,12 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.planup.planup.database.TokenSaver
+import com.planup.planup.database.UserInfoSaver
 import com.planup.planup.login.ui.LoginViewModel.Event.*
 import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onSuccess
 import com.planup.planup.network.data.UserStatus
-import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +21,8 @@ import javax.inject.Inject
 class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val notificationRepository: NotificationRepository,
-    private val tokenSaver: TokenSaver
+    private val tokenSaver: TokenSaver,
+    private val userInfoSaver: UserInfoSaver
 ) : ViewModel() {
 
     private val _eventChannel = Channel<Event>(Channel.BUFFERED)
@@ -32,13 +33,9 @@ class LoginViewModel @Inject constructor(
     
     init {
         viewModelScope.launch {
-            userRepository.validateToken()
-                .onSuccess {
-                    _eventChannel.send(SuccessLogin)
-                }
-                .onFailWithMessage {
-                    Log.i("LoginViewModel", "자동 로그인 실패: $it")
-                }
+            if(tokenSaver.getToken() != null && tokenSaver.getRefreshToken() != null) {
+                _eventChannel.send(SuccessLogin)
+            }
         }
     }
 
@@ -88,8 +85,11 @@ class LoginViewModel @Inject constructor(
                         UserStatus.LOGIN_SUCCESS -> {
                             tokenSaver.saveToken(it.accessToken)
                             tokenSaver.saveRefreshToken(it.refreshToken)
-
                             notificationRepository.updateFcmToken()
+
+                            userInfoSaver.clearAllUserInfo()
+                            userInfoSaver.saveUserInfo(it.userInfo.toUserInfoFormat())
+
                             _eventChannel.send(Event.SuccessLogin)
                         }
                         UserStatus.SIGNUP_SUCCESS -> {

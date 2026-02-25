@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PlanUP</string>
     <string name="app_version">1.0.0</string>
+    <string name="expired_token">로그인이 만료되었습니다. 다시 로그인해 주세요.</string>
 
     <string name="premium_policy">유료 정책</string>
     <string name="benefit_question">어떤 혜택을 누릴 수 있나요?</string>

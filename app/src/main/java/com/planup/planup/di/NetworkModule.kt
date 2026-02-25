@@ -1,5 +1,6 @@
 package com.planup.planup.di
 
+import android.content.Context
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.UserInfoSaver
 import com.planup.planup.main.user.domain.UserRepository
@@ -16,6 +17,7 @@ import com.planup.planup.network.repository.NotificationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,12 +46,14 @@ class NetworkModule {
     @Provides
     @Singleton
     fun provideTokenAuthenticator(
+        @ApplicationContext context: Context,
         userRepository: dagger.Lazy<UserRepository>,
         notificationRepository: dagger.Lazy<NotificationRepository>,
         userInfoSaver: UserInfoSaver,
         tokenSaver: TokenSaver
     ): TokenAuthenticator {
         return TokenAuthenticator(
+            context,
             userRepository,
             notificationRepository,
             userInfoSaver,
