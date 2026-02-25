@@ -9,6 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.crossfade
 import com.planup.planup.R
 
 data class RankURLItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
@@ -34,10 +36,10 @@ class RankURLAdapter(private val rankList: List<RankURLItem>) :
         holder.rankText.text = "${item.rank}위"
         holder.nicknameText.text = item.nickname
         holder.certCountText.text = "사진인증 ${item.certCount}회"
-        if (holder.itemView.context.isValidImageUri(item.imageResId.toUri()))
-            holder.profileImage.setImageURI(item.imageResId.toUri())
-        else
-            holder.profileImage.setImageResource(R.drawable.ic_profile)
+        holder.profileImage.load(item.imageResId) {
+            crossfade(true)
+            error(R.drawable.ic_profile)
+        }
     }
 
     override fun getItemCount(): Int = rankList.size
