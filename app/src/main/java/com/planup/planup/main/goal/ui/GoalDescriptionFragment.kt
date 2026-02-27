@@ -16,12 +16,15 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDescriptionBinding
+import com.planup.planup.goal.adapter.CommentAdapter
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
-import androidx.core.net.toUri
+import com.planup.planup.goal.adapter.RankURLAdapter
+import com.planup.planup.goal.adapter.RankURLItem
+import com.planup.planup.goal.util.loadProfile
 
 class GoalDescriptionFragment : Fragment() {
 
@@ -100,11 +103,11 @@ class GoalDescriptionFragment : Fragment() {
     // 현재 서버 DTO(GoalResult)에 존재하는 필드만 안전하게 바인딩
     private fun bindGoal(goal: com.planup.planup.main.goal.item.GoalResult) {
         binding.goalTitleTv.text = goal.goalName
-        binding.oneDoseTv.text = "목표 1회 량${goal.oneDose} / ${goal.goalAmount}"
+        binding.oneDoseTv.text = "${goal.goalAmount}"
 
         // 아래 값들은 GoalResult에 아직 없으므로 일단 표시 보류/임시값
         binding.periodTv.text = goal.period.toPeriod()
-        binding.frequencyTv.text = "기준 기간당 달성 횟수: ${goal.frequency}회"
+        binding.frequencyTv.text = "${goal.frequency}회"
         binding.verificationTv.text = when (goal.verificationType) {
             "TIMER" -> "타이머 인증"
             "PICTURE" -> "사진 인증"
@@ -119,31 +122,51 @@ class GoalDescriptionFragment : Fragment() {
 
         isPublic = goal.public
         applyToggleUI(isPublic)
+
+        binding.commentRecyclerView.adapter = CommentAdapter(goal.commentList?.map{
+            com.planup.planup.goal.adapter.CommentItem(
+                it.writer.profileImg,
+                it.writer.nickname,
+                it.content
+            )
+        } ?: emptyList())
     }
 
     fun bindRanking(ranking: List<GoalRanking>) {
+        Log.d("bindRanking", "bindRanking")
+        Log.d("bindRanking", "bindRanking: $ranking")
+        Log.d("bindRanking", "bindRanking: ${ranking.size}")
         binding.apply {
             val empty = ranking.size < 2
             initRaking.visibility = if (empty) View.VISIBLE else View.GONE
             topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
             if (!empty){
-                firstProfile.setImageURI(ranking[0].profileImg.toUri())
+                firstProfile.loadProfile(ranking[0].profileImg)
                 firstName.text = ranking[0].nickName
                 firstVer.text = "사진인증${ranking[0].verificationCount}회"
-                secondProfile.setImageURI(ranking[1].profileImg.toUri())
+                secondProfile.loadProfile(ranking[1].profileImg)
                 secondName.text = ranking[1].nickName
                 secondVer.text = "사진인증${ranking[1].verificationCount}회"
                 if (ranking.size < 3) {
                     thirdRankLayout.visibility = View.GONE
                 } else {
-                    ThirdProfile.setImageURI(ranking[2].profileImg.toUri())
+                    ThirdProfile.loadProfile(ranking[2].profileImg)
                     ThirdName.text = ranking[2].nickName
                     ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
 
                     val remain = ranking.drop(3)
                     if (remain.isNotEmpty()){
-
+                        rankRecyclerView.adapter = RankURLAdapter(
+                            ranking.mapIndexed { index, ranking ->
+                                RankURLItem(
+                                    index + 3,
+                                    ranking.nickName,
+                                    ranking.verificationCount,
+                                    ranking.profileImg
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -178,18 +201,8 @@ class GoalDescriptionFragment : Fragment() {
 
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
-            runCatching {
-                RetrofitInstance.goalApi.getGoalRanking(goalId = goalId) // GoalDetailResponse
-            }.onSuccess { resp ->
-                if (resp.isSuccessful && resp.body() != null) {
-                    val ranking = resp.body()!!.result.goalRankingList.sortedByDescending { it.verificationCount }
-                    // ✅ 타입 맞춤
-                    bindRanking(ranking)
-                } else {
-                    Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
-                }
-            }.onFailure {
-                Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            com.planup.planup.goal.util.setRanking(requireContext(),goalId){
+                ranking -> bindRanking(ranking)
             }
         }
     }
