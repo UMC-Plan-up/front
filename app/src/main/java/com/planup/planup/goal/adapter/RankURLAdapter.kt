@@ -1,16 +1,11 @@
 package com.planup.planup.goal.adapter
 
-import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
-import coil3.load
-import coil3.request.crossfade
 import com.planup.planup.R
 import com.planup.planup.goal.util.loadProfile
 
