@@ -1,18 +1,23 @@
 package com.planup.planup.goal.util
 
+import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import coil3.load
 import coil3.request.crossfade
 import com.planup.planup.R
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.data.GoalCreateRequest
+import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.main.goal.data.GoalType
 import com.planup.planup.main.goal.data.MyGoalListDto
 import com.planup.planup.main.goal.item.EditGoalResponse
@@ -20,9 +25,11 @@ import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
+import com.planup.planup.network.RetrofitInstance
 import kotlin.jvm.JvmName
 import com.planup.planup.network.data.ChallengeFriends
 import com.planup.planup.network.dto.friend.FriendInfo
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
@@ -382,6 +389,27 @@ fun ImageView.loadProfile(url: String?) {
         crossfade(true)
         error(R.drawable.ic_profile)
     }
+}
+
+suspend fun setRanking(context: Context, goalId: Int,bindRanking:(List<GoalRanking>)->Unit) {
+        runCatching {
+            RetrofitInstance.goalApi.getGoalRanking(goalId = goalId) // GoalDetailResponse
+        }.onSuccess { resp ->
+            Log.d("setRanking", "setRanking: $resp")
+            if (resp.isSuccessful && resp.body() != null) {
+                val ranking = resp.body()!!.result.sortedByDescending { it.verificationCount }
+                // ✅ 타입 맞춤
+                bindRanking(ranking)
+            } else {
+                Toast.makeText(context, resp.message(), Toast.LENGTH_SHORT).show()
+                bindRanking(emptyList())
+            }
+        }.onFailure {
+            Log.d("setRanking", "setRanking: fail")
+            Toast.makeText(context, "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            bindRanking(emptyList())
+        }
+
 }
 
 
