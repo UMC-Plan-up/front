@@ -1,5 +1,7 @@
 package com.planup.planup.main.goal.item
 
+import android.R
+
 // GoalResponse.kt
 data class GoalDetailResponse(
     val isSuccess: Boolean,
@@ -17,19 +19,23 @@ data class GoalResult(
     val period : String,
     val verificationType : String,
     val public: Boolean,
-    val commentList: List<Comment>
+    val commentList: List<Comment>?
 )
 
 data class Comment(
-    val goal: GoalDetail
-)
-
-data class GoalDetail(
     val createdAt: String, // 목표 생성일 (시작일)
     val endDate: String,   // 목표 종료일
-    val period: String,
-    val oneDose: Int,
+    val content: String,
+    val status: String, // ACTIVE, INACTIVE
+    val parentComment: String,
+    val writer: Writer,
     val userGoals: List<UserGoal>
+)
+
+data class Writer(
+    val id: Int,
+    val nickname: String,
+    val profileImg: String
 )
 
 data class UserGoal(
