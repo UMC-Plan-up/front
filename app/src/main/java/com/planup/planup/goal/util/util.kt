@@ -3,10 +3,13 @@ package com.planup.planup.goal.util
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import coil3.load
+import coil3.request.crossfade
 import com.planup.planup.R
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.data.GoalCreateRequest
@@ -358,15 +361,29 @@ fun setLockText(titleText: TextView, descriptionText: TextView, level: Int){
 fun List<FriendInfo>.toFriendItems(): List<ChallengeFriends> =
     this.map { ChallengeFriends(it.id, it.nickname, it.goalCnt) }
 
-fun String.toPeriod(): String = when(this) {
+fun String?.toPeriod(): String = when(this) {
     "DAY" -> "매일"
     "매일"-> "DAY"
     "WEEK" -> "매주"
     "매주" -> "WEEK"
     "MONTH" -> "매달"
     "매달" -> "MONTH"
+    null -> "매일"
     else -> this
 }
+
+fun ImageView.loadProfile(url: String?) {
+    if (url.isNullOrBlank()) {
+        setImageResource(R.drawable.ic_profile)
+        return
+    }
+
+    this.load(url) {
+        crossfade(true)
+        error(R.drawable.ic_profile)
+    }
+}
+
 
 data class TmpGoalData(
     val goalName: String = "",
