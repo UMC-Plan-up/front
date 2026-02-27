@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil3.load
 import coil3.request.crossfade
 import com.planup.planup.R
+import com.planup.planup.goal.util.loadProfile
 
 data class RankURLItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
 
@@ -36,19 +37,8 @@ class RankURLAdapter(private val rankList: List<RankURLItem>) :
         holder.rankText.text = "${item.rank}위"
         holder.nicknameText.text = item.nickname
         holder.certCountText.text = "사진인증 ${item.certCount}회"
-        holder.profileImage.load(item.imageResId) {
-            crossfade(true)
-            error(R.drawable.ic_profile)
-        }
+        holder.profileImage.loadProfile(item.imageResId)
     }
 
     override fun getItemCount(): Int = rankList.size
-
-    fun Context.isValidImageUri(uri: Uri): Boolean {
-        return try {
-            contentResolver.openInputStream(uri)?.use { true } ?: false
-        } catch (e: Exception) {
-            false
-        }
-    }
 }
