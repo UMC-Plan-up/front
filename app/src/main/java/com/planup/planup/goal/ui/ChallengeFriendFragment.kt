@@ -1,5 +1,6 @@
 package com.planup.planup.goal.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
@@ -49,8 +50,8 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 
     //프레그먼트 초기화
     private fun init(){
-//        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
-//        editor = prefs.edit()
+        prefs = (requireActivity() as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        editor = prefs.edit()
 //        val userPrefs = (context as GoalActivity).getSharedPreferences("userInfo", MODE_PRIVATE)
         challengeService = ChallengeController()
         viewModel.getUserNickName{
@@ -137,6 +138,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             Time(prefs.getInt("oneDoes",0)) //타이머 총 시간
         )
         challengeService.requestChallenge(challengeDto)
+        successRequest()
     }
     //챌린지 요청 성공 시 완료 화면으로 이동
     override fun successRequest() {
@@ -149,7 +151,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             putString("friend",friend?.nickname)
         }
         //완료 화면으로 이동
-        (context as GoalActivity).supportFragmentManager.beginTransaction()
+        (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.goal_container,finishRequestFragment)
             .commitAllowingStateLoss()
     }

@@ -4,6 +4,7 @@ import com.planup.planup.main.friend.data.FriendRepositoryImpl
 import com.planup.planup.main.friend.domain.FriendRepository
 import com.planup.planup.main.goal.data.GoalRepositoryImpl
 import com.planup.planup.main.goal.domain.GoalRepository
+import com.planup.planup.main.record.ui.repository.RecordWeeklyReportRepository
 import com.planup.planup.main.user.data.UserRepositoryImpl
 import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.repository.NotificationRepository
@@ -53,5 +54,5 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         impl: NotificationRepositoryImpl
     ): NotificationRepository
-
+    
 }

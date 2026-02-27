@@ -23,23 +23,28 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.setLockText
 import com.planup.planup.goal.util.toGoalItems
-import com.planup.planup.goal.util.toGoalItemsForFriend
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.adapter.GoalAdapter
 import com.planup.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.goal.item.MyGoalListItem
+import com.planup.planup.main.goal.ui.EditFriendGoalActivity
+import com.planup.planup.main.goal.ui.GoalDescriptionFragment
+import com.planup.planup.main.goal.ui.GoalUpdateDialog
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.network.ApiResult
 import com.planup.planup.network.RetrofitInstance
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlin.jvm.java
 
@@ -55,6 +60,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
     private var isEditMode: Boolean = false
 
     private val viewModel: GoalViewModel by viewModels()
+    lateinit var isCreateGoal: StateFlow<Boolean>
     companion object {
         private const val ARG_TARGET_USER_ID = "TARGET_USER_ID"
         private const val ARG_TARGET_NICKNAME = "TARGET_NICKNAME"
@@ -76,7 +82,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentGoalBinding.inflate(inflater, container, false)
-
+        isCreateGoal  = viewModel.isCreateGoal
 //        userController = UserController()
 //        goalController = GoalController()
         // 사용자 정보 콜백 연결
@@ -109,13 +115,20 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         viewModel.setTargetUserId(arguments?.getInt(ARG_TARGET_USER_ID, -1) ?: -1)
 
         targetNicknameArg = arguments?.getString(ARG_TARGET_NICKNAME).orEmpty()
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch{
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.goalState.collect { state ->
                     setGoals(state)
+                    viewModel.getGoalLevel{
+                        setLockText(binding.lockTitle,
+                            binding.lockDescription,
+                            it)
+                        setGenerateButton()
+                    }
                 }
             }
         }
+
 
         clickListener()
         return binding.root
@@ -147,31 +160,16 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             },
             onEditClick = { goalId ->
                 val intent = Intent(requireContext(), EditFriendGoalActivity::class.java)
-                intent.putExtra("goalId",goalId)
+                intent.putExtra("goalId", goalId)
                 startActivity(intent)
                 //editGoalLauncher.launch(intent)
             },
             onDeactivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = false) },
             onActivateConfirmed = { goalId -> requestToggleActive(goalId, willActivate = true) },
-            onDeleteConfirmed = {goalId,action -> requestDeleteGoal(goalId) { action() } }
+            onDeleteConfirmed = { goalId, action -> requestDeleteGoal(goalId) { action() } }
         )
         recyclerView.adapter = adapter
 
-        viewModel.loadGoalList(
-            friendAction = {
-                // ✅ 친구 모드
-                binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
-
-                // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
-                binding.manageButton.visibility = View.GONE
-            },
-            action = {
-                // ✅ 내 모드
-                binding.userGoalListTv.text = "${viewModel.userName}의 목표 리스트"
-
-                viewModel.fetchMyGoals()
-            }
-        )
 //        if (targetUserId > 0) {
             // ✅ 친구 모드
 //            binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
@@ -192,6 +190,34 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadGoalList(
+            friendAction = {
+                // ✅ 친구 모드
+                binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+
+                // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
+                binding.manageButton.visibility = View.GONE
+
+                viewModel.loadFriendGoals(viewModel.targetUserId.value!!) {
+                    if (it is ApiResult.Success) {
+                        viewModel.setGoalState(
+                            it.data
+                        )
+                    }
+                }
+            },
+            action = {
+                // ✅ 내 모드
+                binding.userGoalListTv.text = "${viewModel.userName}의 목표 리스트"
+
+                viewModel.fetchMyGoals()
+            }
+        )
+    }
+
     // ⬇️ 새로 추가
 //    // ⬇️ 새로 추가
 //    private fun loadFriendGoalList(token: String?, friendUserId: Int) {
@@ -222,11 +248,11 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //        }
 //    }
 
-    private fun loadFriendGoalList(friendUserId: Int) =
-        viewModel.loadFriendGoalList(friendUserId) { response ->
-            val items = response.toGoalItemsForFriend()
-            setGoals(items)
-        }
+//    private fun loadFriendGoalList(friendUserId: Int) =
+//        viewModel.loadFriendGoalList(friendUserId) { response ->
+//            val items = response.toGoalItemsForFriend()
+//            setGoals(items)
+//        }
 
     // 파일 상단 import에 추가
 // import com.example.planup.main.friend.data.FriendGoalListDto
@@ -443,7 +469,7 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
 //            (context as? MainActivity)?.navigateToFragment(subscriptionFragment)
 //        }
 
-        binding.lockCircleIv2.setOnClickListener {
+        binding.addNewGoalCl.setOnClickListener {
             // SharedPreferences에서 닉네임 가져오기
             val nickname = prefs.getString("nickname", "사용자") ?: "사용자"
             Log.d("GoalFragment", "nickname: $nickname")
@@ -566,22 +592,14 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
         Toast.makeText(requireContext(), "목표 목록을 불러오지 못했습니다: $message", Toast.LENGTH_SHORT).show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadGoalList(
-            friendAction = {
-                // ✅ 친구 모드
-                binding.userGoalListTv.text = "${targetNicknameArg}의 목표 리스트"
+    fun setGenerateButton() {
+        if (isCreateGoal.value) {
+            binding.addNewGoal.visibility = View.VISIBLE
+            binding.addNewGoalCl.visibility = View.GONE
 
-                // 편집/삭제 같은 본인 전용 UI는 숨기는 걸 권장
-                binding.manageButton.visibility = View.GONE
-            },
-            action = {
-                // ✅ 내 모드
-                binding.userGoalListTv.text = "${viewModel.userName}의 목표 리스트"
-
-                viewModel.fetchMyGoals()
-            }
-        )
+        }else{
+            binding.addNewGoal.visibility = View.GONE
+            binding.addNewGoalCl.visibility = View.VISIBLE
+        }
     }
 }

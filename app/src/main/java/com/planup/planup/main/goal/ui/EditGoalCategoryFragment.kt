@@ -14,10 +14,15 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentEditGoalCategoryBinding
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlin.collections.forEach
 
+@AndroidEntryPoint
 class EditGoalCategoryFragment : Fragment() {
     private var _binding: FragmentEditGoalCategoryBinding? = null
     private val binding get() = _binding!!
@@ -30,6 +35,8 @@ class EditGoalCategoryFragment : Fragment() {
     private lateinit var edittext: EditText
     private lateinit var nextbtn: Button
 
+    private val viewModel: GoalViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,7 +47,6 @@ class EditGoalCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.editCategoryBackIcon.setOnClickListener {
@@ -85,24 +91,24 @@ class EditGoalCategoryFragment : Fragment() {
                 binding.editCategoryGuideText1.visibility = View.VISIBLE
                 return@setOnClickListener
             }
-
-
             val selectedCategoryCode = if (isCustomMode) {
                 edittext.text.toString()
             } else {
                 getCategoryCode(selectedCategory!!.id)
             }
+            viewModel.setGoalData(
+                viewModel.goalData.copy(
+                    goalCategory = selectedCategoryCode
+                )
+            )
 
-            val titlefragment = EditGoalTitleFragment()
+
+            val titleFragment = EditGoalTitleFragment()
             val goalId = arguments?.getInt("goalId") ?: 0
             Log.d("EditGoalCategoryFragment", "goalId: $goalId")
-            titlefragment.arguments = Bundle().apply {
-                putString("selectedCategory", selectedCategoryCode)
-                putInt("goalId", goalId)
-            }
 
             parentFragmentManager.beginTransaction()
-                .replace(R.id.edit_friend_goal_fragment_container, titlefragment)
+                .replace(R.id.edit_friend_goal_fragment_container, titleFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -117,6 +123,20 @@ class EditGoalCategoryFragment : Fragment() {
             view.performClick()
             false
         }
+
+        viewModel.setGoalData(
+            viewModel.goalData.copy(
+                goalCategory = viewModel.editGoalData?.goalCategory ?: ""
+            )
+        )
+        Log.d("EditGoalCategoryFragment", "editGoalData: ${viewModel.editGoalData}")
+        Log.d("EditGoalCategoryFragment", "goaldata: ${viewModel.goalData.goalCategory}")
+        val layout = binding.root.findViewById<LinearLayout>(
+            getCategoryString(viewModel.goalData.goalCategory)
+        )
+        if (layout != null)
+            handleCategorySelection(layout)
+
     }
 
     // 카테고리 선택 처리
@@ -176,6 +196,21 @@ class EditGoalCategoryFragment : Fragment() {
             R.id.edit_category_DiaryLayout -> "DIARY"
             R.id.edit_category_CustomLayout -> "SELF"
             else -> "SELF"
+        }
+    }
+
+    private fun getCategoryString(category: String): Int {
+        return when (category) {
+            "STUDYING" -> R.id.edit_category_StudyLayout
+            "READING" ->  R.id.edit_category_ReadingLayout
+            "DIGITAL_DETOX" -> R.id.edit_category_DigitalDetoxLayout
+            "MEDITATION" ->  R.id.edit_category_MeditationLayout
+            "SLEEP_PATTERN" ->  R.id.edit_category_SleepLayout
+            "MUSIC"->  R.id.edit_category_InstrumentLayout
+            "EXERCISE" ->R.id.edit_category_ExerciseLayout
+            "DIARY" -> R.id.edit_category_DiaryLayout
+            "SELF" ->  R.id.edit_category_CustomLayout
+            else -> R.id.edit_category_StudyLayout
         }
     }
 

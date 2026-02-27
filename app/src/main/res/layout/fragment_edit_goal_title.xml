@@ -34,13 +34,14 @@
 
         <TextView
             android:id="@+id/edit_friend_title_description_tv"
+            style="@style/Typography_S_Medium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="목표 수정 시, 참여 중인 친구들의 목표도 변경돼요."
-            style="@style/Typography_S_Medium"
             android:textColor="@color/black_300"
-            app:layout_constraintTop_toBottomOf="@+id/edit_friend_title_tv"
-            app:layout_constraintStart_toStartOf="parent"/>
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edit_friend_title_tv" />
 
         <TextView
             android:id="@+id/edit_friend_goal_name_tv"
@@ -90,7 +91,7 @@
             android:id="@+id/edit_friend_goal_period_description_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="목표 수행에 도전할 때마다 무엇을 얼마만큼 수행할지 구체적 분량을 작성해 주세요."
+            android:text="한 번 실천할 때의 구체적인 분량을 적어주세요."
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/edit_friend_goal_period_tv" />
 

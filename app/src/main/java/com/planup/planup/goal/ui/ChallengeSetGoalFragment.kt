@@ -44,13 +44,13 @@ class ChallengeSetGoalFragment : Fragment() {
                 binding.challengeSetGoalCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
-        prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
+        prefs = (requireActivity() as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
     }
     private fun clickListener() {
         //뒤로가기: 목표 설정하기 페이지로 이동, 1:1 챌린지, 커뮤니티 선택 가능
         binding.backIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
+            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container, GoalSelectFragment())
                 .commitAllowingStateLoss()
         }
@@ -59,7 +59,7 @@ class ChallengeSetGoalFragment : Fragment() {
             editor.putString("goalName",binding.goalNameEt.text.toString())
             editor.putString("goalAmount",binding.goalAmountEt.text.toString())
             editor.apply()
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
+            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
                 .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
                 .commitAllowingStateLoss()
         }

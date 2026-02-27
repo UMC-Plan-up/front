@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:padding="20dp">
+    android:padding="28dp">
 
     <ImageView
         android:id="@+id/backIcon"
@@ -23,8 +23,8 @@
         android:text="@string/goal_friend_detail"
         android:textColor="@color/black_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="87dp"/>
+        app:layout_constraintTop_toBottomOf="@+id/backIcon"
+        android:layout_marginTop="31dp"/>
 
 <!--    <TextView-->
 <!--        android:id="@+id/goalDetailSubtitle"-->
@@ -173,6 +173,5 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

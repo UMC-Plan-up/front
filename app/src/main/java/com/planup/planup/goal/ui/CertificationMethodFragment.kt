@@ -12,7 +12,10 @@ import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentCertificationMethodBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.equil
 import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.titleFormat
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
@@ -42,27 +45,10 @@ class CertificationMethodFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setInsets(binding.root,binding.root.paddingBottom)
+
         val activity = requireActivity() as GoalActivity
         goalOwnerName = activity.goalOwnerName
-        val titleTv = binding.goalDetailTitle
-        Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
-        if(viewModel.friendNickname != "사용자") {
-            Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
-            Log.d("CertificationMethodFragment", "titleTv: ${getString(R.string.goal_friend_detail, viewModel.friendNickname)}")
-            titleTv.text = getString(R.string.goal_friend_detail, viewModel.friendNickname)
-            when(activity.verificationType){
-                "TIMER" -> selectAuthMethod("TIMER")
-                "PICTURE" -> selectAuthMethod("PICTURE")
-                else -> {
-                    // 다음 버튼 비활성화
-                    setNextButtonEnabled(false)
-                }
-            }
-        }
 //        binding.goalDetailTitle.text = getString(R.string.goal_friend_detail, goalOwnerName)
-
-
 
         /* 뒤로가기 아이콘 → 이전 화면으로 이동 */
         binding.backIcon.setOnClickListener {
@@ -100,9 +86,11 @@ class CertificationMethodFragment : Fragment() {
                 }
 
                 // 다음 프래그먼트로 이동
-                activity.navigateToFragment(nextFragment)
+                backStackTrueGoalNav(nextFragment,"CertificationMethodFragment")
             }
         }
+        setInsets(view)
+        setEdit()
     }
 
     /* 인증 방식 선택 처리 */
@@ -142,6 +130,36 @@ class CertificationMethodFragment : Fragment() {
         } else {
             ContextCompat.getDrawable(requireContext(), R.drawable.btn_next_background_gray)
         }
+    }
+
+    private fun setEdit(){
+        val activity = requireActivity() as GoalActivity
+        Log.d("CertificationMethodFragment", "friendNickname: ${viewModel.friendNickname}")
+        val goalDataE = if (viewModel.editGoalData != null){
+            viewModel.editGoalData!!.run {
+                equil(
+                    copy(goalName = activity.goalName, goalAmount = activity.goalAmount)
+                )
+            }
+        }else false
+
+        titleFormat(activity.isFriendTab,goalDataE, binding.goalDetailTitle,
+            if (viewModel.friendNickname!="사용자")viewModel.friendNickname else activity.goalOwnerName){
+
+        }
+        when(activity.verificationType){
+            "TIMER" -> selectAuthMethod("TIMER")
+            "PICTURE" -> selectAuthMethod("PICTURE")
+            else -> {
+                // 다음 버튼 비활성화
+                setNextButtonEnabled(false)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setEdit()
     }
 
     override fun onDestroyView() {

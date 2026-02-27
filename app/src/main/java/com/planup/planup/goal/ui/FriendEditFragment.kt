@@ -7,11 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.planup.planup.databinding.FragmentEditGoalTitleBinding
 import android.text.TextWatcher
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
+import com.planup.planup.databinding.FragmentEditGoalTitleBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.logGoalActivityData
+import com.planup.planup.goal.util.resetGoalDataTrueCategory
 import com.planup.planup.goal.util.setGoalData
 import com.planup.planup.goal.util.setInsets
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
@@ -48,6 +51,8 @@ class FriendEditFragment : Fragment() {
             goalId,
             goalDataAction = {
                 setGoalData(it)
+                binding.editFriendGoalNameEt.setText(it.goalName)
+                binding.editFriendGoalPeriodEt.setText(it.goalAmount)
             },
             backAction = {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -65,7 +70,6 @@ class FriendEditFragment : Fragment() {
             Log.d("EditGoalTitleFragment", "friendNickname: ${viewModel.friendNickname}")
             titleTv.text = "${viewModel.friendNickname}님의 세부 목표"
             titleEt.setText(goalActivity.goalName)
-            goalAmountEt.setText(goalActivity.goalAmount)
         }
         backBtn.setOnClickListener {
             parentFragmentManager.popBackStack()
@@ -129,11 +133,13 @@ class FriendEditFragment : Fragment() {
             activity.goalName = goalName
             activity.goalAmount = goalAmount
 
+            logGoalActivityData()
             val bundle = Bundle().apply {
                 putBoolean("friendEditBoolean", true)
             }
             val nextFragment = CertificationMethodFragment()
             nextFragment.arguments = bundle
+            backStackTrueGoalNav(nextFragment,"FriendEditFragment")
             (requireActivity() as GoalActivity)
                 .navigateToFragment(nextFragment)
 //            if(viewModel.friendNickname != "사용자")
@@ -179,6 +185,11 @@ class FriendEditFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setInsets(binding.root,binding.root.paddingBottom)
+        setInsets(binding.root)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        resetGoalDataTrueCategory()
     }
 }

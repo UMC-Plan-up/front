@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/goal_detail_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,165 +13,125 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:id="@+id/scroll_linear_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="95dp"
             android:padding="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center|left">
+                android:gravity="center|left"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/btn_back"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
-                    android:src="@drawable/ic_arrow_back"/>
+                    android:src="@drawable/ic_arrow_back" />
 
                 <TextView
-                    android:text="@string/goal_description_page_title"
-                    android:textSize="22sp"
+                    android:id="@+id/backText"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="카테고리"
+                    android:textColor="@color/black_400"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginTop="10dp"
                 android:gravity="center|left"
-                android:layout_marginTop="10dp">
-
+                android:orientation="horizontal">
                 <TextView
                     android:id="@+id/goal_title_tv"
-                    android:text="@string/goal_description_goal_title"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <ImageView
-                    android:id="@+id/goal_desc_edit_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/img_edit_goal_namepng"
-                    android:layout_marginStart="5dp"/>
-
-                <LinearLayout
-                    android:id="@+id/toggle_group"
-                    android:layout_width="80dp"
-                    android:layout_height="35dp"
-                    android:layout_gravity="center"
-                    android:orientation="horizontal"
-                    android:clipToPadding="false"
-                    android:background="@drawable/bg_toggle_group"
-                    android:layout_marginStart="154dp"
-                    android:layout_marginEnd="24dp">
-
-                    <TextView
-                        android:id="@+id/btn_public"
-                        android:layout_width="40dp"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/goal_description_public"
-                        android:textSize="11sp"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/selector_toggle_item"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:layout_marginEnd="2dp"/>
-
-                    <TextView
-                        android:id="@+id/btn_private"
-                        android:layout_width="40dp"
-                        android:layout_height="match_parent"
-                        android:text="@string/goal_description_not_public"
-                        android:textSize="11sp"
-                        android:layout_marginStart="2dp"
-                        android:gravity="center"
-                        android:background="@drawable/selector_toggle_item"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:textColor="@android:color/black" />
-                </LinearLayout>
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="@string/goal_description_goal_title"
+                    android:textColor="@color/black_400"
+                    android:textSize="24sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="20dp">
+                android:layout_marginStart="20dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_person"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_person" />
 
                 <TextView
                     android:id="@+id/goal_description_attendee_cnt_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/goal_description_attendee_cnt"
-                    android:layout_gravity="center"/>
+                    android:layout_gravity="center"
+                    android:text="@string/goal_description_attendee_cnt" />
             </LinearLayout>
 
             <!-- 규칙 정보 섹션 -->
             <LinearLayout
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="200dp"
-                android:layout_marginTop="12dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="200dp"
                 android:orientation="horizontal"
                 android:weightSum="2">
 
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:orientation="vertical"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:gravity="center"
-                    android:layout_height="wrap_content">
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1회 분량"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="기준 기간"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="빈도"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="인증 방식"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_weight="1"
-                    android:orientation="vertical"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/one_dose_tv"
@@ -199,101 +160,26 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!-- 타이머 및 사진 인증 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:id="@+id/record_ll"
-                    android:layout_width="200dp"
-                    android:layout_height="82dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_goal_black"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginEnd="15dp">
-
-                    <TextView
-                        android:id="@+id/communityGoalText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="오늘의 타이머 기록"
-                        android:textSize="16sp"
-                        android:textColor="@color/black_400"
-                        android:fontFamily="@font/pretendard_medium" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="00:00:00"
-                        android:textSize="35sp"
-                        android:fontFamily="@font/pretendard_medium"/>
-                </LinearLayout>
-
-
-                <LinearLayout
-                    android:layout_width="90dp"
-                    android:layout_height="82dp"
-                    android:orientation="vertical"
-                    android:background="@drawable/bg_goal_black"
-                    android:gravity="center_vertical"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginEnd="15dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/pretendard_medium"
-                        android:gravity="center"
-                        android:layout_marginBottom="10dp"
-                        android:text="사진 인증"
-                        android:textColor="@color/black_400"
-                        android:textSize="16sp" />
-
-                    <ImageView
-                        android:layout_width="37dp"
-                        android:layout_height="37dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_camera" />
-                </LinearLayout>
-
-
-            </LinearLayout>
-
             <!-- 랭킹 제목 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp">
+                android:layout_marginEnd="10dp"
+                android:orientation="vertical">
+
 
                 <TextView
+                    android:id="@+id/communityTitle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="참여자 랭킹"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"/>
+                    android:layout_height="30dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginBottom="12dp"
+                    android:fontFamily="@font/pretendard_semibold"
+                    android:text="커뮤니티 참여자 랭킹"
+                    android:textColor="@color/black_400"
+                    android:textSize="18sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="사진 인증 횟수 기반 누적 기록 랭킹"
-                    android:textSize="14sp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"/>
 
                 <LinearLayout
                     android:id="@+id/initRaking"
@@ -563,129 +449,58 @@
 
             </LinearLayout>
 
-            <!-- 댓글 입력 -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="댓글 남기기"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="20dp"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_gravity="center">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img_friend_profile_sample1"
-                            android:scaleType="centerCrop"
-                            android:clipToOutline="true"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="친구1"
-                            android:textSize="14sp"
-                            android:textColor="#222222"
-                            android:layout_gravity="center"/>
-
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/textSpeech"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_speech_box"
-                        android:padding="16dp"
-                        android:text="벌써 이만큼 했음? 부지런하네..."
-                        android:textColor="#333333"
-                        android:textSize="14sp"
-                        android:lineSpacingExtra="4dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:elevation="4dp"
-                        android:layout_gravity="center"/>
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_gravity="center">
-
-                        <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:src="@drawable/img_friend_profile_sample2"
-                            android:scaleType="centerCrop"
-                            android:clipToOutline="true"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="닉네임"
-                            android:textSize="14sp"
-                            android:textColor="#222222"
-                            android:layout_gravity="center"/>
-
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/textSpeech2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/img_speech_ballon"
-                        android:padding="26dp"
-                        android:hint="댓글을 입력하세요"
-                        android:textColor="#333333"
-                        android:textSize="14sp"
-                        android:lineSpacingExtra="4dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:elevation="4dp"
-                        android:layout_gravity="center"/>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="21dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="42dp"
+        app:layout_constraintBottom_toBottomOf="@+id/scroll_content"
+        app:layout_constraintEnd_toEndOf="@+id/scroll_content"
+        app:layout_constraintStart_toStartOf="@+id/scroll_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/goal_join_next_btn"
+            android:layout_width="match_parent"
+            app:cornerRadius="25dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="12dp"
+            android:text="커뮤니티 참여하기"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            app:backgroundTint="@color/blue_200"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+        <Space
+            android:layout_width="15dp"
+            android:layout_height="match_parent">
+
+        </Space>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/edit_goal_next_btn"
+            android:layout_width="match_parent"
+            app:cornerRadius="25dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/pretendard_regular"
+            android:letterSpacing="0.015"
+            android:lineSpacingExtra="12dp"
+            android:text="기준 직접 설정하기"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="16sp"
+            app:backgroundTint="@color/blue_200"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
