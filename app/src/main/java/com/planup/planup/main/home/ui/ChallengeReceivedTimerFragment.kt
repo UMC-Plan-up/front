@@ -11,15 +11,17 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.planup.planup.R
+import com.planup.planup.databinding.FragmentChallengeReceivedBinding
 import com.planup.planup.databinding.FragmentChallengeReceivedTimerBinding
 import com.planup.planup.goal.adapter.AcceptChallengeAdapter
 import com.planup.planup.goal.adapter.RejectChallengeAdapter
+import com.planup.planup.goal.util.challengeReceivedInit
 import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.main.MainActivity
 import com.planup.planup.network.controller.ChallengeController
 
 class ChallengeReceivedTimerFragment : Fragment(), RejectChallengeAdapter, AcceptChallengeAdapter {
-    private lateinit var binding: FragmentChallengeReceivedTimerBinding
+    private lateinit var binding: FragmentChallengeReceivedBinding
 
     // 챌린지 정보 저장
     private lateinit var challengeInfo: ChallengeReceivedTimer
@@ -29,7 +31,7 @@ class ChallengeReceivedTimerFragment : Fragment(), RejectChallengeAdapter, Accep
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentChallengeReceivedTimerBinding.inflate(inflater, container, false)
+        binding = FragmentChallengeReceivedBinding.inflate(inflater, container, false)
         init()
         clickListener()
         return binding.root
@@ -37,86 +39,10 @@ class ChallengeReceivedTimerFragment : Fragment(), RejectChallengeAdapter, Accep
 
     // 프래그먼트 초기화
     private fun init() {
-        binding.challengeReceivedTimerCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
-            override fun onGlobalLayout() {
-                val height = binding.challengeReceivedTimerCl.height
-                binding.challengeReceivedTimerInnerCl.minHeight = height
-                binding.challengeReceivedTimerCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
-
-        })
         // 챌린지 정보 사용하기
         challengeInfo = requireArguments().getParcelable("receivedChallenge")!!
-
-        // 친구 이름
-        binding.challengeTimerTitleTv.text =
-            getString(R.string.challenge_request_from, challengeInfo.friendName)
-
-        // 목표명
-        binding.challengeTimerGoalEnterTv.text = challengeInfo.goalName
-
-        // 1회 분량
-        binding.challengeTimerAmountEnterTv.text = challengeInfo.goalAmount
-
-        // 인증방식
-        binding.challengeTimerVerifyEnterIv.setImageResource(R.drawable.ic_timer)
-        binding.challengeTimerVerifyEnterTv.setText(R.string.auth_timer)
-
-        // 타이머 정보
-        val totalTime = challengeInfo.targetTime
-        val hour = totalTime / 3600
-        val minute = (totalTime - hour * 3600) / 60
-        val second = totalTime - hour * 3600 - minute * 60
-        binding.challengeTimerHourEnterTv.text = hour.toString()
-        binding.challengeTimerMinuteEnterTv.text = minute.toString()
-        binding.challengeTimerSecondEnterTv.text = second.toString()
-
-        // 종료일
-        binding.challengeTimerDueEnterTv.text = challengeInfo.endDate
-
-        // 기준 기간
-        binding.challengeTimerDurationEnterTv.text = challengeInfo.duration
-
-        // 빈도
-        binding.challengeTimerFrequencyEnterTv.text = challengeInfo.frequency
-
-        // 페널티
-        when (challengeInfo.penalty) {
-            "coffee" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_coffee)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_coffee)
-            }
-
-            "snack" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_burrito)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_snack)
-            }
-
-            "cleaning" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_bucket)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_cleaning)
-            }
-
-            "wish" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_megaphone)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_wish)
-            }
-
-            "present" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_money)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_present)
-            }
-
-            "skip" -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.img_none_friend)
-                binding.challengeTimerPenaltyEnterTv.setText(R.string.challenge_penalty_skip)
-            }
-
-            else -> {
-                binding.challengeTimerPenaltyEnterIv.setImageResource(R.drawable.ic_pencil)
-                binding.challengeTimerPenaltyEnterTv.text = challengeInfo.penalty
-            }
-        }
+        // 챌린지 정보 초기화
+        challengeReceivedInit(binding, challengeInfo)
     }
 
     // 클릭 이벤트 처리
