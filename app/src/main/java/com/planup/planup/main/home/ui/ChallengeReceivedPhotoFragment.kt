@@ -11,9 +11,10 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.planup.planup.R
-import com.planup.planup.databinding.FragmentChallengeReceivedPhotoBinding
+import com.planup.planup.databinding.FragmentChallengeReceivedBinding
 import com.planup.planup.goal.adapter.AcceptChallengeAdapter
 import com.planup.planup.goal.adapter.RejectChallengeAdapter
+import com.planup.planup.goal.util.challengeReceivedInit
 import com.planup.planup.main.home.data.ChallengeReceivedPhoto
 import com.planup.planup.main.MainActivity
 import com.planup.planup.network.controller.ChallengeController
@@ -23,7 +24,7 @@ class ChallengeReceivedPhotoFragment :
     RejectChallengeAdapter,
     AcceptChallengeAdapter {
 
-    private lateinit var binding: FragmentChallengeReceivedPhotoBinding
+    private lateinit var binding: FragmentChallengeReceivedBinding
 
     // 챌린지 정보 저장
     private lateinit var challengeInfo: ChallengeReceivedPhoto
@@ -33,76 +34,25 @@ class ChallengeReceivedPhotoFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentChallengeReceivedPhotoBinding.inflate(inflater, container, false)
+        binding = FragmentChallengeReceivedBinding.inflate(inflater, container, false)
         init()
         clickListener()
         return binding.root
     }
 
-    private fun init() {
-        binding.challengeReceivedPhotoCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener{
-            override fun onGlobalLayout() {
-                val height = binding.challengeReceivedPhotoCl.height
-                binding.challengeReceivedPhotoInnerCl.minHeight = height
-                binding.challengeReceivedPhotoCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
-            }
+    override fun onResume() {
+        super.onResume()
+        binding.apply {
 
-        })
+        }
+    }
+
+    private fun init() {
         // 전달받은 챌린지 정보
         challengeInfo =
             requireArguments().getParcelable("receivedChallenge")!!
-
-        // 친구 이름
-        binding.challengePhotoTitleTv.text =
-            getString(R.string.challenge_request_from, challengeInfo.friendName)
-
-        // 목표명 / 1회 분량
-        binding.challengePhotoGoalEnterTv.text = challengeInfo.goalName
-        binding.challengePhotoAmountEnterTv.text = challengeInfo.goalAmount
-
-        // 인증 방식
-        binding.challengePhotoVerifyEnterIv.setImageResource(R.drawable.ic_timer)
-        binding.challengePhotoVerifyEnterTv.setText(R.string.auth_photo)
-
-        // 타이머 정보
-        binding.challengePhotoNumberEnterTv.text = challengeInfo.howMany.toString()
-
-        // 종료일 / 기준 기간 / 빈도
-        binding.challengePhotoDueEnterTv.text = challengeInfo.endDate
-        binding.challengePhotoDurationEnterTv.text = challengeInfo.duration
-        binding.challengePhotoFrequencyEnterTv.text = challengeInfo.frequency
-
-        // 페널티
-        when (challengeInfo.penalty) {
-            "coffee" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_coffee)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_coffee)
-            }
-            "snack" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_burrito)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_snack)
-            }
-            "cleaning" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_bucket)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_cleaning)
-            }
-            "wish" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_megaphone)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_wish)
-            }
-            "present" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_money)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_present)
-            }
-            "skip" -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.img_none_friend)
-                binding.challengePhotoPenaltyEnterTv.setText(R.string.challenge_penalty_skip)
-            }
-            else -> {
-                binding.challengePhotoPenaltyEnterIv.setImageResource(R.drawable.ic_pencil)
-                binding.challengePhotoPenaltyEnterTv.text = challengeInfo.penalty
-            }
-        }
+        // 챌린지 정보 초기화
+        challengeReceivedInit(binding, challengeInfo)
     }
 
     private fun clickListener() {
