@@ -62,8 +62,7 @@ class ChallengeController {
 
     //챌린지 정보 조회: 25.08.13 미구현
     fun challengeInfo(challengeId: Int) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.challengeInfo(challengeId)
+        RetrofitInstance.challengeApi.challengeInfo(challengeId)
             .enqueue(object : Callback<ChallengeResponse<ChallengeInfo>> {
                 override fun onResponse(
                     call: Call<ChallengeResponse<ChallengeInfo>>,
@@ -82,8 +81,7 @@ class ChallengeController {
 
     //챌린지 거절
     fun rejectChallenge(challengeId: Int, userId: Int) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.rejectChallenge(challengeId, userId).enqueue(object : Callback<ChallengeResponseNoResult>{
+        RetrofitInstance.challengeApi.rejectChallenge(challengeId, userId).enqueue(object : Callback<ChallengeResponseNoResult>{
             override fun onResponse(
                 call: Call<ChallengeResponseNoResult>,
                 response: Response<ChallengeResponseNoResult>
@@ -110,8 +108,7 @@ class ChallengeController {
     }
     //챌린지  결과 조회
     fun showChallengeResult(userId: Int, challengeId: Int){
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.challengeResult(userId, challengeId).enqueue(object : Callback<ChallengeResponse<ChallengeResult>>{
+        RetrofitInstance.challengeApi.challengeResult(userId, challengeId).enqueue(object : Callback<ChallengeResponse<ChallengeResult>>{
             override fun onResponse(
                 call: Call<ChallengeResponse<ChallengeResult>>,
                 response: Response<ChallengeResponse<ChallengeResult>>
@@ -134,8 +131,7 @@ class ChallengeController {
 
     //챌린지 수락
     fun acceptChallenge(challengeId: Int, userId: Int) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.acceptChallenge(challengeId, userId)
+        RetrofitInstance.challengeApi.acceptChallenge(challengeId, userId)
             .enqueue(object : Callback<ChallengeResponseNoResult> {
                 override fun onResponse(
                     call: Call<ChallengeResponseNoResult>,
@@ -178,8 +174,7 @@ class ChallengeController {
 
     //챌린지에 대한 다른 페널티 제안
     fun sendRepenalty(repenaltyDto: RepenaltyDto) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.changePenalty(repenaltyDto).enqueue(object : Callback<ChallengeResponseNoResult> {
+        RetrofitInstance.challengeApi.changePenalty(repenaltyDto).enqueue(object : Callback<ChallengeResponseNoResult> {
             override fun onResponse(
                 call: Call<ChallengeResponseNoResult>,
                 response: Response<ChallengeResponseNoResult>
@@ -202,8 +197,7 @@ class ChallengeController {
 
     // 챌린지 생성 요청
     fun requestChallenge(challengeDto: ChallengeDto) {
-        val service = getRetrofit().create(ChallengePort::class.java)
-        service.createChallenge(challengeDto)
+        RetrofitInstance.challengeApi.createChallenge(challengeDto)
             .enqueue(object : Callback<ChallengeResponseNoResult> {
                 override fun onResponse(
                     call: Call<ChallengeResponseNoResult>,
