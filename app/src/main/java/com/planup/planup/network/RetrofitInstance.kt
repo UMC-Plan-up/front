@@ -1,5 +1,6 @@
 package com.planup.planup.network
 
+import com.example.planup.network.ChallengeApi
 import com.planup.planup.App
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -7,6 +8,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import kotlin.jvm.java
 
 object RetrofitInstance {
     private const val BASE_URL = "http://54.180.207.84/"
@@ -64,4 +66,5 @@ object RetrofitInstance {
         getRetrofit().create(EncourageMessageApi::class.java)
     }
     val recordApi: RecordApi by lazy { retrofit.create(RecordApi::class.java) }
+    val challengeApi: ChallengeApi by lazy { retrofit.create(ChallengeApi::class.java) }
 }

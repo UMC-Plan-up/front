@@ -1,6 +1,8 @@
 package com.planup.planup.main
 
 import android.Manifest
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -32,6 +34,7 @@ import com.planup.planup.R
 import com.planup.planup.component.snackbar.BlueSnackbarHost
 import com.planup.planup.component.snackbar.GraySnackbarHost
 import com.planup.planup.databinding.ActivityMainBinding
+import com.planup.planup.login.ui.LoginActivityNew
 import com.planup.planup.main.friend.ui.FriendFragment
 import com.planup.planup.main.friend.ui.viewmodel.FriendUiMessage
 import com.planup.planup.main.friend.ui.viewmodel.FriendViewModel
@@ -123,7 +126,9 @@ class MainActivity : AppCompatActivity() {
             WindowInsetsCompat.CONSUMED
         }
 
+        validateUserToken()
         requestPermissions()
+        handleDeeplink(intent)
 
         prefs = getSharedPreferences("userInfo", MODE_PRIVATE)
         editor = prefs.edit()
@@ -235,23 +240,7 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
-        val data = intent.data
-        println("scheme data: $data")
-        Log.d("JWH", data.toString())
-        data ?: return
-        val host = data.host
-        when (host) {
-            "mypage" -> {
-            }
-
-            "email" -> {
-                //이메일 변경 완료 됨 검증
-                if (intent.getStringExtra(QUERY_VERIFIED) == "true") {
-                    val token = data.getQueryParameter(QUERY_TOKEN)
-                    myPageEmailChangeViewModel.verifyScheme(token)
-                }
-            }
-        }
+        setIntent(intent)
 //        val deeplinkFragment = when {
 //            intent?.action == Intent.ACTION_VIEW -> {
 //                val data: Uri? = intent?.data
@@ -333,6 +322,47 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun validateUserToken() {
+        lifecycleScope.launch {
+            val validation = mainSnackbarViewModel.validateUserToken()
+
+            if(!validation) {
+                // 토큰 만료로 인한 재로그인
+                val intent = Intent(this@MainActivity, LoginActivityNew::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                startActivity(intent)
+            }
+        }
+    }
+
+    private fun handleDeeplink(intent: Intent) {
+        val data = intent.data ?: return
+        when (data.host) {
+            "mypage" -> {
+            }
+
+            "email" -> {
+                //이메일 변경 완료 됨 검증
+                if (intent.getStringExtra(QUERY_VERIFIED) == "true") {
+                    val token = data.getQueryParameter(QUERY_TOKEN)
+                    myPageEmailChangeViewModel.verifyScheme(token)
+                }
+            }
+
+            "kakaolink" -> {
+                if(intent.getStringExtra(QUERY_KAKAOLINK_FROM) == "share") {
+                    val clip = intent.getStringExtra(QUERY_KAKAOLINK_INVITE_CODE).let { inviteCode ->
+                        ClipData.newPlainText("invite_code", inviteCode)
+                    }
+                    val manager = getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+
+                    manager.setPrimaryClip(clip)
+                }
+            }
+        }
+    }
+
     private fun requestPermissions() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
@@ -346,6 +376,10 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private const val QUERY_VERIFIED = "verified"
         private const val QUERY_TOKEN = "token"
+
+        private const val QUERY_KAKAOLINK_FROM = "from"
+        private const val QUERY_KAKAOLINK_INVITE_USER = "invite_user"
+        private const val QUERY_KAKAOLINK_INVITE_CODE = "invite_code"
 
         fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
             .apply {
@@ -368,6 +402,7 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }.forEach { (key, value) ->
+                    setData(deeplink)
                     putExtra(key, value)
                 }
             }

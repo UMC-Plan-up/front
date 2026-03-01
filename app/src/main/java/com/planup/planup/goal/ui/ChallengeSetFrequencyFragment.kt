@@ -70,7 +70,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         prefs = (context as GoalActivity).getSharedPreferences("challenge",MODE_PRIVATE)
         editor = prefs.edit()
         //종료일 설정을 위한 날짜 연동
-        val sdf = SimpleDateFormat("MM/dd (E)", Locale.KOREAN)
+        val sdf = SimpleDateFormat("MM/dd(E)", Locale.KOREAN)
         calendar = Calendar.getInstance()
 
         //다음날부터 최대 7일째까지 선택 가능

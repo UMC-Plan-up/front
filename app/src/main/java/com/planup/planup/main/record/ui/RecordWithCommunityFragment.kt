@@ -10,6 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.PercentFormatter
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentRecordWithCommunityBinding
 import com.planup.planup.main.home.item.CustomCombinedChartRenderer
@@ -19,10 +23,6 @@ import com.planup.planup.main.record.adapter.RankItem
 import com.planup.planup.main.record.data.DailyAchievementRateDto
 import com.planup.planup.main.record.data.ThreeWeekAchievementRateDto
 import com.planup.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.*
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.PercentFormatter
 import com.planup.planup.main.record.adapter.SampleRankItem
 import com.planup.planup.main.record.data.RankingListResult
 import dagger.hilt.android.AndroidEntryPoint

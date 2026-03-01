@@ -21,9 +21,13 @@ import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalSelectBinding
 import com.planup.planup.goal.GoalActivity
-import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import com.planup.planup.goal.util.backStackTrueGoalNav
 import com.planup.planup.main.MainActivity
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlin.jvm.java
 
+@AndroidEntryPoint
 class GoalSelectFragment : Fragment() {
     lateinit var binding: FragmentGoalSelectBinding
     lateinit var category: TextView // 선택된 카테고리
@@ -95,28 +99,29 @@ class GoalSelectFragment : Fragment() {
 
         // 뒤로가기
         binding.goalSelectBackIv.setOnClickListener {
-            when(fromWhere){
-                "CommunityIntroFragment" -> {
-                    val inflater = LayoutInflater.from(context)
-                    val layout = inflater.inflate(R.layout.toast_grey_template,null)
-                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_make_new_goal)
-                    val toast = Toast(context)
-                    toast.view = layout
-                    toast.duration = LENGTH_SHORT
-                    toast.setGravity(Gravity.BOTTOM,0,400)
-                    toast.show()
-                }
-                "GoalFragment" -> {
-                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
-                    intent.putExtra("FROM_CHALLENGE_TO", "GoalFragment")
-                    startActivity(intent)
-                }
-                "ChallengeCompleteFragment" -> {
-                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
-                    intent.putExtra("FROM_CHALLENGE_TO","RecordFragment")
-                    startActivity(intent)
-                }
-            }
+//            when(fromWhere){
+//                "CommunityIntroFragment" -> {
+//                    val inflater = LayoutInflater.from(context)
+//                    val layout = inflater.inflate(R.layout.toast_grey_template,null)
+//                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(R.string.toast_make_new_goal)
+//                    val toast = Toast(context)
+//                    toast.view = layout
+//                    toast.duration = LENGTH_SHORT
+//                    toast.setGravity(Gravity.BOTTOM,0,400)
+//                    toast.show()
+//                }
+//                "GoalFragment" -> {
+//                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+//                    intent.putExtra("FROM_CHALLENGE_TO", "GoalFragment")
+//                    startActivity(intent)
+//                }
+//                "ChallengeCompleteFragment" -> {
+//                    val intent = Intent(context as GoalActivity, MainActivity::class.java)
+//                    intent.putExtra("FROM_CHALLENGE_TO","RecordFragment")
+//                    startActivity(intent)
+//                }
+//            }
+            parentFragmentManager.popBackStack()
         }
 
         // 함께 목표 설정하기 클릭
@@ -180,19 +185,20 @@ class GoalSelectFragment : Fragment() {
                     Log.d("GoalSelectFragment", "이름 전달 $nickname")
                     putString("goalOwnerName", nickname)
                     putString("selectedCategory", selectedCategoryEnum)
-                    putString("goalType","COMMUNITY")
                 }
 
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, commonGoalFragment)
-                    .commitAllowingStateLoss()
+                backStackTrueGoalNav(commonGoalFragment,"goalSelect")
+
+//                (context as GoalActivity).supportFragmentManager
+//                    .beginTransaction()
+//                    .replace(R.id.goal_container, commonGoalFragment)
+//                    .commitAllowingStateLoss()
             } else if (binding.goalSelectChallengeCl.isSelected) {
                 if (sleepChallenge == 2) {
                     makeToast()
                     sleepChallenge--
-                    return@setOnClickListener
                 }
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
+                (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
                     .replace(R.id.goal_container, ChallengeSetGoalFragment())
                     .commitAllowingStateLoss()
             }

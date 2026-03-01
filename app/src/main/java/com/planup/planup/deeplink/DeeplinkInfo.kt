@@ -1,9 +1,12 @@
 package com.planup.planup.deeplink
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.ContextCompat.getSystemService
 import com.planup.planup.main.MainActivity
 import com.planup.planup.onboarding.OnBoardingActivity
 import com.planup.planup.password.ResetPasswordActivity
@@ -30,8 +33,23 @@ enum class DeeplinkInfo(val host: String, val path: String) {
                 setData(deeplink)
             }
         }
-    };
+    },
 
+    /**
+     * 카카오 공유하기 버튼
+     *
+     * key
+     * from: 카카오 링크 종류 (share, )
+     * invite_user: 초대한 유저 닉네임
+     * invite_code: 초대한 유저 초대코드
+     */
+    KAKAO_SHARE_INVITE(host = "kakaolink", path = "") {
+        override val needMainForParents: Boolean = false
+        override fun getIntent(context: Context, deeplink: Uri): Intent {
+            return MainActivity.getIntent(context, deeplink)
+        }
+    }
+;
 
     open val needMainForParents = true
     abstract fun getIntent(context: Context, deeplink: Uri): Intent
@@ -43,13 +61,14 @@ enum class DeeplinkInfo(val host: String, val path: String) {
         operator fun invoke(deeplink: Uri): DeeplinkInfo? {
             val host = deeplink.host
             val path = deeplink.path
+            val queries = deeplink.queryParameterNames
 
             if (host == null || path == null) {
                 Log.e("DeeplinkInfo", "Deeplink host or path is null: $host, $path")
             }
 
             // host, path 에 따른 딥링크 연결 정보
-            Log.d("DeeplinkInfo", "host: $host, path: $path")
+            Log.d("DeeplinkInfo", "host: $host, path: $path, queries: $queries")
             DeeplinkInfo.entries.forEach { it ->
                 if (it.host == host && it.path == path) {
                     return it

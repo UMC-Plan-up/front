@@ -122,6 +122,16 @@
 
                 <data android:scheme="planup" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="kakaolink"
+                    android:scheme="${kakao_scheme}" />
+            </intent-filter>
         </activity>
 
         <provider

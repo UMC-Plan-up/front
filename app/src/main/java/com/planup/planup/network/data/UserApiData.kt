@@ -143,7 +143,20 @@ data class KakaoLogin(
         @SerializedName("profileImg") val profileImg: String?,
         @SerializedName(value = "serviceNotificationAllow") var serviceNotification: Boolean,
         @SerializedName(value = "marketingNotificationAllow") var marketingNotification: Boolean,
-    )
+    ) {
+        fun toUserInfoFormat(): UserInfo =
+            UserInfo(
+                id = id ?: -1,
+                email = email,
+                name = name,
+                nickname = nickname,
+                birthDate = birthDate,
+                gender = gender,
+                profileImg = profileImg,
+                serviceNotification = serviceNotification,
+                marketingNotification = marketingNotification
+            )
+    }
 }
 
 data class KakaoSignup(

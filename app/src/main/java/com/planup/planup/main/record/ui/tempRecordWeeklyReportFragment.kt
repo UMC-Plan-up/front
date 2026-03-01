@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.planup.main.record.ui.RecordWithCommunityFragment
 import com.planup.planup.App
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentRecordWeeklyReportBinding
