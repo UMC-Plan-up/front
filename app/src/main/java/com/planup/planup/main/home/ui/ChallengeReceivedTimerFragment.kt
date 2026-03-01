@@ -1,24 +1,20 @@
 package com.planup.planup.main.home.ui
 
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeReceivedBinding
-import com.planup.planup.databinding.FragmentChallengeReceivedTimerBinding
 import com.planup.planup.goal.adapter.AcceptChallengeAdapter
 import com.planup.planup.goal.adapter.RejectChallengeAdapter
 import com.planup.planup.goal.util.challengeReceivedInit
+import com.planup.planup.goal.util.errorToast
+import com.planup.planup.goal.util.initClickListener
+import com.planup.planup.goal.util.makeToast
 import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.main.MainActivity
-import com.planup.planup.network.controller.ChallengeController
 
 class ChallengeReceivedTimerFragment : Fragment(), RejectChallengeAdapter, AcceptChallengeAdapter {
     private lateinit var binding: FragmentChallengeReceivedBinding
@@ -32,100 +28,41 @@ class ChallengeReceivedTimerFragment : Fragment(), RejectChallengeAdapter, Accep
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChallengeReceivedBinding.inflate(inflater, container, false)
-        init()
-        clickListener()
-        return binding.root
-    }
-
-    // 프래그먼트 초기화
-    private fun init() {
         // 챌린지 정보 사용하기
         challengeInfo = requireArguments().getParcelable("receivedChallenge")!!
-        // 챌린지 정보 초기화
+        // 챌린지 정보 초기화     // 프래그먼트 초기화
         challengeReceivedInit(binding, challengeInfo)
-    }
-
-    // 클릭 이벤트 처리
-    private fun clickListener() {
-        binding.btnRejectTv.setOnClickListener {
-            val service = ChallengeController()
-            service.setRejectChallengeAdapter(this)
-            service.rejectChallenge(challengeInfo.userId, challengeInfo.challengeId)
-        }
-        binding.btnAcceptTv.setOnClickListener {
-            val service = ChallengeController()
-            service.setAcceptChallengeAdapter(this)
-            service.acceptChallenge(challengeInfo.challengeId, challengeInfo.userId)
-        }
-        // 새로운 페널티 제안하기 페이지로 이동
-        binding.btnAskNewPenaltyTv.setOnClickListener {
-            val askNewPenaltyFragment = AskNewPenaltyFragment().apply {
-                arguments = Bundle().apply {
-                    putInt("userId", challengeInfo.userId)
-                    putInt("challengeId", challengeInfo.challengeId)
-                    putSerializable("friendIdList", ArrayList(challengeInfo.friendId))
-                    putString("friendName", challengeInfo.friendName)
-                }
-            }
-            (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container, askNewPenaltyFragment)
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
-        }
-    }
-
-    // API 연동 오류 시 토스트 메시지 출력
-    private fun errorToast(message: String) {
-        val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = message
-
-        val toast = Toast(context)
-        toast.view = layout
-        toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 477)
-        toast.show()
-    }
-
-    // 수락 또는 거절 토스트 메시지 출력
-    private fun makeToast(message: Int) {
-        val inflater = LayoutInflater.from(context)
-        val layout = inflater.inflate(R.layout.toast_grey_template, null)
-        layout.findViewById<TextView>(R.id.toast_grey_template_tv).setText(message)
-
-        val toast = Toast(context)
-        toast.view = layout
-        toast.duration = LENGTH_SHORT
-        toast.setGravity(Gravity.BOTTOM, 0, 300)
-        toast.show()
+        // 클릭 이벤트 처리
+        binding.initClickListener(requireActivity() as MainActivity, challengeInfo, this)
+        return binding.root
     }
 
     // 수락 또는 거절 클릭 시 홈 화면으로 이동
     private fun goToHome() {
-        (context as MainActivity).supportFragmentManager.beginTransaction()
+        (requireActivity() as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, HomeFragment())
             .commitAllowingStateLoss()
     }
 
     // 거절하기 API 성공
     override fun successReject() {
-        makeToast(R.string.toast_challenge_reject)
+        binding.makeToast(R.string.toast_challenge_reject)
         goToHome()
     }
 
     // 거절하기 API 오류
     override fun failReject(message: String) {
-        errorToast(message)
+        binding.errorToast(message)
     }
 
     // 수락하기 API 성공
     override fun successAccept() {
-        makeToast(R.string.toast_challenge_accept)
+        binding.makeToast(R.string.toast_challenge_accept)
         goToHome()
     }
 
     // 수락하기 API 오류
     override fun failAccept(message: String) {
-        errorToast(message)
+        binding.errorToast(message)
     }
 }
