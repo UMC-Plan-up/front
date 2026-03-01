@@ -18,7 +18,6 @@ import com.planup.planup.goal.util.challengeReceivedInit
 import com.planup.planup.goal.util.errorToast
 import com.planup.planup.goal.util.initClickListener
 import com.planup.planup.goal.util.makeToast
-import com.planup.planup.goal.util.challengeReceivedInit
 import com.planup.planup.main.home.data.ChallengeReceivedPhoto
 import com.planup.planup.main.MainActivity
 
