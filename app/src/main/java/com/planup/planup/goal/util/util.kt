@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -25,6 +26,9 @@ import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
+import com.planup.planup.main.home.data.ChallengeReceived
+import com.planup.planup.main.home.data.ChallengeReceivedPhoto
+import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.network.RetrofitInstance
 import kotlin.jvm.JvmName
 import com.planup.planup.network.data.ChallengeFriends
