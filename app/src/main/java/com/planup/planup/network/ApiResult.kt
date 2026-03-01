@@ -2,6 +2,8 @@ package com.planup.planup.network
 
 import com.planup.planup.network.dto.ErrorResponse
 import com.google.gson.Gson
+import com.planup.planup.network.dto.term.TermDetail
+import com.planup.planup.network.dto.term.TermItem
 import kotlinx.coroutines.CancellationException
 import retrofit2.Response
 
