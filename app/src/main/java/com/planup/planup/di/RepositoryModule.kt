@@ -7,9 +7,11 @@ import com.planup.planup.main.goal.domain.GoalRepository
 import com.planup.planup.main.record.ui.repository.RecordWeeklyReportRepository
 import com.planup.planup.main.user.data.UserRepositoryImpl
 import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.repository.ChallengeRepository
 import com.planup.planup.network.repository.NotificationRepository
 import com.planup.planup.network.repository.ProfileRepository
 import com.planup.planup.network.repository.TermRepository
+import com.planup.planup.network.repository.impl.ChallengeRepositoryImpl
 import com.planup.planup.network.repository.impl.NotificationRepositoryImpl
 import com.planup.planup.network.repository.impl.ProfileRepositoryImpl
 import com.planup.planup.network.repository.impl.TermRepositoryImpl
@@ -54,5 +56,10 @@ abstract class RepositoryModule {
     abstract fun bindNotificationRepository(
         impl: NotificationRepositoryImpl
     ): NotificationRepository
+
+    @Binds
+    abstract fun bindChallengeRepository(
+        impl: ChallengeRepositoryImpl
+    ): ChallengeRepository
     
 }
