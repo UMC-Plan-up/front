@@ -7,21 +7,12 @@ import com.planup.planup.goal.adapter.RepenaltyAdapter
 import com.planup.planup.goal.adapter.RequestChallengeAdapter
 import com.planup.planup.goal.util.toFriendItems
 import com.planup.planup.network.RetrofitInstance
-import com.planup.planup.network.data.ChallengeInfo
-import com.planup.planup.network.data.ChallengeResponse
-import com.planup.planup.network.data.ChallengeResponseNoResult
-import com.planup.planup.network.data.ChallengeResult
 import com.planup.planup.network.dto.challenge.ChallengeDto
 import com.planup.planup.network.dto.challenge.RepenaltyDto
-import com.planup.planup.network.getRetrofit
-import com.planup.planup.network.port.ChallengePort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import kotlin.jvm.java
 
 class ChallengeController {
@@ -62,95 +53,67 @@ class ChallengeController {
 
     //챌린지 정보 조회: 25.08.13 미구현
     fun challengeInfo(challengeId: Int) {
-        RetrofitInstance.challengeApi.challengeInfo(challengeId)
-            .enqueue(object : Callback<ChallengeResponse<ChallengeInfo>> {
-                override fun onResponse(
-                    call: Call<ChallengeResponse<ChallengeInfo>>,
-                    response: Response<ChallengeResponse<ChallengeInfo>>
-                ) {
-                    TODO("Not yet implemented")
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitInstance.challengeApi.challengeInfo(challengeId)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
+
+                    } else if (!isSuccessful && body() != null) {
+
+                    }else {
+
+                    }
                 }
 
-                override fun onFailure(call: Call<ChallengeResponse<ChallengeInfo>>, t: Throwable) {
-                    TODO("Not yet implemented")
-                }
-
-
-            })
+        }
     }
 
     //챌린지 거절
     fun rejectChallenge(challengeId: Int, userId: Int) {
-        RetrofitInstance.challengeApi.rejectChallenge(challengeId, userId).enqueue(object : Callback<ChallengeResponseNoResult>{
-            override fun onResponse(
-                call: Call<ChallengeResponseNoResult>,
-                response: Response<ChallengeResponseNoResult>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    rejectChallengeAdapter.successReject()
-                } else if (!response.isSuccessful && response.body() != null) {
-                    rejectChallengeAdapter.failReject(response.body()!!.message)
-                } else {
-                    rejectChallengeAdapter.failReject("null")
+        CoroutineScope(Dispatchers.IO).launch{
+            RetrofitInstance.challengeApi.rejectChallenge(challengeId, userId)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
+                        rejectChallengeAdapter.successReject()
+                    } else if (!isSuccessful && body() != null) {
+                        rejectChallengeAdapter.failReject(body()!!.message)
+                    } else {
+                        rejectChallengeAdapter.failReject("null")
+                    }
                 }
-            }
+        }
 
-            override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
-                rejectChallengeAdapter.failReject(t.toString())
-            }
-
-        })
-    }
-
-    //챌린지 이름 조회: 25.08.13 미구현
-    fun showChallengeName(challengeId: Int, userId: Int) {
-        val service = getRetrofit().create(ChallengePort::class.java)
     }
     //챌린지  결과 조회
     fun showChallengeResult(userId: Int, challengeId: Int){
-        RetrofitInstance.challengeApi.challengeResult(userId, challengeId).enqueue(object : Callback<ChallengeResponse<ChallengeResult>>{
-            override fun onResponse(
-                call: Call<ChallengeResponse<ChallengeResult>>,
-                response: Response<ChallengeResponse<ChallengeResult>>
-            ) {
-                if (response.isSuccessful && response.body() != null){
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitInstance.challengeApi.challengeResult(userId, challengeId)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
 
-                } else if (!response.isSuccessful && response.body() != null){
+                    } else if (!isSuccessful && body() != null) {
 
-                } else{
+                    } else {
 
+                    }
                 }
-            }
-
-            override fun onFailure(call: Call<ChallengeResponse<ChallengeResult>>, t: Throwable) {
-
-            }
-
-        })
+        }
     }
 
     //챌린지 수락
     fun acceptChallenge(challengeId: Int, userId: Int) {
-        RetrofitInstance.challengeApi.acceptChallenge(challengeId, userId)
-            .enqueue(object : Callback<ChallengeResponseNoResult> {
-                override fun onResponse(
-                    call: Call<ChallengeResponseNoResult>,
-                    response: Response<ChallengeResponseNoResult>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitInstance.challengeApi.acceptChallenge(challengeId, userId)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
                         acceptChallengeAdapter.successAccept()
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        acceptChallengeAdapter.failAccept(response.body()!!.message)
+                    } else if (!isSuccessful && body() != null) {
+                        acceptChallengeAdapter.failAccept(body()!!.message)
                     } else {
                         acceptChallengeAdapter.failAccept("null")
                     }
                 }
-
-                override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
-                    acceptChallengeAdapter.failAccept(t.toString())
-                }
-
-            })
+        }
     }
 
     //챌린지에서 친구 조회
@@ -174,50 +137,33 @@ class ChallengeController {
 
     //챌린지에 대한 다른 페널티 제안
     fun sendRepenalty(repenaltyDto: RepenaltyDto) {
-        RetrofitInstance.challengeApi.changePenalty(repenaltyDto).enqueue(object : Callback<ChallengeResponseNoResult> {
-            override fun onResponse(
-                call: Call<ChallengeResponseNoResult>,
-                response: Response<ChallengeResponseNoResult>
-            ) {
-                if (response.isSuccessful && response.body() != null) {
-                    repenaltyAdapter.successRepenalty()
-                } else if (!response.isSuccessful && response.body() != null) {
-                    repenaltyAdapter.failRepenalty(response.body()!!.message)
-                } else {
-                    repenaltyAdapter.failRepenalty("null")
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitInstance.challengeApi.changePenalty(repenaltyDto)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
+                        repenaltyAdapter.successRepenalty()
+                    } else if (!isSuccessful && body() != null) {
+                        repenaltyAdapter.failRepenalty(body()!!.message)
+                    } else {
+                        repenaltyAdapter.failRepenalty("null")
+                    }
                 }
-            }
-
-            override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
-                repenaltyAdapter.failRepenalty(t.toString())
-            }
-
-        })
+        }
     }
 
     // 챌린지 생성 요청
     fun requestChallenge(challengeDto: ChallengeDto) {
-        RetrofitInstance.challengeApi.createChallenge(challengeDto)
-            .enqueue(object : Callback<ChallengeResponseNoResult> {
-                override fun onResponse(
-                    call: Call<ChallengeResponseNoResult>,
-                    response: Response<ChallengeResponseNoResult>
-                ) {
-                    if (response.isSuccessful && response.body() != null) {
+        CoroutineScope(Dispatchers.IO).launch {
+            RetrofitInstance.challengeApi.createChallenge(challengeDto)
+                .runCatching {
+                    if (isSuccessful && body() != null) {
                         requestChallengeAdapter.successRequest()
-                    } else if (!response.isSuccessful && response.body() != null) {
-                        requestChallengeAdapter.failRequest(response.body()!!.message)
-                    } else if (response.isSuccessful && response.body() == null){
-                        requestChallengeAdapter.failRequest(response.toString())
+                    } else if (!isSuccessful && body() != null) {
+                        requestChallengeAdapter.failRequest(body()!!.message)
                     } else {
                         requestChallengeAdapter.failRequest("null")
                     }
                 }
-
-                override fun onFailure(call: Call<ChallengeResponseNoResult>, t: Throwable) {
-                    requestChallengeAdapter.failRequest(t.toString())
-                }
-
-            })
+        }
     }
 }
