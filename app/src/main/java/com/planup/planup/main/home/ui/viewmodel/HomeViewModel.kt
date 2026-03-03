@@ -18,14 +18,13 @@ import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.data.DailyToDo
 import com.planup.planup.main.home.item.FriendChallengeItem
 import com.planup.planup.main.home.data.CalendarEvent
-import com.planup.planup.main.home.ui.repository.HomeRepository
+import com.planup.planup.main.home.ui.HomeRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
 import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -227,6 +226,7 @@ class HomeViewModel @Inject constructor(
                     _profileImg.value = result.profileImg ?: ""
                     _nickname.value = result.nickname ?: ""
                     _userId.value = result.id
+                    checkAndEmitIfNeeded()
                 }
                 .onFailWithMessage { message ->
                     Log.d("loadUserInfo", "Fail: $message")
@@ -241,36 +241,35 @@ class HomeViewModel @Inject constructor(
         if (userId.value == 0) return
         Log.d("checkAndEmitIfNeeded", "${userId.value}")
         viewModelScope.launch {
-            loadNotificationWithRetry(userId = _userId.value, retry = 0)
-        }
-    }
+            notificationRepository.loadNotificationType(receiverId = userId.value, type = "CHALLENGE")
+                .onSuccess { list ->
+                    val latest = list.lastOrNull() ?: return@launch
 
-    private suspend fun loadNotificationWithRetry(
-        userId: Int,
-        retry: Int
-    ) {
-        Log.d("loadNotificationWithRetry","retry $retry")
-        notificationRepository
-            .loadNotificationType(receiverId = userId, type = "CHALLENGE")
-            .onSuccess { list ->
-                val latest = list.lastOrNull() ?: return
-                Log.d("loadNotificationWithRetry","retry success $retry")
 //                    if (shouldShow(latest)) {
 //                        _popupEvent.emit(latest)
 //                    }
-            }
-            .onFailWithMessage { message ->
-                Log.d("loadNotificationWithRetry","message $message")
-                if (message == "인증이 필요합니다" && retry < 1) {
-                    Log.d("loadNotificationWithRetry","retrying $retry")
-                    delay(400)
+                }
+                .onFailWithMessage { message ->
 
                 }
-            }
+        }
     }
 
-    fun isNotificationCheck(check: Boolean) {
-        _notificationCheck.value = check
+    fun isNotificationCheck(context: Context) {
+        _notificationCheck.value = isNotificationEnabled(context)
+    }
+
+    fun isNotificationEnabled(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            NotificationManagerCompat
+                .from(context)
+                .areNotificationsEnabled()
+        }
     }
 }
 

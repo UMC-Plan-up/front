@@ -166,4 +166,12 @@ class NetworkModule {
     ): VerificationApi {
         return retrofit.create(VerificationApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideChallengeApi(
+        retrofit: Retrofit
+    ): ChallengeApi {
+        return retrofit.create(ChallengeApi::class.java)
+    }
 }

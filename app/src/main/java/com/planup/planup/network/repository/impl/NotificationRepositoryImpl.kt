@@ -5,6 +5,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.planup.planup.main.home.ui.viewmodel.NotificationItem
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.NotificationApi
+import com.planup.planup.network.dto.notification.NotificationResult
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenRequest
 import com.planup.planup.network.repository.NotificationRepository
 import com.planup.planup.network.safeResult
@@ -78,13 +79,11 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun loadNotificationType(receiverId: Int, type: String) =
         withContext(Dispatchers.IO) {
-
             safeResult(
                 response = {
                     notificationApi.loadNotificationType(receiverId, type)
                 },
                 onResponse = { response ->
-                    Log.d("errorCode", response.code)
                     if (response.isSuccess) {
                         Log.d("loadNotificationType", response.result.toString())
                         ApiResult.Success(response.result.map { item ->
@@ -94,7 +93,7 @@ class NotificationRepositoryImpl @Inject constructor(
                             )
                         })
                     } else {
-                            ApiResult.Fail("${response.code}/${response.message}")
+                        ApiResult.Fail(response.message)
                     }
                 }
             )
