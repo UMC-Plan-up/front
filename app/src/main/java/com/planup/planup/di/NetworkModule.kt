@@ -4,6 +4,7 @@ import android.content.Context
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.UserInfoSaver
 import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.ChallengeApi
 import com.planup.planup.network.FriendApi
 import com.planup.planup.network.GoalApi
 import com.planup.planup.network.NotificationApi
@@ -146,5 +147,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): RecordApi {
         return retrofit.create(RecordApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideChallengeApi(
+        retrofit: Retrofit
+    ): ChallengeApi {
+        return retrofit.create(ChallengeApi::class.java)
     }
 }

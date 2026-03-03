@@ -1,8 +1,16 @@
 package com.planup.planup.main.home.ui.viewmodel
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.main.goal.item.DailyGoalResult
 import com.planup.planup.main.goal.item.FriendGoalAchievementResult
@@ -14,10 +22,13 @@ import com.planup.planup.main.home.ui.HomeRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
+import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -25,7 +36,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val notificationRepository: NotificationRepository
 ): ViewModel() {
 
     // daily todo
@@ -45,6 +57,15 @@ class HomeViewModel @Inject constructor(
 
     private val _nickname = MutableStateFlow("")
     val nickname: StateFlow<String> = _nickname
+
+    private val _userId = MutableStateFlow(0)
+    val userId: StateFlow<Int> = _userId
+
+    private val _notificationCheck = MutableStateFlow(false)
+    val notificationId: StateFlow<Boolean> = _notificationCheck
+
+    private val _popupEvent = MutableSharedFlow<NotificationItem>()
+    val popupEvent = _popupEvent.asSharedFlow()
 
 
     fun loadMyGoalList(
@@ -204,10 +225,54 @@ class HomeViewModel @Inject constructor(
                 .onSuccess { result ->
                     _profileImg.value = result.profileImg ?: ""
                     _nickname.value = result.nickname ?: ""
+                    _userId.value = result.id
                 }
                 .onFailWithMessage { message ->
                     Log.d("loadUserInfo", "Fail: $message")
                 }
         }
     }
+
+    fun checkAndEmitIfNeeded() {
+        Log.d("checkAndEmitIfNeeded", "checkAndEmitIfNeeded ${_notificationCheck.value}")
+        if (!_notificationCheck.value) return
+        Log.d("checkAndEmitIfNeeded", "isNotificationEnabled ${userId.value}")
+        if (userId.value == 0) return
+        Log.d("checkAndEmitIfNeeded", "${userId.value}")
+        viewModelScope.launch {
+            notificationRepository.loadNotificationType(receiverId = userId.value, type = "CHALLENGE")
+                .onSuccess { list ->
+                    val latest = list.lastOrNull() ?: return@launch
+
+//                    if (shouldShow(latest)) {
+//                        _popupEvent.emit(latest)
+//                    }
+                }
+                .onFailWithMessage { message ->
+
+                }
+        }
+    }
+
+    fun isNotificationCheck(context: Context) {
+        _notificationCheck.value = isNotificationEnabled(context)
+    }
+
+    fun isNotificationEnabled(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            NotificationManagerCompat
+                .from(context)
+                .areNotificationsEnabled()
+        }
+    }
 }
+
+data class NotificationItem(
+    val id: Int,
+    val text: String
+)

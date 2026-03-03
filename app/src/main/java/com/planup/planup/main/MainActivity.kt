@@ -241,6 +241,13 @@ class MainActivity : AppCompatActivity() {
         super.onNewIntent(intent)
 
         setIntent(intent)
+
+        intent.getStringExtra("TARGET_TAB")?.let { tab ->
+            handleTargetTab(tab)
+            return
+        }
+
+        // handleDeeplink(intent)
 //        val deeplinkFragment = when {
 //            intent?.action == Intent.ACTION_VIEW -> {
 //                val data: Uri? = intent?.data
@@ -370,6 +377,17 @@ class MainActivity : AppCompatActivity() {
             ) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
+        }
+    }
+
+
+    private fun handleTargetTab(tab: String) {
+        when (tab) {
+            "GOAL" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_goal
+            "HOME" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_home
+            "RECORD" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_record
+            "FRIEND" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_friend
+            "MYPAGE" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_mypage
         }
     }
 
