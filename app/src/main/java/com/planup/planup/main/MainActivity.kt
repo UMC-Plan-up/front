@@ -28,6 +28,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.component.snackbar.BlueSnackbarHost
 import com.planup.planup.component.snackbar.GraySnackbarHost
@@ -37,12 +38,14 @@ import com.planup.planup.main.friend.ui.viewmodel.FriendUiMessage
 import com.planup.planup.main.friend.ui.viewmodel.FriendViewModel
 import com.planup.planup.main.goal.ui.GoalFragment
 import com.planup.planup.main.goal.ui.SubscriptionPlanFragment
+import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import com.planup.planup.main.home.ui.HomeFragment
 import com.planup.planup.main.my.ui.MypageFragment
 import com.planup.planup.main.my.ui.dialog.EmailChangeSuccessDialog
 import com.planup.planup.main.my.ui.viewmodel.MyPageEmailChangeViewModel
 import com.planup.planup.main.record.ui.RecordFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -57,6 +60,8 @@ class MainActivity : AppCompatActivity() {
     private val mainSnackbarViewModel: MainSnackbarViewModel by viewModels()
     private val friendViewModel: FriendViewModel by viewModels()
     private val myPageEmailChangeViewModel: MyPageEmailChangeViewModel by viewModels()
+
+
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -230,11 +235,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
+        intent.getStringExtra("TARGET_TAB")?.let { tab ->
+            handleTargetTab(tab)
+            return
+        }
         val data = intent.data
         println("scheme data: $data")
         Log.d("JWH", data.toString())
@@ -343,6 +352,17 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private fun handleTargetTab(tab: String) {
+        when (tab) {
+            "GOAL" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_goal
+            "HOME" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_home
+            "RECORD" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_record
+            "FRIEND" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_friend
+            "MYPAGE" -> binding.bottomNavigationView.selectedItemId = R.id.fragment_mypage
+        }
+    }
+
     companion object {
         private const val QUERY_VERIFIED = "verified"
         private const val QUERY_TOKEN = "token"
@@ -372,4 +392,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
     }
+
+
 }

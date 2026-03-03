@@ -42,6 +42,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.doOnLayout
 import coil3.load
 import com.bumptech.glide.Glide
+import com.planup.planup.main.home.ui.viewmodel.NotificationItem
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 
 class HomeFragment : Fragment() {
 
@@ -66,7 +69,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.isNotificationCheck(requireContext())
         viewModel.loadUserInfo()
         setupAdapters()
         observeViewModel()
@@ -204,6 +207,25 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+
+        lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.userId
+//                    .filter { it != 0 }
+//                    .first()   // 최초 1회만
+//                    .let {
+//                        viewModel.checkAndEmitIfNeeded(requireContext())
+//                    }
+//            }
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.popupEvent.collect { item ->
+                    showPopup(item)
+                }
+            }
+        }
+
     }
 
     private fun setupClickListeners() {
@@ -218,7 +240,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.homeMainProfileIv.setOnClickListener {
-            showPopup()
+
         }
 
         binding.homeAlarmNoneIv.setOnClickListener {
@@ -360,7 +382,7 @@ class HomeFragment : Fragment() {
     private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
         return eventList.filter { it.date == date }
     }
-    private fun showPopup(){
+    private fun showPopup(item: NotificationItem){
         val timerChallenge = ChallengeReceivedTimer(
             1,
             16,
