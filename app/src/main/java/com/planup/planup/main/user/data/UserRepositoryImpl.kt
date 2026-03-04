@@ -277,6 +277,9 @@ class UserRepositoryImpl @Inject constructor(
                         userInfoSaver.saveUserInfo(response.result.userInfo)
 
                     }
+                    if (result.refreshToken.isNotEmpty()){
+                        tokenSaver.saveRefreshToken(result.refreshToken)
+                    }
 
                     ApiResult.Success(result)
                 } else {
