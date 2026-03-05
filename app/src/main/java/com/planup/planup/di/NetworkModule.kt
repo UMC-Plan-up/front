@@ -136,14 +136,6 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideNotificationApi(
-        retrofit: Retrofit
-    ): NotificationApi {
-        return retrofit.create(NotificationApi::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun provideRecordApi(
         retrofit: Retrofit
     ): RecordApi {
@@ -157,6 +149,15 @@ class NetworkModule {
     ): ChallengeApi {
         return retrofit.create(ChallengeApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideNotificationApi(
+        retrofit: Retrofit
+    ): NotificationApi {
+        return retrofit.create(NotificationApi::class.java)
+    }
+
 
     @Provides
     @Singleton
