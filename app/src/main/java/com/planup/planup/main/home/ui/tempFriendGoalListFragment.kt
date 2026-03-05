@@ -166,12 +166,11 @@ class tempFriendGoalListFragment : Fragment() {
             Log.d("FriendGoal", "요청 시작: friendId=$friendId")
 
             // 1. 친구 목표 리스트 가져오기
-            val goalService = GoalRetrofitInstance.api.create(GoalApiService::class.java)
-            val goalListResponse = goalService.getFriendGoalList("Bearer $token", friendId)
+            val goalListResponse = RetrofitInstance.goalApi.getFriendGoalList(friendId)
             Log.d("FriendGoal", "getFriendGoalList(friendId=$friendId) response: $goalListResponse")
 
-            if (goalListResponse.isSuccess) {
-                val goalList = goalListResponse.result
+            if (goalListResponse.isSuccessful && goalListResponse.body() != null) {
+                val goalList = goalListResponse.body()!!.result
                 Log.d("FriendGoal", "friendId=$friendId 목표 개수=${goalList.size}")
 
                 for (goal in goalList) {
@@ -179,8 +178,7 @@ class tempFriendGoalListFragment : Fragment() {
                         Log.d("FriendGoal", "목표 처리 중: goalId=${goal.goalId}, goalName=${goal.goalName}")
 
                         // 2. 각 goalId의 달성률 가져오기
-                        val achievementResponse = goalService.getFriendGoalAchievement(
-                            "Bearer $token",
+                        val achievementResponse = RetrofitInstance.goalApi.getFriendGoalAchievement(
                             friendId,
                             goal.goalId
                         )
@@ -189,8 +187,8 @@ class tempFriendGoalListFragment : Fragment() {
                             "getFriendGoalAchievement(friendId=$friendId, goalId=${goal.goalId}) response: $achievementResponse"
                         )
 
-                        if (achievementResponse.isSuccess) {
-                            val achievement = achievementResponse.result.totalAchievement
+                        if (achievementResponse.isSuccessful && achievementResponse.body() != null) {
+                            val achievement = achievementResponse.body()!!.result.totalAchievement
                             Log.d(
                                 "FriendGoal",
                                 "달성률 성공: friendId=$friendId, goalId=${goal.goalId}, achievement=$achievement"
@@ -206,7 +204,7 @@ class tempFriendGoalListFragment : Fragment() {
                         } else {
                             Log.e(
                                 "FriendGoal",
-                                "달성률 실패: friendId=$friendId, goalId=${goal.goalId}, message=${achievementResponse.message}"
+                                "달성률 실패: friendId=$friendId, goalId=${goal.goalId}, message=${achievementResponse.message()}"
                             )
                         }
                     } catch (e: Exception) {
@@ -216,7 +214,7 @@ class tempFriendGoalListFragment : Fragment() {
             } else {
                 Log.e(
                     "FriendGoal",
-                    "목표 리스트 실패: friendId=$friendId, message=${goalListResponse.message}"
+                    "목표 리스트 실패: friendId=$friendId, message=${goalListResponse.message()}"
                 )
             }
         } catch (e: Exception) {
