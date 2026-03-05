@@ -83,6 +83,7 @@ class NotificationRepositoryImpl @Inject constructor(
                     notificationApi.loadNotificationType(receiverId, type)
                 },
                 onResponse = { response ->
+                    Log.d("errorCode", response.code)
                     if (response.isSuccess) {
                         Log.d("loadNotificationType", response.result.toString())
                         ApiResult.Success(response.result.map { item ->
@@ -92,7 +93,7 @@ class NotificationRepositoryImpl @Inject constructor(
                             )
                         })
                     } else {
-                        ApiResult.Fail(response.message)
+                            ApiResult.Fail("${response.code}/${response.message}")
                     }
                 }
             )
