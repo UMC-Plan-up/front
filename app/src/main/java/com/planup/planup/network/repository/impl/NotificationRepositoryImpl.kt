@@ -78,6 +78,7 @@ class NotificationRepositoryImpl @Inject constructor(
 
     override suspend fun loadNotificationType(receiverId: Int, type: String) =
         withContext(Dispatchers.IO) {
+
             safeResult(
                 response = {
                     notificationApi.loadNotificationType(receiverId, type)
