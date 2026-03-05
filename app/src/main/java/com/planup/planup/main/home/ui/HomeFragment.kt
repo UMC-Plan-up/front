@@ -42,8 +42,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.doOnLayout
 import com.bumptech.glide.Glide
 import com.planup.planup.main.home.ui.viewmodel.NotificationItem
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
+import com.planup.planup.main.util.isNotificationEnabled
 
 class HomeFragment : Fragment() {
 
@@ -68,7 +67,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.isNotificationCheck(requireContext())
+        viewModel.isNotificationCheck(isNotificationEnabled(view.context))
         viewModel.loadUserInfo()
         setupAdapters()
         observeViewModel()
