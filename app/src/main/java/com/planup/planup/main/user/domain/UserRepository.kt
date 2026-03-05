@@ -16,6 +16,7 @@ import com.planup.planup.signup.data.Agreement
 import com.planup.planup.signup.data.ProcessResult
 import com.planup.planup.signup.data.ProfileImageResponse
 import okhttp3.MultipartBody
+import retrofit2.Call
 import java.io.File
 
 interface UserRepository {
