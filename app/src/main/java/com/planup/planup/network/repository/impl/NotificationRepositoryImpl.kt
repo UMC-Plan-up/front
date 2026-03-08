@@ -5,7 +5,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.planup.planup.main.home.ui.viewmodel.NotificationItem
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.NotificationApi
-import com.planup.planup.network.dto.notification.NotificationResult
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenRequest
 import com.planup.planup.network.repository.NotificationRepository
 import com.planup.planup.network.safeResult
@@ -92,6 +91,7 @@ class NotificationRepositoryImpl @Inject constructor(
                             NotificationItem(
                                 id = item.id,
                                 text = item.notificationText,
+                                url = item.url
                             )
                         })
                     } else {

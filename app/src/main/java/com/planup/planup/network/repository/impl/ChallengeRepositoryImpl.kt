@@ -2,6 +2,7 @@ package com.planup.planup.network.repository.impl
 
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.ChallengeApi
+import com.planup.planup.network.data.ChallengeInfo
 import com.planup.planup.network.repository.ChallengeRepository
 import com.planup.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +48,22 @@ class ChallengeRepositoryImpl @Inject constructor(
                 }
             }
         )
+    }
+
+    override suspend fun challengeInfo(challengeId: Int): ApiResult<ChallengeInfo>
+        = withContext(Dispatchers.IO){
+            safeResult(
+                response = {
+                    challengeApi.challengeInfo(challengeId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
+                }
+            )
     }
 
 }
