@@ -176,7 +176,8 @@ class LoginActivityNew : AppCompatActivity() {
                                 timeStamp = event.endDate,
                                 count = event.count,
                                 status = event.status,
-                                reason = event.reason
+                                reason = event.reason,
+                                detailReason = event.detailReason
                             ).show(supportFragmentManager, "dialog")
                         }
                     }

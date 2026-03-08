@@ -37,6 +37,7 @@ class LoginSuspendDialog : DialogFragment() {
         private const val KEY_COUNT = "key_count"
         private const val KEY_STATUS = "key_status"
         private const val KEY_REASON = "key_reason"
+        private const val KEY_DETAIL_REASON = "key_detail_reason"
 
         /**
          * @param timeStamp 제제된 날짜
@@ -49,7 +50,8 @@ class LoginSuspendDialog : DialogFragment() {
             timeStamp: String,
             count: Int,
             status: String,
-            reason: String
+            reason: String,
+            detailReason: String,
         ): LoginSuspendDialog {
             return LoginSuspendDialog().apply {
                 arguments = Bundle().apply {
@@ -57,6 +59,7 @@ class LoginSuspendDialog : DialogFragment() {
                     putInt(KEY_COUNT, count)
                     putString(KEY_STATUS, status)
                     putString(KEY_REASON, reason)
+                    putString(KEY_DETAIL_REASON, detailReason)
                 }
             }
         }
@@ -77,16 +80,37 @@ class LoginSuspendDialog : DialogFragment() {
                 )
             }.getOrNull()
         } ?: "xxxx년 xx월 xx일"
-        val count = arguments?.getInt(KEY_COUNT) ?: 0
+
+        val count = arguments?.getInt(KEY_COUNT) ?: -1
+
         val status = arguments?.getString(KEY_STATUS).let {
-            if (it == "SUSPENDED") {
-                "계정 비활성화"
-            } else if (it == "DELETED") {
-                "계정 삭제"
+            when (it) {
+                "SUSPENDED" -> getString(R.string.suspend_status_suspended)
+                "DELETED" -> getString(R.string.suspend_status_deleted)
+                else -> getString(R.string.suspend_status_other)
             }
-            "계정 정지"
         }
-        val reason = arguments?.getString(KEY_REASON) ?: ""
+
+        val reason = arguments?.getString(KEY_REASON)?.let {
+            // TODO:: enum 값에 따라 분기
+            when(it) {
+                "" -> ""
+                else -> ""
+            }
+        } ?: ""
+
+        val detailReason = arguments?.getString(KEY_DETAIL_REASON).let {
+            when (it) {
+                "ABUSE_OR_HATE_SPEECH" -> getString(R.string.suspend_reason_abuse_or_hate_speech)
+                "SEXUAL_CONTENT" -> getString(R.string.suspend_reason_sexual_content)
+                "SPAM_OR_ADVERTISING" -> getString(R.string.suspend_reason_span_or_advertising)
+                "INAPPROPRIATE_CONTENT" -> getString(R.string.suspend_reason_inappropriate_content)
+                "FRAUD_OR_IMPERSONATION" -> getString(R.string.suspend_reason_fraud_or_impersonation)
+                "OTHER" -> getString(R.string.suspend_reason_other)
+                else -> getString(R.string.suspend_reason_other)
+            }
+        }
+
 
         dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -97,6 +121,7 @@ class LoginSuspendDialog : DialogFragment() {
                     count = count,
                     status = status,
                     reason = reason,
+                    detailReason = detailReason,
                     onDismiss = {
                         dismiss()
                     }
@@ -113,13 +138,14 @@ private fun SuspendedDialog(
     count: Int,
     status: String,
     reason: String,
+    detailReason: String,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {}
 ) {
     val timeStamp = stringResource(R.string.login_suspend_date, timeStamp)
     val count = stringResource(R.string.login_suspend_report_count, count)
     val status = stringResource(R.string.login_suspend_status, status)
-    val reason = stringResource(R.string.login_suspend_reason, reason)
+    val reason = stringResource(R.string.login_suspend_reason, "$reason $detailReason")
 
     val body = remember {
         timeStamp + "\n\n" +

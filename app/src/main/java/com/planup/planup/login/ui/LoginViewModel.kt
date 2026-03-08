@@ -55,8 +55,9 @@ class LoginViewModel @Inject constructor(
                             _eventChannel.send(
                                 Event.SuspendedUser(
                                     status = sanctionStatus ?: "",
-                                    count = -1,
+                                    count = reportCount ?: -1,
                                     reason = sanctionReason ?: "",
+                                    detailReason = sanctionDetailReason ?: "",
                                     endDate = sanctionEndAt ?: ""
                                 )
                             )
@@ -132,6 +133,7 @@ class LoginViewModel @Inject constructor(
             val status: String,
             val count: Int,
             val reason: String,
+            val detailReason: String,
             val endDate: String
         ) : Event()
     }

@@ -48,7 +48,9 @@ data class Login(
     // 제재된 유저일 경우 데이터
     @SerializedName("sanctionStatus") val sanctionStatus: String?,
     @SerializedName("sanctionEndAt") val sanctionEndAt: String?,
-    @SerializedName("sanctionReason") val sanctionReason: String?
+    @SerializedName("sanctionReason") val sanctionReason: String?,
+    @SerializedName("sanctionDetailReason") val sanctionDetailReason: String?,
+    @SerializedName("reportCount") val reportCount: Int?,
 )
 
 //비밀번호 변경 시 링크 발송, 재발송

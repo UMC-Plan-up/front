@@ -65,6 +65,17 @@
     <string name="login_suspend_reason">제제 사유: %1$s</string>
     <string name="login_suspend_contact">문의: weareplanup@gmail.com</string>
 
+    <string name="suspend_status_suspended">계정 비활성화</string>
+    <string name="suspend_status_deleted">계정 삭제</string>
+    <string name="suspend_status_other">계정 정지</string>
+
+    <string name="suspend_reason_abuse_or_hate_speech">욕설/비방/혐오 표현 사용</string>
+    <string name="suspend_reason_sexual_content">음란물/선정적 내용</string>
+    <string name="suspend_reason_span_or_advertising">스팸/광고</string>
+    <string name="suspend_reason_inappropriate_content">불쾌하거나 부적절한 내용</string>
+    <string name="suspend_reason_fraud_or_impersonation">거짓 정보 및 사칭</string>
+    <string name="suspend_reason_other">기타</string>
+
     <string name="signup_id_input">로그인에 사용할\n아이디를 입력해 주세요</string>
     <string name="signup_email">이메일 입력</string>
     <string name="signup_password_input">로그인에 사용할\n비밀번호를 입력해 주세요</string>
