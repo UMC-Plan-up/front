@@ -194,6 +194,9 @@ class OnBoardingActivity: AppCompatActivity() {
                         is OnBoardingViewModel.SnackBarEvent.UndefinedError -> {
                             errorSnackBarHost.showSnackbar(event.message)
                         }
+                        is OnBoardingViewModel.SnackBarEvent.UnknownError -> {
+                            errorSnackBarHost.showSnackbar(getString(R.string.toast_unknown_error))
+                        }
                         is OnBoardingViewModel.SnackBarEvent.NotCheckedRequiredTerm -> {
                             errorSnackBarHost.showSnackbar(getString(R.string.toast_required_terms))
                         }

@@ -62,7 +62,7 @@ class LoginViewModel @Inject constructor(
                             }
                         }.getOrNull()
 
-                    if(suspendedData != null) {
+                    if(suspendedData?.sanctionStatus != null) {
                         // 정지당하거나 삭제된 유저인 경우
                         with(suspendedData) {
                             _eventChannel.send(
