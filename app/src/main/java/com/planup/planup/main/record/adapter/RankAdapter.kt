@@ -6,12 +6,14 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import coil3.load
+import coil3.request.crossfade
 import com.planup.planup.R
 
 data class RankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
 data class SampleRankItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: Int)
 
-class RankAdapter(private val rankList: List<SampleRankItem>) :
+class RankAdapter(private val rankList: List<RankItem>) :
     RecyclerView.Adapter<RankAdapter.RankViewHolder>() {
 
     class RankViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

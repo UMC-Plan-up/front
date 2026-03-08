@@ -11,6 +11,7 @@ import com.planup.planup.network.ProfileApi
 import com.planup.planup.network.RecordApi
 import com.planup.planup.network.TermsApi
 import com.planup.planup.network.UserApi
+import com.planup.planup.network.VerificationApi
 import com.planup.planup.network.interceptor.AuthInterceptor
 import com.planup.planup.network.interceptor.TokenAuthenticator
 import com.planup.planup.network.repository.NotificationRepository
@@ -146,5 +147,13 @@ class NetworkModule {
         retrofit: Retrofit
     ): RecordApi {
         return retrofit.create(RecordApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideVerificationApi(
+        retrofit: Retrofit
+    ): VerificationApi {
+        return retrofit.create(VerificationApi::class.java)
     }
 }

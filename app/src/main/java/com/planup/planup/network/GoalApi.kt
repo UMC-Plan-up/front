@@ -11,7 +11,9 @@ import com.planup.planup.main.goal.item.CreateCommentRequest
 import com.planup.planup.main.goal.item.CreateCommentResponse
 import com.planup.planup.main.goal.item.DailyAchievementResponse
 import com.planup.planup.main.goal.item.DailyGoalResponse
+import com.planup.planup.main.goal.item.DailyPhotoResponse
 import com.planup.planup.main.goal.item.DateMemoResponse
+import com.planup.planup.main.goal.item.DeletePhotoResponse
 import com.planup.planup.main.goal.item.EditGoalApiResponse
 import com.planup.planup.main.goal.item.EditGoalRequest
 import com.planup.planup.main.goal.item.FriendGoalAchievementResponse
@@ -25,6 +27,8 @@ import com.planup.planup.main.goal.item.GoalPhotosResponse
 import com.planup.planup.main.goal.item.MemoRequest
 import com.planup.planup.main.goal.item.MyGoalListResponse
 import com.planup.planup.main.goal.item.PostMemoResponse
+import com.planup.planup.main.goal.item.PostPhotoRequest
+import com.planup.planup.main.goal.item.PostPhotoResponse
 import com.planup.planup.main.goal.item.TotalAchievementResponse
 import com.planup.planup.network.dto.goal.ReactionResponseDto
 import retrofit2.Response
@@ -192,4 +196,22 @@ interface GoalApi {
     suspend fun getGoalRanking(
         @Query("goalId") goalId: Int
     ): Response<GoalRankingResponse>
+
+    @DELETE("/goals/photos/{photoId}")
+    suspend fun deletePhoto(
+        @Path("photoId") photoId: Int
+    ): Response<DeletePhotoResponse>
+
+    @GET("/goals/{goalId}/photos/date")
+    suspend fun getDailyPhoto(
+        @Path("goalId") goalId: Int,
+        @Query("date") date: String
+    ): Response<DailyPhotoResponse>
+
+    @POST("/goals/{goalId}/photos")
+    suspend fun postPhoto(
+        @Path("goalId") goalId: Int,
+        @Query("date") date: String,
+        @Body photoRequest: PostPhotoRequest
+    ): Response<PostPhotoResponse>
 }

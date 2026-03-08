@@ -28,7 +28,7 @@ import com.planup.planup.main.record.data.RankingListResult
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 @AndroidEntryPoint
-class RecordWithCommunityFragment @Inject constructor(): Fragment() {
+class RecordWithCommunityFragment: Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
@@ -64,7 +64,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentRecordWithCommunityBinding.inflate(inflater, container, false)
         viewModel.loadWeeklyGoalReport()
@@ -82,7 +82,10 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             val spacing = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
-                    outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                    outRect: android.graphics.Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State,
                 ) {
                     val pos = parent.getChildAdapterPosition(view)
                     if (pos >= 0) {
@@ -102,7 +105,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         val dailyAchievementRate = viewModel.dailyAchievementRate.value
         val entries = toBarEntry(dailyAchievementRate)
         val dataSet = BarDataSet(sampleEntries, "요일별 기록").apply {
-            color = Color.parseColor("#508CFF")
+            color = "#508CFF".toColorInt()
             valueTextColor = Color.TRANSPARENT
         }
         barChart.apply {
@@ -144,7 +147,7 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             SampleRankItem(5, "친구5", 60, R.drawable.img_friend_profile_sample4)
 
         )
-        val rankAdapter = RankAdapter(sampleRankData)
+        val rankAdapter = RankAdapter(sortedRankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rankAdapter

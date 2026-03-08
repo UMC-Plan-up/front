@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menu_take_photo"
-        android:title="사진 찍기" />
+        android:id="@+id/menu_gallery"
+        android:title="사진 보관함"
+        android:icon="@drawable/ic_item_album" />
     <item
-        android:id="@+id/menu_choose_gallery"
-        android:title="앨범에서 선택하기" />
+        android:id="@+id/menu_camera"
+        android:title="사진 찍기"
+        android:icon="@drawable/ic_item_camera" />
 </menu>
