@@ -417,6 +417,12 @@ suspend fun setRanking(context: Context, goalId: Int,bindRanking:(List<GoalRanki
 
 }
 
+fun String.extractBracket(): String? {
+    return "\\[(.*?)\\]".toRegex()
+        .find(this)
+        ?.groupValues
+        ?.get(1)
+}
 
 data class TmpGoalData(
     val goalName: String = "",

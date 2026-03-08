@@ -19,8 +19,8 @@ import retrofit2.http.Query
 interface ChallengeApi {
     //챌린지 정보 조회
     @GET("challenges/{challengeId}")
-    fun challengeInfo(
-        @Path("challengeId") challengeId: Int
+    suspend fun challengeInfo(
+        @Query("challengeId") challengeId: Int
     ): Response<ChallengeResponse<ChallengeInfo>>
     //챌린지 결과 조회
     @GET("challenges/{challengeId}/result")

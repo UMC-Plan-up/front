@@ -1,6 +1,7 @@
 package com.planup.planup.goal.util
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.planup.planup.main.home.data.ChallengeReceived
 import com.planup.planup.main.home.data.ChallengeReceivedPhoto
 import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.main.home.ui.AskNewPenaltyFragment
+import com.planup.planup.main.home.ui.HomeFragment
 import com.planup.planup.network.controller.ChallengeController
 
 fun Fragment.challengeReceivedInit(binding: FragmentChallengeReceivedBinding, challengeInfo: ChallengeReceived){
@@ -121,6 +123,13 @@ fun Fragment.challengeReceivedInit(binding: FragmentChallengeReceivedBinding, ch
 }
 
 fun FragmentChallengeReceivedBinding.initClickListener(activity: MainActivity, challengeInfo: ChallengeReceived,fragment: Fragment) {
+    this.backIv.setOnClickListener {
+        Log.d("backIv", "backIv Clicked")
+        (activity).supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, HomeFragment())
+            .commitAllowingStateLoss()
+    }
+
     this.btnRejectTv.setOnClickListener {
         val service = ChallengeController().apply { setRejectChallengeAdapter(fragment as RejectChallengeAdapter) }
         service.rejectChallenge(challengeInfo.userId, challengeInfo.challengeId)

@@ -144,14 +144,6 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideChallengeApi(
-        retrofit: Retrofit
-    ): ChallengeApi {
-        return retrofit.create(ChallengeApi::class.java)
-    }
-
-    @Provides
-    @Singleton
     fun provideNotificationApi(
         retrofit: Retrofit
     ): NotificationApi {

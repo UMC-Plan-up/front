@@ -1,16 +1,8 @@
 package com.planup.planup.main.home.ui.viewmodel
 
-import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.util.Log
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.main.goal.item.DailyGoalResult
 import com.planup.planup.main.goal.item.FriendGoalAchievementResult
@@ -18,10 +10,12 @@ import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.data.DailyToDo
 import com.planup.planup.main.home.item.FriendChallengeItem
 import com.planup.planup.main.home.data.CalendarEvent
-import com.planup.planup.main.home.ui.HomeRepository
+import com.planup.planup.main.home.ui.repository.HomeRepository
 import com.planup.planup.network.ApiResult
+import com.planup.planup.network.data.ChallengeInfo
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
+import com.planup.planup.network.repository.ChallengeRepository
 import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
@@ -38,7 +32,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val notificationRepository: NotificationRepository
+    private val notificationRepository: NotificationRepository,
+    private val challengeRepository: ChallengeRepository
 ): ViewModel() {
 
     // daily todo
@@ -256,6 +251,16 @@ class HomeViewModel @Inject constructor(
             .onSuccess { list ->
                 val latest = list.lastOrNull() ?: return
                 Log.d("loadNotificationWithRetry","retry success $retry")
+                Log.d("loadNotificationWithRetry","latest $latest")
+                when(latest.url.contains("goal")){
+                    true -> {
+                        _popupEvent.emit(latest.copy(url = latest.url.replace("/goals/", "")))
+                    }
+                    false -> {
+
+                    }
+
+                }
 //                    if (shouldShow(latest)) {
 //                        _popupEvent.emit(latest)
 //                    }
@@ -270,6 +275,19 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+    fun challengeInfo(id: Int, action: (ChallengeInfo)-> Unit, error: (String) -> Unit) {
+        viewModelScope.launch {
+            challengeRepository.challengeInfo(id)
+                .onSuccess {
+                    action(it)
+                }
+                .onFailWithMessage { message ->
+                    Log.d("challengeReceived", "Fail: $message")
+                    error("챌린지 참여 요청 로드에 실패했습니다")
+                }
+        }
+    }
+
     fun isNotificationCheck(check: Boolean) {
         _notificationCheck.value = check
     }
@@ -277,5 +295,6 @@ class HomeViewModel @Inject constructor(
 
 data class NotificationItem(
     val id: Int,
-    val text: String
+    val text: String,
+    val url: String
 )
