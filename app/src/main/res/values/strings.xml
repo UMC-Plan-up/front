@@ -61,7 +61,7 @@
     <string name="login_suspend_title">서비스 이용 제한 안내</string>
     <string name="login_suspend_date">회원님은 서비스 운영정책 위반으로 %1$s까지 이용이 제한된 상태입니다.</string>
     <string name="login_suspend_report_count">누적 신고 수: %1$d회</string>
-    <string name="login_suspend_status">제제 상태: %1$s회</string>
+    <string name="login_suspend_status">제제 상태: %1$s</string>
     <string name="login_suspend_reason">제제 사유: %1$s</string>
     <string name="login_suspend_contact">문의: weareplanup@gmail.com</string>
 

@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,6 +27,8 @@ import androidx.fragment.app.DialogFragment
 import com.planup.planup.R
 import com.planup.planup.component.button.PlanUpButton
 import com.planup.planup.theme.Typography
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class LoginSuspendDialog : DialogFragment() {
 
@@ -64,10 +68,27 @@ class LoginSuspendDialog : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val timeStamp = arguments?.getString(KEY_REASON) ?: ""
+        val timeStamp = arguments?.getString(KEY_TIMESTAMP)?.let {
+            runCatching {
+                LocalDate.parse(it, DateTimeFormatter.ISO_DATE_TIME).format(
+                    DateTimeFormatter.ofPattern(
+                        "yyyy년 MM월 dd일"
+                    )
+                )
+            }.getOrNull()
+        } ?: "xxxx년 xx월 xx일"
         val count = arguments?.getInt(KEY_COUNT) ?: 0
-        val status = arguments?.getString(KEY_STATUS) ?: ""
+        val status = arguments?.getString(KEY_STATUS).let {
+            if (it == "SUSPENDED") {
+                "계정 비활성화"
+            } else if (it == "DELETED") {
+                "계정 삭제"
+            }
+            "계정 정지"
+        }
         val reason = arguments?.getString(KEY_REASON) ?: ""
+
+        dialog?.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
         return ComposeView(requireContext()).apply {
             setContent {
@@ -76,7 +97,9 @@ class LoginSuspendDialog : DialogFragment() {
                     count = count,
                     status = status,
                     reason = reason,
-                    onDismiss = {}
+                    onDismiss = {
+                        dismiss()
+                    }
                 )
             }
         }
@@ -93,9 +116,21 @@ private fun SuspendedDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {}
 ) {
+    val timeStamp = stringResource(R.string.login_suspend_date, timeStamp)
+    val count = stringResource(R.string.login_suspend_report_count, count)
+    val status = stringResource(R.string.login_suspend_status, status)
+    val reason = stringResource(R.string.login_suspend_reason, reason)
+
+    val body = remember {
+        timeStamp + "\n\n" +
+                count + "\n" +
+                status + "\n" +
+                reason
+    }
+
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(10.dp))
             .background(Color.White),
     ) {
         Column(
@@ -104,50 +139,37 @@ private fun SuspendedDialog(
         ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = "서비스 이용 제한 안내",
-                style = Typography.Medium_L,
+                text = stringResource(R.string.login_suspend_title),
+                style = Typography.Semibold_L,
                 textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                modifier = Modifier,
-                text = stringResource(R.string.login_suspend_date, timeStamp),
+                text = body,
                 style = Typography.Medium_SM
             )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Text(
-                modifier = Modifier,
-                text = stringResource(R.string.login_suspend_report_count, count),
-                style = Typography.Medium_SM
-            )
-            Text(
-                modifier = Modifier,
-                text = stringResource(R.string.login_suspend_status, status),
-                style = Typography.Medium_SM
-            )
-            Text(
-                modifier = Modifier,
-                text = stringResource(R.string.login_suspend_reason, reason),
-                style = Typography.Medium_SM
-            )
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Text(
-                modifier = Modifier,
                 text = stringResource(R.string.login_suspend_contact),
                 style = Typography.Medium_SM
             )
 
-            PlanUpButton(
-                modifier = Modifier.height(34.dp),
-                title = stringResource(R.string.btn_ok)
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
             ) {
-                onDismiss()
+                PlanUpButton(
+                    modifier = Modifier.height(34.dp),
+                    title = stringResource(R.string.btn_ok)
+                ) {
+                    onDismiss()
+                }
             }
         }
     }

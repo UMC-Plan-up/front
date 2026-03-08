@@ -1,5 +1,6 @@
 package com.planup.planup.login.ui
 
+import android.R
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -53,6 +54,8 @@ class LoginViewModel @Inject constructor(
                         with(result.data) {
                             _eventChannel.send(
                                 Event.SuspendedUser(
+                                    status = sanctionStatus ?: "",
+                                    count = -1,
                                     reason = sanctionReason ?: "",
                                     endDate = sanctionEndAt ?: ""
                                 )
@@ -125,7 +128,12 @@ class LoginViewModel @Inject constructor(
         object FailKakaoLogin : Event()
         object UnknownError : Event()
 
-        data class SuspendedUser(val reason: String, val endDate: String) : Event()
+        data class SuspendedUser(
+            val status: String,
+            val count: Int,
+            val reason: String,
+            val endDate: String
+        ) : Event()
     }
 
     sealed class SnackBarEvent {

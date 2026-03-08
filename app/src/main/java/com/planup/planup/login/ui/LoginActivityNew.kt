@@ -172,7 +172,12 @@ class LoginActivityNew : AppCompatActivity() {
                             )
                         }
                         is LoginViewModel.Event.SuspendedUser -> {
-                            
+                            LoginSuspendDialog.newInstance(
+                                timeStamp = event.endDate,
+                                count = event.count,
+                                status = event.status,
+                                reason = event.reason
+                            ).show(supportFragmentManager, "dialog")
                         }
                     }
                 }
