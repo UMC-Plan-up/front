@@ -12,6 +12,7 @@ import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import coil3.load
 import coil3.request.crossfade
 import com.planup.planup.R
@@ -33,6 +34,7 @@ import com.planup.planup.network.RetrofitInstance
 import kotlin.jvm.JvmName
 import com.planup.planup.network.data.ChallengeFriends
 import com.planup.planup.network.dto.friend.FriendInfo
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
