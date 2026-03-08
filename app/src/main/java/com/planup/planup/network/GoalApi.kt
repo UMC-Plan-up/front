@@ -11,7 +11,9 @@ import com.planup.planup.main.goal.item.CreateCommentRequest
 import com.planup.planup.main.goal.item.CreateCommentResponse
 import com.planup.planup.main.goal.item.DailyAchievementResponse
 import com.planup.planup.main.goal.item.DailyGoalResponse
+import com.planup.planup.main.goal.item.DailyPhotoResponse
 import com.planup.planup.main.goal.item.DateMemoResponse
+import com.planup.planup.main.goal.item.DeletePhotoResponse
 import com.planup.planup.main.goal.item.EditGoalApiResponse
 import com.planup.planup.main.goal.item.EditGoalRequest
 import com.planup.planup.main.goal.item.FriendGoalAchievementResponse
@@ -25,7 +27,10 @@ import com.planup.planup.main.goal.item.GoalPhotosResponse
 import com.planup.planup.main.goal.item.MemoRequest
 import com.planup.planup.main.goal.item.MyGoalListResponse
 import com.planup.planup.main.goal.item.PostMemoResponse
+import com.planup.planup.main.goal.item.PostPhotoRequest
+import com.planup.planup.main.goal.item.PostPhotoResponse
 import com.planup.planup.main.goal.item.TotalAchievementResponse
+import com.planup.planup.network.dto.goal.ReactionResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -100,16 +105,15 @@ interface GoalApi {
     @GET("/goals/friend/{friendId}/goal/{goalId}/photos")
     suspend fun getFriendPhotos(
         @Path("friendId") friendId: Int,
-        @Path("goalId") goalId: Int,
-        @Query("userId") userId: Int // ? 스웨거에 안보임
-    ): FriendPhotosResponse
+        @Path("goalId") goalId: Int
+    ): Response<FriendPhotosResponse>
 
     // http://54.180.207.84/goals/1/comments
     @POST("/goals/{goalId}/comment")
     suspend fun createComment(
         @Path("goalId") goalId: Int,
         @Body comment: CreateCommentRequest
-    ): CreateCommentResponse
+    ): Response<CreateCommentResponse>
 
     @PUT("/goals/{goalId}")
     suspend fun editGoal(
@@ -157,7 +161,7 @@ interface GoalApi {
     @GET("/goals/{goalId}/comments")
     suspend fun getComments(
         @Path("goalId") goalId: Int
-    ): GetCommentsResponse
+    ): Response<GetCommentsResponse>
     //http://54.180.207.84/community/friend/2/goal/1/total-achievement
     @GET("/community/friend/{friendId}/goal/{goalId}/total-achievement")
     suspend fun getFriendGoalAchievement(
@@ -169,6 +173,16 @@ interface GoalApi {
     suspend fun getGoalPhotos(
         @Path("goalId") goalId: Int
     ): Response<GoalPhotosResponse>
+
+    @POST("/goals/{goalId}/reactions/encourage")
+    suspend fun postEncourage(
+        @Path("goalId") goalId: Int
+    ): Response<ReactionResponseDto>
+
+    @POST("/goals/{goalId}/reactions/cheer")
+    suspend fun postCheer(
+        @Path("goalId") goalId: Int
+    ): Response<ReactionResponseDto>
 
     @POST("/community/{goalId}/join")
     suspend fun joinGoal(
@@ -182,4 +196,22 @@ interface GoalApi {
     suspend fun getGoalRanking(
         @Query("goalId") goalId: Int
     ): Response<GoalRankingResponse>
+
+    @DELETE("/goals/photos/{photoId}")
+    suspend fun deletePhoto(
+        @Path("photoId") photoId: Int
+    ): Response<DeletePhotoResponse>
+
+    @GET("/goals/{goalId}/photos/date")
+    suspend fun getDailyPhoto(
+        @Path("goalId") goalId: Int,
+        @Query("date") date: String
+    ): Response<DailyPhotoResponse>
+
+    @POST("/goals/{goalId}/photos")
+    suspend fun postPhoto(
+        @Path("goalId") goalId: Int,
+        @Query("date") date: String,
+        @Body photoRequest: PostPhotoRequest
+    ): Response<PostPhotoResponse>
 }

@@ -16,7 +16,7 @@ import com.planup.planup.main.goal.item.EditGoalResponse
 import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
-import com.planup.planup.main.home.ui.FriendGoalListRepository
+import com.planup.planup.main.home.ui.repository.FriendGoalListRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess

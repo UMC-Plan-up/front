@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.planup.planup.main.record.data.RankingListResult
 
 @HiltViewModel
 class RecordGoalReportViewModel @Inject constructor(
@@ -56,6 +57,9 @@ class RecordGoalReportViewModel @Inject constructor(
     private val _photos = MutableStateFlow<List<GoalPhotoResult>>(emptyList())
     val photos: StateFlow<List<GoalPhotoResult>> = _photos
 
+    private val _rankingList = MutableStateFlow<List<RankingListResult>>(emptyList())
+    val rankingList: StateFlow<List<RankingListResult>> = _rankingList
+
     fun loadWeeklyGoalReport() {
         viewModelScope.launch {
             repository.loadWeeklyGoalReport(userId, goalReportId)
@@ -80,6 +84,19 @@ class RecordGoalReportViewModel @Inject constructor(
                 }.onFailWithMessage {
             Log.d("RecordFail", "loadPhotos Error : $it")
             }
+        }
+    }
+
+    fun loadRankingList() {
+        viewModelScope.launch {
+            repository.loadRankingList(goalId)
+                .onSuccess { result ->
+                    val tempList = result
+                    val sortedList = tempList.sortedByDescending { it.verificationCount }
+                    _rankingList.value = sortedList
+                }.onFailWithMessage {
+                    Log.d("RecordFail", "loadRankingList Error : $it")
+                }
         }
     }
 

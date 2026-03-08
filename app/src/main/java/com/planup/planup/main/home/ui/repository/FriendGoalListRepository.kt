@@ -1,4 +1,4 @@
-package com.planup.planup.main.home.ui
+package com.planup.planup.main.home.ui.repository
 
 import com.planup.planup.main.goal.item.DailyAchievementResult
 import com.planup.planup.main.goal.item.FriendGoalAchievementResult
@@ -43,7 +43,7 @@ class FriendGoalListRepository @Inject constructor(
                     goalApi.getFriendGoalAchievement(friendId, goal.goalId)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {

@@ -617,4 +617,6 @@
     <string name="home_alert_category_challenge">챌린지</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="photo_manage_title">업로드한 사진</string>
+    <string name="photo_manage_delete">삭제하기</string>
 </resources>

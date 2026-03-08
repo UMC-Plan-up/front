@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.planup.planup.main.goal.item.DailyGoalResult
 import com.planup.planup.main.home.data.CalendarEvent
-import com.planup.planup.main.home.ui.CalendarRepository
+import com.planup.planup.main.home.ui.repository.CalendarRepository
 import com.planup.planup.network.ApiResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException

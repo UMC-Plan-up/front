@@ -1,4 +1,4 @@
-package com.planup.planup.main.home.ui
+package com.planup.planup.main.home.ui.repository
 
 import com.planup.planup.main.goal.item.DailyGoalResult
 import com.planup.planup.network.ApiResult
@@ -28,5 +28,3 @@ class CalendarRepository @Inject constructor(
             )
         }
 }
-
-

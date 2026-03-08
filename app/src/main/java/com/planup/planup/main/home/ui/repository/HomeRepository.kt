@@ -1,4 +1,4 @@
-package com.planup.planup.main.home.ui
+package com.planup.planup.main.home.ui.repository
 
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.main.goal.item.MyGoalListItem
@@ -60,7 +60,7 @@ class HomeRepository @Inject constructor(
                     friendApi.getFriendSummary()
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {
@@ -78,7 +78,7 @@ class HomeRepository @Inject constructor(
                     goalApi.getFriendGoalList(friendId)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {
@@ -95,7 +95,7 @@ class HomeRepository @Inject constructor(
                     goalApi.getFriendGoalAchievement(friendId, goalId)
                 },
                 onResponse = { response ->
-                    if(response.isSuccess) {
+                    if (response.isSuccess) {
                         val result = response.result
                         ApiResult.Success(result)
                     } else {

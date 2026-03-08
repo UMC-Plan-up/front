@@ -1,44 +1,26 @@
-package com.planup.planup.main.record.ui.repository
+package com.planup.planup.main.home.ui.repository
 
-import com.planup.planup.network.RecordApi
+import com.planup.planup.main.goal.item.PostPhotoRequest
+import com.planup.planup.network.GoalApi
 import com.planup.planup.network.safeResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Singleton
 import com.planup.planup.network.ApiResult
-import com.planup.planup.network.GoalApi
-import com.planup.planup.network.UserApi
 
-class RecordGoalReportRepository @Inject constructor(
-    private val recordApi: RecordApi,
-    private val goalApi: GoalApi,
-    private val userApi: UserApi
+@Singleton
+class PhotoManageRepository @Inject constructor(
+    private val goalApi: GoalApi
 ){
-    suspend fun loadWeeklyGoalReport(userId: Int, goalReportId: Int) =
-        withContext(Dispatchers.IO) {
-            safeResult(
-                response = {
-                    recordApi.getWeeklyGoalReport(userId, goalReportId)
-                },
-                onResponse = { response ->
-                    if(response.isSuccess) {
-                        val result = response.result
-                        ApiResult.Success(result)
-                    } else {
-                        ApiResult.Fail(response.message)
-                    }
-                }
-            )
-        }
-
-    suspend fun loadGoalPhotos(goalId: Int) =
+    suspend fun loadPhotos(goalId: Int) =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
                     goalApi.getGoalPhotos(goalId)
                 },
                 onResponse = {
-                    if(it.isSuccess) {
+                    if (it.isSuccess) {
                         ApiResult.Success(it.result)
                     } else {
                         ApiResult.Fail(it.message)
@@ -47,14 +29,32 @@ class RecordGoalReportRepository @Inject constructor(
             )
         }
 
-    suspend fun loadRankingList(goalId: Int) =
+    suspend fun postPhotos(goalId: Int, date: String, photoList: List<String>) =
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                    recordApi.getRankingData(goalId)
+                    goalApi.postPhoto(goalId, date,
+                        PostPhotoRequest(photoList)
+                    )
                 },
                 onResponse = {
-                    if(it.isSuccess) {
+                    if (it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun deletePhotos(photoId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.deletePhoto(photoId)
+                },
+                onResponse = {
+                    if (it.isSuccess) {
                         ApiResult.Success(it.result)
                     } else {
                         ApiResult.Fail(it.message)

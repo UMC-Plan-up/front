@@ -1,4 +1,4 @@
-package com.example.planup.main.record.ui
+package com.planup.planup.main.record.ui
 
 import android.graphics.Color
 import android.os.Bundle
@@ -23,10 +23,12 @@ import com.planup.planup.main.record.adapter.RankItem
 import com.planup.planup.main.record.data.DailyAchievementRateDto
 import com.planup.planup.main.record.data.ThreeWeekAchievementRateDto
 import com.planup.planup.main.record.ui.viewmodel.RecordGoalReportViewModel
+import com.planup.planup.main.record.adapter.SampleRankItem
+import com.planup.planup.main.record.data.RankingListResult
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 @AndroidEntryPoint
-class RecordWithCommunityFragment @Inject constructor(): Fragment() {
+class RecordWithCommunityFragment: Fragment() {
     lateinit var binding: FragmentRecordWithCommunityBinding
     private lateinit var recyclerView: RecyclerView
     private lateinit var photoAdapter: PhotoAdapter
@@ -62,11 +64,12 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentRecordWithCommunityBinding.inflate(inflater, container, false)
         viewModel.loadWeeklyGoalReport()
         viewModel.loadPhotos()
+        viewModel.loadRankingList()
         // ====== 사진 그리드 ======
         val sampleImages = listOf(
             R.drawable.img_sample1, R.drawable.img_sample2, R.drawable.img_sample3,
@@ -79,7 +82,10 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             val spacing = resources.getDimensionPixelSize(R.dimen.item_vertical_spacing)
             addItemDecoration(object : RecyclerView.ItemDecoration() {
                 override fun getItemOffsets(
-                    outRect: android.graphics.Rect, view: View, parent: RecyclerView, state: RecyclerView.State
+                    outRect: android.graphics.Rect,
+                    view: View,
+                    parent: RecyclerView,
+                    state: RecyclerView.State,
                 ) {
                     val pos = parent.getChildAdapterPosition(view)
                     if (pos >= 0) {
@@ -98,8 +104,8 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
         )
         val dailyAchievementRate = viewModel.dailyAchievementRate.value
         val entries = toBarEntry(dailyAchievementRate)
-        val dataSet = BarDataSet(entries, "요일별 기록").apply {
-            color = Color.parseColor("#508CFF")
+        val dataSet = BarDataSet(sampleEntries, "요일별 기록").apply {
+            color = "#508CFF".toColorInt()
             valueTextColor = Color.TRANSPARENT
         }
         barChart.apply {
@@ -128,20 +134,20 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             10, 80, 25
         )
         val combinedEntries = viewModel.threeWeekAchievementRate.value
-        setupCombinedChart(combinedEntries)
+        setupCombinedChart(sampleCombinedEntries)
 
         // ====== 랭킹 리스트 ======
+        val rankData = viewModel.rankingList.value
+        val sortedRankData = rankingDataToRankItem(rankData)
         val sampleRankData = listOf(
-            RankItem(4, "닉네임4", 12, R.drawable.img_friend_profile_sample4),
-            RankItem(5, "닉네임5", 10, R.drawable.img_friend_profile_sample2),
-            RankItem(6, "닉네임6", 8, R.drawable.img_friend_profile_sample3),
-            RankItem(7, "닉네임7", 6, R.drawable.img_friend_profile_sample4),
+            SampleRankItem(1, "친구1", 80, R.drawable.img_friend_profile_sample1),
+            SampleRankItem(2, "친구2", 75, R.drawable.img_friend_profile_sample2),
+            SampleRankItem(3, "친구3", 70, R.drawable.img_friend_profile_sample3),
+            SampleRankItem(4, "친구4", 65, R.drawable.img_friend_profile_sample4),
+            SampleRankItem(5, "친구5", 60, R.drawable.img_friend_profile_sample4)
+
         )
-        val rankData = viewModel.reportUsers.value.sortedByDescending { it.rate }
-            .mapIndexed { index, user ->
-                RankItem(index + 1, user.userName, user.rate, R.drawable.img_friend_profile_sample4)
-        }
-        val rankAdapter = RankAdapter(rankData)
+        val rankAdapter = RankAdapter(sortedRankData)
         binding.rankRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = rankAdapter
@@ -230,5 +236,17 @@ class RecordWithCommunityFragment @Inject constructor(): Fragment() {
             renderer = CustomCombinedChartRenderer(chart, chart.animator, chart.viewPortHandler)
             invalidate()
         }
+    }
+
+    fun rankingDataToRankItem(rankingList: List<RankingListResult>): List<RankItem> {
+        val list = rankingList.map {
+            RankItem(
+                rank = 1,
+                nickname = it.nickName,
+                certCount = it.verificationCount,
+                imageResId = it.profileImg
+            )
+        }
+        return list
     }
 }

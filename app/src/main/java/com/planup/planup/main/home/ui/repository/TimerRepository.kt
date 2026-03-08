@@ -1,4 +1,4 @@
-package com.planup.planup.main.home.data
+package com.planup.planup.main.home.ui.repository
 
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.checkToken
@@ -70,7 +70,7 @@ class TimerRepository @Inject constructor(
             tokenSaver.checkToken { token ->
                 safeResult(
                     response = {
-                        verifyApi.getTodayTotalTime(token, goalId)
+                        verifyApi.getTodayTotalTime(goalId)
                     },
                     onResponse = { response ->
                         if (response.isSuccess) {
@@ -87,10 +87,9 @@ class TimerRepository @Inject constructor(
 
     suspend fun startTimer(goalId: Int) : ApiResult<TimerStartResult> =
         withContext(Dispatchers.IO) {
-            tokenSaver.checkToken { token ->
                 safeResult(
                     response = {
-                        verifyApi.postTimerStart(token, goalId)
+                        verifyApi.postTimerStart(goalId)
                     },
                     onResponse = { response ->
                         if (response.isSuccess) {
@@ -101,7 +100,6 @@ class TimerRepository @Inject constructor(
                         }
                     }
                 )
-            }
         }
 
     suspend fun stopTimer(timerId: Int): ApiResult<TimerStopResult> =
@@ -109,7 +107,7 @@ class TimerRepository @Inject constructor(
             tokenSaver.checkToken { token ->
                 safeResult(
                     response = {
-                        verifyApi.putTimerStop(token, timerId)
+                        verifyApi.putTimerStop(timerId)
                     },
                     onResponse = { response ->
                         if (response.isSuccess) {
@@ -162,16 +160,16 @@ class TimerRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                        goalApi.getEditGoal(goalId)
-                    },
-                    onResponse = { response ->
-                        if (response.isSuccess) {
-                            ApiResult.Success(response.result)
-                        } else {
-                            ApiResult.Fail(response.message)
-                        }
+                    goalApi.getEditGoal(goalId)
+                },
+                onResponse = { response ->
+                    if (response.isSuccess) {
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
                     }
-                )
+                }
+            )
 
         }
 

@@ -1,4 +1,4 @@
-package com.planup.planup.main.home.ui
+package com.planup.planup.main.home.ui.repository
 
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.NotificationApi
@@ -38,7 +38,7 @@ class HomeAlertRepository @Inject constructor(
         withContext(Dispatchers.IO) {
             safeResult(
                 response = {
-                    notiApi.loadNotificationType(receiverId,type)
+                    notiApi.loadNotificationType(receiverId, type)
                 },
                 onResponse = { notificationDto ->
                     if (notificationDto.isSuccess) {

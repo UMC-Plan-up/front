@@ -34,7 +34,6 @@ import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
 import androidx.core.graphics.toColorInt
-import com.example.planup.main.record.ui.RecordWithCommunityFragment
 
 // 챌린지 카드 표시용 데이터(ChallengeCompleteFragment로 전달)
 data class ChallengeCardData(
@@ -192,7 +191,7 @@ class RecordWeeklyReportFragment : Fragment() {
             goalCriteria = "매일 30분 이상",
             achievementRate = 72,
             goalType = "PERSONAL",
-            isCommunity = false
+            isCommunity = true
         )
     )
 

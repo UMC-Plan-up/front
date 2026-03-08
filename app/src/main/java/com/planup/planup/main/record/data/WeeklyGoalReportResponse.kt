@@ -40,7 +40,8 @@ data class DailyAchievementRateDto(
 data class ReportUserDto(
     val id: Long,
     val userName: String,
-    val rate: Int
+    val rate: Int,
+    val profileImg: String
 )
 
 data class CommentDto(
@@ -54,4 +55,19 @@ data class CommentDto(
     val parentCommentWriter: String?,
     val myComment: Boolean,
     val reply: Boolean
+)
+
+data class RankingListResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: List<RankingListResult>
+)
+
+data class RankingListResult(
+    val goalId: Long,
+    val userId: Long,
+    val nickName: String,
+    val profileImg: String,
+    val verificationCount: Int
 )

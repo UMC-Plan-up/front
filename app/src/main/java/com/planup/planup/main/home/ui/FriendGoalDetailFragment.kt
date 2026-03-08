@@ -24,6 +24,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import androidx.core.graphics.toColorInt
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
@@ -32,43 +33,41 @@ import retrofit2.HttpException
 import com.planup.planup.R
 import com.planup.planup.main.goal.item.CreateCommentRequest
 import com.planup.planup.main.home.adapter.PhotoAdapter
+import com.planup.planup.main.home.ui.viewmodel.FriendGoalDetailViewModel
+import com.planup.planup.network.ApiResult
 import com.planup.planup.network.RetrofitInstance
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendGoalDetailFragment : Fragment() {
 
     private var _binding: FragmentFriendGoalDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var chart: CombinedChart
-    private lateinit var userPrefs: SharedPreferences
+    private val viewModel: FriendGoalDetailViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFriendGoalDetailBinding.inflate(inflater, container, false)
-        userPrefs = requireContext().getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-        val token = userPrefs.getString("accessToken", null)
-
-        val goalId = arguments?.getInt("goalId") ?: 0
-        val title = arguments?.getString("title") ?: ""
-        val friendId = arguments?.getInt("friendId") ?: 0
-
+        val title = viewModel.title
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
         binding.friendGoalDetailTodayfocusTv.text = getString(R.string.friend_goal_detail_today_text, title)
-        loadComment(goalId)
-        loadTodayFriendTime(token, friendId, goalId)
-        loadFriendPhotos(friendId, goalId)
+        loadComment()
+        loadTodayFriendTime()
+        loadFriendPhotos()
 
         chart = binding.friendGoalChart
         setupCombinedChart()
 
         binding.friendGoalCheerBtn.setOnClickListener {
-            // TODO: 응원하기 클릭 이벤트
+            viewModel.sendReaction(false)
         }
 
         binding.friendGoalMotivateBtn.setOnClickListener {
-            // TODO: 칭찬하기 클릭 이벤트
+            viewModel.sendReaction(true)
         }
 
         binding.friendGoalDetailBackIv.setOnClickListener {
@@ -80,7 +79,7 @@ class FriendGoalDetailFragment : Fragment() {
         binding.friendGoalSendCommentIv.setOnClickListener {
             val comment = binding.friendGoalCommentEt.text.toString()
             if (comment.isNotEmpty()) {
-                sendComment(goalId, comment)
+                sendComment(comment)
             }
         }
 
@@ -169,65 +168,28 @@ class FriendGoalDetailFragment : Fragment() {
         _binding = null
     }
 
-    private fun loadComment(goalId: Int) {
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.goalApi.getComments(goalId = goalId)
-                if(response.isSuccess) {
-                    binding.friendGoalCommentTv.text = response.result[0].content
-                    binding.friendGoalOtherNicknameTv.text = response.result[0].writerNickname
-                    Glide.with(this@FriendGoalDetailFragment)
-                        .load(response.result[0].writerProfileImg)
-                        .error(R.drawable.img_friend_profile_sample1)
-                        .into(binding.friendGoalOtherProfileIv)
-                } else {
-                    Log.d("FriendGoalDetailFragment", "loadComment 실패: ${response.message}")
-                    //binding.friendGoalOtherCommentLl.visibility = View.GONE
-                }
-            } catch(e: Exception) {
-                Log.d("FriendGoalDetailFragment", "loadComment 오류: ${e.message}")
-                //binding.friendGoalOtherCommentLl.visibility = View.GONE
-            }
-        }
+    private fun loadComment() {
+        viewModel.loadComment(createErrorHandler("loadComment") {
+            binding.friendGoalCommentTv.text = it[0].content
+            binding.friendGoalOtherNicknameTv.text = it[0].writerNickname
+            Glide.with(this@FriendGoalDetailFragment)
+                .load(it[0].writerProfileImg)
+                .error(R.drawable.img_friend_profile_sample1)
+                .into(binding.friendGoalOtherProfileIv)
+        })
     }
 
-    private fun loadTodayFriendTime(token: String?, friendId: Int, goalId: Int){
-        lifecycleScope.launch {
-            try {
-                val apiService = RetrofitInstance.verificationApi
-                val response = apiService.getTodayFriendTimer(
-                    token = "Bearer $token",
-                    friendId = friendId,
-                    goalId = goalId
-                )
-                if (response.isSuccessful) {
-                    binding.goalDetailTodayTimerTv.text = response.body()?.result?.formattedTime
-                } else {
-                    Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 실패: ${response.message()}")
-                }
-            } catch (e: Exception){
-                Log.d("FriendGoalDetailFragment", "loadTodayFriendTime 오류: ${e.message}")
-            }
-        }
+    private fun loadTodayFriendTime(){
+        viewModel.loadTodayFriendTime(createErrorHandler("loadTodayFriendTime") {
+            binding.goalDetailTodayTimerTv.text = it
+        })
     }
 
-    private fun loadFriendPhotos(friendId: Int, goalId: Int) {
-        lifecycleScope.launch {
-            try {
-                val response = RetrofitInstance.goalApi.getFriendPhotos(
-                    friendId = friendId,
-                    goalId = goalId,
-                    userId = userPrefs.getInt("userId", 0)
-                )
-                if (response.isSuccess) {
-                    val photoUrls = response.result.map { it.photoImg } // result 안에 url 속성이 있다고 가정
-                    setupRecyclerView(photoUrls)
-                }
-            } catch (e: Exception){
-
-            }
-        }
-
+    private fun loadFriendPhotos() {
+        viewModel.loadFriendPhoto(createErrorHandler("loadFriendPhotos") { result ->
+            val urls = result.map { it.photoImg }
+            setupRecyclerView(urls)
+        })
     }
     private fun setupRecyclerView(photoUrls: List<String>) {
         val recyclerView = binding.photoRecyclerView
@@ -235,23 +197,23 @@ class FriendGoalDetailFragment : Fragment() {
         recyclerView.adapter = PhotoAdapter(photoUrls)
     }
 
-    private fun sendComment(goalId: Int, comment: String) {
-        lifecycleScope.launch {
-            try {
-                val request = CreateCommentRequest(content = comment, parentCommentId = 0, reply = false)
-                val goalService = RetrofitInstance.goalApi
-                val response = goalService.createComment(goalId = goalId, comment = request)
-                if(response.isSuccess){
-                    binding.friendGoalCommentEt.text.clear()
-                    loadComment(goalId)
-                } else {
-                    Log.d("FriendGoalDetailFragment", "sendComment 실패: ${response.message}")
-                }
-            } catch (e: Exception) {
-                if(e is HttpException) Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.code()} ${e.message()}")
-                else Log.d("FriendGoalDetailFragment", "sendComment 오류: ${e.message}")
-            }
+    private fun sendComment(comment: String) {
+        viewModel.sendComment(comment,createErrorHandler("sendComment") {
+            binding.friendGoalCommentEt.text.clear()
+            loadComment()
+        })
+    }
 
+    fun <T> createErrorHandler(
+        tag: String,
+        onSuccess: ((T) -> Unit)? = null): (ApiResult<T>) -> Unit {
+        return { result ->
+            when (result) {
+                is ApiResult.Success -> onSuccess?.invoke(result.data)
+                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
+                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
+                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
+            }
         }
     }
 }

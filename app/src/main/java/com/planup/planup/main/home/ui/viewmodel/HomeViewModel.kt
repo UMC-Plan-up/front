@@ -10,7 +10,7 @@ import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.data.DailyToDo
 import com.planup.planup.main.home.item.FriendChallengeItem
 import com.planup.planup.main.home.data.CalendarEvent
-import com.planup.planup.main.home.ui.HomeRepository
+import com.planup.planup.main.home.ui.repository.HomeRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess

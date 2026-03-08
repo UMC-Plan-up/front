@@ -2,7 +2,7 @@ package com.planup.planup.main.home.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.planup.planup.main.home.ui.HomeAlertRepository
+import com.planup.planup.main.home.ui.repository.HomeAlertRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.dto.notification.NotificationResult
 import dagger.hilt.android.lifecycle.HiltViewModel

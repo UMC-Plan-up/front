@@ -1,0 +1,114 @@
+package com.planup.planup.main.home.ui.repository
+
+import com.planup.planup.main.goal.item.CreateCommentRequest
+import com.planup.planup.network.ApiResult
+import com.planup.planup.network.GoalApi
+import com.planup.planup.network.VerificationApi
+import com.planup.planup.network.safeResult
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class FriendGoalDetailRepository @Inject constructor(
+    val goalApi: GoalApi,
+    val verificationApi: VerificationApi
+) {
+    suspend fun loadComment(goalId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getComments(goalId)
+                },
+                onResponse = {
+                    if (it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun loadTodayFriendTime(goalId: Int, friendId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    verificationApi.getTodayFriendTimer(friendId, goalId)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+
+        }
+
+    suspend fun loadFriendPhotos(friendId: Int, goalId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.getFriendPhotos(friendId, goalId)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun sendComment(goalId: Int, comment: CreateCommentRequest) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.createComment(goalId, comment)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun sendEncourage(goalId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.postEncourage(goalId)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+
+    suspend fun sendCheer(goalId: Int) =
+        withContext(Dispatchers.IO) {
+            safeResult(
+                response = {
+                    goalApi.postCheer(goalId)
+                },
+                onResponse = {
+                    if(it.isSuccess) {
+                        ApiResult.Success(it.result)
+                    } else {
+                        ApiResult.Fail(it.message)
+                    }
+                }
+            )
+        }
+}

@@ -282,7 +282,17 @@ class TimerFragment @Inject constructor() : Fragment() {
 
     private fun initClickListener() {
         binding.goalListBtnCameraIb.setOnClickListener {
-            showImagePickerBottomSheet()
+            //showImagePickerBottomSheet()
+
+                val fragment = PhotoManageFragment().apply {
+                    arguments = Bundle().apply {
+                        putInt("goalId", viewModel.selectedGoalId.value)
+                    }
+                }
+                parentFragmentManager.beginTransaction()
+                    .replace(com.planup.planup.R.id.main_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
         }
 
         binding.timerDateBeforeIv.setOnClickListener {
