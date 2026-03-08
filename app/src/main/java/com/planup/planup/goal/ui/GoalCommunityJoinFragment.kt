@@ -189,7 +189,7 @@ class GoalCommunityJoinFragment : Fragment() {
                 RetrofitInstance.goalApi.getGoalRanking(goalId = goalId) // GoalDetailResponse
             }.onSuccess { resp ->
                 if (resp.isSuccessful && resp.body() != null) {
-                    val ranking = resp.body()!!.result.goalRankingList.sortedByDescending { it.verificationCount }
+                    val ranking = resp.body()!!.result.sortedByDescending { it.verificationCount }
                     // ✅ 타입 맞춤
                     bindRanking(ranking)
                 } else {
