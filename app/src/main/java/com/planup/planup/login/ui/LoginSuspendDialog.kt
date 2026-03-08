@@ -26,7 +26,37 @@ import com.planup.planup.R
 import com.planup.planup.component.button.PlanUpButton
 import com.planup.planup.theme.Typography
 
-class LoginSuspendDialog: DialogFragment() {
+class LoginSuspendDialog : DialogFragment() {
+
+    companion object {
+        private const val KEY_TIMESTAMP = "key_timestamp"
+        private const val KEY_COUNT = "key_count"
+        private const val KEY_STATUS = "key_status"
+        private const val KEY_REASON = "key_reason"
+
+        /**
+         * @param timeStamp 제제된 날짜
+         * @param count 누적 신고 수
+         * @param status 제제 상태 (계정 비활성화, 계정 삭제)
+         * @param reason 제제 사유
+         * @return
+         */
+        fun newInstance(
+            timeStamp: String,
+            count: Int,
+            status: String,
+            reason: String
+        ): LoginSuspendDialog {
+            return LoginSuspendDialog().apply {
+                arguments = Bundle().apply {
+                    putString(KEY_TIMESTAMP, timeStamp)
+                    putInt(KEY_COUNT, count)
+                    putString(KEY_STATUS, status)
+                    putString(KEY_REASON, reason)
+                }
+            }
+        }
+    }
 
 
     override fun onCreateView(
@@ -34,13 +64,18 @@ class LoginSuspendDialog: DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val timeStamp = arguments?.getString(KEY_REASON) ?: ""
+        val count = arguments?.getInt(KEY_COUNT) ?: 0
+        val status = arguments?.getString(KEY_STATUS) ?: ""
+        val reason = arguments?.getString(KEY_REASON) ?: ""
+
         return ComposeView(requireContext()).apply {
             setContent {
                 SuspendedDialog(
-                    timeStamp = "",
-                    count = 0,
-                    status = "",
-                    reason = "",
+                    timeStamp = timeStamp,
+                    count = count,
+                    status = status,
+                    reason = reason,
                     onDismiss = {}
                 )
             }
