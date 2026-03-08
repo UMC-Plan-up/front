@@ -522,6 +522,7 @@
     <string name="toast_challenge_accept">챌린지 참여를 수락했어요.</string>
     <string name="toast_challenge_reject">챌린지 참여를 거절했어요.</string>
     <string name="toast_incorrect_email">이메일 형식을 다시 확인해주세요</string>
+    <string name="toast_empty_password">비밀번호를 입력해주세요.</string>
     <string name="toast_invalid_email">등록되지 않은 이메일이에요</string>
     <string name="toast_incorrect_password">비밀번호를 다시 확인해 주세요.</string>
     <string name="toast_report">신고가 완료되었습니다.</string>
