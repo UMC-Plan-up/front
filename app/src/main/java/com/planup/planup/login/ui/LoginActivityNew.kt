@@ -171,6 +171,9 @@ class LoginActivityNew : AppCompatActivity() {
                                 }
                             )
                         }
+                        is LoginViewModel.Event.SuspendedUser -> {
+                            
+                        }
                     }
                 }
             }

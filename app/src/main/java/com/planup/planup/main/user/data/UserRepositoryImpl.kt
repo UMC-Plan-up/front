@@ -280,7 +280,12 @@ class UserRepositoryImpl @Inject constructor(
 
                     ApiResult.Success(result)
                 } else {
-                    ApiResult.Fail(response.message)
+                    if(response.code == "USER4011" || response.code == "USER4012") {
+                        // 정지된 유저거나 삭제된 유저인 경우
+                        ApiResult.Success(response.result)
+                    } else {
+                        ApiResult.Fail(response.message)
+                    }
                 }
             }
         )
