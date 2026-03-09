@@ -8,8 +8,8 @@ import com.planup.planup.network.data.ChallengeResult
 import com.planup.planup.network.data.EmptyResult
 import com.planup.planup.network.dto.challenge.ChallengeDto
 import com.planup.planup.network.dto.challenge.RepenaltyDto
-import retrofit2.Response
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -47,5 +47,5 @@ interface ChallengeApi {
     fun changePenalty(@Body repenaltyDto: RepenaltyDto): Response<ChallengeResponseNoResult<EmptyResult>>
     //챌린지 생성 요청
     @POST("challenges/create")
-    fun createChallenge(@Body challengeDto: ChallengeDto): Response<ChallengeResponseNoResult<EmptyResult>>
+    suspend fun createChallenge(@Body challengeDto: ChallengeDto): ChallengeResponseNoResult<EmptyResult>
 }
