@@ -47,7 +47,7 @@ fun Fragment.challengeReceivedInit(binding: FragmentChallengeReceivedBinding, ch
     binding.challengeDueEnterTv.text = challengeInfo.endDate
 
     // 기준 기간
-    binding.challengeDurationEnterTv.text = challengeInfo.duration
+    binding.challengeDurationEnterTv.text = challengeInfo.period
 
     // 빈도
     binding.challengeFrequencyEnterTv.text = challengeInfo.frequency

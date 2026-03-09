@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeSetGoalBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 
 /*1:1 챌린지 설정 플로우 챌린지 목표 설정하기
 *목표명 및 1회 분량 입력하는 페이지
@@ -50,18 +52,14 @@ class ChallengeSetGoalFragment : Fragment() {
     private fun clickListener() {
         //뒤로가기: 목표 설정하기 페이지로 이동, 1:1 챌린지, 커뮤니티 선택 가능
         binding.backIv.setOnClickListener {
-            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, GoalSelectFragment())
-                .commitAllowingStateLoss()
+            goalPopBack()
         }
         //인증방식 설정 페이지로 이동
         binding.btnNextTv.setOnClickListener{
             editor.putString("goalName",binding.goalNameEt.text.toString())
             editor.putString("goalAmount",binding.goalAmountEt.text.toString())
             editor.apply()
-            (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeTimerPhotoFragment())
-                .commitAllowingStateLoss()
+            backStackTrueGoalNav(ChallengeTimerPhotoFragment())
         }
     }
 
