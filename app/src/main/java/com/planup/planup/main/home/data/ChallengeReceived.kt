@@ -10,7 +10,7 @@ sealed class ChallengeReceived(): Parcelable{
     abstract  val goalName: String //목표명
     abstract  val goalAmount: String //1회 분량
     abstract  val endDate: String //종료일
-    abstract  val duration: String //기준 기간
+    abstract  val period: String //기준 기간
     abstract  val frequency: String //빈도
     abstract  val penalty: String //페널티
 }
