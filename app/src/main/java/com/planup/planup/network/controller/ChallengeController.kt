@@ -13,7 +13,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.jvm.java
 
 class ChallengeController {
 
@@ -156,12 +155,10 @@ class ChallengeController {
         CoroutineScope(Dispatchers.IO).launch {
             RetrofitInstance.challengeApi.createChallenge(challengeDto)
                 .runCatching {
-                    if (isSuccessful && body() != null) {
+                    if (isSuccess) {
                         requestChallengeAdapter.successRequest()
-                    } else if (!isSuccessful && body() != null) {
-                        requestChallengeAdapter.failRequest(body()!!.message)
                     } else {
-                        requestChallengeAdapter.failRequest("null")
+                        requestChallengeAdapter.failRequest("fail create challenge")
                     }
                 }
         }
