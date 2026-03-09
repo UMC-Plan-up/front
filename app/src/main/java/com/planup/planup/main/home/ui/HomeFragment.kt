@@ -15,24 +15,31 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentHomeBinding
 import com.planup.planup.databinding.ItemCalendarDayBinding
+import com.planup.planup.goal.util.extractBracket
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.home.adapter.DailyToDoAdapter
 import com.planup.planup.main.home.adapter.FriendChallengeAdapter
 import com.planup.planup.main.home.data.CalendarEvent
+import com.planup.planup.main.home.data.ChallengeReceivedPhoto
 import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.main.home.ui.viewmodel.HomeViewModel
+import com.planup.planup.main.home.ui.viewmodel.NotificationItem
+import com.planup.planup.main.util.isNotificationEnabled
 import com.planup.planup.network.ApiResult
-import com.kizitonwose.calendar.view.MonthDayBinder
-import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -40,13 +47,6 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
-import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.doOnLayout
-import com.bumptech.glide.Glide
-import com.planup.planup.goal.util.extractBracket
-import com.planup.planup.main.home.data.ChallengeReceivedPhoto
-import com.planup.planup.main.home.ui.viewmodel.NotificationItem
-import com.planup.planup.main.util.isNotificationEnabled
 
 class HomeFragment : Fragment() {
 
@@ -430,12 +430,12 @@ class HomeFragment : Fragment() {
                                             friendId = listOf(13L),
                                             friendName = item.text.extractBracket()!!,
                                             goalName = challengeInfo.goalName,
-                                            goalAmount =challengeInfo.,
-                                            1200,
-                                            "endDate",
-                                            "duration",
-                                            "frequency",
-                                            "penalty"
+                                            goalAmount =challengeInfo.name,
+                                            targetTime = 1200,
+                                            endDate = "endDate",
+                                            period = "duration",
+                                            frequency = "frequency",
+                                            penalty = "penalty"
                                         )
                                     )
                                 }
@@ -451,7 +451,7 @@ class HomeFragment : Fragment() {
                                         "friend",
                                         "goalName",
                                         "goalAmount",
-                                        "photoUrl",
+                                        1,
                                         "endDate",
                                         "duration",
                                         "frequency",
