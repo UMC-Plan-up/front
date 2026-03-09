@@ -9,13 +9,15 @@ import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import android.widget.PopupWindow
 import android.widget.TextView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeSetTimerBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
-import androidx.core.graphics.drawable.toDrawable
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 
 class ChallengeSetTimerFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetTimerBinding
@@ -62,9 +64,7 @@ class ChallengeSetTimerFragment : Fragment() {
     private fun clickListener() {
         //이전 버튼 -> 인증방식 설정 페이지로 이동
         binding.backIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, ChallengeTimerPhotoFragment())
-                .commitAllowingStateLoss()
+            goalPopBack()
         }
 
         //타이머 시간 설정
@@ -85,10 +85,7 @@ class ChallengeSetTimerFragment : Fragment() {
         binding.challengeTimerNextBtn.setOnClickListener {
             if (!binding.challengeTimerNextBtn.isActivated) return@setOnClickListener
             editor.apply()
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, ChallengeSetFrequencyFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            backStackTrueGoalNav(ChallengeSetFrequencyFragment())
         }
     }
 
