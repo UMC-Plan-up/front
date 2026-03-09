@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -14,7 +13,6 @@ import androidx.fragment.app.Fragment
 import coil3.load
 import coil3.request.crossfade
 import com.planup.planup.R
-import com.planup.planup.databinding.FragmentChallengeReceivedBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.data.GoalCreateRequest
 import com.planup.planup.main.goal.data.GoalRanking
@@ -25,19 +23,13 @@ import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.goal.item.MyGoalListItem
 import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
-import com.planup.planup.main.home.data.ChallengeReceived
-import com.planup.planup.main.home.data.ChallengeReceivedPhoto
-import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.network.RetrofitInstance
-import kotlin.jvm.JvmName
 import com.planup.planup.network.data.ChallengeFriends
 import com.planup.planup.network.dto.friend.FriendInfo
-
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.ResolverStyle
 import java.time.temporal.ChronoUnit
-import kotlin.collections.map
 
 /** 서버 DTO → 화면용 GoalItem으로 변환 */
 @JvmName("myGoalListDtoToGoalItems") // JVM name for the first function
@@ -49,6 +41,7 @@ fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
         GoalItem(
             goalId = dto.goalId,
             title = dto.goalName.orEmpty(),
+            goalType = dto.goalType,
             description = criteria,
             percent = 0,
             authType = when (dto.goalType) {
@@ -68,11 +61,18 @@ fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
 fun List<MyGoalListItem>.toGoalItems(): List<GoalItem> =
     map { dto ->
         val typeLabel = dto.goalType.toCriteria()
-        val criteria = "$typeLabel ${dto.frequency}번 이상"
+        val criteria = "$typeLabel ${dto.oneDose}번 이상"
 
         GoalItem(
             goalId = dto.goalId,
             title = dto.goalName.orEmpty(),
+            goalType = when(dto.goalType){
+                "FRIEND" -> GoalType.FRIEND
+                "COMMUNITY" -> GoalType.COMMUNITY
+                "CHALLENGE_PHOTO" -> GoalType.CHALLENGE_PHOTO
+                "CHALLENGE_TIME" -> GoalType.CHALLENGE_TIME
+                else -> GoalType.FRIEND
+            },
             description = criteria,
             percent = 0,
             authType = when (dto.goalType) {
@@ -81,7 +81,7 @@ fun List<MyGoalListItem>.toGoalItems(): List<GoalItem> =
                 else -> "none"
             },
             isEditMode = false,
-            isActive = true,
+            isActive = dto.isActive,
             criteria = criteria,
             progress = 0
         )
@@ -96,6 +96,13 @@ fun List<FriendGoalListResult>.toGoalItemsForFriend(): List<GoalItem> =
         GoalItem(
             goalId = dto.goalId,
             title = dto.goalName,
+            goalType = when(dto.goalType){
+                "FRIEND" -> GoalType.FRIEND
+                "COMMUNITY" -> GoalType.COMMUNITY
+                "CHALLENGE_PHOTO" -> GoalType.CHALLENGE_PHOTO
+                "CHALLENGE_TIME" -> GoalType.CHALLENGE_TIME
+                else -> GoalType.FRIEND
+            },
             description = criteria,
             percent = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
             authType = dto.verificationType,
@@ -114,6 +121,13 @@ fun List<FriendGoalWithAchievement>.toGoalItemsForFriendAchieve(): List<GoalItem
         GoalItem(
             goalId = dto.goalId,
             title = dto.goalName,
+            goalType = when(dto.goalType){
+                "FRIEND" -> GoalType.FRIEND
+                "COMMUNITY" -> GoalType.COMMUNITY
+                "CHALLENGE_PHOTO" -> GoalType.CHALLENGE_PHOTO
+                "CHALLENGE_TIME" -> GoalType.CHALLENGE_TIME
+                else -> GoalType.FRIEND
+            },
             description = criteria,
             percent = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
             authType = dto.verificationType,
@@ -209,6 +223,10 @@ fun Fragment.backStackTrueNav(resId: Int, nextFragment: Fragment,name: String?=n
         .hide(this@backStackTrueNav)
         .addToBackStack(name)
         .commitAllowingStateLoss()
+}
+
+fun Fragment.goalPopBack(){
+    (requireActivity() as GoalActivity).supportFragmentManager.popBackStack()
 }
 
 fun GoalCreateRequest.equil(data: EditGoalResponse): Boolean{
