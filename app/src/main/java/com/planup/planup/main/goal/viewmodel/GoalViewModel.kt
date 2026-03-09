@@ -20,9 +20,7 @@ import com.planup.planup.main.home.ui.repository.FriendGoalListRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
-import javax.inject.Inject;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +28,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class GoalViewModel @Inject constructor(
@@ -128,7 +127,9 @@ class GoalViewModel @Inject constructor(
     fun fetchMyGoals() = viewModelScope.launch {
         goalRepository.fetchMyGoals()
             .onSuccess { res ->
-                _goalState.value = res.toGoalItems()
+                _goalState.value = res.filterNot {
+                    !it.isActive && (it.goalType == "CHALLENGE_TIME" || it.goalType == "CHALLENGE_PHOTO")
+                }.toGoalItems()
                 _challengeNullState.value = res.filter { it.goalType == "FRIEND" || it.goalType == "COMMUNITY" }.toGoalItems()
             }
             .onFailWithMessage {
