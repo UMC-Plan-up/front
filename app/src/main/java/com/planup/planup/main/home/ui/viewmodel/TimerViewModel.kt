@@ -18,13 +18,11 @@ import com.planup.planup.network.data.TimerStopResult
 import com.planup.planup.network.data.TodayTotalTimeResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.MutableSharedFlow
-import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
@@ -72,8 +70,8 @@ class TimerViewModel @Inject constructor(
                 val result = repository.getMyGoalList()
                 if(result is ApiResult.Success) { _goals.value = result.data }
                 val dummyList: List<MyGoalListItem> = listOf(
-                    MyGoalListItem(0,"목표1", "FRIEND", 10, 10),
-                    MyGoalListItem(-1, "목표2", "FRIEND", 11, 11)
+                    MyGoalListItem(0,"목표1", "FRIEND", 10, 10,true),
+                    MyGoalListItem(-1, "목표2", "FRIEND", 11, 11,true)
                 ) //더미 데이터 << 목표 생성 가능해지면 지우기
                 _goals.value = dummyList
                 onCallBack(result)
