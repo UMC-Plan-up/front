@@ -2,6 +2,7 @@ package com.planup.planup.main.goal.item
 
 data class GoalItem(
     val goalId: Int,
+    val goalType: com.planup.planup.main.goal.data.GoalType,
     val title: String,
     val description: String,
     val percent: Int,
