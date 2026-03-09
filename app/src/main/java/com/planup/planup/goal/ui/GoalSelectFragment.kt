@@ -1,6 +1,5 @@
 package com.planup.planup.goal.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -20,12 +19,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalSelectBinding
-import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.util.backStackTrueGoalNav
-import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class GoalSelectFragment : Fragment() {
@@ -194,13 +190,11 @@ class GoalSelectFragment : Fragment() {
 //                    .replace(R.id.goal_container, commonGoalFragment)
 //                    .commitAllowingStateLoss()
             } else if (binding.goalSelectChallengeCl.isSelected) {
-                if (sleepChallenge == 2) {
-                    makeToast()
-                    sleepChallenge--
-                }
-                (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container, ChallengeSetGoalFragment())
-                    .commitAllowingStateLoss()
+//                if (sleepChallenge == 2) {
+//                    makeToast()
+//                    sleepChallenge--
+//                }
+                backStackTrueGoalNav(ChallengeSetGoalFragment())
             }
         }
     }

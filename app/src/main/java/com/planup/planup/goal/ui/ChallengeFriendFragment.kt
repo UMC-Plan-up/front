@@ -4,6 +4,7 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,12 +13,13 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeFriendBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.ChallengeFriendsAdapter
 import com.planup.planup.goal.adapter.FriendRVAdapter
 import com.planup.planup.goal.adapter.RequestChallengeAdapter
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 import com.planup.planup.main.goal.viewmodel.ChallengeViewModel
 import com.planup.planup.network.controller.ChallengeController
 import com.planup.planup.network.data.ChallengeFriends
@@ -75,9 +77,10 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
     private fun clickListener(){
         //뒤로가기: 페널티 선택 페이지로 이동
         binding.challengeSendBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengePenaltyFragment())
-                .commitAllowingStateLoss()
+//            (context as GoalActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.goal_container,ChallengePenaltyFragment())
+//                .commitAllowingStateLoss()
+            goalPopBack()
         }
         //완료 버튼: 챌린지 참여 완료 페이지로 이동
         binding.challengeSendCompleteBtn.setOnClickListener {
@@ -133,12 +136,12 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             prefs.getString("status","no-data")!!, //요청 형태
             prefs.getString("penalty","no-data")!!, //페널티
             friendId, //친구 id
-            GoalPeriod.DAY, //기준기간
+            GoalPeriod.WEEK, //기준기간
             prefs.getInt("frequency",0), //빈도
             Time(prefs.getInt("oneDoes",0)) //타이머 총 시간
         )
+        Log.d("challengeDto",challengeDto.toString())
         challengeService.requestChallenge(challengeDto)
-        successRequest()
     }
     //챌린지 요청 성공 시 완료 화면으로 이동
     override fun successRequest() {
@@ -151,9 +154,7 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
             putString("friend",friend?.nickname)
         }
         //완료 화면으로 이동
-        (requireActivity() as GoalActivity).supportFragmentManager.beginTransaction()
-            .replace(R.id.goal_container,finishRequestFragment)
-            .commitAllowingStateLoss()
+        backStackTrueGoalNav(finishRequestFragment)
     }
     //챌린지 요청 실패 시 토스트 메시지
     override fun failRequest(response: String) {

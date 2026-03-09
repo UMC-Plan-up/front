@@ -14,6 +14,8 @@ import androidx.fragment.app.Fragment
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengePenaltyBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 
 class ChallengePenaltyFragment : Fragment() {
     lateinit var binding: FragmentChallengePenaltyBinding
@@ -85,9 +87,10 @@ class ChallengePenaltyFragment : Fragment() {
     private fun clickListener() {
         //이전 버튼 : 종료일, 빈도, 기준기간 설정 페이지로 이동
         binding.challengePenaltyBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeSetFrequencyFragment())
-                .commitAllowingStateLoss()
+//            (context as GoalActivity).supportFragmentManager.beginTransaction()
+//                .replace(R.id.goal_container,ChallengeSetFrequencyFragment())
+//                .commitAllowingStateLoss()
+            goalPopBack()
         }
         //페널티 : 커피
         binding.challengePenaltyCoffeeCl.setOnClickListener {
@@ -138,9 +141,7 @@ class ChallengePenaltyFragment : Fragment() {
             if (!binding.challengePenaltyNextBtn.isActivated) return@setOnClickListener
             editor.putString("penalty",penalty)
             editor.apply()
-             (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, ChallengeFriendFragment())
-                .commitAllowingStateLoss()
+            backStackTrueGoalNav( ChallengeFriendFragment())
         }
     }
 

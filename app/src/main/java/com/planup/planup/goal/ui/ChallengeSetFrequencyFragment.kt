@@ -21,6 +21,8 @@ import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeSetFrequencyBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -94,7 +96,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
 
         //뒤로가기: 타이머 설정 또는 인증방식 선택 페이지로 이동
         binding.photoBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.popBackStack()
+            goalPopBack()
         }
         /* 요일 선택 효과 */
         // 월요일
@@ -165,9 +167,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
         binding.btnNextTv.setOnClickListener {
             if (!binding.btnNextTv.isActivated) return@setOnClickListener
             editor.apply()
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container, ChallengePenaltyFragment())
-                .commitAllowingStateLoss()
+            backStackTrueGoalNav(ChallengePenaltyFragment())
         }
     }
 
