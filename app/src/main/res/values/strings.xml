@@ -58,6 +58,24 @@
     <string name="hint_password">비밀번호를 입력하세요.</string>
     <string name="login_error_already_exist_account">이미 이메일로 가입된 계정이에요. 이메일 로그인 후 카카오 계정을 연동할 수 있어요.</string>
 
+    <string name="login_suspend_title">서비스 이용 제한 안내</string>
+    <string name="login_suspend_date">회원님은 서비스 운영정책 위반으로 %1$s까지 이용이 제한된 상태입니다.</string>
+    <string name="login_suspend_report_count">누적 신고 수: %1$d회</string>
+    <string name="login_suspend_status">제제 상태: %1$s</string>
+    <string name="login_suspend_reason">제제 사유: %1$s</string>
+    <string name="login_suspend_contact">문의: weareplanup@gmail.com</string>
+
+    <string name="suspend_status_suspended">계정 비활성화</string>
+    <string name="suspend_status_deleted">계정 삭제</string>
+    <string name="suspend_status_other">계정 정지</string>
+
+    <string name="suspend_reason_abuse_or_hate_speech">욕설/비방/혐오 표현 사용</string>
+    <string name="suspend_reason_sexual_content">음란물/선정적 내용</string>
+    <string name="suspend_reason_span_or_advertising">스팸/광고</string>
+    <string name="suspend_reason_inappropriate_content">불쾌하거나 부적절한 내용</string>
+    <string name="suspend_reason_fraud_or_impersonation">거짓 정보 및 사칭</string>
+    <string name="suspend_reason_other">기타</string>
+
     <string name="signup_id_input">로그인에 사용할\n아이디를 입력해 주세요</string>
     <string name="signup_email">이메일 입력</string>
     <string name="signup_password_input">로그인에 사용할\n비밀번호를 입력해 주세요</string>
@@ -504,6 +522,7 @@
     <string name="toast_challenge_accept">챌린지 참여를 수락했어요.</string>
     <string name="toast_challenge_reject">챌린지 참여를 거절했어요.</string>
     <string name="toast_incorrect_email">이메일 형식을 다시 확인해주세요</string>
+    <string name="toast_empty_password">비밀번호를 입력해주세요.</string>
     <string name="toast_invalid_email">등록되지 않은 이메일이에요</string>
     <string name="toast_incorrect_password">비밀번호를 다시 확인해 주세요.</string>
     <string name="toast_report">신고가 완료되었습니다.</string>
@@ -519,6 +538,7 @@
     <string name="toast_make_new_goal">새로운 목표를 추가하세요</string>
 
     <string name="toast_required_terms">필수 항목에 동의해야 합니다.</string>
+    <string name="toast_unknown_error">알 수 없는 오류가 발생했습니다.</string>
     <string name="toast_failed_email_validation">이메일 인증에 실패했습니다. 다시 시도해주세요.</string>
     <string name="toast_goal_deactivate">목표가 비활성화되었어요.</string>
     <string name="toast_goal_activate">목표가 활성화되었어요.</string>

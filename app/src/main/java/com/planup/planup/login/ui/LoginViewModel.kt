@@ -3,13 +3,16 @@ package com.planup.planup.login.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.planup.planup.database.TokenSaver
 import com.planup.planup.database.UserInfoSaver
-import com.planup.planup.login.ui.LoginViewModel.Event.*
+import com.planup.planup.login.data.SuspendedData
+import com.planup.planup.login.ui.LoginViewModel.Event.StartKakaoOnboarding
+import com.planup.planup.login.ui.LoginViewModel.Event.SuccessLogin
 import com.planup.planup.main.user.domain.UserRepository
 import com.planup.planup.network.ApiResult
-import com.planup.planup.network.onSuccess
 import com.planup.planup.network.data.UserStatus
+import com.planup.planup.network.onSuccess
 import com.planup.planup.network.repository.NotificationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -30,10 +33,10 @@ class LoginViewModel @Inject constructor(
 
     private val _snackBarEvent = Channel<SnackBarEvent>(Channel.BUFFERED)
     val snackBarEvent = _snackBarEvent.receiveAsFlow()
-    
+
     init {
         viewModelScope.launch {
-            if(tokenSaver.getToken() != null && tokenSaver.getRefreshToken() != null) {
+            if (tokenSaver.getToken() != null && tokenSaver.getRefreshToken() != null) {
                 _eventChannel.send(SuccessLogin)
             }
         }
@@ -51,7 +54,31 @@ class LoginViewModel @Inject constructor(
                     _eventChannel.send(Event.SuccessLogin)
                 }
 
-                is ApiResult.Error -> _eventChannel.send(Event.FailLogin(result.message))
+                is ApiResult.Error -> {
+                    val suspendedData = runCatching {
+                            val gson = Gson()
+                            gson.toJson(result.result).let {
+                                gson.fromJson(it, SuspendedData::class.java)
+                            }
+                        }.getOrNull()
+
+                    if(suspendedData?.sanctionStatus != null) {
+                        // 정지당하거나 삭제된 유저인 경우
+                        with(suspendedData) {
+                            _eventChannel.send(
+                                Event.SuspendedUser(
+                                    status = sanctionStatus ?: "",
+                                    count = reportCount ?: -1,
+                                    reason = sanctionReason ?: "",
+                                    detailReason = sanctionDetailReason ?: "",
+                                    endDate = sanctionEndAt ?: ""
+                                )
+                            )
+                        }
+                    } else {
+                        _eventChannel.send(Event.FailLogin(result.message))
+                    }
+                }
                 is ApiResult.Exception -> {
                     Log.e("LoginViewModel", "Fail requestLogin. exception: ${result.error}")
                     _eventChannel.send(Event.UnknownError)
@@ -70,7 +97,7 @@ class LoginViewModel @Inject constructor(
             }
             userRepository.kakaoLogin(accessToken, email)
                 .onSuccess {
-                    when(it.userStatus) {
+                    when (it.userStatus) {
                         UserStatus.SIGNUP_REQUIRED -> {
                             _eventChannel.send(
                                 StartKakaoOnboarding(
@@ -79,9 +106,11 @@ class LoginViewModel @Inject constructor(
                                 )
                             )
                         }
+
                         UserStatus.ACCOUNT_CONFLICT -> {
                             _snackBarEvent.send(SnackBarEvent.ShowExistUserSnackBar)
                         }
+
                         UserStatus.LOGIN_SUCCESS -> {
                             tokenSaver.saveToken(it.accessToken)
                             tokenSaver.saveRefreshToken(it.refreshToken)
@@ -92,6 +121,7 @@ class LoginViewModel @Inject constructor(
 
                             _eventChannel.send(Event.SuccessLogin)
                         }
+
                         UserStatus.SIGNUP_SUCCESS -> {
                             // 해당 없음
                         }
@@ -108,6 +138,14 @@ class LoginViewModel @Inject constructor(
         data class StartKakaoOnboarding(val tempUserId: String, val email: String) : Event()
         object FailKakaoLogin : Event()
         object UnknownError : Event()
+
+        data class SuspendedUser(
+            val status: String,
+            val count: Int,
+            val reason: String,
+            val detailReason: String,
+            val endDate: String
+        ) : Event()
     }
 
     sealed class SnackBarEvent {

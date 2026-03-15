@@ -43,7 +43,14 @@ data class Login(
     @SerializedName("accessToken") val accessToken: String,
     @SerializedName("refreshToken") val refreshToken: String,
     @SerializedName("expiresIn") val expiresIn: Int,
-    @SerializedName("userInfo") val userInfo: UserInfo
+    @SerializedName("userInfo") val userInfo: UserInfo,
+
+    // 제재된 유저일 경우 데이터
+    @SerializedName("sanctionStatus") val sanctionStatus: String?,
+    @SerializedName("sanctionEndAt") val sanctionEndAt: String?,
+    @SerializedName("sanctionReason") val sanctionReason: String?,
+    @SerializedName("sanctionDetailReason") val sanctionDetailReason: String?,
+    @SerializedName("reportCount") val reportCount: Int?,
 )
 
 //비밀번호 변경 시 링크 발송, 재발송
