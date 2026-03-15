@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeSetPhotoBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 
 class ChallengeSetPhotoFragment:Fragment() {
     private lateinit var binding: FragmentChallengeSetPhotoBinding
@@ -47,18 +49,14 @@ class ChallengeSetPhotoFragment:Fragment() {
     }
     private fun clickListener(){
         binding.challengePhotoBackIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager
-                .popBackStack()
+            goalPopBack()
         }
         binding.challengePhotoNumberIv.setOnClickListener {
             dropdown(binding.challengePhotoNumberTv)
         }
         binding.challengePhotoNextBtn.setOnClickListener {
             editor.apply()
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeSetFrequencyFragment())
-                .addToBackStack(null)
-                .commitAllowingStateLoss()
+            backStackTrueGoalNav(ChallengeSetFrequencyFragment())
         }
     }
     private fun dropdown(view: View){

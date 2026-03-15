@@ -5,15 +5,15 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ChallengeReceivedPhoto(
-    val userId: Int, //사용자 id
-    val challengeId: Int, //챌린지 id
-    val friendId: List<Long>, //챌린지를 요청한 친구의 id
-    val friendName: String, //친구 이름
-    val goalName: String, //목표명
-    val goalAmount: String, //1회 분량
+    override val userId: Int, //사용자 id
+    override val challengeId: Int, //챌린지 id
+    override val friendId: List<Long>, //챌린지를 요청한 친구의 id
+    override val friendName: String, //친구 이름
+    override val goalAmount: String, //1회 분량
+    override val goalName: String, //목표명
     val howMany: Int, //인증 횟수
-    val endDate: String, //종료일
-    val duration: String, //기준 기간
-    val frequency: String, //빈도
-    val penalty: String //페널티
-): Parcelable
+    override val endDate: String, //종료일
+    override val period: String, //기준 기간
+    override val frequency: String, //빈도
+    override val penalty: String //페널티
+): ChallengeReceived()

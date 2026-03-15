@@ -82,7 +82,7 @@ interface GoalApi {
     // http://54.180.207.84/community/daily-achievement?targetDate=2024-08-21
     @GET("/goals/daily/{date}")
     suspend fun getDailyGoal(
-        @Query("date") date: String
+        @Path("date") date: String
     ): Response<DailyGoalResponse>
     //http://54.180.207.84/community/daily-achievement?targetDate=2024-08-21
     @GET("/community/daily-achievement")

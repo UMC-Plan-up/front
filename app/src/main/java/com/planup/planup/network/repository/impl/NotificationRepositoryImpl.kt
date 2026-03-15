@@ -1,6 +1,8 @@
 package com.planup.planup.network.repository.impl
 
+import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
+import com.planup.planup.main.home.ui.viewmodel.NotificationItem
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.NotificationApi
 import com.planup.planup.network.dto.notification.UpdateDeviceTokenRequest
@@ -73,4 +75,30 @@ class NotificationRepositoryImpl @Inject constructor(
                 }
             )
         }
+
+    override suspend fun loadNotificationType(receiverId: Int, type: String) =
+        withContext(Dispatchers.IO) {
+
+            safeResult(
+                response = {
+                    notificationApi.loadNotificationType(receiverId, type)
+                },
+                onResponse = { response ->
+                    Log.d("errorCode", response.code)
+                    if (response.isSuccess) {
+                        Log.d("loadNotificationType", response.result.toString())
+                        ApiResult.Success(response.result.map { item ->
+                            NotificationItem(
+                                id = item.id,
+                                text = item.notificationText,
+                                url = item.url
+                            )
+                        })
+                    } else {
+                            ApiResult.Fail("${response.code}/${response.message}")
+                    }
+                }
+            )
+        }
+
 }

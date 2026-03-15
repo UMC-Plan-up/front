@@ -9,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
 import androidx.fragment.app.Fragment
-import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeTimerPhotoBinding
 import com.planup.planup.goal.GoalActivity
+import com.planup.planup.goal.util.backStackTrueGoalNav
+import com.planup.planup.goal.util.goalPopBack
 
 class ChallengeTimerPhotoFragment:Fragment() {
     lateinit var binding: FragmentChallengeTimerPhotoBinding
@@ -51,9 +52,7 @@ class ChallengeTimerPhotoFragment:Fragment() {
 
         //뒤로가기 목표명, 1회 분량 설정
         binding.backIv.setOnClickListener {
-            (context as GoalActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.goal_container,ChallengeSetGoalFragment())
-                .commitAllowingStateLoss()
+            goalPopBack()
         }
 
         //타이머 인증 선택
@@ -74,15 +73,9 @@ class ChallengeTimerPhotoFragment:Fragment() {
             if (!binding.timerCl.isSelected && !binding.photoCl.isSelected) return@setOnClickListener
             editor.apply()
             if (binding.timerCl.isSelected) { //타이머 인증을 선택한 경우
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container,ChallengeSetTimerFragment())
-                    .addToBackStack(null)
-                    .commitAllowingStateLoss()
+                backStackTrueGoalNav(ChallengeSetTimerFragment())
             } else if (binding.photoCl.isSelected){ //사진 인증을 선택한 경우
-                (context as GoalActivity).supportFragmentManager.beginTransaction()
-                    .replace(R.id.goal_container,ChallengeSetPhotoFragment())
-                    .addToBackStack(null)
-                    .commitAllowingStateLoss()
+                backStackTrueGoalNav(ChallengeSetPhotoFragment())
             }
 
         }

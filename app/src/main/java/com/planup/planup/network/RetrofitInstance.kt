@@ -1,6 +1,5 @@
 package com.planup.planup.network
 
-import com.example.planup.network.ChallengeApi
 import com.planup.planup.App
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

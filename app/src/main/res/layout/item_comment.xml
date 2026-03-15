@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="3dp"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/comment_profile"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/img_friend_profile_sample1"
+                android:scaleType="centerCrop"
+                android:clipToOutline="true"/>
+
+            <TextView
+                android:id="@+id/comment_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="친구1"
+                android:textSize="14sp"
+                android:textColor="#222222"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/textSpeech"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_speech_box"
+            android:padding="16dp"
+            android:text="벌써 이만큼 했음? 부지런하네..."
+            android:textColor="#333333"
+            android:textSize="14sp"
+            android:lineSpacingExtra="4dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:elevation="4dp"
+            android:layout_gravity="center"/>
+</LinearLayout>
