@@ -120,14 +120,16 @@ class ChallengeController {
         CoroutineScope(Dispatchers.IO).launch {
             val response = RetrofitInstance.friendApi.getFriendSummary()
             withContext(Dispatchers.Main){
-                if (response.isSuccessful && response.body() != null) {
-                    challengeFriendsAdapter.successFriends(
-                        response.body()!!.result.friendInfoSummaryList.toFriendItems()
-                    )
-                } else if (!response.isSuccessful && response.body() != null) {
-                    challengeFriendsAdapter.failFriends(response.body()!!.message)
-                } else {
-                    challengeFriendsAdapter.failFriends("null")
+                if (response.isSuccessful){
+                    if (response.body() != null){
+                        challengeFriendsAdapter.successFriends(
+                            response.body()!!.result.friendInfoSummaryList.toFriendItems()
+                        )
+                    }else {
+                        challengeFriendsAdapter.failFriends("친구 목록이 없습니다.")
+                    }
+                }else{
+                    challengeFriendsAdapter.failFriends("친구 조회에 실패했습니다")
                 }
             }
 
