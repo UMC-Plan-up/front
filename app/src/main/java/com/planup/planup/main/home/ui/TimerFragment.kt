@@ -60,33 +60,16 @@ class TimerFragment @Inject constructor() : Fragment() {
         observeViewModel()
         viewModel.preselectedDate = arguments?.getString("selectedDate").toString()
 
-        viewModel.loadGoals(
-            onCallBack = { result ->
-                when (result) {
-                    is ApiResult.Success -> {
-                        Log.d("setupspinner","${viewModel.goals.value}")
-                        setupSpinner(viewModel.goals.value)
-                    }
-                    is ApiResult.Error -> {
-                        Log.d("loadGoals", "Error: ${result.message}")
-                    }
-
-                    is ApiResult.Exception -> {
-                        Log.d("loadGoals", "Exception: ${result.error}")
-                    }
-
-                    is ApiResult.Fail -> {
-                        Log.d("loadGoals", "Fail: ${result.message}")
-                    }
-
-                    else -> {}
-                }
-            }
-        )
+        viewModel.loadGoals(createErrorHandler("loadGoals_init") {
+            setupSpinner(viewModel.goals.value)
+        })
 
         lifecycleScope.launch {
             viewModel.goals.collect { goals ->
                 // spinner 세팅
+                viewModel.loadGoals(createErrorHandler("loadGoals"){
+                    setupSpinner(viewModel.goals.value)
+                })
             }
         }
 
@@ -113,7 +96,7 @@ class TimerFragment @Inject constructor() : Fragment() {
 
         binding.goalListPlayBtn.setOnClickListener {
             val goalId = viewModel.selectedGoalId.value
-            viewModel.startTimer(goalId,
+            viewModel.startTimer(
                 onCallBack = { result ->
                     when (result) {
                         is ApiResult.Error -> {
@@ -136,7 +119,7 @@ class TimerFragment @Inject constructor() : Fragment() {
         binding.editMemo.setOnFocusChangeListener { _, hasFocus ->
             if (!hasFocus) {
                 val goalId = viewModel.selectedGoalId.value
-                viewModel.saveMemo(goalId, "2025-10-19", binding.editMemo.text.toString(),
+                viewModel.saveMemo("2025-10-19", binding.editMemo.text.toString(),
                     onCallBack = { result ->
                         when (result) {
                             is ApiResult.Error -> {
@@ -185,7 +168,7 @@ class TimerFragment @Inject constructor() : Fragment() {
                 viewModel.selectGoal(selectedSpinnerItem)
 
                 // 3️⃣ UI 초기화
-                viewModel.loadTotalTime(selectedSpinnerItem,
+                viewModel.loadTotalTime(
                     onCallBack = { result ->
                         when (result) {
                             is ApiResult.Error -> {
@@ -207,7 +190,7 @@ class TimerFragment @Inject constructor() : Fragment() {
 
                 // 5️⃣ 기타 UI 로드
                 //setFriendsTimer()
-                viewModel.loadFriends(selectedSpinnerItem,
+                viewModel.loadFriends(
                     onCallBack = { result ->
                         when (result) {
                             is ApiResult.Error -> {
@@ -223,7 +206,7 @@ class TimerFragment @Inject constructor() : Fragment() {
                         }
                     })
                 setGoalInfo()
-                viewModel.loadMemo(selectedSpinnerItem, viewModel.selectedDate.value,
+                viewModel.loadMemo(viewModel.selectedDate.value,
                     onCallBack = { result ->
                         when (result) {
                             is ApiResult.Error -> {
@@ -238,7 +221,7 @@ class TimerFragment @Inject constructor() : Fragment() {
                             else -> {}
                         }
                     })
-                setupTimerButton(selectedSpinnerItem)
+                setupTimerButton()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -254,7 +237,7 @@ class TimerFragment @Inject constructor() : Fragment() {
 //    }
 
     private fun setGoalInfo() {
-        viewModel.loadGoalInfo(viewModel.selectedGoalId.value,
+        viewModel.loadGoalInfo(
             onCallBack = { result ->
                 when (result) {
                     is ApiResult.Error -> {
@@ -273,10 +256,10 @@ class TimerFragment @Inject constructor() : Fragment() {
         binding.timerGoalFrequencyTv.text = "${viewModel.goalFreq}회 이상"
     }
 
-    private fun setupTimerButton(goalId: Int) {
+    private fun setupTimerButton() {
         val playButton = binding.goalListPlayBtn
         playButton.setOnClickListener {
-            viewModel.clickTimerButton(goalId)
+            viewModel.clickTimerButton()
         }
     }
 
@@ -353,6 +336,19 @@ class TimerFragment @Inject constructor() : Fragment() {
             "${requireContext().packageName}.fileprovider",
             file
         )
+    }
+
+    fun <T> createErrorHandler(
+        tag: String,
+        onSuccess: ((T) -> Unit)? = null): (ApiResult<T>) -> Unit {
+        return { result ->
+            when (result) {
+                is ApiResult.Success -> onSuccess?.invoke(result.data)
+                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
+                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
+                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
+            }
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.planup.planup.main.home.adapter
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -120,6 +121,7 @@ class PhotoManageAdapter(
                     toggleSelection(adapterPosition)
                 } else {
                     onPhotoClick.invoke(item)
+                    Log.d("PhotoManageAdapter", "bind: ${item.id}, mode : ${isSelectionMode}")
                 }
             }
         }
@@ -129,18 +131,24 @@ class PhotoManageAdapter(
 
     fun addPhoto(uri: Uri) {
 
+//        val list = currentList
+//            .filterIsInstance<UploadItem.PhotoItem>()
+//            .toMutableList()
+//
+//        val newId = System.currentTimeMillis().toInt()
+//
+//        list.add(
+//            UploadItem.PhotoItem(
+//                id = newId,
+//                imageUrl = uri.toString()
+//            )
+//        )
+        val urls = List(1){
+            uri.toString()
+        }
+
         val list = currentList
             .filterIsInstance<UploadItem.PhotoItem>()
-            .toMutableList()
-
-        val newId = System.currentTimeMillis().toInt()
-
-        list.add(
-            UploadItem.PhotoItem(
-                id = newId,
-                imageUrl = uri.toString()
-            )
-        )
 
         submitList(buildListWithAddButton(list))
     }
@@ -199,7 +207,7 @@ class PhotoManageAdapter(
 
         val list = currentList.toMutableList()
         val item = list[position]
-
+        Log.d("PhotoManageAdapter", "toggleSelection: $item, list : $list")
         if (item is UploadItem.PhotoItem) {
             list[position] = item.copy(isSelected = !item.isSelected)
         }

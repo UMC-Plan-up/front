@@ -51,7 +51,10 @@ class PhotoManageViewModel @Inject constructor(
         }
     }
 
-    fun deletePhotos(ids: List<Int>) {
+    fun deletePhotos(
+        ids: List<Int>,
+        onCallBack: (ApiResult<Unit>) -> Unit
+    ) {
         viewModelScope.launch {
             for(photoId in ids){
                 repository.deletePhotos(photoId)
@@ -64,7 +67,10 @@ class PhotoManageViewModel @Inject constructor(
         }
     }
 
-    fun postPhotos(date: String, photoList: List<String>) {
+    fun postPhotos(
+        date: String, photoList: List<String>,
+        onCallBack: (ApiResult<Unit>) -> Unit
+    ) {
         viewModelScope.launch {
             repository.postPhotos(goalId, date, photoList)
                 .onSuccess {

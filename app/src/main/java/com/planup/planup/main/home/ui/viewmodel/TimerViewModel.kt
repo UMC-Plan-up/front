@@ -16,13 +16,18 @@ import com.planup.planup.network.ApiResult
 import com.planup.planup.network.data.TimerStartResult
 import com.planup.planup.network.data.TimerStopResult
 import com.planup.planup.network.data.TodayTotalTimeResult
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -53,12 +58,15 @@ class TimerViewModel @Inject constructor(
     private val _selectedDate = MutableStateFlow(preselectedDate)
     val selectedDate: StateFlow<String> = _selectedDate
 
-    private var isRunning = false
+    //private var isRunning = false
+    private val _isRunning = MutableStateFlow<Boolean>(false)
+    val isRunning: StateFlow<Boolean> = _isRunning
     private var elapsedSeconds = 0
     private var timerId: Int = 0 //0: 타이머 없음
 
     private val _imageUri = MutableStateFlow<Uri?>(null)
     val imageUri: StateFlow<Uri?> = _imageUri
+    private var timerJob: Job? = null
 
     fun setImage(uri: Uri) {
         _imageUri.value = uri
@@ -68,41 +76,29 @@ class TimerViewModel @Inject constructor(
         onCallBack: (result: ApiResult<List<MyGoalListItem>>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = repository.getMyGoalList()
-                if(result is ApiResult.Success) { _goals.value = result.data }
-                val dummyList: List<MyGoalListItem> = listOf(
-                    MyGoalListItem(0,"목표1", "FRIEND", 10, 10),
-                    MyGoalListItem(-1, "목표2", "FRIEND", 11, 11)
-                ) //더미 데이터 << 목표 생성 가능해지면 지우기
-                _goals.value = dummyList
-                onCallBack(result)
-            } catch (e: CancellationException) {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
+            repository.getMyGoalList()
+                .onSuccess { result ->
+                    _goals.value = result
+                    val dummyList: List<MyGoalListItem> = listOf(
+                        MyGoalListItem(0,"목표1", "FRIEND", 10, 10),
+                        MyGoalListItem(-1, "목표2", "FRIEND", 11, 11)
+                    ) //더미 데이터 << 목표 생성 가능해지면 지우기
+                    _goals.value = dummyList
+                    onCallBack(ApiResult.Success(result))
+                }
         }
     }
 
     fun loadTotalTime(
-        goalId: Int,
         onCallBack: (ApiResult<TodayTotalTimeResult>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = repository.getTodayTotalTime(goalId)
-                if (result is ApiResult.Success) {
-                    _timerText.value = result.data.formattedTime
+            repository.getTodayTotalTime(selectedGoalId.value)
+                .onSuccess {
+                    _timerText.value = it.formattedTime
+                }.onFailWithMessage {
+                    Log.d("loadTotalTime", "loadTotalTime failed : $it")
                 }
-                onCallBack(result)
-            } catch (e: CancellationException) {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 
@@ -111,61 +107,57 @@ class TimerViewModel @Inject constructor(
     }
 
     fun loadFriends(
-        goalId: Int,
         onCallBack: (result: ApiResult<List<FriendsTimerResult>>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = repository.getFriendsTimer(goalId)
-                if (result is ApiResult.Success) {
-                    _friends.value = result.data.map {
+            repository.getFriendsTimer(selectedGoalId.value)
+                .onSuccess {
+                    _friends.value = it.map {
                         FriendTimer(it.nickname, it.todayTime, it.profileImg)
                     }
+                }.onFailWithMessage {
+                    Log.d("loadFriends", "loadFriends failed : $it")
                 }
-                onCallBack(result)
-            } catch (e: CancellationException) {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 
-    fun loadGoalInfo(goalId: Int, onCallBack: (result: ApiResult<EditGoalResponse>) -> Unit) {
+    fun loadGoalInfo(onCallBack: (result: ApiResult<EditGoalResponse>) -> Unit) {
         viewModelScope.launch {
-            try {
-                val result = repository.getEditGoal(goalId)
-                if (result is ApiResult.Success) {
-                    goalFreq = result.data.frequency
-                    goalAmount = result.data.goalAmount
+            repository.getEditGoal(selectedGoalId.value)
+                .onSuccess { result ->
+                    goalFreq = result.frequency
+                    goalAmount = result.goalAmount
+                }.onFailWithMessage {
+                    Log.d("loadGoalInfo", "loadGoalInfo failed : $it")
                 }
-                onCallBack(result)
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 
     fun startTimer(
-        goalId: Int,
         onCallBack: (result: ApiResult<TimerStartResult>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = repository.startTimer(goalId)
-                if (result is ApiResult.Success) {
-                    isRunning = true
-                    elapsedSeconds = result.data.goalTimeMinutes
-                    timerId = result.data.timerId
+            repository.startTimer(selectedGoalId.value)
+                .onSuccess { result ->
+                    _isRunning.value = true
+                    elapsedSeconds = result.goalTimeMinutes
+                    timerId = result.timerId
+                    runTimer()
+                }.onFailWithMessage {
+                    Log.d("startTimer", "startTimer failed : $it")
                 }
-                onCallBack(result)
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
+        }
+    }
+
+    fun runTimer() {
+        viewModelScope.launch {
+            isRunning.collectLatest { running ->
+                if (running) {
+                    while (true) {
+                        delay(1000L)
+                        updateTimerText()
+                    }
+                }
             }
         }
     }
@@ -173,19 +165,14 @@ class TimerViewModel @Inject constructor(
     fun stopTimer(
         onCallBack: (result: ApiResult<TimerStopResult>) -> Unit
     ) {
+        _isRunning.value = false
         viewModelScope.launch {
-            try {
-                val result = repository.stopTimer(timerId)
-                if (result is ApiResult.Success) {
-                    isRunning = false
-                    timerId = 0
+            repository.stopTimer(timerId)
+                .onSuccess {
+                    timerId = -1
+                }.onFailWithMessage {
+                    Log.d("stopTimer", "stopTimer failed : $it")
                 }
-                onCallBack(result)
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 
@@ -197,61 +184,36 @@ class TimerViewModel @Inject constructor(
         _timerText.value = String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 
-    fun clickTimerButton(goalId: Int) {
-        if (isRunning) stopTimer(
-            onCallBack = { result ->
-                when (result) {
-                    is ApiResult.Error -> { Log.d("stopTimer", "Error: ${result.message}") }
-                    is ApiResult.Exception -> { Log.d("stopTimer", "Exception: ${result.error}") }
-                    is ApiResult.Fail -> { Log.d("stopTimer", "Fail: ${result.message}") }
-                    else -> {}
-                }
-            }
-        )
-        else startTimer(
-            goalId,
-            onCallBack = { result ->
-                when (result) {
-                    is ApiResult.Error -> { Log.d("startTimer", "Error: ${result.message}") }
-                    is ApiResult.Exception -> { Log.d("startTimer", "Exception: ${result.error}") }
-                    is ApiResult.Fail -> { Log.d("startTimer", "Fail: ${result.message}") }
-                    else -> {}
-                }
-            }
-        )
+    fun clickTimerButton() {
+        if (isRunning.value) stopTimer(createErrorHandler("stopTimer"))
+        else startTimer(createErrorHandler("startTimer"))
     }
 
-    fun loadMemo(
-        goalId: Int, date: String,
+    fun loadMemo(date: String,
         onCallBack: (result: ApiResult<DateMemoResult>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val response = repository.getDateMemo(goalId, date)
-                if (response is ApiResult.Success) _memo.value = response.data.memo
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
+            repository.getDateMemo(selectedGoalId.value, date)
+                .onSuccess {
+                    _memo.value = it.memo
+                }.onFailWithMessage {
+                    Log.d("loadMemo", "loadMemo failed : $it")
+                }
         }
     }
 
     fun saveMemo(
-        goalId: Int, date: String, memo: String,
+        date: String, memo: String,
         onCallBack: (ApiResult<PostMemoResult>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val response = repository.saveMemo(goalId, date, memo)
-                if (response is ApiResult.Success) {
-
+            repository.saveMemo(selectedGoalId.value,date,memo)
+                .onSuccess {
+                    _memo.value = it.memo
+                    //TODO: post memo api
+                }.onFailWithMessage {
+                    Log.d("saveMemo", "saveMemo failed : $it")
                 }
-            } catch (e: CancellationException) {
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 
@@ -265,6 +227,18 @@ class TimerViewModel @Inject constructor(
         val currentDate = LocalDate.parse(selectedDate.value)
         val prevDate = currentDate.minusDays(1)
         _selectedDate.value = prevDate.toString()
+    }
+    fun <T> createErrorHandler(
+        tag: String,
+        onSuccess: ((T) -> Unit)? = null): (ApiResult<T>) -> Unit {
+        return { result ->
+            when (result) {
+                is ApiResult.Success -> onSuccess?.invoke(result.data)
+                is ApiResult.Error -> Log.d(tag, "Error: ${result.message}")
+                is ApiResult.Exception -> Log.d(tag, "Exception: ${result.error}")
+                is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
+            }
+        }
     }
 }
 

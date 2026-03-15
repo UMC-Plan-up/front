@@ -220,7 +220,9 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
                 return@setOnClickListener
             }
             val ids = selectedPhotos.map { it.id }
-            viewModel.deletePhotos(ids)
+            viewModel.deletePhotos(ids, createErrorHandler("deletePhotos") {
+                Log.d("PhotoManageFragment", "showImageDeleteBottomSheet: $it")
+            })
         }
 
         view.findViewById<TextView>(R.id.photo_manage_cancel_tv).setOnClickListener {
@@ -262,7 +264,10 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.postPhotos(
                 date = "2026-03-08", //TODO: 날짜 바꾸기
-                photoList = base64List
+                photoList = base64List,
+                createErrorHandler("postPhotos"){
+                    Log.d("PhotoManageFragment", "uploadPhotos: $it")
+                }
             )
         }
     }
