@@ -21,6 +21,7 @@ import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
 import com.planup.planup.goal.util.TmpGoalData
 import com.planup.planup.goal.util.goalType
+import com.planup.planup.goal.util.loadProfile
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
@@ -147,16 +148,16 @@ class GoalCommunityJoinFragment : Fragment() {
             topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
             if (!empty){
-                firstProfile.setImageURI(ranking[0].profileImg.toUri())
+                firstProfile.loadProfile(ranking[0].profileImg)
                 firstName.text = ranking[0].nickName
                 firstVer.text = "사진인증${ranking[0].verificationCount}회"
-                secondProfile.setImageURI(ranking[1].profileImg.toUri())
+                secondProfile.loadProfile(ranking[1].profileImg)
                 secondName.text = ranking[1].nickName
                 secondVer.text = "사진인증${ranking[1].verificationCount}회"
                 if (ranking.size < 3) {
                     thirdRankLayout.visibility = View.GONE
                 } else {
-                    ThirdProfile.setImageURI(ranking[2].profileImg.toUri())
+                    ThirdProfile.loadProfile(ranking[2].profileImg)
                     ThirdName.text = ranking[2].nickName
                     ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
 
@@ -185,18 +186,8 @@ class GoalCommunityJoinFragment : Fragment() {
 
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
-            runCatching {
-                RetrofitInstance.goalApi.getGoalRanking(goalId = goalId) // GoalDetailResponse
-            }.onSuccess { resp ->
-                if (resp.isSuccessful && resp.body() != null) {
-                    val ranking = resp.body()!!.result.sortedByDescending { it.verificationCount }
-                    // ✅ 타입 맞춤
-                    bindRanking(ranking)
-                } else {
-                    Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
-                }
-            }.onFailure {
-                Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            com.planup.planup.goal.util.setRanking(requireContext(),goalId){
+                    ranking -> bindRanking(ranking)
             }
         }
     }

@@ -16,17 +16,15 @@ import android.widget.TextView
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentChallengeSetAlertBinding
+import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.home.ui.HomeFragment
-import androidx.core.graphics.drawable.toDrawable
-import androidx.lifecycle.ViewModelProvider
-import com.planup.planup.goal.GoalActivity
-import com.planup.planup.main.goal.viewmodel.GoalViewModel
 
 class ChallengeSetAlertFragment : Fragment() {
     lateinit var binding: FragmentChallengeSetAlertBinding
@@ -92,14 +90,14 @@ class ChallengeSetAlertFragment : Fragment() {
         //저장 버튼 클릭
         binding.alertSaveBtn.setOnClickListener {
             makeToast()
-            val goalViewModel = ViewModelProvider(requireActivity()).get(GoalViewModel::class.java)
-            if (goalViewModel.fromWhere.value == "CommunityIntroFragment") {//첫 방문인 경우 온보딩 페이지로 이동
-                val intent = Intent((context as GoalActivity), MainActivity::class.java)
+//            val goalViewModel = ViewModelProvider(requireActivity()).get(GoalViewModel::class.java)
+//            if (goalViewModel.fromWhere.value == "CommunityIntroFragment") {//첫 방문인 경우 온보딩 페이지로 이동
+//                val intent = Intent((requireActivity() as GoalActivity), MainActivity::class.java)
+//                startActivity(intent)
+//            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
+                val intent = Intent((requireActivity() as GoalActivity), MainActivity::class.java)
                 startActivity(intent)
-            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
-                val intent = Intent((context as GoalActivity), MainActivity::class.java)
-                startActivity(intent)
-            }
+//            }
         }
 
         //정기 알림 시간 설정

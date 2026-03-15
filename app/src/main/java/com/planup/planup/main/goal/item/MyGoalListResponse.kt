@@ -12,5 +12,6 @@ data class MyGoalListItem(
     val goalName: String,
     val goalType: String,
     val frequency: Int,
-    val oneDose: Int
+    val oneDose: Int,
+    val isActive: Boolean
 )

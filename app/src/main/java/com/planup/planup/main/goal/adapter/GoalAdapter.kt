@@ -2,21 +2,25 @@ package com.planup.planup.main.goal.adapter
 
 import android.app.Dialog
 import android.graphics.Color
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.planup.planup.R
-import com.planup.planup.databinding.ItemGoalListRecyclerviewBinding
-import com.planup.planup.main.goal.item.GoalItem
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.planup.planup.R
+import com.planup.planup.databinding.ItemGoalListRecyclerviewBinding
+import com.planup.planup.main.goal.data.GoalType
+import com.planup.planup.main.goal.item.GoalItem
 
 class GoalAdapter(
     private var items: List<GoalItem>,
@@ -55,11 +59,18 @@ class GoalAdapter(
 
     override fun onBindViewHolder(holder: GoalViewHolder, position: Int) {
         val item = items[position]
-        holder.title.text = item.title
-        holder.description.text = item.description
-        setupDonutChart(holder.pieChart, item.percent)
+        Log.d("GoalAdapter", "onBindViewHolder: $item")
+        holder.title.apply {
+            text = item.title
+            alpha = if (item.isActive) 1f else 0.7f
+        }
+        holder.description.apply {
+            text = item.description
+            alpha = if (item.isActive) 1f else 0.7f
+        }
+        setupDonutChart(holder.pieChart, item.percent, item.isActive)
 
-        holder.buttonLayout.visibility = if (isEditMode) View.VISIBLE else View.GONE
+        holder.buttonLayout.visibility = if (isEditMode&&(item.goalType == GoalType.FRIEND || item.goalType == GoalType.COMMUNITY)) View.VISIBLE else View.GONE
         // holder.editIcon.visibility = if (isEditMode) View.VISIBLE else View.GONE
 
         holder.toggleBtn.text = if (item.isActive) "비활성화하기" else "활성화하기"
@@ -92,7 +103,19 @@ class GoalAdapter(
 
         holder.itemView.setOnClickListener {
             if (!isEditMode) {
-                onItemClick(item)
+                if (item.isActive)
+                    onItemClick(item)
+                else{
+                    val inflater = LayoutInflater.from(holder.itemView.context)
+                    val layout = inflater.inflate(R.layout.toast_grey_template, null)
+                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = "비활성화 상태입니다."
+                    Toast(holder.itemView.context).apply {
+                        view = layout
+                        duration = LENGTH_SHORT
+                        setGravity(Gravity.BOTTOM, 0, 477)
+                    }.show()
+                }
+
             }
         }
 
@@ -126,7 +149,7 @@ class GoalAdapter(
         }
     }
 
-    private fun setupDonutChart(pieChart: PieChart, percent: Int) {
+    private fun setupDonutChart(pieChart: PieChart, percent: Int,isActivate: Boolean = true) {
         val entries = listOf(
             PieEntry(percent.toFloat()),
             PieEntry((100 - percent).toFloat())
@@ -154,6 +177,7 @@ class GoalAdapter(
             centerText = "$percent%"
             setCenterTextSize(12f)
             setCenterTextColor(Color.BLACK)
+            alpha = if (isActivate)1f else 0.7f
             invalidate()
         }
     }

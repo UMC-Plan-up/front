@@ -1,13 +1,15 @@
-package com.example.planup.network
+package com.planup.planup.network
 
 import com.planup.planup.network.data.ChallengeFriends
 import com.planup.planup.network.data.ChallengeInfo
 import com.planup.planup.network.data.ChallengeResponse
 import com.planup.planup.network.data.ChallengeResponseNoResult
 import com.planup.planup.network.data.ChallengeResult
+import com.planup.planup.network.data.EmptyResult
 import com.planup.planup.network.dto.challenge.ChallengeDto
 import com.planup.planup.network.dto.challenge.RepenaltyDto
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -17,27 +19,33 @@ import retrofit2.http.Query
 interface ChallengeApi {
     //챌린지 정보 조회
     @GET("challenges/{challengeId}")
-    fun challengeInfo(@Path("challengeId") challengeId: Int): Call<ChallengeResponse<ChallengeInfo>>
+    suspend fun challengeInfo(
+        @Query("challengeId") challengeId: Int
+    ): Response<ChallengeResponse<ChallengeInfo>>
     //챌린지 결과 조회
     @GET("challenges/{challengeId}/result")
-    fun challengeResult(@Query("userId") userId: Int, @Path("challengeId") challengeId: Int): Call<ChallengeResponse<ChallengeResult>>
+    fun challengeResult(@Query("userId") userId: Int, @Path("challengeId") challengeId: Int): Response<ChallengeResponse<ChallengeResult>>
     //챌린지 거절
     @GET("challenges/{challengeId}/reject")
-    fun rejectChallenge(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResponseNoResult>
+    fun rejectChallenge(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int)
+    : Response<ChallengeResponseNoResult<EmptyResult>>
     //챌린지 이름 조회
     @GET("challenges/{challengeId}/name")
     fun challengeName(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResponse<String>>
     //챌린지 수학
     @GET("challenges/{challengeId}/accept")
-    fun acceptChallenge(@Path("challengeId") challengeId: Int, @Query("userId") userId: Int): Call<ChallengeResponseNoResult>
+    fun acceptChallenge(
+        @Path("challengeId") challengeId: Int,
+        @Query("userId") userId: Int
+    ): Response<ChallengeResponseNoResult<EmptyResult>>
     //챌린지에서 친구 조회
     @GET("challenges/friends")
     fun showFriends(): Call<ChallengeResponse<List<ChallengeFriends>>>
 
     //챌린지에 대한 다른 페널티 제안
     @POST("challenges/repanalty")
-    fun changePenalty(@Body repenaltyDto: RepenaltyDto): Call<ChallengeResponseNoResult>
+    fun changePenalty(@Body repenaltyDto: RepenaltyDto): Response<ChallengeResponseNoResult<EmptyResult>>
     //챌린지 생성 요청
     @POST("challenges/create")
-    fun createChallenge(@Body challengeDto: ChallengeDto): Call<ChallengeResponseNoResult>
+    suspend fun createChallenge(@Body challengeDto: ChallengeDto): ChallengeResponseNoResult<EmptyResult>
 }

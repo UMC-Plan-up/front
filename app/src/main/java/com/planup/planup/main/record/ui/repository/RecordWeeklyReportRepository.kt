@@ -2,6 +2,7 @@ package com.planup.planup.main.record.ui.repository
 
 import com.planup.planup.main.record.data.DetailWeeklyReportResult
 import com.planup.planup.network.ApiResult
+import com.planup.planup.network.ChallengeApi
 import com.planup.planup.network.NotificationApi
 import com.planup.planup.network.RecordApi
 import com.planup.planup.network.UserApi
@@ -16,7 +17,8 @@ import javax.inject.Singleton
 class RecordWeeklyReportRepository @Inject constructor(
     private val recordApi : RecordApi,
     private val userApi : UserApi,
-    private val notiApi: NotificationApi
+    private val notiApi: NotificationApi,
+    private val challengeApi: ChallengeApi
 ) {
     suspend fun loadWeeklyReport(
         userId: Int, year: Int, month: Int, week: Int

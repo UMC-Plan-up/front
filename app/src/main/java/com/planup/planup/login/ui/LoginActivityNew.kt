@@ -52,6 +52,7 @@ class LoginActivityNew : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.emailEditText.setText("deleted_user@test.com")
         init()
         clickListener()
         initObservers()
@@ -171,6 +172,15 @@ class LoginActivityNew : AppCompatActivity() {
                                 }
                             )
                         }
+                        is LoginViewModel.Event.SuspendedUser -> {
+                            LoginSuspendDialog.newInstance(
+                                timeStamp = event.endDate,
+                                count = event.count,
+                                status = event.status,
+                                reason = event.reason,
+                                detailReason = event.detailReason
+                            ).show(supportFragmentManager, "dialog")
+                        }
                     }
                 }
             }
@@ -182,6 +192,9 @@ class LoginActivityNew : AppCompatActivity() {
         //이메일 형식이 옳바르지 않은 경우
         if (!Patterns.EMAIL_ADDRESS.matcher(binding.emailEditText.text.toString()).matches()) {
             makeToast(R.string.toast_incorrect_email)
+            return
+        } else if(binding.passwordEditText.text.isBlank()) {
+            makeToast(R.string.toast_empty_password)
             return
         } else { //이메일 형식이 옳바른 경우 서버에 로그인 요청
             viewModel.requestLogin(

@@ -5,12 +5,14 @@ import android.util.Patterns
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.planup.planup.login.data.SuspendedData
 import com.planup.planup.main.user.domain.UserRepository
+import com.planup.planup.network.ApiResult
 import com.planup.planup.network.onFailWithMessage
 import com.planup.planup.network.onSuccess
 import com.planup.planup.network.repository.ProfileRepository
 import com.planup.planup.network.repository.TermRepository
-import com.planup.planup.onboarding.OnBoardingViewModel.Event.*
 import com.planup.planup.onboarding.model.GenderModel
 import com.planup.planup.onboarding.model.OnboardingStep
 import com.planup.planup.onboarding.model.SignupTypeModel
@@ -165,18 +167,50 @@ class OnBoardingViewModel @Inject constructor(
         var isDuplicated = true
 
         viewModelScope.async {
-            userRepository.checkEmailAvailable(state.value.email)
-                .onSuccess { available ->
-                    isDuplicated = !available
-                    _state.update { it.copy(isDuplicatedEmail = !available) }
+//            userRepository.checkEmailAvailable(state.value.email)
+//                .onSuccess { available ->
+//                    isDuplicated = !available
+//                    _state.update { it.copy(isDuplicatedEmail = !available) }
+//                }
+//                .onFailWithMessage {
+//                    Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
+//                    _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
+//
+//                    isDuplicated = true
+//                    _state.update { it.copy(isDuplicatedEmail = true) }
+//                }
+            val result = userRepository.checkEmailAvailable(state.value.email)
+
+            when (result) {
+                is ApiResult.Success -> {
+                    isDuplicated = result.data
+                    _state.update { it.copy(isDuplicatedEmail = !result.data) }
                 }
-                .onFailWithMessage {
-                    Log.e("OnBoardingViewModel", "이메일 중복 확인 실패| $it")
-                    _snackBarEvent.send(SnackBarEvent.UndefinedError(it))
+
+                is ApiResult.Error -> {
+                    val suspendedData = runCatching {
+                        val gson = Gson()
+                        gson.toJson(result.result).let {
+                            gson.fromJson(it, SuspendedData::class.java)
+                        }
+                    }.getOrNull()
+
+                    if (suspendedData?.sanctionStatus == null) {
+                        // 정지당하거나 삭제된 유저인 경우 중복 유저로 표시
+                        isDuplicated = true
+                        _state.update { it.copy(isDuplicatedEmail = true) }
+                    }
 
                     isDuplicated = true
                     _state.update { it.copy(isDuplicatedEmail = true) }
                 }
+                is ApiResult.Exception -> {
+                    Log.e("LoginViewModel", "Fail requestLogin. exception: ${result.error}")
+                    _snackBarEvent.send(SnackBarEvent.UnknownError)
+                }
+
+                is ApiResult.Fail -> _snackBarEvent.send(SnackBarEvent.UndefinedError(result.message))
+            }
         }.await()
 
         return isDuplicated
@@ -288,7 +322,7 @@ class OnBoardingViewModel @Inject constructor(
                         UserStatus.ACCOUNT_CONFLICT -> {
                             // 일반 회원인 경우도 모달 띄우기
                             _event.send(
-                                AlreadyExistUser(
+                                Event.AlreadyExistUser(
                                     email = email,
                                     isKakaoUser = false
                                 )
@@ -298,7 +332,7 @@ class OnBoardingViewModel @Inject constructor(
                         UserStatus.LOGIN_SUCCESS -> {
                             // 카카오 로그인이 성공한 경우 (기존 계정이 존재하는 경우)
                             _event.send(
-                                AlreadyExistUser(
+                                Event.AlreadyExistUser(
                                     email = email,
                                     isKakaoUser = true
                                 )
@@ -545,6 +579,7 @@ class OnBoardingViewModel @Inject constructor(
 
     sealed class SnackBarEvent {
         data class UndefinedError(val message: String) : SnackBarEvent()
+        data object UnknownError: SnackBarEvent()
         data object NotCheckedRequiredTerm : SnackBarEvent()
         data object FailedEmailValidation : SnackBarEvent()
         data object InvalidInviteCode : SnackBarEvent()

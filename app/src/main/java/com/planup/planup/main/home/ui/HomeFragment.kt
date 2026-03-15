@@ -12,25 +12,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.kizitonwose.calendar.view.MonthDayBinder
+import com.kizitonwose.calendar.view.ViewContainer
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentHomeBinding
 import com.planup.planup.databinding.ItemCalendarDayBinding
+import com.planup.planup.goal.util.extractBracket
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.home.adapter.DailyToDoAdapter
 import com.planup.planup.main.home.adapter.FriendChallengeAdapter
 import com.planup.planup.main.home.data.CalendarEvent
+import com.planup.planup.main.home.data.ChallengeReceivedPhoto
 import com.planup.planup.main.home.data.ChallengeReceivedTimer
 import com.planup.planup.main.home.ui.viewmodel.HomeViewModel
+import com.planup.planup.main.home.ui.viewmodel.NotificationItem
+import com.planup.planup.main.util.isNotificationEnabled
 import com.planup.planup.network.ApiResult
-import com.kizitonwose.calendar.view.MonthDayBinder
-import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -38,10 +47,6 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
 import java.util.Locale
-import androidx.recyclerview.widget.RecyclerView
-import androidx.core.view.doOnLayout
-import coil3.load
-import com.bumptech.glide.Glide
 
 class HomeFragment : Fragment() {
 
@@ -66,7 +71,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.isNotificationCheck(isNotificationEnabled(view.context))
         viewModel.loadUserInfo()
         setupAdapters()
         observeViewModel()
@@ -204,6 +209,25 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+
+        lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.userId
+//                    .filter { it != 0 }
+//                    .first()   // 최초 1회만
+//                    .let {
+//                        viewModel.checkAndEmitIfNeeded(requireContext())
+//                    }
+//            }
+
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.popupEvent.collect { item ->
+                    showPopup(item)
+                }
+            }
+        }
+
     }
 
     private fun setupClickListeners() {
@@ -218,7 +242,7 @@ class HomeFragment : Fragment() {
         }
 
         binding.homeMainProfileIv.setOnClickListener {
-            showPopup()
+
         }
 
         binding.homeAlarmNoneIv.setOnClickListener {
@@ -360,7 +384,7 @@ class HomeFragment : Fragment() {
     private fun getEventsForDate(date: LocalDate): List<CalendarEvent> {
         return eventList.filter { it.date == date }
     }
-    private fun showPopup(){
+    private fun showPopup(item: NotificationItem){
         val timerChallenge = ChallengeReceivedTimer(
             1,
             16,
@@ -380,7 +404,7 @@ class HomeFragment : Fragment() {
             setGravity(Gravity.CENTER)
             setLayout(ViewGroup.LayoutParams.WRAP_CONTENT,ViewGroup.LayoutParams.WRAP_CONTENT)
             //팝업에 요청한 친구 이름 바인딩
-            dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = getString(R.string.popup_challenge_request,"그린")
+            dialog.findViewById<TextView>(R.id.popup_challenge_notice_tv).text = item.text
             //배경 투명색
             dialog.setCanceledOnTouchOutside(true)
         }
@@ -391,16 +415,74 @@ class HomeFragment : Fragment() {
         //확인하러 가기 버튼 클릭 시 챌린지 요청 조회 화면으로 이동
         dialog.findViewById<TextView>(R.id.popup_challenge_btn).setOnClickListener{
             dialog.dismiss()
+            viewModel.challengeInfo(item.url.toInt(),
+                action = { challengeInfo ->
+                    Log.d("challengeInfo", "challengeInfo: $challengeInfo")
+                    val nextFragment =
+                    when(challengeInfo.goalType){
+                        "CHALLENGE_TIME" ->{
+                            ChallengeReceivedTimerFragment().apply {
+                                arguments = Bundle().apply {
+                                    putParcelable("receivedChallenge",
+                                        ChallengeReceivedTimer(
+                                            userId = viewModel.userId.value,
+                                            challengeId = challengeInfo.id.toInt(),
+                                            friendId = listOf(13L),
+                                            friendName = item.text.extractBracket()!!,
+                                            goalName = challengeInfo.goalName,
+                                            goalAmount =challengeInfo.name,
+                                            targetTime = 1200,
+                                            endDate = "endDate",
+                                            period = "duration",
+                                            frequency = "frequency",
+                                            penalty = "penalty"
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        else -> {
+                            ChallengeReceivedPhotoFragment().apply {
+                                arguments = Bundle().apply {
+                                    putParcelable("receivedChallenge", ChallengeReceivedPhoto(
+                                        1,
+                                        16,
+                                        listOf(13L),
+                                        "friend",
+                                        "goalName",
+                                        "goalAmount",
+                                        1,
+                                        "endDate",
+                                        "duration",
+                                        "frequency",
+                                        "penalty"
+                                    ))
+                                }
+                            }
+                        }
+                    }
+                    //API response에 따라 photo 또는 timer로 전환
+                    //bundle로 데이터 넘기는 작업도 필요함
+//                    val challengeTimer = ChallengeReceivedTimerFragment()
+//                    challengeTimer.arguments = Bundle().apply {
+//                        putParcelable("receivedChallenge",timerChallenge)
+//                    }
+//                    (context as MainActivity).supportFragmentManager.beginTransaction()
+//                        .replace(R.id.main_container,challengeTimer)
+//                        .commitAllowingStateLoss()
+                },
+                error = {
+                    val inflater = LayoutInflater.from(binding.root.context)
+                    val layout = inflater.inflate(R.layout.toast_grey_template, null)
+                    layout.findViewById<TextView>(R.id.toast_grey_template_tv).text = it
+                    Toast(binding.root.context).apply {
+                        view = layout
+                        duration = LENGTH_SHORT
+                        setGravity(Gravity.BOTTOM, 0, 477)
+                    }.show()
+                }
+            )
 
-            //API response에 따라 photo 또는 timer로 전환
-            //bundle로 데이터 넘기는 작업도 필요함
-            val challengeTimer = ChallengeReceivedTimerFragment()
-            challengeTimer.arguments = Bundle().apply {
-                putParcelable("receivedChallenge",timerChallenge)
-            }
-            (context as MainActivity).supportFragmentManager.beginTransaction()
-                .replace(R.id.main_container,challengeTimer)
-                .commitAllowingStateLoss()
         }
         dialog.show()
     }
