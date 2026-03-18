@@ -97,6 +97,7 @@ class ChallengeSetAlertFragment : Fragment() {
 //            } else {//첫 방문이 아닌 경우 홈 페이지로 이동
                 val intent = Intent((requireActivity() as GoalActivity), MainActivity::class.java)
                 startActivity(intent)
+            (requireActivity() as GoalActivity).finish()
 //            }
         }
 
