@@ -23,7 +23,6 @@ import com.planup.planup.goal.util.goalPopBack
 import com.planup.planup.main.goal.viewmodel.ChallengeViewModel
 import com.planup.planup.network.controller.ChallengeController
 import com.planup.planup.network.data.ChallengeFriends
-import com.planup.planup.network.dto.GoalPeriod
 import com.planup.planup.network.dto.challenge.ChallengeDto
 import com.planup.planup.network.dto.challenge.Time
 import dagger.hilt.android.AndroidEntryPoint
@@ -127,18 +126,23 @@ class ChallengeFriendFragment: Fragment(), RequestChallengeAdapter, ChallengeFri
 //            Time(prefs.getInt("targetTime",0)) //타이머 총 시간
 //        )
         //임시 데이터 / 기준기간을 "DAY"로 설정
+        val timePerPeriod = prefs.getInt("timePerPeriod",0)
+        if (timePerPeriod == 0) {
+            Toast.makeText(context,"기준기간을 설정해주세요.",LENGTH_SHORT).show()
+            return
+        }
         val challengeDto = ChallengeDto(
-            prefs.getString("goalName","no-data")!!, //목표명
-            prefs.getString("goalAmount","no-data")!!, //1회 분량
-            prefs.getString("goalType","no-data")!!, //인증 방식
-            prefs.getInt("oneDoes",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
-            prefs.getString("endDate","no-data")!!, //종료일
-            prefs.getString("status","no-data")!!, //요청 형태
-            prefs.getString("penalty","no-data")!!, //페널티
-            friendId, //친구 id
-            GoalPeriod.WEEK, //기준기간
-            prefs.getInt("frequency",0), //빈도
-            Time(prefs.getInt("oneDoes",0)) //타이머 총 시간
+            goalName = prefs.getString("goalName","no-data")!!, //목표명
+            goalAmount = prefs.getString("goalAmount","no-data")!!, //1회 분량
+            goalType = prefs.getString("goalType","no-data")!!, //인증 방식
+            oneDose = prefs.getInt("oneDoes",0), //oneDose: 1회 분량 중 분량 값(추후 제거 예정)
+            endDate = prefs.getString("endDate","no-data")!!, //종료일
+            status = prefs.getString("status","no-data")!!, //요청 형태
+            penalty = prefs.getString("penalty","no-data")!!, //페널티
+            friendId = friendId, //친구 id
+            period = timePerPeriod, //기준기간
+            frequency = prefs.getInt("frequency",0), //빈도
+            timer = Time(prefs.getInt("oneDoes",0)) //타이머 총 시간
         )
         Log.d("challengeDto",challengeDto.toString())
         challengeService.requestChallenge(challengeDto)
