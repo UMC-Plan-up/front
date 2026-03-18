@@ -250,7 +250,7 @@ class ChallengeSetFrequencyFragment : Fragment() {
                 duration = true
                 popupWindow.dismiss()
                 //기준 기간 저장
-                editor.putString("timePerPeriod",durations[position])
+                editor.putInt("timePerPeriod",durations[position].toInt())
             }
         })
         popupView.findViewById<RecyclerView>(R.id.dropdown_recycler_rv).adapter = adapter
