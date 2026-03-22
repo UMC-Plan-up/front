@@ -1,5 +1,6 @@
 package com.planup.planup.main.home.adapter
 
+import android.R.attr.onClick
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,7 +11,9 @@ import com.planup.planup.network.dto.notification.NotificationResult
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 
-class NotificationAdapter :
+class NotificationAdapter(
+    private val onClick: (NotificationResult) -> Unit
+) :
     ListAdapter<NotificationResult, NotificationAdapter.ViewHolder>(diffUtil) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,16 +23,21 @@ class NotificationAdapter :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position)) { item ->
+            onClick(item)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val text = itemView.findViewById<TextView>(R.id.tvNotificationText)
         private val time = itemView.findViewById<TextView>(R.id.tvTime)
 
-        fun bind(item: NotificationResult) {
+        fun bind(item: NotificationResult, onClick: (NotificationResult) -> Unit) {
             text.text = item.notificationText
             time.text = item.createdAt // 필요하면 포맷팅
+            itemView.setOnClickListener {
+                onClick(item)
+            }
         }
     }
 
