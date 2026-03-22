@@ -82,16 +82,26 @@ class GoalSelectFragment : Fragment() {
         binding.goalSelectCl.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 val height = binding.goalSelectCl.height
-                binding.goalSelectInnerCl.minHeight = height
                 binding.goalSelectCl.viewTreeObserver.removeOnGlobalLayoutListener(this)
             }
         })
+        if (!binding.goalSelectTogetherTv.isSelected) {
+            val select = ContextCompat.getColor(requireContext(), R.color.blue_200)
+            val unselect = ContextCompat.getColor(requireContext(), R.color.black_400)
+            binding.goalSelectTogetherTv.isSelected = true
+            binding.goalSelectTogetherTv.setTextColor(select)
+            binding.goalCategoryCl.visibility = View.VISIBLE
+            isCategory = false
+            binding.goalSelectChallengeCl.isSelected = false
+            binding.goalSelectChallengeTv.setTextColor(unselect)
+            binding.goalSelectPenaltyTv.setTextColor(unselect)
+        }
     }
 
     private fun clickListener() {
-        val select = ContextCompat.getColor(context, R.color.blue_200)
-        val unselect = ContextCompat.getColor(context, R.color.black_400)
-        val unselectCategory = ContextCompat.getColor(context, R.color.blue_200)
+        val select = ContextCompat.getColor(requireContext(), R.color.blue_200)
+        val unselect = ContextCompat.getColor(requireContext(), R.color.black_400)
+        val unselectCategory = ContextCompat.getColor(requireContext(), R.color.blue_200)
 
         // 뒤로가기
         binding.goalSelectBackIv.setOnClickListener {
@@ -200,11 +210,11 @@ class GoalSelectFragment : Fragment() {
     }
 
     private fun makeToast() {
-        val inflater = LayoutInflater.from(context)
+        val inflater = LayoutInflater.from(requireContext())
         val layout = inflater.inflate(R.layout.toast_grey_template_s, null)
         layout.findViewById<TextView>(R.id.toast_grey_template_tv).text =
             getString(R.string.toast_challenge_setting)
-        val toast = Toast(context)
+        val toast = Toast(requireContext())
         toast.view = layout
         toast.duration = LENGTH_SHORT
         toast.setGravity(Gravity.BOTTOM, 0, 330)
@@ -213,8 +223,8 @@ class GoalSelectFragment : Fragment() {
 
     // 선택된 카테고리 보여주는 함수
     private fun showCategory(selected: TextView) {
-        val select = ContextCompat.getColor(context, R.color.white_font)
-        val unselect = ContextCompat.getColor(context, R.color.blue_200)
+        val select = ContextCompat.getColor(requireContext(), R.color.white_font)
+        val unselect = ContextCompat.getColor(requireContext(), R.color.blue_200)
 
         if (!isCategory) {
             category = selected
