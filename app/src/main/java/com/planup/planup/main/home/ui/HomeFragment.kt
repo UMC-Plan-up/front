@@ -71,7 +71,7 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.isNotificationCheck(isNotificationEnabled(view.context))
+//        viewModel.isNotificationCheck(isNotificationEnabled(view.context))
         viewModel.loadUserInfo()
         setupAdapters()
         observeViewModel()
@@ -211,7 +211,7 @@ class HomeFragment : Fragment() {
         }
 
 
-        lifecycleScope.launch {
+//        lifecycleScope.launch {
 //            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
 //                viewModel.userId
 //                    .filter { it != 0 }
@@ -221,12 +221,12 @@ class HomeFragment : Fragment() {
 //                    }
 //            }
 
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.popupEvent.collect { item ->
-                    showPopup(item)
-                }
-            }
-        }
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.popupEvent.collect { item ->
+//                    showPopup(item)
+//                }
+//            }
+//        }
 
     }
 
@@ -246,7 +246,11 @@ class HomeFragment : Fragment() {
         }
 
         binding.homeAlarmNoneIv.setOnClickListener {
-            val fragment = HomeAlertFragment()
+            val fragment = HomeAlertFragment().apply {
+                arguments = Bundle().apply {
+                    putInt("userId", viewModel.userId.value)
+                }
+            }
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_container, fragment)
                 .addToBackStack(null)
