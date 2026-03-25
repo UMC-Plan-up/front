@@ -4,12 +4,12 @@ import android.R.attr.onClick
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.planup.planup.R
 import com.planup.planup.network.dto.notification.NotificationResult
-import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
 
 class NotificationAdapter(
     private val onClick: (NotificationResult) -> Unit
@@ -18,7 +18,7 @@ class NotificationAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_notification, parent, false)
+            .inflate(R.layout.item_home_alert, parent, false)
         return ViewHolder(view)
     }
 
