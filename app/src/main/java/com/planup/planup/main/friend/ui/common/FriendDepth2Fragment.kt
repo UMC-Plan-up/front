@@ -67,13 +67,13 @@ abstract class FriendFragmentBase() : Fragment() {
         friendName: String,
         friendProfile : String?
     ) {
-        val gaolFragment = FriendGoalListFragment.newInstance(
+        val goalFragment = FriendGoalListFragment.newInstance(
             friendId = friendId,
             friendName = friendName,
             friendResId = friendProfile
         )
         parentFragmentManager.beginTransaction()
-            .replace(R.id.main_container, gaolFragment)
+            .replace(R.id.main_container, goalFragment)
             .addToBackStack(null)
             .commitAllowingStateLoss()
     }
