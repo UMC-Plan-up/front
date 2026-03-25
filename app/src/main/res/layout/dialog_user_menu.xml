@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_user_layout"
+    android:orientation="vertical"
+    android:padding="13dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/popup_challenge_close_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/close_emoji"
+        android:layout_gravity="end"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="7dp"
+        android:gravity="top|center"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:src="@drawable/img_friend_profile_sample1"
+            android:background="@drawable/circle_bg"
+            android:scaleType="centerCrop"/>
+        <!-- 제목 -->
+        <TextView
+            android:id="@+id/user_name"
+            style="@style/Typography_L_Semibold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:gravity="center"
+            android:text="닉네임"
+            android:textAlignment="center"
+            android:textColor="@color/black_400" />
+
+        <TextView
+            android:id="@+id/popup_request_friend"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_user_dialog_button"
+            android:gravity="center"
+            android:text="친구 신청하기"
+            android:textColor="@color/blue_300" />
+        <FrameLayout
+            android:id="@+id/popup_emergency"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_user_dialog_button">
+
+            <ImageView
+                android:id="@+id/emergency_toggle"
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="13.5dp"
+                android:src="@drawable/arrow_right_emoji"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="신고하기"
+                android:textColor="@color/blue_300"/>
+
+        </FrameLayout>
+
+
+        <TextView
+            android:id="@+id/popup_inter_pager"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_user_dialog_button"
+            android:gravity="center"
+            android:text="페이지 둘러보기"
+            android:textColor="@color/blue_300"/>
+    </LinearLayout>
+</LinearLayout>
