@@ -17,14 +17,14 @@ import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDescriptionBinding
 import com.planup.planup.goal.adapter.CommentAdapter
+import com.planup.planup.goal.adapter.RankURLAdapter
+import com.planup.planup.goal.adapter.RankURLItem
+import com.planup.planup.goal.util.loadProfile
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
-import com.planup.planup.goal.adapter.RankURLAdapter
-import com.planup.planup.goal.adapter.RankURLItem
-import com.planup.planup.goal.util.loadProfile
 
 class GoalDescriptionFragment : Fragment() {
 
@@ -54,6 +54,10 @@ class GoalDescriptionFragment : Fragment() {
             if (!isPublic) { isPublic = true; applyToggleUI(isPublic) }
         }
         binding.btnPrivate.setOnClickListener { if (isPublic) showPrivateDialog() }
+
+        binding.inviteFriend.setOnClickListener {
+
+        }
 
         if (goalId <= 0) {
             Toast.makeText(requireContext(), "잘못된 목표입니다.", Toast.LENGTH_SHORT).show()
