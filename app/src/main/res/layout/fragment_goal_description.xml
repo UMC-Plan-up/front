@@ -350,6 +350,7 @@
                         android:text="목표 달성을 시작해 보세요!" />
 
                     <LinearLayout
+                        android:id="@+id/inviteFriend"
                         android:layout_width="150dp"
                         android:layout_height="37dp"
                         android:layout_gravity="center"
