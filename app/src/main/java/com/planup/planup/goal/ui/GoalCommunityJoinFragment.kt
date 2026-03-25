@@ -1,26 +1,27 @@
 package com.planup.planup.goal.ui
 
 import android.app.Activity
+import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.geometry.Rect
-import androidx.core.net.toUri
+import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
 import com.planup.planup.goal.util.TmpGoalData
-import com.planup.planup.goal.util.goalType
 import com.planup.planup.goal.util.loadProfile
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
@@ -28,9 +29,6 @@ import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.main.goal.item.EditGoalResponse
 import com.planup.planup.main.goal.ui.GoalFragment
 import com.planup.planup.main.goal.ui.GoalUpdateDialog
-import com.planup.planup.main.goal.viewmodel.GoalViewModel
-import com.planup.planup.main.record.adapter.RankAdapter
-import com.planup.planup.main.record.adapter.RankItem
 import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -43,7 +41,7 @@ class GoalCommunityJoinFragment : Fragment() {
     private lateinit var binding: FragmentGoalCommunityJoinBinding
     private var isPublic: Boolean = true
     private var goalId: Int = -1
-
+    private var popupWindow: PopupWindow? = null
     private var goalData = TmpGoalData()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -141,7 +139,7 @@ class GoalCommunityJoinFragment : Fragment() {
         }
     }
 
-    fun bindRanking(ranking: List<GoalRanking>) {
+    fun bindRanking(ranking: List<GoalRanking>, onUserClick: (Int) -> Unit) {
         binding.apply {
             val empty = ranking.size < 2
             initRaking.visibility = if (empty) View.VISIBLE else View.GONE
@@ -149,15 +147,24 @@ class GoalCommunityJoinFragment : Fragment() {
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
             if (!empty){
                 firstProfile.loadProfile(ranking[0].profileImg)
+                firstProfile.setOnClickListener {
+                    onUserClick(ranking[0].userId)
+                }
                 firstName.text = ranking[0].nickName
                 firstVer.text = "사진인증${ranking[0].verificationCount}회"
                 secondProfile.loadProfile(ranking[1].profileImg)
+                secondProfile.setOnClickListener {
+                    onUserClick(ranking[1].userId)
+                }
                 secondName.text = ranking[1].nickName
                 secondVer.text = "사진인증${ranking[1].verificationCount}회"
                 if (ranking.size < 3) {
                     thirdRankLayout.visibility = View.GONE
                 } else {
                     ThirdProfile.loadProfile(ranking[2].profileImg)
+                    ThirdProfile.setOnClickListener {
+                        onUserClick(ranking[2].userId)
+                    }
                     ThirdName.text = ranking[2].nickName
                     ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
 
@@ -167,10 +174,14 @@ class GoalCommunityJoinFragment : Fragment() {
                             ranking.mapIndexed { index, ranking ->
                                 RankURLItem(
                                     index + 3,
+                                    ranking.userId,
                                     ranking.nickName,
                                     ranking.verificationCount,
                                     ranking.profileImg
                                 )
+                            },
+                            onUserClick = {userId->
+                                onUserClick(userId)
                             }
                         )
                     }
@@ -187,7 +198,9 @@ class GoalCommunityJoinFragment : Fragment() {
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
             com.planup.planup.goal.util.setRanking(requireContext(),goalId){
-                    ranking -> bindRanking(ranking)
+                    ranking -> bindRanking(ranking){
+
+                }
             }
         }
     }
@@ -199,6 +212,8 @@ class GoalCommunityJoinFragment : Fragment() {
             }.onSuccess { resp ->
                 if (resp.isSuccessful && resp.body() != null) {
                     Log.d("join","${resp.body()!!.result}")
+                    requireActivity().finish()
+                    Toast.makeText(requireContext(), "목표에 참여되었습니다.", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT).show()
                 }
@@ -206,5 +221,62 @@ class GoalCommunityJoinFragment : Fragment() {
                 Toast.makeText(requireContext(), "목표 정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    fun userPopup(){
+        val dialog = Dialog(context as GoalActivity)
+        dialog.setContentView(R.layout.dialog_user_menu)
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setGravity(Gravity.BOTTOM)
+            setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
+        }
+
+        dialog.findViewById<TextView>(R.id.popup_request_friend).setOnClickListener {
+
+            dialog.dismiss()
+        }
+        val anchorView = dialog.findViewById<TextView>(R.id.popup_emergency)
+        anchorView.setOnClickListener {
+            if (popupWindow?.isShowing == true) {
+
+                popupWindow?.dismiss()
+
+                return@setOnClickListener
+            }
+
+            val popupView = layoutInflater.inflate(
+                R.layout.menu_report_dropdown,
+                null
+            )
+
+            popupWindow = PopupWindow(
+                popupView,
+                anchorView.width,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                true
+            )
+
+            popupWindow?.apply {
+
+                isOutsideTouchable = true
+                isFocusable = true
+                isClippingEnabled = false
+
+                setOnDismissListener {
+                    popupWindow = null
+                }
+
+                showAsDropDown(anchorView)
+            }
+        }
+
+        dialog.findViewById<TextView>(R.id.popup_inter_pager).setOnClickListener {
+
+        }
+
+        //외부 터치 시 팝업 종료
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.show()
     }
 }
