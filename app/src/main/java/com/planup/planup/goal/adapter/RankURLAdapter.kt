@@ -9,9 +9,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.planup.planup.R
 import com.planup.planup.goal.util.loadProfile
 
-data class RankURLItem(val rank: Int, val nickname: String, val certCount: Int, val imageResId: String)
+data class RankURLItem(val rank: Int, val userId:Int, val nickname: String, val certCount: Int, val imageResId: String)
 
-class RankURLAdapter(private val rankList: List<RankURLItem>) :
+class RankURLAdapter(
+    private val rankList: List<RankURLItem>,
+    private val onUserClick: (Int) -> Unit
+) :
     RecyclerView.Adapter<RankURLAdapter.RankURLViewHolder>() {
 
     class RankURLViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -24,6 +27,7 @@ class RankURLAdapter(private val rankList: List<RankURLItem>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RankURLViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_rank, parent, false)
+
         return RankURLViewHolder(view)
     }
 
@@ -33,6 +37,9 @@ class RankURLAdapter(private val rankList: List<RankURLItem>) :
         holder.nicknameText.text = item.nickname
         holder.certCountText.text = "사진인증 ${item.certCount}회"
         holder.profileImage.loadProfile(item.imageResId)
+        holder.profileImage.setOnClickListener {
+            onUserClick(item.userId)
+        }
     }
 
     override fun getItemCount(): Int = rankList.size
