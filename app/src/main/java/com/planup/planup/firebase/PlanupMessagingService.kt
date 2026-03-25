@@ -40,11 +40,13 @@ class PlanupMessagingService() : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
+        Log.d("PlanupMessagingService", "onMessageReceived")
+        Log.d("PlanupMessagingService", "data: ${remoteMessage.data}")
+        Log.d("PlanupMessagingService", "notification: ${remoteMessage.notification} ${remoteMessage.notification?.title} ${remoteMessage.notification?.body}")
         with(remoteMessage.data) {
             sendNotification(
-                title = get("title"),
-                body = get("body")
+                title = "${remoteMessage.notification?.title.toString()} / ${this}",
+                body = "${remoteMessage.notification?.body.toString()} / ${get("body") != null}"
             )
         }
     }
