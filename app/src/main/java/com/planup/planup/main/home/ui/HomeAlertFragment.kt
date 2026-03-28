@@ -1,6 +1,7 @@
 package com.planup.planup.main.home.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,14 +31,17 @@ class HomeAlertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentHomeAlertBinding.inflate(inflater, container, false)
+        viewModel.userId = arguments?.getInt("userId") ?: 0
+        Log.d("HomeAlertFragment", "userId: ${viewModel.userId}")
         clickListener()
-        adapter = NotificationAdapter()
-
-        viewModel.loadUserId()
+        adapter = NotificationAdapter{
+            viewModel.onClicked(it)
+        }
 
         binding.homeAlertRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = this@HomeAlertFragment.adapter
+
         }
 
         // 🔥 리스트 관찰
@@ -64,6 +68,13 @@ class HomeAlertFragment : Fragment() {
 
         binding.btnChallenge.setOnClickListener {
             viewModel.selectCategory(challenge)
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.selectedCategory.collect { category ->
+                Log.d("HomeAlertFragment", "selectedCategory: $category")
+                viewModel.loadNotifications()
+            }
         }
 
         return binding.root

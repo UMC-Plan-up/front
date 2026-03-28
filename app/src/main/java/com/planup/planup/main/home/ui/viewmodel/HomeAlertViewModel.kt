@@ -1,10 +1,13 @@
 package com.planup.planup.main.home.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.planup.planup.main.home.ui.repository.HomeAlertRepository
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.dto.notification.NotificationResult
+import com.planup.planup.network.onFailWithMessage
+import com.planup.planup.network.onSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.coroutineScope
@@ -28,7 +31,7 @@ class HomeAlertViewModel @Inject constructor(
     private val _goalList = MutableStateFlow<List<NotificationResult>>(emptyList())
     private val _feedbackList = MutableStateFlow<List<NotificationResult>>(emptyList())
     private val _challengeList = MutableStateFlow<List<NotificationResult>>(emptyList())
-    private var userId: Int = 0
+    var userId: Int = 0
     // 현재 선택된 카테고리
     private val _selectedCategory =
         MutableStateFlow(NotificationCategory.GOAL)
@@ -55,18 +58,23 @@ class HomeAlertViewModel @Inject constructor(
         )
 
 
-    fun loadUserId() {
+//    fun loadUserId() {
+//        viewModelScope.launch {
+//            try {
+//                val response = repo.loadUserInfo()
+//                if (response is ApiResult.Success) {
+//                    val result = response.data
+//                    userId = result.id
+//                }
+//            } catch (e: CancellationException) {
+//            } catch (e: Exception){
+//                e.printStackTrace()
+//            }
+//        }
+//    }
+    fun loadNotifications() {
         viewModelScope.launch {
-            try {
-                val response = repo.loadUserInfo()
-                if (response is ApiResult.Success) {
-                    val result = response.data
-                    userId = result.id
-                }
-            } catch (e: CancellationException) {
-            } catch (e: Exception){
-                e.printStackTrace()
-            }
+            loadNotifications(receiverId = userId)
         }
     }
 
@@ -77,35 +85,49 @@ class HomeAlertViewModel @Inject constructor(
     /** 🔥 API 호출 진입점 */
     fun loadNotifications(receiverId: Int) {
         viewModelScope.launch {
-            try {
-                coroutineScope {
-                    val achieveDeferred = async {
-                        repo.loadNotificationType(receiverId, "ACHIEVE")
-                    }
-                    val receiveDeferred = async {
-                        repo.loadNotificationType(receiverId, "RECEIVE")
-                    }
-                    val challengeDeferred = async {
-                        repo.loadNotificationType(receiverId, "CHALLENGE")
-                    }
-
-                    (achieveDeferred.await() as? ApiResult.Success)?.let {
-                        _goalList.value = it.data
-                    }
-
-                    (receiveDeferred.await() as? ApiResult.Success)?.let {
-                        _feedbackList.value = it.data
-                    }
-
-                    (challengeDeferred.await() as? ApiResult.Success)?.let {
-                        _challengeList.value = it.data
-                    }
-                }
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                _error.emit(e)
+            Log.d("HomeAlertViewModel", "loadNotifications: loading")
+            if (receiverId == 0) {
+                Log.d("HomeAlertViewModel", "loadNotifications: receiverId is 0")
+                return@launch
             }
+            when(_selectedCategory.value){
+                NotificationCategory.GOAL -> {
+                    repo.loadNotificationType(receiverId, "GOAL")
+                        .onSuccess {
+                            Log.d("HomeAlertViewModel", "loadNotifications: achieveDeferred $it")
+                            _goalList.value = it
+                        }
+                        .onFailWithMessage { it ->
+                            Log.d("HomeAlertViewModel", "loadNotifications: achieveDeferred $it")
+                        }
+                }
+                NotificationCategory.FEEDBACK -> {
+                    repo.loadNotificationType(receiverId, "REACTION")
+                        .onSuccess {
+                            Log.d("HomeAlertViewModel", "loadNotifications: receiveDeferred $it")
+                            _feedbackList.value = it
+                        }
+                        .onFailWithMessage { it ->
+                            Log.d("HomeAlertViewModel", "loadNotifications: receiveDeferred $it")
+                        }
+                }
+                NotificationCategory.CHALLENGE -> {
+                    repo.loadNotificationType(receiverId, "CHALLENGE")
+                        .onSuccess {
+                            Log.d("HomeAlertViewModel", "loadNotifications: challengeDeferred $it")
+                            _challengeList.value = it
+                        }
+                        .onFailWithMessage { it ->
+                            Log.d("HomeAlertViewModel", "loadNotifications: challengeDeferred $it")
+                        }
+                }
+            }
+        }
+    }
+
+    fun onClicked(item: NotificationResult) {
+        viewModelScope.launch {
+
         }
     }
 

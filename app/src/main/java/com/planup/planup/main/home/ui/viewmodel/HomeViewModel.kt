@@ -222,7 +222,7 @@ class HomeViewModel @Inject constructor(
                     _profileImg.value = result.profileImg ?: ""
                     _nickname.value = result.nickname ?: ""
                     _userId.value = result.id
-                    checkAndEmitIfNeeded()
+//                    checkAndEmitIfNeeded()
                 }
                 .onFailWithMessage { message ->
                     Log.d("loadUserInfo", "Fail: $message")

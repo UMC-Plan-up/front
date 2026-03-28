@@ -10,8 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.FrameLayout
+import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.compose.ui.graphics.Color
+import androidx.core.content.ContentProviderCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
@@ -21,12 +25,14 @@ import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDetailBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.TimerRVAdapter
+import com.planup.planup.goal.util.applyPickerColor
 import com.planup.planup.goal.util.backStackTrueGoalNav
 import com.planup.planup.goal.util.daysFromToday
 import com.planup.planup.goal.util.endDateFromToday
 import com.planup.planup.goal.util.equil
 import com.planup.planup.goal.util.logGoalActivityData
 import com.planup.planup.goal.util.setInsets
+import com.planup.planup.goal.util.setupPicker
 import com.planup.planup.goal.util.titleFormat
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -110,7 +116,7 @@ class GoalDetailFragment : Fragment() {
         setupFrequencyInput()
         setupEndOptionButtons()
         setupNextButton()
-        setupDirectSetSection()
+//        setupDirectSetSection()
         setupKeyboardHiding()
 
         setEdit()
@@ -258,6 +264,9 @@ class GoalDetailFragment : Fragment() {
         endOptionButtons.forEach { button ->
             button.setOnClickListener {
                 setEndListener(button)
+                if (button == binding.directSetButton) {
+                    showWheelPicker()
+                }
                 updateNextButtonState()
             }
         }
@@ -489,22 +498,23 @@ class GoalDetailFragment : Fragment() {
             selectedEndButton = button
 
             // '직접 설정' 버튼 선택 시 드롭다운 표시
-            if (button == binding.directSetButton) {
-                binding.dropdownContainer1.visibility = View.VISIBLE
-                binding.dropdownContainer2.visibility = View.VISIBLE
-                binding.dropdownContainer3.visibility = View.VISIBLE
-            } else {
-                binding.dropdownContainer1.visibility = View.GONE
-                binding.dropdownContainer2.visibility = View.GONE
-                binding.dropdownContainer3.visibility = View.GONE
+//            if (button == binding.directSetButton) {
+//                binding.dropdownContainer1.visibility = View.VISIBLE
+//                binding.dropdownContainer2.visibility = View.VISIBLE
+//                binding.dropdownContainer3.visibility = View.VISIBLE
+//            } else {
+//                binding.dropdownContainer1.visibility = View.GONE
+//                binding.dropdownContainer2.visibility = View.GONE
+//                binding.dropdownContainer3.visibility = View.GONE
+//
+//                selectedYear = null
+//                selectedMonth = null
+//                selectedDay = null
+//                binding.challengeYearTv.text = getString(R.string.year)
+//                binding.challengeMonthTv.text = getString(R.string.month)
+//                binding.challengeDayTv.text = getString(R.string.day)
+//            }
 
-                selectedYear = null
-                selectedMonth = null
-                selectedDay = null
-                binding.challengeYearTv.text = getString(R.string.year)
-                binding.challengeMonthTv.text = getString(R.string.month)
-                binding.challengeDayTv.text = getString(R.string.day)
-            }
         }
     }
 
@@ -613,4 +623,94 @@ class GoalDetailFragment : Fragment() {
     = if(period == "매달"||period == "MONTH") {
             _endOptionButtons.drop(1)
         }else _endOptionButtons
+
+    private fun showWheelPicker() {
+        val dialog = android.app.Dialog(requireContext(),
+                android.R.style.Theme_DeviceDefault_Light_Dialog
+        )
+        val view = layoutInflater.inflate(R.layout.dialog_date_picker, null)
+        dialog.setContentView(view)
+        dialog.setCancelable(true)
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.window?.apply {
+            dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+            dialog.window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            decorView.setPadding(32, 0, 28, 0)
+        }
+        dialog.setOnCancelListener {
+            // 👉 바깥 터치 / 뒤로가기일 때만 실행됨
+            Log.d("WheelPicker", "밖에서 닫힘")
+            selectedYear = null
+            selectedMonth = null
+            selectedDay = null
+            binding.directSetButton.text =getString(R.string.category_custom_option)
+            // 원하는 로직
+            updateNextButtonState()
+        }
+        val yearPicker = view.findViewById<NumberPicker>(R.id.yearPicker)
+        val monthPicker = view.findViewById<NumberPicker>(R.id.monthPicker)
+        val dayPicker = view.findViewById<NumberPicker>(R.id.dayPicker)
+        // 범위 설정
+        yearPicker.minValue = 2025
+        yearPicker.maxValue = 2035
+
+        monthPicker.minValue = 1
+        monthPicker.maxValue = 12
+
+        dayPicker.minValue = 1
+        dayPicker.maxValue = 31
+
+        // 포맷
+        monthPicker.setFormatter { String.format("%02d", it) }
+        dayPicker.setFormatter { String.format("%02d", it) }
+
+        // 커스텀 적용
+        setupPicker(yearPicker)
+        setupPicker(monthPicker)
+        setupPicker(dayPicker)
+
+
+
+        // 날짜 동기화 (중요)
+        val updateDay = {
+            val maxDay = java.time.YearMonth.of(
+                yearPicker.value,
+                monthPicker.value
+            ).lengthOfMonth()
+            dayPicker.maxValue = maxDay
+        }
+
+        yearPicker.setOnValueChangedListener { _, _, _ ->
+            updateDay()
+            applyPickerColor(yearPicker, android.graphics.Color.BLACK)
+        }
+        monthPicker.setOnValueChangedListener { _, _, _ ->
+            updateDay()
+            applyPickerColor(monthPicker, android.graphics.Color.BLACK)
+        }
+
+        dayPicker.setOnValueChangedListener { _, _, _ ->
+            updateDay()
+            Log.d("WheelPicker", "dayPicker: ${dayPicker.value}")
+            applyPickerColor(dayPicker, android.graphics.Color.BLACK)
+        }
+
+        // 확인 버튼
+        view.findViewById<TextView>(R.id.btnConfirm).setOnClickListener {
+            selectedYear = yearPicker.value.toString()
+            selectedMonth = String.format("%02d", monthPicker.value)
+            selectedDay = String.format("%02d", dayPicker.value)
+            binding.directSetButton.text =getString(R.string.year_unit, selectedYear) +
+                    getString(R.string.month_unit, selectedMonth) +
+                    getString(R.string.day_unit, selectedDay)
+
+            updateNextButtonState()
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
 }

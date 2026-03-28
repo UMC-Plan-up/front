@@ -1,7 +1,6 @@
 package com.planup.planup.network.dto.challenge
 
 import com.google.gson.annotations.SerializedName
-import com.planup.planup.network.dto.GoalPeriod
 
 data class ChallengeDto(
     @SerializedName("goalName") val goalName: String, //목표명
@@ -12,7 +11,7 @@ data class ChallengeDto(
     @SerializedName("status") val status: String, //신청 여부
     @SerializedName("penalty") val penalty: String, //페널티
     @SerializedName("friendId") val friendId: Int, //신청할 친구 id
-    @SerializedName("period") val period: GoalPeriod, //기준기간
+    @SerializedName("referencePeriod") val period: Int, //기준기간
     @SerializedName("frequency") val frequency: Int, //빈도
     @SerializedName("timeChallenge") val timer: Time //타이머 설정 정보
 )

@@ -6,13 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.planup.planup.R
-import com.planup.planup.databinding.ItemFriendGoalListBinding
-import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.planup.planup.R
+import com.planup.planup.databinding.ItemFriendGoalListBinding
+import com.planup.planup.main.goal.item.FriendGoalListResult
 
 data class FriendGoalWithAchievement(
     val goalId: Int,
@@ -48,7 +48,9 @@ class FriendGoalListAdapter(
     private val items = mutableListOf<FriendGoalWithAchievement>().apply {
         addAll(paramItems)
     }
+    private val visibleCount = 3
     private var showingCnt = 3
+
     inner class FriendGoalViewHolder(val binding: ItemFriendGoalListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         val pieChart = binding.friendGoalListPc
@@ -108,7 +110,22 @@ class FriendGoalListAdapter(
     }
 
     override fun getItemCount(): Int {
-        return if (showingCnt < items.size) showingCnt else items.size
+
+        return minOf(showingCnt, items.size)
+    }
+
+    fun showMore() {
+
+        showingCnt = minOf(
+            showingCnt + visibleCount,
+            items.size
+        )
+        notifyDataSetChanged()
+    }
+
+    fun hasMoreItems(): Boolean {
+
+        return showingCnt < items.size
     }
 
     private fun setupDonutChart(chart: PieChart, progress: Int, position: Int) {

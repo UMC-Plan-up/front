@@ -37,16 +37,12 @@ import com.planup.planup.main.goal.adapter.GoalAdapter
 import com.planup.planup.main.goal.adapter.MyGoalListDtoAdapter
 import com.planup.planup.main.goal.item.GoalItem
 import com.planup.planup.main.goal.item.MyGoalListItem
-import com.planup.planup.main.goal.ui.EditFriendGoalActivity
-import com.planup.planup.main.goal.ui.GoalDescriptionFragment
-import com.planup.planup.main.goal.ui.GoalUpdateDialog
 import com.planup.planup.main.goal.viewmodel.GoalViewModel
 import com.planup.planup.network.ApiResult
 import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import kotlin.jvm.java
 
 @AndroidEntryPoint
 class GoalFragment : Fragment(), MyGoalListDtoAdapter {
@@ -217,85 +213,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
             }
         )
     }
-
-    // ⬇️ 새로 추가
-//    // ⬇️ 새로 추가
-//    private fun loadFriendGoalList(token: String?, friendUserId: Int) {
-//        if (token.isNullOrBlank()) {
-//            Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-//        lifecycleScope.launch {
-//            try {
-//                // GoalApi 는 네가 준 인터페이스(아래에 있음). 이미 RetrofitInstance.goalApi 쓰고 있으니 동일 사용.
-//                val res = RetrofitInstance.goalApi.getFriendGoalList(
-//                    token = token,
-//                    friendId = friendUserId
-//                )
-//
-//                // ⚠️ 서버 응답 데이터 클래스에 오타: 'reuslt'
-//                if (res.isSuccess) {
-////                    val friendGoals = res.result
-////                    val items = friendGoals.toGoalItemsForFriend()
-////                    setGoals(items)
-//                } else {
-//                    Toast.makeText(requireContext(), res.message, Toast.LENGTH_SHORT).show()
-//                }
-//            } catch (e: Exception) {
-//                Log.e("GoalFragment", "loadFriendGoalList error", e)
-//                Toast.makeText(requireContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//    }
-
-//    private fun loadFriendGoalList(friendUserId: Int) =
-//        viewModel.loadFriendGoalList(friendUserId) { response ->
-//            val items = response.toGoalItemsForFriend()
-//            setGoals(items)
-//        }
-
-    // 파일 상단 import에 추가
-// import com.example.planup.main.friend.data.FriendGoalListDto
-// import com.example.planup.main.friend.data.VerificationType
-// import com.example.planup.main.friend.data.GoalType as FriendGoalType
-
-    // ⬇️ 새로 추가: 친구 리스트 변환
-//    private fun List<com.example.planup.main.friend.data.FriendGoalListDto>.toGoalItemsForFriend(): List<GoalItem> =
-//        map { dto ->
-//            val typeLabel = when (dto.goalType) {
-//                com.example.planup.main.friend.data.GoalType.FRIEND -> "매일"
-//                com.example.planup.main.friend.data.GoalType.COMMUNITY -> "매주"
-//                com.example.planup.main.friend.data.GoalType.CHALLENGE_PHOTO -> "매일"
-//                com.example.planup.main.friend.data.GoalType.CHALLENGE_TIME -> "매주"
-//            }
-//            val criteria = "$typeLabel ${dto.frequency}번 이상"
-//            val auth = when (dto.verificationType) {
-//                com.example.planup.main.friend.data.VerificationType.PHOTO -> "camera"
-//                com.example.planup.main.friend.data.VerificationType.TIMER -> "timer"
-//            }
-//
-//            GoalItem(
-//                goalId      = dto.goalId,
-//                title       = dto.goalName,
-//                description = criteria,
-//                percent     = 0,           // 친구용 응답에 퍼센트가 없으므로 0으로 표기 (있으면 반영)
-//                authType    = auth,
-//                isEditMode  = false,
-//                isActive    = true,        // 친구 데이터에 공개/활성 여부가 없으니 true로 표시 (필요 시 서버 필드 연결)
-//                criteria    = criteria,
-//                progress    = 0            // 필요 시 서버 값 매핑
-//            )
-//        }
-
-//    private val goalEditApi by lazy{
-//        RetrofitInstance.goalApi
-//    }
-
-//    // 액세스 토큰 가져오기
-//    private fun requireTokenOrNull(): String?{
-//        return tokenSaver.safeToken()
-//    }
-
     // 삭제
     /** 삭제 */
     private fun requestDeleteGoal(goalId: Int , action:()-> Unit) {
@@ -363,34 +280,6 @@ class GoalFragment : Fragment(), MyGoalListDtoAdapter {
                 }
         }
     }
-
-    /** 서버 DTO → 화면용 GoalItem으로 변환 */
-//    private fun List<MyGoalListDto>.toGoalItems(): List<GoalItem> =
-//        map { dto ->
-//            val typeLabel = when (dto.goalType) {
-//                GoalType.FRIEND -> "매일"
-//                GoalType.COMMUNITY -> "매주"
-//                GoalType.CHALLENGE_PHOTO -> "매일"
-//                GoalType.CHALLENGE_TIME -> "매주"
-//            }
-//            val criteria = "$typeLabel ${dto.frequency}번 이상"
-//
-//            GoalItem(
-//                goalId     = dto.goalId,
-//                title      = dto.goalName.orEmpty(),
-//                description= criteria,
-//                percent    = 0,
-//                authType   = when (dto.goalType) {
-//                    GoalType.CHALLENGE_PHOTO -> "camera"
-//                    GoalType.CHALLENGE_TIME  -> "timer"
-//                    else -> "none"
-//                },
-//                isEditMode = false,
-//                isActive = !dto.isActive,
-//                criteria   = criteria,
-//                progress   = 0
-//            )
-//        }
 
     private fun setGoals(items: List<GoalItem>) {
         adapter.updateItems(items)        // ✅ 리스트만 교체

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:layout_marginStart="32dp"
+    android:layout_marginEnd="28dp"
+    android:elevation="8dp"
+    android:background="@drawable/bg_round_white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<!-- 기존 구조 유지 -->
+<LinearLayout
+    android:orientation="horizontal"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <!-- 연 -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11.39dp"
+            android:layout_marginBottom="9.5dp"
+            android:text="연도"
+            android:textSize="16sp"
+            android:gravity="center"
+            style="@style/Typography_SM_Medium"/>
+
+        <!-- 👇 여기만 FrameLayout으로 감쌈 -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <!-- 선택 영역 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_picker_center_highlight_left"/>
+
+            <NumberPicker
+                android:id="@+id/yearPicker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:selectionDividerHeight="0dp"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- 월 -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11.39dp"
+            android:layout_marginBottom="9.5dp"
+            android:text="월"
+            android:textSize="16sp"
+            android:gravity="center"
+            style="@style/Typography_SM_Medium"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_picker_center_highlight"/>
+
+            <NumberPicker
+                android:id="@+id/monthPicker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:selectionDividerHeight="0dp"
+                android:background="@android:color/transparent"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- 일 -->
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11.39dp"
+            android:layout_marginBottom="9.5dp"
+            android:text="일"
+            android:textSize="16sp"
+            android:gravity="center"
+            style="@style/Typography_SM_Medium"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="210dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_gravity="center"
+                android:background="@drawable/bg_picker_center_highlight_right"/>
+
+            <NumberPicker
+                android:id="@+id/dayPicker"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:selectionDividerHeight="0dp"
+                android:background="@android:color/transparent"/>
+        </FrameLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+<!-- 버튼 그대로 유지 -->
+<Button
+    android:id="@+id/btnConfirm"
+    android:text="확인"
+    android:textSize="16sp"
+    android:textColor="@color/black_300"
+    android:backgroundTint="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"/>
+</LinearLayout>
