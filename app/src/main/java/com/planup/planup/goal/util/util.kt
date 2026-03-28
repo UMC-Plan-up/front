@@ -1,12 +1,20 @@
 package com.planup.planup.goal.util
 
 import android.content.Context
+import android.graphics.Color
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.NumberPicker
+import android.widget.Scroller
 import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -438,6 +446,47 @@ fun String.extractBracket(): String? {
         .find(this)
         ?.groupValues
         ?.get(1)
+}
+
+fun setFriction(picker: NumberPicker) {
+    try {
+        val field = NumberPicker::class.java.getDeclaredField("mFlingScroller")
+        field.isAccessible = true
+        val scroller = field.get(picker) as Scroller
+        scroller.setFriction(ViewConfiguration.getScrollFriction() * 0.5f)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun applyPickerColor(picker: NumberPicker, color: Int) {
+    try {
+        val field = NumberPicker::class.java.getDeclaredField("mSelectorWheelPaint")
+        field.isAccessible = true
+        val paint = field.get(picker) as android.graphics.Paint
+        paint.color = color
+
+        for (i in 0 until picker.childCount) {
+            val child = picker.getChildAt(i)
+            if (child is EditText) {
+                child.setTextColor(color)
+            }
+        }
+
+        picker.invalidate()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun setupPicker(picker: NumberPicker) {
+    applyPickerColor(picker, Color.BLACK)
+    setFriction(picker)
+    val pickerHeight = 550 // 원하는 높이
+    picker.layoutParams.height = pickerHeight
+    picker.invalidate()
+
+    picker.wrapSelectorWheel = true
 }
 
 data class TmpGoalData(

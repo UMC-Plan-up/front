@@ -17,12 +17,14 @@ import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDescriptionBinding
 import com.planup.planup.goal.adapter.CommentAdapter
+import com.planup.planup.goal.adapter.CommentItem
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
 import com.planup.planup.goal.util.loadProfile
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
+import com.planup.planup.main.goal.item.GoalResult
 import com.planup.planup.network.RetrofitInstance
 import kotlinx.coroutines.launch
 
@@ -93,7 +95,7 @@ class GoalDescriptionFragment : Fragment() {
                 RetrofitInstance.goalApi.getGoalDetail(goalId = goalId) // GoalDetailResponse
             }.onSuccess { resp ->
                 if (resp.isSuccess) {
-                    val goal: com.planup.planup.main.goal.item.GoalResult = resp.result  // ✅ 타입 맞춤
+                    val goal: GoalResult = resp.result  // ✅ 타입 맞춤
                     bindGoal(goal)
                 } else {
                     Toast.makeText(requireContext(), resp.message, Toast.LENGTH_SHORT).show()
@@ -105,7 +107,7 @@ class GoalDescriptionFragment : Fragment() {
     }
 
     // 현재 서버 DTO(GoalResult)에 존재하는 필드만 안전하게 바인딩
-    private fun bindGoal(goal: com.planup.planup.main.goal.item.GoalResult) {
+    private fun bindGoal(goal: GoalResult) {
         binding.goalTitleTv.text = goal.goalName
         binding.oneDoseTv.text = "${goal.goalAmount}"
 
@@ -128,7 +130,7 @@ class GoalDescriptionFragment : Fragment() {
         applyToggleUI(isPublic)
 
         binding.commentRecyclerView.adapter = CommentAdapter(goal.commentList?.map{
-            com.planup.planup.goal.adapter.CommentItem(
+            CommentItem(
                 it.writer.profileImg,
                 it.writer.nickname,
                 it.content
@@ -165,10 +167,14 @@ class GoalDescriptionFragment : Fragment() {
                             ranking.mapIndexed { index, ranking ->
                                 RankURLItem(
                                     index + 3,
+                                    userId = ranking.userId,
                                     ranking.nickName,
                                     ranking.verificationCount,
                                     ranking.profileImg
                                 )
+                            },
+                            onUserClick = {
+                                Toast.makeText(requireContext(), "유저 클릭", Toast.LENGTH_SHORT).show()
                             }
                         )
                     }
