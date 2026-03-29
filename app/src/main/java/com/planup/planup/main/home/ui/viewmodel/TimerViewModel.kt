@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import javax.inject.Inject
 
 @HiltViewModel
 class TimerViewModel @Inject constructor(
@@ -81,8 +80,8 @@ class TimerViewModel @Inject constructor(
                 .onSuccess { result ->
                     _goals.value = result
                     val dummyList: List<MyGoalListItem> = listOf(
-                        MyGoalListItem(0,"목표1", "FRIEND", 10, 10),
-                        MyGoalListItem(-1, "목표2", "FRIEND", 11, 11)
+                        MyGoalListItem(0,"목표1", "FRIEND", 10, 10,true),
+                        MyGoalListItem(-1, "목표2", "FRIEND", 11, 11,true)
                     ) //더미 데이터 << 목표 생성 가능해지면 지우기
                     _goals.value = dummyList
                     onCallBack(ApiResult.Success(result))
