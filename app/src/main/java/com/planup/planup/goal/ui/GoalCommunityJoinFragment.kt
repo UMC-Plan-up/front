@@ -1,5 +1,6 @@
 package com.planup.planup.goal.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
@@ -8,12 +9,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
@@ -21,8 +23,10 @@ import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
+import com.planup.planup.goal.util.Report
 import com.planup.planup.goal.util.TmpGoalData
 import com.planup.planup.goal.util.loadProfile
+import com.planup.planup.goal.util.scaleImageChange
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
@@ -146,25 +150,26 @@ class GoalCommunityJoinFragment : Fragment() {
             topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
             if (!empty){
-                firstProfile.loadProfile(ranking[0].profileImg)
-                firstProfile.setOnClickListener {
+                firstRankLayout.setOnClickListener {
                     onUserClick(ranking[0].userId)
                 }
+                firstProfile.loadProfile(ranking[0].profileImg)
                 firstName.text = ranking[0].nickName
                 firstVer.text = "사진인증${ranking[0].verificationCount}회"
-                secondProfile.loadProfile(ranking[1].profileImg)
-                secondProfile.setOnClickListener {
+                secondRankLayout.setOnClickListener {
                     onUserClick(ranking[1].userId)
                 }
+                secondProfile.loadProfile(ranking[1].profileImg)
+
                 secondName.text = ranking[1].nickName
                 secondVer.text = "사진인증${ranking[1].verificationCount}회"
                 if (ranking.size < 3) {
                     thirdRankLayout.visibility = View.GONE
                 } else {
-                    ThirdProfile.loadProfile(ranking[2].profileImg)
-                    ThirdProfile.setOnClickListener {
+                    thirdRankLayout.setOnClickListener {
                         onUserClick(ranking[2].userId)
                     }
+                    ThirdProfile.loadProfile(ranking[2].profileImg)
                     ThirdName.text = ranking[2].nickName
                     ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
 
@@ -198,8 +203,8 @@ class GoalCommunityJoinFragment : Fragment() {
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
             com.planup.planup.goal.util.setRanking(requireContext(),goalId){
-                    ranking -> bindRanking(ranking){
-
+                    ranking -> bindRanking(ranking){ id->
+                        userPopup(id)
                 }
             }
         }
@@ -223,32 +228,64 @@ class GoalCommunityJoinFragment : Fragment() {
         }
     }
 
-    fun userPopup(){
-        val dialog = Dialog(context as GoalActivity)
+    @SuppressLint("ResourceType")
+    fun userPopup(id:Int){
+        val dialog = Dialog(requireContext())
         dialog.setContentView(R.layout.dialog_user_menu)
         dialog.window?.apply {
-            setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            setGravity(Gravity.BOTTOM)
-            setBackgroundDrawable(resources.getColor(R.color.transparent).toDrawable())
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawableResource(R.color.transparent)
+            dialog.window?.decorView?.setPadding(
+                30.dp(),
+                0,
+                30.dp(),
+                0
+            )
         }
 
         dialog.findViewById<TextView>(R.id.popup_request_friend).setOnClickListener {
 
             dialog.dismiss()
         }
-        val anchorView = dialog.findViewById<TextView>(R.id.popup_emergency)
+        val anchorView = dialog.findViewById<FrameLayout>(R.id.popup_emergency)
         anchorView.setOnClickListener {
+            val arrow = dialog.findViewById<ImageView>(R.id.emergency_toggle)
             if (popupWindow?.isShowing == true) {
-
+               arrow.scaleImageChange(R.drawable.ic_arrow_right)
                 popupWindow?.dismiss()
 
                 return@setOnClickListener
             }
-
+            arrow.scaleImageChange(R.drawable.ic_arrow_down)
             val popupView = layoutInflater.inflate(
                 R.layout.menu_report_dropdown,
                 null
             )
+
+            Report.entries.forEach { report->
+                val textView = popupView.findViewById<TextView>(report.id)
+                textView.setOnClickListener {
+                    Log.d("report",report.title)
+                    lifecycleScope.launch {
+//                        runCatching {
+//                            RetrofitInstance.goalApi.reportGoal(goalId, ReportGoal(report.title))
+//                        }.onSuccess { resp ->
+//                            if (resp.isSuccessful && resp.body() != null) {
+//                                Log.d("join", "${resp.body()!!.result}")
+//                                Toast.makeText(requireContext(), "신고가 접수되었습니다.", Toast.LENGTH_SHORT)
+//                                    .show()
+//                                requireActivity().finish()
+//                            } else {
+//                                Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                        }
+
+                    }
+                    dialog.dismiss()
+                }
+            }
 
             popupWindow = PopupWindow(
                 popupView,
@@ -257,13 +294,14 @@ class GoalCommunityJoinFragment : Fragment() {
                 true
             )
 
-            popupWindow?.apply {
 
+
+            popupWindow?.apply {
                 isOutsideTouchable = true
                 isFocusable = true
                 isClippingEnabled = false
-
                 setOnDismissListener {
+                    arrow.scaleImageChange(R.drawable.ic_arrow_right)
                     popupWindow = null
                 }
 
@@ -279,4 +317,7 @@ class GoalCommunityJoinFragment : Fragment() {
         dialog.setCanceledOnTouchOutside(true)
         dialog.show()
     }
+
+    fun Int.dp(): Int =
+        (this * resources.displayMetrics.density).toInt()
 }

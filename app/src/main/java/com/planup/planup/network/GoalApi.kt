@@ -4,6 +4,7 @@ import com.planup.planup.goal.data.GoalCreateRequest
 import com.planup.planup.goal.data.GoalCreateResponse
 import com.planup.planup.goal.data.GoalJoinResponseDto
 import com.planup.planup.goal.data.GoalListResponseDto
+import com.planup.planup.goal.data.ReportGoal
 import com.planup.planup.main.goal.data.GoalEditResponse
 import com.planup.planup.main.goal.data.GoalRankingResponse
 import com.planup.planup.main.goal.item.ApiResponseListMyGoalListDto
@@ -30,8 +31,8 @@ import com.planup.planup.main.goal.item.PostMemoResponse
 import com.planup.planup.main.goal.item.PostPhotoRequest
 import com.planup.planup.main.goal.item.PostPhotoResponse
 import com.planup.planup.main.goal.item.TotalAchievementResponse
-import com.planup.planup.network.dto.goal.CommunityComplaintsResponse
-import com.planup.planup.network.dto.goal.CommunityReportRequest
+import com.planup.planup.network.data.ChallengeResponseNoResult
+import com.planup.planup.network.data.EmptyResult
 import com.planup.planup.network.dto.goal.ReactionResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -218,8 +219,9 @@ interface GoalApi {
     ): Response<PostPhotoResponse>
 
     @POST("/goals/{goalId}/complaints")
-    suspend fun postCommunityReport(
+    suspend fun reportGoal(
         @Path("goalId") goalId: Int,
-        @Body reason: CommunityReportRequest
-    ): Response<CommunityComplaintsResponse>
+        @Body reportRequest: ReportGoal
+    ): Response<ChallengeResponseNoResult<EmptyResult>>
+
 }
