@@ -9,7 +9,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/bg_dashed_border_top_empty">
+    android:background="@drawable/bg_dashed_border">
         <TextView
             android:id="@+id/presenter_report"
             android:layout_width="match_parent"

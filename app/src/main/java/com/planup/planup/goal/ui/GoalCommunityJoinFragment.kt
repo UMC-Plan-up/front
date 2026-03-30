@@ -16,7 +16,6 @@ import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
@@ -24,7 +23,6 @@ import com.planup.planup.databinding.FragmentGoalCommunityJoinBinding
 import com.planup.planup.goal.GoalActivity
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
-import com.planup.planup.goal.data.ReportGoal
 import com.planup.planup.goal.util.Report
 import com.planup.planup.goal.util.TmpGoalData
 import com.planup.planup.goal.util.loadProfile
@@ -36,7 +34,6 @@ import com.planup.planup.main.goal.item.EditGoalResponse
 import com.planup.planup.main.goal.ui.GoalFragment
 import com.planup.planup.main.goal.ui.GoalUpdateDialog
 import com.planup.planup.network.RetrofitInstance
-import com.planup.planup.network.dto.friend.FriendReportRequestDto
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -195,7 +192,11 @@ class GoalCommunityJoinFragment : Fragment() {
                     }
                 }
             }
+
+
         }
+
+
 
     }
 
@@ -251,7 +252,7 @@ class GoalCommunityJoinFragment : Fragment() {
         anchorView.setOnClickListener {
             val arrow = dialog.findViewById<ImageView>(R.id.emergency_toggle)
             if (popupWindow?.isShowing == true) {
-                arrow.scaleImageChange(R.drawable.ic_arrow_right)
+               arrow.scaleImageChange(R.drawable.ic_arrow_right)
                 popupWindow?.dismiss()
 
                 return@setOnClickListener
@@ -267,23 +268,22 @@ class GoalCommunityJoinFragment : Fragment() {
                 textView.setOnClickListener {
                     Log.d("report",report.title)
                     lifecycleScope.launch {
-                        runCatching {
-                            RetrofitInstance.friendApi.reportFriend(FriendReportRequestDto(id,report.title,true))
-                        }.onSuccess { resp ->
-                            if (resp.isSuccessful && resp.body() != null) {
-                                Log.d("join", "${resp.body()!!.result}")
-                                Toast.makeText(requireContext(), "신고가 접수되었습니다.", Toast.LENGTH_SHORT)
-                                    .show()
-                                setRanking(goalId)
-                                dialog.dismiss()
-                            } else {
-                                Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT)
-                                    .show()
-                                dialog.dismiss()
-                            }
-                        }
+//                        runCatching {
+//                            RetrofitInstance.goalApi.reportGoal(goalId, ReportGoal(report.title))
+//                        }.onSuccess { resp ->
+//                            if (resp.isSuccessful && resp.body() != null) {
+//                                Log.d("join", "${resp.body()!!.result}")
+//                                Toast.makeText(requireContext(), "신고가 접수되었습니다.", Toast.LENGTH_SHORT)
+//                                    .show()
+//                                requireActivity().finish()
+//                            } else {
+//                                Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT)
+//                                    .show()
+//                            }
+//                        }
 
                     }
+                    dialog.dismiss()
                 }
             }
 
