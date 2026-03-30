@@ -3,7 +3,6 @@ package com.planup.planup.goal.util
 import android.content.Context
 import android.graphics.Color
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
@@ -13,8 +12,6 @@ import android.widget.NumberPicker
 import android.widget.Scroller
 import android.widget.TextView
 import android.widget.Toast
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
@@ -488,7 +485,37 @@ fun setupPicker(picker: NumberPicker) {
 
     picker.wrapSelectorWheel = true
 }
+enum class Report(val id: Int, val title: String){
+    Present(R.id.presenter_report,"ABUSE_OR_HATE_SPEECH"),
+    // 욕설/비방/혐오 표현 사용
+    Adult(R.id.adult_report,"SEXUAL_CONTENT"),
+    // 음란물/선정적 내용
+    Spam(R.id.spam_report, "SPAM_OR_ADVERTISING"),
+    // 스팸/광고
+    Hate(R.id.hate_report,"INAPPROPRIATE_CONTENT"),
+    // 불쾌하거나 부적절한 내용
+    Fake(R.id.fake_report,"FRAUD_OR_IMPERSONATION"),
+    // 거짓 정보 및 사칭
+    Etc(R.id.etc_report,"OTHER")
+    // 기타
+}
 
+fun ImageView.scaleImageChange(newRes: Int) {
+    this.animate()
+        .scaleX(0f)
+        .scaleY(0f)
+        .setDuration(150)
+        .withEndAction {
+            this.setImageResource(newRes)
+
+            this.animate()
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(150)
+                .start()
+        }
+        .start()
+}
 data class TmpGoalData(
     val goalName: String = "",
     val goalAmount: String = "",

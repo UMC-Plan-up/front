@@ -248,6 +248,7 @@
 
                     <!-- 2위 -->
                     <LinearLayout
+                        android:id="@+id/secondRankLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -256,6 +257,7 @@
 
                         <!-- 프로필 이미지 + 순위 -->
                         <LinearLayout
+
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center_horizontal"
@@ -307,6 +309,7 @@
 
                     <!-- 1위 -->
                     <LinearLayout
+                        android:id="@+id/firstRankLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
