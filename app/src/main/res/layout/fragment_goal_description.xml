@@ -39,8 +39,15 @@
                 <TextView
                     android:text="@string/goal_description_page_title"
                     android:textSize="22sp"
+                    android:layout_weight="1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
+
+                <ImageView
+                    android:id="@+id/reportBar"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/progress_3"/>
 
             </LinearLayout>
 
@@ -383,6 +390,7 @@
 
                     <!-- 2위 -->
                     <LinearLayout
+                        android:id="@+id/secondRankLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -442,6 +450,7 @@
 
                     <!-- 1위 -->
                     <LinearLayout
+                        android:id="@+id/firstRankLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

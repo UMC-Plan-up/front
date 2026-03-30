@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuContainer"
+    android:layout_width="156dp"
+    android:layout_height="wrap_content">
+    <!-- 부모 메뉴 -->
+    <LinearLayout
+        android:id="@+id/mainMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/menu_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_dashed_border">
+            <ImageView
+                android:id="@+id/arrow"
+                android:contentDescription="arrow"
+                android:paddingStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="0dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_right_14"
+                />
+            <TextView
+                android:text="신고"
+                android:layout_weight="1"
+                android:layout_height="32dp"
+                android:layout_width="match_parent"
+                android:gravity="center"/>
+            <ImageView
+                android:id="@+id/siren"
+                android:contentDescription="siren"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/boxicons_siren_filled_24"
+                />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 서브 메뉴 -->
+    <LinearLayout
+        android:id="@+id/toggle_menu"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@drawable/bg_dashed_border">
+            <ImageView
+                android:contentDescription="arrow"
+                android:paddingStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="0dp"
+                android:paddingTop="9dp"
+                android:paddingBottom="9dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_arrow_down_14"
+                />
+            <TextView
+                android:text="신고"
+                android:layout_weight="1"
+                android:layout_height="32dp"
+                android:layout_width="match_parent"
+                android:gravity="center"/>
+            <ImageView
+                android:contentDescription="siren"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/boxicons_siren_filled_24"
+                />
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:background="@drawable/dash_line"/>
+        <include android:id="@+id/presenter_report" layout="@layout/menu_report_dropdown" />
+    </LinearLayout>
+</FrameLayout>
