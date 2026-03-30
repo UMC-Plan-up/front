@@ -1,17 +1,25 @@
 package com.planup.planup.main.goal.ui
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
@@ -20,13 +28,18 @@ import com.planup.planup.goal.adapter.CommentAdapter
 import com.planup.planup.goal.adapter.CommentItem
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
+import com.planup.planup.goal.util.Report
 import com.planup.planup.goal.util.loadProfile
+import com.planup.planup.goal.util.scaleImageChange
+import com.planup.planup.goal.util.setRanking
 import com.planup.planup.goal.util.toPeriod
 import com.planup.planup.main.MainActivity
 import com.planup.planup.main.goal.data.GoalRanking
 import com.planup.planup.main.goal.item.GoalResult
 import com.planup.planup.network.RetrofitInstance
+import com.planup.planup.network.dto.friend.FriendReportRequestDto
 import kotlinx.coroutines.launch
+
 
 class GoalDescriptionFragment : Fragment() {
 
@@ -35,6 +48,7 @@ class GoalDescriptionFragment : Fragment() {
     private lateinit var binding: FragmentGoalDescriptionBinding
     private var isPublic: Boolean = true
     private var goalId: Int = -1
+    private var popupWindow: PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +64,15 @@ class GoalDescriptionFragment : Fragment() {
 
         applyToggleUI(isPublic)
 
-        binding.btnBack.setOnClickListener { (context as MainActivity).supportFragmentManager.beginTransaction()
+        binding.btnBack.setOnClickListener { (requireContext() as MainActivity).supportFragmentManager.beginTransaction()
             .replace(R.id.main_container, GoalFragment()).commitAllowingStateLoss()}
+        binding.reportBar.setOnClickListener {v ->
+            initPopup()
+            popupWindow?.let {
+                if (it.isShowing) it.dismiss()
+                else it.showAsDropDown(v)
+            }
+        }
         binding.btnPublic.setOnClickListener {
             if (!isPublic) { isPublic = true; applyToggleUI(isPublic) }
         }
@@ -138,25 +159,32 @@ class GoalDescriptionFragment : Fragment() {
         } ?: emptyList())
     }
 
-    fun bindRanking(ranking: List<GoalRanking>) {
-        Log.d("bindRanking", "bindRanking")
-        Log.d("bindRanking", "bindRanking: $ranking")
-        Log.d("bindRanking", "bindRanking: ${ranking.size}")
+    fun bindRanking(ranking: List<GoalRanking>, onUserClick: (Int) -> Unit) {
         binding.apply {
             val empty = ranking.size < 2
             initRaking.visibility = if (empty) View.VISIBLE else View.GONE
             topThirdRaking.visibility = if (empty) View.GONE else View.VISIBLE
             rankRecyclerView.visibility = if (empty) View.GONE else View.VISIBLE
             if (!empty){
+                firstRankLayout.setOnClickListener {
+                    onUserClick(ranking[0].userId)
+                }
                 firstProfile.loadProfile(ranking[0].profileImg)
                 firstName.text = ranking[0].nickName
                 firstVer.text = "사진인증${ranking[0].verificationCount}회"
+                secondRankLayout.setOnClickListener {
+                    onUserClick(ranking[1].userId)
+                }
                 secondProfile.loadProfile(ranking[1].profileImg)
+
                 secondName.text = ranking[1].nickName
                 secondVer.text = "사진인증${ranking[1].verificationCount}회"
                 if (ranking.size < 3) {
                     thirdRankLayout.visibility = View.GONE
                 } else {
+                    thirdRankLayout.setOnClickListener {
+                        onUserClick(ranking[2].userId)
+                    }
                     ThirdProfile.loadProfile(ranking[2].profileImg)
                     ThirdName.text = ranking[2].nickName
                     ThirdVer.text = "시진인증${ranking[2].verificationCount}회"
@@ -167,24 +195,20 @@ class GoalDescriptionFragment : Fragment() {
                             ranking.mapIndexed { index, ranking ->
                                 RankURLItem(
                                     index + 3,
-                                    userId = ranking.userId,
+                                    ranking.userId,
                                     ranking.nickName,
                                     ranking.verificationCount,
                                     ranking.profileImg
                                 )
                             },
-                            onUserClick = {
-                                Toast.makeText(requireContext(), "유저 클릭", Toast.LENGTH_SHORT).show()
+                            onUserClick = {userId->
+                                onUserClick(userId)
                             }
                         )
                     }
                 }
             }
-
-
         }
-
-
 
     }
 
@@ -209,11 +233,157 @@ class GoalDescriptionFragment : Fragment() {
         dialog.show()
     }
 
+    private fun initPopup() {
+        if (popupWindow != null) return
+
+        val popupView = layoutInflater.inflate(R.layout.report_bar, null)
+
+        popupWindow = PopupWindow(
+            popupView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            isOutsideTouchable = true
+            setBackgroundDrawable(ColorDrawable())
+        }
+
+        // 👉 popup 내부 뷰 접근은 반드시 popupView 기준
+        val parent = popupView.findViewById<LinearLayout>(R.id.menu_parent)
+        val mainMenu = popupView.findViewById<LinearLayout>(R.id.mainMenu)
+        val subMenu = popupView.findViewById<View>(R.id.toggle_menu)
+        val sub = popupView.findViewById<FrameLayout>(R.id.presenter_report)
+        Report.entries.forEach { it ->
+            sub.findViewById<TextView>(it.id).setOnClickListener {
+                Log.d("report",it.toString())
+            }
+        }
+
+        parent.setOnClickListener {
+            subMenu.visibility = View.VISIBLE
+
+            // 메인 왼쪽으로 밀림
+            mainMenu.animate()
+                .translationX(-mainMenu.width.toFloat())
+                .alpha(0f)
+                .setDuration(200)
+
+            // 서브 오른쪽에서 들어옴
+            subMenu.translationX = mainMenu.width.toFloat()
+            subMenu.alpha = 0f
+
+            subMenu.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setDuration(200)
+                .withEndAction {
+                    mainMenu.visibility = View.GONE
+                }
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    fun userPopup(id:Int){
+        val dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.dialog_user_menu)
+        dialog.window?.apply {
+            setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawableResource(R.color.transparent)
+            dialog.window?.decorView?.setPadding(
+                30.dp(),
+                0,
+                30.dp(),
+                0
+            )
+        }
+
+        dialog.findViewById<TextView>(R.id.popup_request_friend).setOnClickListener {
+
+            dialog.dismiss()
+        }
+        val anchorView = dialog.findViewById<FrameLayout>(R.id.popup_emergency)
+        anchorView.setOnClickListener {
+            val arrow = dialog.findViewById<ImageView>(R.id.emergency_toggle)
+            if (popupWindow?.isShowing == true) {
+                arrow.scaleImageChange(R.drawable.ic_arrow_right)
+                popupWindow?.dismiss()
+
+                return@setOnClickListener
+            }
+            arrow.scaleImageChange(R.drawable.ic_arrow_down)
+            val popupView = layoutInflater.inflate(
+                R.layout.menu_report_dropdown,
+                null
+            )
+
+            Report.entries.forEach { report->
+                val textView = popupView.findViewById<TextView>(report.id)
+                textView.setOnClickListener {
+                    Log.d("report",report.title)
+                    lifecycleScope.launch {
+                        runCatching {
+                            RetrofitInstance.friendApi.reportFriend(FriendReportRequestDto(id,report.title,true))
+                        }.onSuccess { resp ->
+                            if (resp.isSuccessful && resp.body() != null) {
+                                Log.d("join", "${resp.body()!!.result}")
+                                Toast.makeText(requireContext(), "신고가 접수되었습니다.", Toast.LENGTH_SHORT)
+                                    .show()
+                                setRanking(goalId)
+                                dialog.dismiss()
+                            } else {
+                                Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT)
+                                    .show()
+                                dialog.dismiss()
+                            }
+                        }
+
+                    }
+                }
+            }
+
+            popupWindow = PopupWindow(
+                popupView,
+                anchorView.width,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                true
+            )
+
+
+
+            popupWindow?.apply {
+                isOutsideTouchable = true
+                isFocusable = true
+                isClippingEnabled = false
+                setOnDismissListener {
+                    arrow.scaleImageChange(R.drawable.ic_arrow_right)
+                    popupWindow = null
+                }
+
+                showAsDropDown(anchorView)
+            }
+        }
+
+        dialog.findViewById<TextView>(R.id.popup_inter_pager).setOnClickListener {
+
+        }
+
+        //외부 터치 시 팝업 종료
+        dialog.setCanceledOnTouchOutside(true)
+        dialog.show()
+    }
+
     fun setRanking(goalId: Int) {
         lifecycleScope.launch {
             com.planup.planup.goal.util.setRanking(requireContext(),goalId){
-                ranking -> bindRanking(ranking)
+                ranking -> bindRanking(ranking){id->
+                    userPopup(id)
+            }
             }
         }
     }
+
+
+    fun Int.dp(): Int =
+        (this * resources.displayMetrics.density).toInt()
 }
