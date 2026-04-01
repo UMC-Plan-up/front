@@ -1,0 +1,11 @@
+<!-- res/menu/report_menu.xml -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/report_abuse" android:title="욕설/비방/혐오 표현 사용"/>
+    <item android:id="@+id/report_sexual" android:title="음란물/선정적 내용"/>
+    <item android:id="@+id/report_spam" android:title="스팸/광고"/>
+    <item android:id="@+id/report_bad" android:title="불쾌하거나 부적절한 내용"/>
+    <item android:id="@+id/report_fake" android:title="거짓 정보 및 사칭"/>
+    <item android:id="@+id/report_etc" android:title="기타"/>
+
+</menu>

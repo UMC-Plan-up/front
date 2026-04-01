@@ -63,8 +63,6 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-
         initAdapter()
         initRecyclerView()
         initClickListener()
@@ -88,13 +86,10 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
     // ---------------- Adapter ----------------
 
     private fun initAdapter() {
-
         photoAdapter = PhotoManageAdapter(
-
             onAddClick = {
                 openGallery()
             },
-
             onPhotoClick = { photo ->
                 // 선택모드 아닐 때 사진 클릭
                 Toast.makeText(

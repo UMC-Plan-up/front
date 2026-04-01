@@ -15,6 +15,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Collections.list
 import javax.inject.Inject
 @HiltViewModel
 class FriendGoalDetailViewModel @Inject constructor(
@@ -118,6 +119,19 @@ class FriendGoalDetailViewModel @Inject constructor(
                     }
             }
 
+        }
+    }
+
+    fun postReport(
+        friendId: Int, reason: String, block: Boolean
+    ) {
+        viewModelScope.launch {
+            repository.postReport(friendId, reason, block)
+                .onSuccess {
+                    Log.d("FriendGoalDetailVM", "postReport: $it")
+                }.onFailWithMessage {
+                    Log.d("FriendGoalDetailVM", "postReport fail : $it")
+                }
         }
     }
 }

@@ -11,6 +11,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <Button
+            android:id="@+id/test_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
         <!-- 1. 뒤로가기 + 제목 -->
         <ImageView
             android:id="@+id/friend_goal_detail_back_iv"
@@ -239,6 +245,15 @@
             android:layout_marginStart="33dp"
             android:layout_marginTop="24dp" />
         <!-- 댓글 부분 -->
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comment_friend_detail_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_comment_tv" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -246,64 +261,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_comment_tv">
-
-            <LinearLayout
-                android:id="@+id/friend_goal_other_comment_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="10dp"
-                android:gravity="center_vertical">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_gravity="center">
-
-                    <ImageView
-                        android:id="@+id/friend_goal_other_profile_iv"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:src="@drawable/img_friend_profile_sample1"
-                        android:scaleType="centerCrop"
-                        android:clipToOutline="true"/>
-
-                    <TextView
-                        android:id="@+id/friend_goal_other_nickname_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="친구1"
-                        android:textSize="14sp"
-                        android:textColor="#222222"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="6dp"/>
-
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/friend_goal_comment_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/img_speech_balloon_friend"
-                    android:padding="16dp"
-                    android:paddingStart="30dp"
-                    android:text="벌써 이만큼 했음? 부지런하네..."
-                    style="@style/Typography_SM_Medium"
-                    android:textColor="@color/black_300"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:elevation="4dp"
-                    android:layout_gravity="center"/>
+            app:layout_constraintTop_toBottomOf="@id/comment_friend_detail_rv">
 
 
-            </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/friend_goal_comment_my_ll"
