@@ -15,7 +15,7 @@ class CommentAdapter(private val comments: List<CommentItem>)
     : RecyclerView.Adapter<CommentViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_comment, parent, false)
+            .inflate(R.layout.item_comment_other, parent, false)
         return CommentViewHolder(view)
     }
 
@@ -31,7 +31,7 @@ class CommentAdapter(private val comments: List<CommentItem>)
 }
 
 class CommentViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val profileImage: ImageView = itemView.findViewById(R.id.comment_profile)
-    val nicknameText: TextView = itemView.findViewById(R.id.comment_nickname)
+    val profileImage: ImageView = itemView.findViewById(R.id.comment_other_profile_iv)
+    val nicknameText: TextView = itemView.findViewById(R.id.comment_other_nickname_tv)
     val commentText: TextView = itemView.findViewById(R.id.textSpeech)
 }

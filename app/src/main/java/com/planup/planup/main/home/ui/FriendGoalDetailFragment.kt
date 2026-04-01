@@ -1,14 +1,19 @@
 package com.planup.planup.main.home.ui
 
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.app.AlertDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.planup.planup.databinding.FragmentFriendGoalDetailBinding
 import com.planup.planup.main.home.item.CustomCombinedChartRenderer
@@ -25,18 +30,22 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
 import androidx.core.graphics.toColorInt
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.launch
-import retrofit2.HttpException
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.planup.planup.R
-import com.planup.planup.main.goal.item.CreateCommentRequest
+import com.planup.planup.main.goal.item.GetCommentsResult
+import com.planup.planup.main.home.adapter.CommentAdapter
 import com.planup.planup.main.home.adapter.PhotoAdapter
 import com.planup.planup.main.home.ui.viewmodel.FriendGoalDetailViewModel
 import com.planup.planup.network.ApiResult
-import com.planup.planup.network.RetrofitInstance
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class FriendGoalDetailFragment : Fragment() {
@@ -45,12 +54,18 @@ class FriendGoalDetailFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var chart: CombinedChart
     private val viewModel: FriendGoalDetailViewModel by viewModels()
-
+    private lateinit var commentAdapter: CommentAdapter
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentFriendGoalDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         val title = viewModel.title
         binding.friendDetailTitleTv.text = title
         binding.friendDetailWeekFocusTv.text = getString(R.string.friend_detail_week_focus, title)
@@ -58,6 +73,8 @@ class FriendGoalDetailFragment : Fragment() {
         loadComment()
         loadTodayFriendTime()
         loadFriendPhotos()
+        setupCommentRv()
+        pushDummyComment() //TODO: dummy comment
 
         chart = binding.friendGoalChart
         setupCombinedChart()
@@ -74,8 +91,6 @@ class FriendGoalDetailFragment : Fragment() {
             parentFragmentManager.popBackStack()
         }
 
-
-
         binding.friendGoalSendCommentIv.setOnClickListener {
             val comment = binding.friendGoalCommentEt.text.toString()
             if (comment.isNotEmpty()) {
@@ -83,7 +98,18 @@ class FriendGoalDetailFragment : Fragment() {
             }
         }
 
-        return binding.root
+
+        binding.testBtn.setOnClickListener {
+            Log.d("popup", "context: ${requireContext()}")
+            Log.d("popup", "activity: ${requireActivity()}")
+            Log.d("popup", "isAdded: $isAdded")
+            Log.d("popup", "isVisible: $isVisible")
+
+            AlertDialog.Builder(requireActivity())
+                .setTitle("테스트")
+                .setMessage("보이나요?")
+                .show()
+        }
     }
 
     private fun setupCombinedChart() {
@@ -169,14 +195,7 @@ class FriendGoalDetailFragment : Fragment() {
     }
 
     private fun loadComment() {
-        viewModel.loadComment(createErrorHandler("loadComment") {
-            binding.friendGoalCommentTv.text = it[0].content
-            binding.friendGoalOtherNicknameTv.text = it[0].writerNickname
-            Glide.with(this@FriendGoalDetailFragment)
-                .load(it[0].writerProfileImg)
-                .error(R.drawable.img_friend_profile_sample1)
-                .into(binding.friendGoalOtherProfileIv)
-        })
+        viewModel.loadComment(createErrorHandler("loadComment"))
     }
 
     private fun loadTodayFriendTime(){
@@ -192,9 +211,45 @@ class FriendGoalDetailFragment : Fragment() {
         })
     }
     private fun setupRecyclerView(photoUrls: List<String>) {
-        val recyclerView = binding.photoRecyclerView
-        recyclerView.layoutManager = GridLayoutManager(requireContext(), 4) // 4열
-        recyclerView.adapter = PhotoAdapter(photoUrls)
+        val photoRv = binding.photoRecyclerView
+        photoRv.layoutManager = GridLayoutManager(requireContext(), 4) // 4열
+        photoRv.adapter = PhotoAdapter(photoUrls)
+    }
+
+    private fun setupCommentRv() {
+        val commentRv = binding.commentFriendDetailRv
+        commentRv.layoutManager = LinearLayoutManager(requireContext())
+        commentAdapter = CommentAdapter { view, comment ->
+            //showCommentMoreMenu(view, comment)
+            showBottomSheetDialog()
+        }
+        commentRv.adapter = commentAdapter
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                viewModel.comments.collectLatest { list ->
+//                    commentAdapter.submitList(list)  // ⭐ 이 한 줄이 핵심
+//                }
+//            }
+//        }
+    }
+
+    private fun pushDummyComment() {
+        val dummyComment = GetCommentsResult(
+            id = 101,
+            content = "와, 정말 유익한 정보네요! 감사합니다.",
+            writerId = 50,
+            writerNickname = "안드로이드개발자",
+            writerProfileImg = "https://example.com/profiles/user50.png",
+            parentCommentId = 100,
+            parentCommentContent = "이 라이브러리를 사용해보시는 건 어떨까요?",
+            parentCommentWriter = "기술멘토",
+            reply = true,
+            myComment = false
+        )
+        val dummyList = listOf(dummyComment,dummyComment)
+        commentAdapter.submitList(dummyList)
+        //TODO : comment dummy (friend goal detail)
     }
 
     private fun sendComment(comment: String) {
@@ -215,5 +270,68 @@ class FriendGoalDetailFragment : Fragment() {
                 is ApiResult.Fail -> Log.d(tag, "Fail: ${result.message}")
             }
         }
+    }
+
+//
+private fun showCommentMoreMenu(anchorView: View, comment: GetCommentsResult) {
+    val inflater = LayoutInflater.from(requireActivity())
+    val popupView = inflater.inflate(R.layout.popup_comment_more, null)
+    val popupWindow = PopupWindow(
+        popupView,
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        LinearLayout.LayoutParams.WRAP_CONTENT,
+        true
+    )
+    popupView.findViewById<LinearLayout>(R.id.layout_block).setOnClickListener {
+        popupWindow.dismiss()
+    }
+
+    popupView.findViewById<LinearLayout>(R.id.layout_report).setOnClickListener {
+        popupWindow.dismiss()
+        showReportPopup(anchorView, comment)
+    }
+
+    popupWindow.showAtLocation(anchorView.rootView, Gravity.CENTER, 0, 0)
+}
+
+    private fun showReportPopup(anchorView: View, comment: GetCommentsResult) {
+        val inflater = LayoutInflater.from(context)
+        val popupView = inflater.inflate(R.layout.popup_comment_report, null)
+
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        fun setClick(id: Int, reason: String) {
+            popupView.findViewById<View>(id).setOnClickListener {
+                viewModel.postReport(comment.writerId, reason, false)
+                popupWindow.dismiss()
+            }
+        }
+        setClick(R.id.report_abuse, "ABUSE_OR_HATE_SPEECH")
+        setClick(R.id.report_sexual, "SEXUAL_CONTENT")
+        setClick(R.id.report_spam, "SPAM_OR_ADVERTISING")
+        setClick(R.id.report_bad, "INAPPROPRIATE_CONTENT")
+        setClick(R.id.report_fake, "FRAUD_OR_IMPERSONATION")
+        setClick(R.id.report_etc, "OTHER")
+
+        popupWindow.showAtLocation(anchorView.rootView, Gravity.CENTER, 0, 0)
+    }
+
+    private fun showBottomSheetDialog() {
+        val dialog = BottomSheetDialog(requireActivity())
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_photo_delete, null)
+        view.findViewById<TextView>(R.id.photo_manage_delete_tv).setOnClickListener {
+            Log.d("test","test1")
+        }
+
+        view.findViewById<TextView>(R.id.photo_manage_cancel_tv).setOnClickListener {
+            Log.d("test","test2")
+        }
+
+        dialog.setContentView(view)
+        dialog.show()
     }
 }

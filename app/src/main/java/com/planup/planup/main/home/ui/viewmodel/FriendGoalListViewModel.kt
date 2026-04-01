@@ -3,6 +3,7 @@ package com.planup.planup.main.home.ui.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.planup.planup.main.goal.item.FriendGoalListResult
 import com.planup.planup.main.home.adapter.FriendGoalWithAchievement
 import com.planup.planup.main.home.ui.FriendGoalListFragment
 import com.planup.planup.main.home.ui.repository.FriendGoalListRepository
@@ -65,48 +66,48 @@ class FriendGoalListViewModel @Inject constructor(
                     )
                 }
             //TODO: friendgoallist dummy
-//            val dummyList = listOf(
-//                FriendGoalWithAchievement(
-//                    goal = FriendGoalListResult(
-//                        goalId = 1,
-//                        goalName ="goal1",
-//                        goalType = "FRIEND",
-//                        goalAmount = "1회",
-//                        verificationType = "PHOTO",
-//                        goalTime = 100,
-//                        frequency = 2,
-//                        oneDose = 2
-//                    ),
-//                    totalAchievement = 10
-//                ),
-//                FriendGoalWithAchievement(
-//                    goal = FriendGoalListResult(
-//                        goalId = 1,
-//                        goalName ="goal2",
-//                        goalType = "FRIEND",
-//                        goalAmount = "1회",
-//                        verificationType = "PHOTO",
-//                        goalTime = 100,
-//                        frequency = 2,
-//                        oneDose = 2
-//                    ),
-//                    totalAchievement = 10
-//                ),
-//                FriendGoalWithAchievement(
-//                    goal = FriendGoalListResult(
-//                        goalId = 1,
-//                        goalName ="goal3",
-//                        goalType = "FRIEND",
-//                        goalAmount = "1회",
-//                        verificationType = "PHOTO",
-//                        goalTime = 100,
-//                        frequency = 2,
-//                        oneDose = 2
-//                    ),
-//                    totalAchievement = 10
-//                )
-//            )
-//            _friendGoals.update { dummyList }
+            val dummyList = listOf(
+                FriendGoalWithAchievement(
+                    goal = FriendGoalListResult(
+                        goalId = 1,
+                        goalName = "goal1",
+                        goalType = "FRIEND",
+                        goalAmount = "1회",
+                        verificationType = "PHOTO",
+                        goalTime = 100,
+                        frequency = 2,
+                        oneDose = 2
+                    ),
+                    totalAchievement = 10
+                ),
+                FriendGoalWithAchievement(
+                    goal = FriendGoalListResult(
+                        goalId = 1,
+                        goalName ="goal2",
+                        goalType = "FRIEND",
+                        goalAmount = "1회",
+                        verificationType = "PHOTO",
+                        goalTime = 100,
+                        frequency = 2,
+                        oneDose = 2
+                    ),
+                    totalAchievement = 10
+                ),
+                FriendGoalWithAchievement(
+                    goal = FriendGoalListResult(
+                        goalId = 1,
+                        goalName ="goal3",
+                        goalType = "FRIEND",
+                        goalAmount = "1회",
+                        verificationType = "PHOTO",
+                        goalTime = 100,
+                        frequency = 2,
+                        oneDose = 2
+                    ),
+                    totalAchievement = 10
+                )
+            )
+            _friendGoals.update { dummyList }
 
         }
     }

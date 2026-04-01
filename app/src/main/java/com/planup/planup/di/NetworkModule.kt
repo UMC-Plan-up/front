@@ -21,6 +21,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Dispatcher
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -77,6 +78,9 @@ class NetworkModule {
                     level = HttpLoggingInterceptor.Level.BODY
                 }
             )
+            .dispatcher(Dispatcher().apply {
+                maxRequests = 128
+            })
             .authenticator(authenticator)
             .connectTimeout(20, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

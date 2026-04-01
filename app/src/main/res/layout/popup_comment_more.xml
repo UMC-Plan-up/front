@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popup_container"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_popup_camera">
+
+    <!-- 차단 -->
+    <LinearLayout
+        android:id="@+id/layout_block"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="차단"
+            style="@style/Typography_S_Medium"
+            android:textColor="@color/black_300" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_block"/>
+    </LinearLayout>
+
+    <!-- 신고 -->
+    <LinearLayout
+        android:id="@+id/layout_report"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="12dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="신고"
+            style="@style/Typography_S_Medium"
+            android:textColor="@color/black_300" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_report"/>
+    </LinearLayout>
+
+</LinearLayout>
