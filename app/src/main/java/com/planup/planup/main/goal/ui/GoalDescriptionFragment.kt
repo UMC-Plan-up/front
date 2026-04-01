@@ -20,7 +20,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentGoalDescriptionBinding
@@ -28,6 +30,7 @@ import com.planup.planup.goal.adapter.CommentAdapter
 import com.planup.planup.goal.adapter.CommentItem
 import com.planup.planup.goal.adapter.RankURLAdapter
 import com.planup.planup.goal.adapter.RankURLItem
+import com.planup.planup.goal.data.ReportGoal
 import com.planup.planup.goal.util.Report
 import com.planup.planup.goal.util.loadProfile
 import com.planup.planup.goal.util.scaleImageChange
@@ -253,8 +256,26 @@ class GoalDescriptionFragment : Fragment() {
         val mainMenu = popupView.findViewById<LinearLayout>(R.id.mainMenu)
         val subMenu = popupView.findViewById<View>(R.id.toggle_menu)
         val sub = popupView.findViewById<FrameLayout>(R.id.presenter_report)
-        Report.entries.forEach { it ->
-            sub.findViewById<TextView>(it.id).setOnClickListener {
+        Report.entries.forEach { report ->
+            val reason = sub.findViewById<TextView>(report.id)
+            reason.setOnClickListener {
+                lifecycleScope.launch {
+                    runCatching {
+                        RetrofitInstance.goalApi.reportGoal(goalId, ReportGoal(report.title))
+                    }.onSuccess { resp ->
+                        if (resp.isSuccessful && resp.body() != null) {
+                            Log.d("join", "${resp.body()!!.result}")
+                            Toast.makeText(requireContext(), "신고가 접수되었습니다.", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            Toast.makeText(requireContext(), resp.message(), Toast.LENGTH_SHORT)
+                                .show()
+
+                        }
+                    }.onFailure {
+
+                    }
+                }
                 Log.d("report",it.toString())
             }
         }
