@@ -52,6 +52,17 @@
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/empty_alert_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/img_empty_alert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutFilter"
+        android:layout_marginTop="168dp"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/home_alert_rv"
         android:layout_width="match_parent"

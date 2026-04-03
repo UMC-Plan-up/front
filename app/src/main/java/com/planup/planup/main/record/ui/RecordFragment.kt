@@ -12,10 +12,14 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.planup.planup.R
 import com.planup.planup.databinding.FragmentRecordBinding
 import com.planup.planup.main.MainActivity
+import com.planup.planup.main.home.adapter.UploadItem
 import com.planup.planup.main.home.ui.HomeAlertFragment
 import com.planup.planup.main.record.adapter.NotificationAdapter
 import com.planup.planup.main.record.data.BadgeDTO
@@ -23,6 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlin.getValue
 import com.planup.planup.main.record.ui.viewmodel.RecordViewModel
 import com.planup.planup.network.ApiResult
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @AndroidEntryPoint
@@ -42,12 +47,12 @@ class RecordFragment :  Fragment() {
     ): View {
         binding = FragmentRecordBinding.inflate(inflater, container, false)
 
-        viewModel.loadUserInfo()
         setUpDropdownList()
         setupNotificationRecycler()
         fetchWeeklyPageData()      // 주간 페이지(배지/알림/응원) 조회
         applySpannableTitle()
         setClickListeners()
+        observeViewModel()
 
         return binding.root
     }
@@ -83,7 +88,7 @@ class RecordFragment :  Fragment() {
                 Toast.makeText(requireContext(), "알림 클릭: ${item.url}", Toast.LENGTH_SHORT).show()
             }
         )
-        binding.notificationRecyclerView.apply {
+        binding.recordNotificationRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = notificationAdapter
             isNestedScrollingEnabled = false
@@ -238,7 +243,22 @@ class RecordFragment :  Fragment() {
         }
     }
 
-
+    private fun observeViewModel() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.notificationList.collect { item ->
+                    notificationAdapter.submitList(item)
+                    if (item.isEmpty()) {
+                        binding.recordEmptyNotificationIv.visibility = View.VISIBLE
+                        binding.recordNotificationRv.visibility = View.GONE
+                    } else {
+                        binding.recordEmptyNotificationIv.visibility = View.GONE
+                        binding.recordNotificationRv.visibility = View.VISIBLE
+                    }
+                }
+            }
+        }
+    }
 
     fun <T> createErrorHandler(
         tag: String,

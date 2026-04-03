@@ -48,6 +48,13 @@ class HomeAlertFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.notificationList.collect { list ->
                 adapter.submitList(list)
+                if (list.isEmpty()) {
+                    binding.emptyAlertIv.visibility = View.VISIBLE
+                    binding.homeAlertRv.visibility = View.GONE
+                } else {
+                    binding.emptyAlertIv.visibility = View.GONE
+                    binding.homeAlertRv.visibility = View.VISIBLE
+                }
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {

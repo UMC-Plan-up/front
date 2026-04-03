@@ -97,19 +97,6 @@ class FriendGoalDetailFragment : Fragment() {
                 sendComment(comment)
             }
         }
-
-
-        binding.testBtn.setOnClickListener {
-            Log.d("popup", "context: ${requireContext()}")
-            Log.d("popup", "activity: ${requireActivity()}")
-            Log.d("popup", "isAdded: $isAdded")
-            Log.d("popup", "isVisible: $isVisible")
-
-            AlertDialog.Builder(requireActivity())
-                .setTitle("테스트")
-                .setMessage("보이나요?")
-                .show()
-        }
     }
 
     private fun setupCombinedChart() {
@@ -220,8 +207,7 @@ class FriendGoalDetailFragment : Fragment() {
         val commentRv = binding.commentFriendDetailRv
         commentRv.layoutManager = LinearLayoutManager(requireContext())
         commentAdapter = CommentAdapter { view, comment ->
-            //showCommentMoreMenu(view, comment)
-            showBottomSheetDialog()
+            showCommentMoreMenu(view, comment)
         }
         commentRv.adapter = commentAdapter
 
@@ -273,26 +259,25 @@ class FriendGoalDetailFragment : Fragment() {
     }
 
 //
-private fun showCommentMoreMenu(anchorView: View, comment: GetCommentsResult) {
-    val inflater = LayoutInflater.from(requireActivity())
-    val popupView = inflater.inflate(R.layout.popup_comment_more, null)
-    val popupWindow = PopupWindow(
-        popupView,
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        LinearLayout.LayoutParams.WRAP_CONTENT,
-        true
-    )
-    popupView.findViewById<LinearLayout>(R.id.layout_block).setOnClickListener {
-        popupWindow.dismiss()
-    }
+    private fun showCommentMoreMenu(anchorView: View, comment: GetCommentsResult) {
+        val inflater = LayoutInflater.from(requireActivity())
+        val popupView = inflater.inflate(R.layout.popup_comment_more, null)
+        val popupWindow = PopupWindow(
+            popupView,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            true
+        )
+        popupView.findViewById<LinearLayout>(R.id.layout_block).setOnClickListener {
+            popupWindow.dismiss()
+        }
 
-    popupView.findViewById<LinearLayout>(R.id.layout_report).setOnClickListener {
-        popupWindow.dismiss()
-        showReportPopup(anchorView, comment)
+        popupView.findViewById<LinearLayout>(R.id.layout_report).setOnClickListener {
+            popupWindow.dismiss()
+            showReportPopup(anchorView, comment)
+        }
+        popupWindow.showAsDropDown(anchorView)
     }
-
-    popupWindow.showAtLocation(anchorView.rootView, Gravity.CENTER, 0, 0)
-}
 
     private fun showReportPopup(anchorView: View, comment: GetCommentsResult) {
         val inflater = LayoutInflater.from(context)
@@ -310,28 +295,13 @@ private fun showCommentMoreMenu(anchorView: View, comment: GetCommentsResult) {
                 popupWindow.dismiss()
             }
         }
-        setClick(R.id.report_abuse, "ABUSE_OR_HATE_SPEECH")
-        setClick(R.id.report_sexual, "SEXUAL_CONTENT")
-        setClick(R.id.report_spam, "SPAM_OR_ADVERTISING")
-        setClick(R.id.report_bad, "INAPPROPRIATE_CONTENT")
-        setClick(R.id.report_fake, "FRAUD_OR_IMPERSONATION")
-        setClick(R.id.report_etc, "OTHER")
+        setClick(R.id.layout_abuse, "ABUSE_OR_HATE_SPEECH")
+        setClick(R.id.layout_sexual, "SEXUAL_CONTENT")
+        setClick(R.id.layout_spam, "SPAM_OR_ADVERTISING")
+        setClick(R.id.layout_inappropriate, "INAPPROPRIATE_CONTENT")
+        setClick(R.id.layout_fake, "FRAUD_OR_IMPERSONATION")
+        setClick(R.id.layout_other, "OTHER")
 
-        popupWindow.showAtLocation(anchorView.rootView, Gravity.CENTER, 0, 0)
-    }
-
-    private fun showBottomSheetDialog() {
-        val dialog = BottomSheetDialog(requireActivity())
-        val view = layoutInflater.inflate(R.layout.bottom_sheet_photo_delete, null)
-        view.findViewById<TextView>(R.id.photo_manage_delete_tv).setOnClickListener {
-            Log.d("test","test1")
-        }
-
-        view.findViewById<TextView>(R.id.photo_manage_cancel_tv).setOnClickListener {
-            Log.d("test","test2")
-        }
-
-        dialog.setContentView(view)
-        dialog.show()
+        popupWindow.showAsDropDown(anchorView)
     }
 }
