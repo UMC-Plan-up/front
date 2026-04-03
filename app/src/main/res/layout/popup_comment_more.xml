@@ -3,55 +3,59 @@
     android:id="@+id/popup_container"
     android:layout_width="150dp"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:background="@drawable/bg_popup_camera">
+    android:background="@drawable/bg_popup_camera"
+    android:minWidth="140dp"
+    android:orientation="vertical">
 
-    <!-- 차단 -->
     <LinearLayout
         android:id="@+id/layout_block"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:paddingHorizontal="12dp">
+        android:gravity="center_vertical"
+        android:padding="5dp">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="차단"
             style="@style/Typography_S_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="75dp"
+            android:paddingBottom="4dp"
+            android:text="차단"
             android:textColor="@color/black_300" />
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_block"/>
+            android:src="@drawable/ic_block" />
     </LinearLayout>
 
-    <!-- 신고 -->
     <LinearLayout
         android:id="@+id/layout_report"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:gravity="center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:paddingHorizontal="12dp">
+        android:gravity="center_vertical"
+        android:padding="5dp">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="신고"
             style="@style/Typography_S_Medium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="8dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="75dp"
+            android:paddingBottom="4dp"
+            android:text="신고"
             android:textColor="@color/black_300" />
 
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_report"/>
+            android:src="@drawable/ic_report" />
     </LinearLayout>
-
 </LinearLayout>

@@ -11,12 +11,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/test_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
         <!-- 1. 뒤로가기 + 제목 -->
         <ImageView
             android:id="@+id/friend_goal_detail_back_iv"
