@@ -3,6 +3,7 @@ package com.planup.planup.main.record.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.planup.planup.database.UserInfoSaver
 import com.planup.planup.main.record.data.BadgeDTO
 import com.planup.planup.main.record.data.NotificationDTO
 import com.planup.planup.main.record.data.WeeklyReportResult
@@ -18,7 +19,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecordViewModel @Inject constructor(
-    private val recordRepository: RecordRepository
+    private val recordRepository: RecordRepository,
+    private val userInfoSaver: UserInfoSaver
 ): ViewModel(){
     val defaultCheering = "이번 주도 화이팅! 꾸준함이 실력을 만듭니다 💪"
     private val _cheering = MutableStateFlow(defaultCheering)
@@ -27,10 +29,9 @@ class RecordViewModel @Inject constructor(
     val badgeList: StateFlow<List<BadgeDTO>> = _badgeList
     private val _notificationList = MutableStateFlow<List<NotificationDTO>>(emptyList())
     val notificationList: StateFlow<List<NotificationDTO>> = _notificationList
-    private var userId = 0
+    private var userId = userInfoSaver.getUserId()
 
     init {
-        loadUserInfo()
         loadNotification()
     }
 
@@ -58,18 +59,6 @@ class RecordViewModel @Inject constructor(
                     Log.d("loadMonthlyReport", "Success: $result")
                 }.onFailWithMessage { message ->
                     Log.w("loadMonthlyReport", "monthly weeks FAIL: http=${message}")
-                }
-        }
-    }
-
-    fun loadUserInfo() {
-        viewModelScope.launch {
-            recordRepository.getUserInfo()
-                .onSuccess { result ->
-                    userId = result.id
-                }
-                .onFailWithMessage { message ->
-                    Log.d("loadUserInfo", "Fail: $message")
                 }
         }
     }

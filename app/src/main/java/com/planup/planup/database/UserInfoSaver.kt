@@ -37,9 +37,17 @@ class UserInfoSaver(
 
     private val prefs = context.getSharedPreferences(PREF_TOKEN_NAME, MODE_PRIVATE)
 
+    /**
+     * 저장된 유저 ID를 가져옵니다. (없으면 -1 반환)
+     */
+    fun getUserId(): Int {
+        return prefs.getInt(KEY_ID, -1)
+    }
     // 저장된 유저 정보가 없는지 확인
     val isEmpty
         get() = !prefs.contains(KEY_ID)
+
+
 
     /**
      * 현재 저장된 닉네임을 가져옵니다.
