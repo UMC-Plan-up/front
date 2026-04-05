@@ -30,6 +30,8 @@ import com.planup.planup.main.goal.item.PostMemoResponse
 import com.planup.planup.main.goal.item.PostPhotoRequest
 import com.planup.planup.main.goal.item.PostPhotoResponse
 import com.planup.planup.main.goal.item.TotalAchievementResponse
+import com.planup.planup.network.dto.goal.CommunityComplaintsResponse
+import com.planup.planup.network.dto.goal.CommunityReportRequest
 import com.planup.planup.network.dto.goal.ReactionResponseDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -214,4 +216,10 @@ interface GoalApi {
         @Query("date") date: String,
         @Body photoRequest: PostPhotoRequest
     ): Response<PostPhotoResponse>
+
+    @POST("/goals/{goalId}/complaints")
+    suspend fun postCommunityReport(
+        @Path("goalId") goalId: Int,
+        @Body reason: CommunityReportRequest
+    ): Response<CommunityComplaintsResponse>
 }

@@ -101,51 +101,33 @@
         </LinearLayout>
 
         <!-- 6. 이번 주 업로드한 사진 -->
-        <TextView
-            android:id="@+id/week_upload_picture_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="이번 주 업로드한 사진 N장"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textSize="18sp"
-            android:lineSpacingExtra="9dp"
-            android:letterSpacing="0.015"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="20dp"
-            app:layout_constraintTop_toBottomOf="@+id/goal_detail_emotion_button_ll"
-            android:layout_marginTop="27dp"/>
-
-        <LinearLayout
-            android:id="@+id/linearLayout6"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/week_upload_picture_cl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="27dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/week_upload_picture_tv">
+            app:layout_constraintTop_toBottomOf="@+id/goal_detail_emotion_button_ll">
 
-            <View
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="5dp"
-                android:background="@color/gray_100" />
+            <TextView
+                android:id="@+id/week_upload_picture_tv"
+                style="@style/Typography_L_Semibold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이번 주 업로드한 사진 N장"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_right"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginEnd="36dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <View
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="5dp"
-                android:background="@color/gray_100" />
-
-            <View
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="5dp"
-                android:background="@color/gray_100" />
-            <View
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_margin="5dp"
-                android:background="@color/gray_100" />
-        </LinearLayout>
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/photoRecyclerView"
             android:layout_width="match_parent"
@@ -157,7 +139,7 @@
             android:layout_marginEnd="28dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout6"/>
+            app:layout_constraintTop_toBottomOf="@+id/week_upload_picture_cl"/>
 
         <!-- 7. 오늘 집중 시간 -->
         <TextView

@@ -78,7 +78,10 @@ class FriendGoalDetailFragment : Fragment() {
 
         chart = binding.friendGoalChart
         setupCombinedChart()
+        setupClickListener()
+    }
 
+    private fun setupClickListener() {
         binding.friendGoalCheerBtn.setOnClickListener {
             viewModel.sendReaction(false)
         }
@@ -96,6 +99,20 @@ class FriendGoalDetailFragment : Fragment() {
             if (comment.isNotEmpty()) {
                 sendComment(comment)
             }
+        }
+
+        binding.weekUploadPictureCl.setOnClickListener {
+            Log.d("cl", "click")
+            val fragment = FriendPhotoFragment.newInstance(
+                viewModel.friendId, viewModel.goalId
+            )
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.main_container,
+                    fragment
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
 
@@ -199,8 +216,10 @@ class FriendGoalDetailFragment : Fragment() {
     }
     private fun setupRecyclerView(photoUrls: List<String>) {
         val photoRv = binding.photoRecyclerView
+        val adapter = PhotoAdapter()
+        photoRv.adapter = adapter
         photoRv.layoutManager = GridLayoutManager(requireContext(), 4) // 4열
-        photoRv.adapter = PhotoAdapter(photoUrls)
+        adapter.submitList(photoUrls)
     }
 
     private fun setupCommentRv() {
