@@ -79,28 +79,10 @@ class TimerViewModel @Inject constructor(
             repository.getMyGoalList()
                 .onSuccess { result ->
                     _goals.value = result
-                    val dummyList: List<MyGoalListItem> = listOf(
-                        MyGoalListItem(0,"목표1", "FRIEND", 10, 10,false),
-                        MyGoalListItem(-1, "목표2", "FRIEND", 11, 11,false)
-                    ) //더미 데이터 << 목표 생성 가능해지면 지우기
-                    _goals.value = dummyList
                     onCallBack(ApiResult.Success(result))
+                }.onFailWithMessage {
+                    Log.d("loadGoals","fail : $it")
                 }
-            try {
-                val result = repository.getMyGoalList()
-                if(result is ApiResult.Success) { _goals.value = result.data }
-                val dummyList: List<MyGoalListItem> = listOf(
-                    MyGoalListItem(0,"목표1", "FRIEND", 10, 10,true),
-                    MyGoalListItem(-1, "목표2", "FRIEND", 11, 11,true)
-                ) //더미 데이터 << 목표 생성 가능해지면 지우기
-                _goals.value = dummyList
-                onCallBack(result)
-            } catch (e: CancellationException) {
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
 

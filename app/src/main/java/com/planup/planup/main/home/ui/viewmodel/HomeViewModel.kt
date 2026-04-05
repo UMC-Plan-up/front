@@ -85,7 +85,7 @@ class HomeViewModel @Inject constructor(
                     }
                     _dailyToDos.value = dailyList
                 }.onFailWithMessage { result ->
-                    Log.d("homeRepository", "loadmygoallist fail : $result")
+                    Log.d("homeRepository", result)
                 }
         }
     }
@@ -93,14 +93,11 @@ class HomeViewModel @Inject constructor(
         onCallBack: (result: ApiResult<FriendGoalAchievementResult>) -> Unit
     ) {
         viewModelScope.launch {
-            Log.d("loadfriendchallenge","loadFriendChallenges")
             val summaries = mutableListOf<FriendChallengeItem>()
             try {
                 val friendRes = homeRepository.getFriendSummary()
-                Log.d("loadfriendchallenge","friendRes : $friendRes")
                 if (friendRes is ApiResult.Success) {
                     val friendList = friendRes.data.friendInfoSummaryList
-                    Log.d("loadfriendchallenge","friendlist : $friendList")
                     for (friend in friendList) {
                         val friendId = friend.id
                         val nickname = friend.nickname
@@ -113,20 +110,18 @@ class HomeViewModel @Inject constructor(
                                 if (achieveRes is ApiResult.Success) {
                                     achievements.add(achieveRes.data.totalAchievement)
                                 }
-                                val avg = achievements.average()
-                                val top3float = achievements.sortedDescending().take(3).map { it.toFloat() }
-                                summaries.add(
-                                    FriendChallengeItem(
-                                        friendId,
-                                        nickname,
-                                        "평균 목표 달성률 : $avg",
-                                        R.drawable.profile_example,
-                                        top3float
-                                    )
-                                )
-                                Log.d("loadfriendchallenge","$summaries")
-                                onCallBack(achieveRes)
                             }
+                            val avg = achievements.average()
+                            val top3float = achievements.sortedDescending().take(3).map { it.toFloat() }
+                            summaries.add(
+                                FriendChallengeItem(
+                                    friendId,
+                                    nickname,
+                                    "평균 목표 달성률 : $avg",
+                                    R.drawable.profile_example,
+                                    top3float
+                                )
+                            )
                         }
                     }
                 }

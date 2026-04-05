@@ -33,19 +33,6 @@ class TimerFragment @Inject constructor() : Fragment() {
     private lateinit var binding: FragmentTimerBinding
     private val viewModel: TimerViewModel by viewModels()
     private var selectedSpinnerItem = 0
-    private var cameraImageUri: Uri? = null
-    private val galleryLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                viewModel.setImage(it)
-            }
-        }
-    private val cameraLauncher =
-        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
-            if (success && cameraImageUri != null) {
-                viewModel.setImage(cameraImageUri!!)
-            }
-        }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentTimerBinding.inflate(inflater, container, false)
@@ -63,15 +50,6 @@ class TimerFragment @Inject constructor() : Fragment() {
         viewModel.loadGoals(createErrorHandler("loadGoals_init") {
             setupSpinner(viewModel.goals.value)
         })
-
-        lifecycleScope.launch {
-            viewModel.goals.collect { goals ->
-                // spinner 세팅
-                viewModel.loadGoals(createErrorHandler("loadGoals"){
-                    setupSpinner(viewModel.goals.value)
-                })
-            }
-        }
 
         lifecycleScope.launch {
             viewModel.friends.collect { friends ->
@@ -298,28 +276,6 @@ class TimerFragment @Inject constructor() : Fragment() {
                 }
             }
         }
-    }
-
-    /* ------------------------------
-       BottomSheet
-     ------------------------------ */
-    private fun showImagePickerBottomSheet() {
-        val dialog = BottomSheetDialog(requireContext())
-        val view = layoutInflater.inflate(com.planup.planup.R.layout.bottom_sheet_image_camera, null)
-
-        view.findViewById<TextView>(com.planup.planup.R.id.timer_bottom_camera_tv).setOnClickListener {
-            cameraImageUri = createCameraImageUri()
-            cameraLauncher.launch(cameraImageUri)
-            dialog.dismiss()
-        }
-
-        view.findViewById<TextView>(com.planup.planup.R.id.timer_bottom_gallery_tv).setOnClickListener {
-            galleryLauncher.launch("image/*")
-            dialog.dismiss()
-        }
-
-        dialog.setContentView(view)
-        dialog.show()
     }
 
     /* ------------------------------
