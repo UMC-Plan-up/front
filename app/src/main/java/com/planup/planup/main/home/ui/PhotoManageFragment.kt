@@ -258,7 +258,7 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.postPhotos(
-                date = "2026-03-08", //TODO: 날짜 바꾸기
+                date = "2026-03-08", //TODO: 날짜 바꾸기 -> 타이머 고친 후
                 photoList = base64List,
                 createErrorHandler("postPhotos"){
                     Log.d("PhotoManageFragment", "uploadPhotos: $it")

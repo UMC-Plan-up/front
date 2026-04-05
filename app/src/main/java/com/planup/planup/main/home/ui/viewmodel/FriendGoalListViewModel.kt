@@ -70,33 +70,7 @@ class FriendGoalListViewModel @Inject constructor(
                 FriendGoalWithAchievement(
                     goal = FriendGoalListResult(
                         goalId = 1,
-                        goalName = "goal1",
-                        goalType = "FRIEND",
-                        goalAmount = "1회",
-                        verificationType = "PHOTO",
-                        goalTime = 100,
-                        frequency = 2,
-                        oneDose = 2
-                    ),
-                    totalAchievement = 10
-                ),
-                FriendGoalWithAchievement(
-                    goal = FriendGoalListResult(
-                        goalId = 1,
-                        goalName ="goal2",
-                        goalType = "FRIEND",
-                        goalAmount = "1회",
-                        verificationType = "PHOTO",
-                        goalTime = 100,
-                        frequency = 2,
-                        oneDose = 2
-                    ),
-                    totalAchievement = 10
-                ),
-                FriendGoalWithAchievement(
-                    goal = FriendGoalListResult(
-                        goalId = 1,
-                        goalName ="goal3",
+                        goalName = "dummy1",
                         goalType = "FRIEND",
                         goalAmount = "1회",
                         verificationType = "PHOTO",
