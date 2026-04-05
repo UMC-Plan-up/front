@@ -22,3 +22,15 @@ data class UserReactionsDto(
     val hasCheer: Boolean,
     val hasEncourage: Boolean
 )
+
+data class CommunityReportRequest(
+    val reason: String
+)
+
+data class CommunityComplaintsResponse(
+    val isSuccess: Boolean,
+    val code: String,
+    val message: String,
+    val result: Unit
+)
+
