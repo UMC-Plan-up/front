@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Base64
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import coil3.ImageLoader
 import coil3.SingletonImageLoader
 import coil3.request.crossfade
@@ -33,6 +34,7 @@ class App : Application() , SingletonImageLoader.Factory {
 
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_KEY)
         printKeyHash()
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     override fun newImageLoader(context: Context): ImageLoader {
