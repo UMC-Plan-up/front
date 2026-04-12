@@ -59,10 +59,10 @@ class TimerViewModel @Inject constructor(
     val selectedDate: StateFlow<String> = _selectedDate
 
     //private var isRunning = false
-    private val _isRunning = MutableStateFlow<Boolean>(false)
+    private val _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean> = _isRunning
     private var elapsedSeconds = 0
-    private var timerId: Int = 0 //0: 타이머 없음
+    private var timerId: Int = -1 // -1: 타이머 없음
 
     private val _imageUri = MutableStateFlow<Uri?>(null)
     val imageUri: StateFlow<Uri?> = _imageUri
@@ -93,13 +93,20 @@ class TimerViewModel @Inject constructor(
             repository.getTodayTotalTime(selectedGoalId.value)
                 .onSuccess {
                     _timerText.value = it.formattedTime
+                    elapsedSeconds = parseTimeToSeconds(it.formattedTime)
                 }.onFailWithMessage {
                     Log.d("loadTotalTime", "loadTotalTime failed : $it")
+                    _timerText.value = "00:00:00"
+                    elapsedSeconds = 0
                 }
         }
     }
 
     fun selectGoal(goalId: Int) {
+        timerJob?.cancel()
+        _isRunning.value = false
+        timerId = -1
+
         _selectedGoalId.value = goalId
     }
 
@@ -137,8 +144,8 @@ class TimerViewModel @Inject constructor(
             repository.startTimer(selectedGoalId.value)
                 .onSuccess { result ->
                     _isRunning.value = true
-                    elapsedSeconds = result.goalTimeMinutes
                     timerId = result.timerId
+                    Log.d("starttimer", "elapsed : $elapsedSeconds")
                     runTimer()
                 }.onFailWithMessage {
                     Log.d("startTimer", "startTimer failed : $it")
@@ -147,14 +154,12 @@ class TimerViewModel @Inject constructor(
     }
 
     fun runTimer() {
-        viewModelScope.launch {
-            isRunning.collectLatest { running ->
-                if (running) {
-                    while (true) {
-                        delay(1000L)
-                        updateTimerText()
-                    }
-                }
+        timerJob?.cancel() // 기존 타이머 제거
+
+        timerJob = viewModelScope.launch {
+            while (_isRunning.value) {
+                delay(1000L)
+                updateTimerText()
             }
         }
     }
@@ -163,6 +168,8 @@ class TimerViewModel @Inject constructor(
         onCallBack: (result: ApiResult<TimerStopResult>) -> Unit
     ) {
         _isRunning.value = false
+        timerJob?.cancel()
+
         viewModelScope.launch {
             repository.stopTimer(timerId)
                 .onSuccess {
@@ -186,28 +193,28 @@ class TimerViewModel @Inject constructor(
         else startTimer(createErrorHandler("startTimer"))
     }
 
-    fun loadMemo(date: String,
+    fun loadMemo(
         onCallBack: (result: ApiResult<DateMemoResult>) -> Unit
     ) {
         viewModelScope.launch {
-            repository.getDateMemo(selectedGoalId.value, date)
+            repository.getDateMemo(selectedGoalId.value, selectedDate.value)
                 .onSuccess {
                     _memo.value = it.memo
+                    onCallBack(ApiResult.Success(it))
                 }.onFailWithMessage {
-                    Log.d("loadMemo", "loadMemo failed : $it")
+                    onCallBack(ApiResult.Fail(it))
                 }
         }
     }
 
     fun saveMemo(
-        date: String, memo: String,
+        memo: String,
         onCallBack: (ApiResult<PostMemoResult>) -> Unit
     ) {
         viewModelScope.launch {
-            repository.saveMemo(selectedGoalId.value,date,memo)
+            repository.saveMemo(selectedGoalId.value, selectedDate.value, memo)
                 .onSuccess {
                     _memo.value = it.memo
-                    //TODO: post memo api
                 }.onFailWithMessage {
                     Log.d("saveMemo", "saveMemo failed : $it")
                 }
@@ -237,10 +244,15 @@ class TimerViewModel @Inject constructor(
             }
         }
     }
-}
 
-sealed class CameraEvent {
-    object ShowCameraPopup : CameraEvent()
-    object OpenCamera : CameraEvent()
-    object OpenGallery : CameraEvent()
+    private fun parseTimeToSeconds(time: String): Int {
+        val parts = time.split(":")
+        if (parts.size != 3) return 0
+
+        val h = parts[0].toIntOrNull() ?: 0
+        val m = parts[1].toIntOrNull() ?: 0
+        val s = parts[2].toIntOrNull() ?: 0
+
+        return h * 3600 + m * 60 + s
+    }
 }

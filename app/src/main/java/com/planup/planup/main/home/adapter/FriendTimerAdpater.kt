@@ -31,8 +31,8 @@ class FriendTimerAdapter(private val friends: List<FriendTimer>) :
         val imgUrl = item.profileResId
         Glide.with(holder.itemView.context) // context 대신 이렇게
             .load(imgUrl)
-            .placeholder(R.drawable.ic_launcher_background) // 로딩 중
-            .error(R.drawable.ic_launcher_background) // 실패 시
+            .placeholder(R.drawable.profile_example) // 로딩 중
+            .error(R.drawable.profile_example) // 실패 시
             .circleCrop()
             .into(holder.profile)
         holder.nickname.text = item.nickname

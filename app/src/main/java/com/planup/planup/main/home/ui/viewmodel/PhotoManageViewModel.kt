@@ -25,6 +25,7 @@ class PhotoManageViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     val goalId = savedStateHandle["goalId"] ?: 0
+    val date = savedStateHandle["date"] ?: "2026-04-12"
     private val _photoList = MutableStateFlow<List<GoalPhotoResult>>(emptyList())
     val photoList: StateFlow<List<GoalPhotoResult>> = _photoList
 
@@ -68,7 +69,7 @@ class PhotoManageViewModel @Inject constructor(
     }
 
     fun postPhotos(
-        date: String, photoList: List<String>,
+        photoList: List<String>,
         onCallBack: (ApiResult<Unit>) -> Unit
     ) {
         viewModelScope.launch {

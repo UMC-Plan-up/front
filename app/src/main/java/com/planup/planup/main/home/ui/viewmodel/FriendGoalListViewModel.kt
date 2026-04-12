@@ -65,23 +65,6 @@ class FriendGoalListViewModel @Inject constructor(
                         FriendGoalUiMessage.Error(message)
                     )
                 }
-            //TODO: friendgoallist dummy
-            val dummyList = listOf(
-                FriendGoalWithAchievement(
-                    goal = FriendGoalListResult(
-                        goalId = 1,
-                        goalName = "dummy1",
-                        goalType = "FRIEND",
-                        goalAmount = "1회",
-                        verificationType = "PHOTO",
-                        goalTime = 100,
-                        frequency = 2,
-                        oneDose = 2
-                    ),
-                    totalAchievement = 10
-                )
-            )
-            _friendGoals.update { dummyList }
 
         }
     }
