@@ -36,7 +36,6 @@ class HomeViewModel @Inject constructor(
     private val challengeRepository: ChallengeRepository
 ): ViewModel() {
 
-    // daily todo
     private val _dailyToDos = MutableStateFlow<List<DailyToDo>>(emptyList())
     val dailyToDos: StateFlow<List<DailyToDo>> = _dailyToDos
 
@@ -68,52 +67,37 @@ class HomeViewModel @Inject constructor(
         onCallBack: (result: ApiResult<List<MyGoalListItem>>) -> Unit
     ) {
         viewModelScope.launch {
-            try {
-                val result = homeRepository.getMyGoalList()
-                if (result is ApiResult.Success) {
-                    Log.d("loadMyGoalList", "result: ${result.data}")
+            homeRepository.getMyGoalList()
+                .onSuccess { result ->
                     val dailyList = mutableListOf<DailyToDo>()
-                    for (goal in result.data) {
-                        val total = homeRepository.loadTotalAchievement(goal.goalId)
-                        if(total is ApiResult.Success) {
-                            val progress = total.data.totalAchievementRate
-                            dailyList.add(DailyToDo(goal.goalName, progress, goal.frequency))
-                        }
+                    for (goal in result) {
+                        homeRepository.loadTotalAchievement(goal.goalId)
+                            .onSuccess {
+                                val progress = it.totalAchievementRate
+                                dailyList.add(
+                                    DailyToDo(
+                                        goal.goalName,
+                                        progress,
+                                        goal.frequency
+                                    )
+                                )
+                            }
                     }
                     _dailyToDos.value = dailyList
+                }.onFailWithMessage { result ->
+                    Log.d("homeRepository", result)
                 }
-
-                //TODO : dailytodo dummy
-                val dailyDummyList = listOf(
-                    DailyToDo("dummy1", 10, 20),
-                    DailyToDo("dummy2", 20, 30),
-                    DailyToDo("dummy3", 30, 40),
-                    DailyToDo("dummy4", 40, 50)
-                )
-                _dailyToDos.value = dailyDummyList
-
-                Log.d("loadMyGoalList", "result: ${_dailyToDos.value}")
-                onCallBack(result)
-            } catch (e: CancellationException) {
-            }
-            catch (e: Exception) {
-                e.printStackTrace()
-                onCallBack(ApiResult.Exception(e))
-            }
         }
     }
     fun loadFriendChallenges(
         onCallBack: (result: ApiResult<FriendGoalAchievementResult>) -> Unit
     ) {
         viewModelScope.launch {
-            Log.d("loadfriendchallenge","loadFriendChallenges")
             val summaries = mutableListOf<FriendChallengeItem>()
             try {
                 val friendRes = homeRepository.getFriendSummary()
-                Log.d("loadfriendchallenge","friendRes : $friendRes")
                 if (friendRes is ApiResult.Success) {
                     val friendList = friendRes.data.friendInfoSummaryList
-                    Log.d("loadfriendchallenge","friendlist : $friendList")
                     for (friend in friendList) {
                         val friendId = friend.id
                         val nickname = friend.nickname
@@ -126,20 +110,18 @@ class HomeViewModel @Inject constructor(
                                 if (achieveRes is ApiResult.Success) {
                                     achievements.add(achieveRes.data.totalAchievement)
                                 }
-                                val avg = achievements.average()
-                                val top3float = achievements.sortedDescending().take(3).map { it.toFloat() }
-                                summaries.add(
-                                    FriendChallengeItem(
-                                        friendId,
-                                        nickname,
-                                        "평균 목표 달성률 : $avg",
-                                        R.drawable.profile_example,
-                                        top3float
-                                    )
-                                )
-                                Log.d("loadfriendchallenge","$summaries")
-                                onCallBack(achieveRes)
                             }
+                            val avg = achievements.average()
+                            val top3float = achievements.sortedDescending().take(3).map { it.toFloat() }
+                            summaries.add(
+                                FriendChallengeItem(
+                                    friendId,
+                                    nickname,
+                                    "평균 목표 달성률 : $avg",
+                                    R.drawable.profile_example,
+                                    top3float
+                                )
+                            )
                         }
                     }
                 }

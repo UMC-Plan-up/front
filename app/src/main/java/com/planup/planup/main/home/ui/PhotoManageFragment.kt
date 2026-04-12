@@ -33,6 +33,22 @@ import com.planup.planup.network.ApiResult
 
 @AndroidEntryPoint
 class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
+    companion object {
+        const val GOAL_ID = "goalId"
+        const val DATE = "date"
+
+        fun newInstance(
+            goalId: Int,
+            date: String
+        ): FriendGoalListFragment {
+            return FriendGoalListFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(GOAL_ID, goalId)
+                    putString(DATE, date)
+                }
+            }
+        }
+    }
 
     private lateinit var binding: FragmentPhotoManageBinding
 
@@ -56,6 +72,7 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
         }
 
     private lateinit var photoAdapter: PhotoManageAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentPhotoManageBinding.inflate(inflater, container, false)
         return binding.root
@@ -258,7 +275,6 @@ class PhotoManageFragment : Fragment(R.layout.fragment_photo_manage) {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.postPhotos(
-                date = "2026-03-08", //TODO: 날짜 바꾸기
                 photoList = base64List,
                 createErrorHandler("postPhotos"){
                     Log.d("PhotoManageFragment", "uploadPhotos: $it")

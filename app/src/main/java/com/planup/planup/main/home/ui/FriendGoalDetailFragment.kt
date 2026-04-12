@@ -74,7 +74,6 @@ class FriendGoalDetailFragment : Fragment() {
         loadTodayFriendTime()
         loadFriendPhotos()
         setupCommentRv()
-        pushDummyComment() //TODO: dummy comment
 
         chart = binding.friendGoalChart
         setupCombinedChart()
@@ -254,7 +253,6 @@ class FriendGoalDetailFragment : Fragment() {
         )
         val dummyList = listOf(dummyComment,dummyComment)
         commentAdapter.submitList(dummyList)
-        //TODO : comment dummy (friend goal detail)
     }
 
     private fun sendComment(comment: String) {

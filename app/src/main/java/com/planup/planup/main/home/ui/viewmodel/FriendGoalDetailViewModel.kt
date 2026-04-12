@@ -84,7 +84,7 @@ class FriendGoalDetailViewModel @Inject constructor(
         viewModelScope.launch {
             val content = CreateCommentRequest(
                 content = comment,
-                parentCommentId = comments.value[0].id, //TODO: 확인 필요
+                parentCommentId = comments.value[0].id,
                 reply = false
             )
             repository.sendComment(goalId, content)

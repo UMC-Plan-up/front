@@ -60,13 +60,7 @@ class CalendarViewModel @Inject constructor(
                     onCallBack(ApiResult.Exception(e))
                 }
             }
-            //TODO: calendar dummy
-            val monthDummyList = mutableListOf(
-                CalendarEvent("goal1", "1일", 1, LocalDate.of(2026, 1, 20)),
-                CalendarEvent("goal2", "2일", 2, LocalDate.of(2026, 1, 20)),
-                CalendarEvent("goal3", "3일", 3, LocalDate.of(2026, 1, 20)),
-            )
-            _allEvents.value = monthDummyList
+            _allEvents.value = monthList
             updateSelectedDateEvents()
         }
     }

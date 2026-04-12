@@ -57,12 +57,7 @@ class HomeFragment : Fragment() {
 
     private val today = LocalDate.now()
     private var selectedDate = today
-    private var eventList = mutableListOf(
-        CalendarEvent("토익 공부하기", "DAY", 1, LocalDate.of(2025, 12, 11)),
-        CalendarEvent("헬스장 가기", "DAY", 1, LocalDate.of(2025, 12, 18)),
-        CalendarEvent("스터디 모임", "DAY", 1, LocalDate.of(2025, 12, 19)),
-        CalendarEvent("<인간관계론> 읽기", "DAY", 1, LocalDate.of(2025, 12, 18))
-    )
+    private var eventList = mutableListOf<CalendarEvent>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
